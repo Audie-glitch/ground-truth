@@ -8,7 +8,47 @@
 
 1. **I cannot receive or hold funds.** Do not send crypto, cash, seed phrases, or exchange logins to me or to any “agent” wallet. That is a common theft pattern.
 2. **There is no reliable way to make quick gains.** Fast, large, low-risk returns are the main advertising copy of investment fraud.
-3. **The honest paths are slow:** buy on a regulated venue you control, hold assets you understand, or earn modest protocol/exchange yield. Anything faster is a bet, not a method.
+3. **The honest paths are work or patience:** earn assets through paid engineering, bounties, or hackathons; buy on a regulated venue you control; or earn modest protocol/exchange yield. Anything promising fast passive returns is a bet or a scam, not a repeatable method.
+
+## Current earn-without-capital opportunities
+
+These opportunities were checked against primary listings on **2 September 2026**. Prize pools are competitive, not guaranteed income.
+
+| Rank | Opportunity | Reward and deadline | Speed | Effort / fit | Eligibility | Risk | Verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | [KeeperHub feature bounty](https://dorahacks.io/hackathon/agent-economy/detail) | **$1,000 in stablecoins**: two $500 winners; build window Sep 6–18 | Fast | Medium–high; best fit for an experienced software engineer | 18+, worldwide except sanctioned locations; solo allowed | Low financial risk; high time/competition risk | Best direct-to-crypto route. Ship a mergeable feature or developer-experience improvement to the open-source KeeperHub repository. Do not start implementation before the Sep 6 build window. |
+| 2 | [BUIDL CTC 2026 Fall](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) | **$15,000 pool**: $10k/$3k/$2k; deadline Sep 13, 23:59 ET | Fast | High; requires a working Attestcoin integration, testnet deployment, README, deck, and video | Solo allowed; legal/sanctions and criminal-record restrictions apply | Low financial risk; very high time and execution risk; payout asset is not stated | Strong upside, but it is a three-winner competition and does not yet prove the reward will be paid in crypto. |
+| 3 | [KeeperHub live-project integration](https://dorahacks.io/hackathon/agent-economy/detail) | **$4,000 in stablecoins**: $2k/$1.2k/$800; deadline Sep 18 | Fast | High; must integrate KeeperHub with a real, already-running project and show a KeeperHub transaction | Same KeeperHub eligibility | Low financial risk; high integration and judging risk | Attractive only if access to a qualifying live project is available. A generic new wrapper does not qualify. |
+| 4 | [Immunefi bug bounties](https://immunefi.com/bug-bounty/) | **183 active programs**; program maxima range from thousands to millions, generally stablecoin payouts | Unpredictable | Very high; requires security expertise and usually a reproducible proof of concept | Program-specific; many require KYC | No capital required, but severe legal/operational risk if scope or disclosure rules are violated | Legitimate but not “quick.” Work only inside the exact published scope and safe-harbor terms. |
+| 5 | [BLI Legal Tech Hackathon 2](https://dorahacks.io/hackathon/legal-hack-2026) | **$20,000 pool**; deadline Nov 1 | Slowest | High; blockchain/legal/compliance product plus submission artifacts | Listing-specific terms must be checked before work | Low financial risk; high time risk; payout form not verified | Useful fallback with more build time, but weaker for the objective because crypto payout is not confirmed. |
+
+### Current dead ends
+
+- [OnlyDust](https://app.onlydust.com/) has closed.
+- No active September contest was verified on Code4rena or Cantina; search results were completed contests.
+- Gitcoin has no currently verified open application round.
+- Bountycaster's current developer filter returned no open posts.
+- Superteam search results that looked active were historical pages marked completed. A listing is not actionable until its live page says submissions are open.
+
+### Recommended execution order
+
+1. Confirm eligibility before registering or submitting.
+2. Prioritize the KeeperHub feature bounty because it explicitly pays stablecoins, matches software-engineering skills, and requires no capital.
+3. Before Sep 6, inspect accepted, unclaimed KeeperHub issues without implementing them. Existing accepted fixes [#2208](https://github.com/keeperhub/keeperhub/issues/2208) and [#2211](https://github.com/keeperhub/keeperhub/issues/2211) already have pull requests, so duplicating them would waste effort.
+4. On or after Sep 6, claim an accepted feature issue publicly before coding, then deliver tests, documentation, a source link, and demo evidence.
+5. Use BUIDL CTC only if the higher-effort testnet build and uncertain payout form are acceptable.
+
+## Resources needed for the recommended route
+
+- A GitHub account that can fork KeeperHub and open a pull request.
+- A DoraHacks account and hackathon registration.
+- A reachable email plus an X or Discord handle for the submission.
+- Confirmation that the participant is 18+ and physically located outside sanctions-restricted regions.
+- An EVM-compatible self-custody wallet address for a stablecoin payout. **Never share its seed phrase or private key.**
+- For integration testing only: testnet tokens from official faucets and, if required, a KeeperHub organization API key stored as a secret environment variable—not pasted into chat or committed.
+- A short demo video and, for the main track, a public testnet transaction link.
+
+No investment capital, trading deposit, exchange API key, or wallet secret is needed.
 
 ## How people actually get crypto
 
