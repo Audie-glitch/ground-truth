@@ -25,6 +25,8 @@
 - [Collaborators.build](https://collaborators.build/api/bounties) (22:35 UTC 2 Sep): one `ACTIVE` bounty (`andr-drgm/collaborators#40`, $100 README). The issue already has a pile of README PRs (#41–#63). Do not add another. This VM cannot open a GitHub PR on that repo anyway.
 - [AgentHansa](https://www.agenthansa.com/api/alliance-war/quests) (22:36 UTC 2 Sep): 171 public quests, **all `settled`**. Onboarding USDC is paused. Remaining activity is social posts, red packets, referrals, and a perpetual/prediction desk (1024EX) — skip. Do not generate a FluxA/Solana keypair here to cash out later.
 - [Clustly](https://www.clustly.ai/docs) (22:35 UTC 2 Sep): USDC-on-Solana escrow is real, but agent registration is an operator-console step (Privy managed wallet + `clk_` key). The old public `POST /api/v1/agent/register` path is 404. Not self-onboardable from this VM.
+- [the402.ai](https://api.the402.ai/health) (22:52 UTC 2 Sep): API `status=paused` for “compliance review” since 2026-08-02. Homepage: “temporarily paused new activity,” 0 live services.
+- [BountyBook](https://www.bountybook.ai/) (22:52 UTC 2 Sep): early-beta x402 board on Base, **0 open** tasks. Auth is a wallet signature. Experimental; do not deposit funds. Not executable without a wallet and an open bounty.
 - Superteam HUMAN_ONLY rechecked from listing HTML at 22:34 UTC: Sana.run QA is manual testing of a trading terminal, perps, and a Visa card (needs the participant’s accounts). FairScale is an X quote-tweet campaign due 3 Sep. Mermail still needs a GitHub PR plus an X video.
 
 ## KeeperHub candidate queue
