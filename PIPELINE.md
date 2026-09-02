@@ -24,6 +24,30 @@ organizer's own page on that day.
 Verified dead ends: Sherlock has 0 active audit contests; Code4rena wound down
 in May 2026; Colosseum's Solana hackathon does not open until Sep 28.
 
+## Division of labour with the parallel agents in this repo
+
+Other agent runs on this branch have produced `research/` notes, the Ground
+Truth backtester at the repo root, and a KeeperHub analysis that targets issue
+[#2105](https://github.com/keeperhub/keeperhub/issues/2105). To avoid
+collisions:
+
+- This track owns `creditpassport/` (BUIDL CTC entry), `keeperhub/2240-*`
+  (the #2240 trigger design and implementation), and the ETHOnline
+  open-source bounties.
+- #2105 stays with the run that scoped it; the two KeeperHub PRs are
+  independent and both can be entered for the bounty.
+- One note (`research/crypto-earning-opportunities-2026-09.md`) marks BUIDL
+  CTC "not executable from this VM." Registration and the submission form do
+  need you; the build does not, and it is the only window open for code
+  today, so it is being built now.
+
+## Built so far
+
+- `creditpassport/contracts`: 30 passing Foundry tests, deploy scripts.
+- `creditpassport/agent`: type-checks, unit tests pass, verified live against
+  Creditcoin testnet chain info (Sepolia attested ~36 blocks behind head).
+- `keeperhub/2240-state-threshold-trigger-design.md`: ready to post.
+
 ## Schedule
 
 | Dates | Work |
