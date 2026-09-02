@@ -1,6 +1,7 @@
 # Phantom agent wallet: login succeeded, KMS still blocked
 
 **Probed:** 2 September 2026, this Cloud Agent VM.  
+**Live:** 21:29 UTC — first-client session refreshed; no `session.json`; device code `des6pxAN` still waiting; VM browser has no Phantom login. Nested `ext.a2t` JWT is `aud=urn:phantom:kms-api` but is rejected as a Bearer (`Invalid or expired Hydra JWT`). Portal `/portal/v1/apps` is 401 with both tokens.  
 **Goal relevance:** without a provisioned agent wallet there is no Solana or Ethereum address, no balance, and no legal on-chain acquisition to execute.
 
 This note replaces the earlier “Phantom MCP only times out” finding. Device-code login now works. Wallet creation does not.
@@ -11,7 +12,7 @@ This note replaces the earlier “Phantom MCP only times out” finding. Device-
 | --- | --- | --- |
 | `~/.phantom-mcp/auth2-stamper.json` | Present after user approved device code `PRs7Fxb4` | File exists; access token `exp` ~50 minutes after refresh |
 | OAuth userinfo | HTTP 200 | `GET https://auth.phantom.app/userinfo` returns `organization_id` plus `auth2_id_token` |
-| Access-token JWT | No `organization_id` / `org_id` | Claims are `aud`, `client_id`, `exp`, `ext`, `iat`, `iss`, `jti`, `nbf`, `scp`, `sub`. `aud` is `urn:phantom:wallet-tag:<dcr-client-id>` |
+| Access-token JWT | No `organization_id` / `org_id` | Claims are `aud`, `client_id`, `exp`, `ext`, `iat`, `iss`, `jti`, `nbf`, `scp`, `sub`. `aud` is `urn:phantom:wallet-tag:<dcr-client-id>`. Nested `ext.a2t` has `aud=urn:phantom:kms-api` and is not a usable Bearer. |
 | `~/.phantom-mcp/session.json` | **Absent** | No `walletId` |
 | Agent addresses | **None** | KMS never returned a wallet |
 | Balances / txs | **None** | Nothing to query |
