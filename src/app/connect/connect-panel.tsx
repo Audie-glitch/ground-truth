@@ -157,6 +157,17 @@ export function ConnectPanel() {
     void connectInjectedWallet();
   }, [connectInjectedWallet]);
 
+  useEffect(() => {
+    if (!status?.waiting || !status.url || status.session || status.kmsBlocked) return;
+    try {
+      if (sessionStorage.getItem("gt-connect-autostart")) return;
+      sessionStorage.setItem("gt-connect-autostart", "1");
+    } catch {
+      return;
+    }
+    window.open("/connect/go", "_blank", "noopener,noreferrer");
+  }, [status]);
+
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setBusy(true);
