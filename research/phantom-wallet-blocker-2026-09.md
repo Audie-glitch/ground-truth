@@ -1,7 +1,7 @@
 # Phantom agent wallet: login succeeded, KMS still blocked
 
 **Probed:** 2 September 2026, this Cloud Agent VM.  
-**Live:** 22:07 UTC — first-client tokens still valid. KMS still `whitelist-disabled`. No `session.json`. Connect JS also embeds stub UUID `2b4308d3-…` (invalid_client for device flow). First-party apps `cf082b41`, `a61bc25e`, `457ad40e`, `7e9bb222` remain real whitelist rows **without** the device-code grant. Hydra DCR reminted unused code `H7ajubqm` at 22:07:34 UTC. `scripts/show-agent-addresses.mjs` prints public Solana/ETH addresses once a session exists.  
+**Live:** 22:09 UTC — first-client refresh still valid (~45 min). KMS retry still `whitelist-disabled` for `4da950ac-…`. No `session.json`. Hydra DCR code `H7ajubqm` still unused. Phantom MCP `wallet_status` still times out (`-32001`). BUIDL CTC is open but USD-denominated and needs the participant’s DoraHacks/GitHub identity — not started here.  
 **Goal relevance:** without a provisioned agent wallet there is no Solana or Ethereum address, no balance, and no legal on-chain acquisition to execute.
 
 This note replaces the earlier “Phantom MCP only times out” finding. Device-code login now works. Wallet creation does not.
