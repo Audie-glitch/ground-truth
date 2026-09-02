@@ -46,7 +46,21 @@ The app ID in that error is the **JWT `client_id` / wallet-tag**, not the `x-app
 
 That UUID came from RFC 7591 dynamic client registration (`DCRClient.registerForDeviceFlow` in `@phantom/cli`). Phantom MCP docs say no Portal app is required; DCR is the intended agent path. Auth accepted the client. **KMS did not.**
 
-`GET /v1/wallets/whitelist/<uuid>` returns `enabled: true`, `status: PUBLIC` with `createdAt` equal to the request time even for unknown IDs. That response is not the KMS allowlist. `PUT /v1/wallets/whitelist/<uuid>` asks for `x-api-key` (we do not have Phantom’s admin key).
+`GET /v1/wallets/whitelist/<uuid>` is **not** the KMS allowlist. Rechecked 21:15 UTC 2 Sep 2026:
+
+| App ID | Real whitelist row? | Device-code grant | Notes |
+| --- | --- | --- | --- |
+| `4da950ac-…` (self-chosen DCR) | **Stub** (`id == externalId`, `createdAt = now`, empty redirects) | Yes (auth succeeded) | KMS `whitelist-disabled` |
+| `b90d07cd-…` (Hydra-assigned DCR) | **Stub** (same shape) | Yes (waiting on Connect approval) | Almost certainly the same KMS policy |
+| `cf082b41-…` | Real (internal id differs, created 2026-04-14, Connect callback) | No | Official Connect app |
+| `a61bc25e-…` | Real (created 2026-04-10) | No | Connect SSO `login/start` prod client |
+| `457ad40e-…` / `7e9bb222-…` | Real (Melee / Bonk demo apps) | No | From Connect homepage JS |
+| `00000000-0000-…` | Real sandbox row | `invalid_client` | Connect init sandbox |
+| `582739de-…`, Datadog IDs | Stub or not an OAuth client | `invalid_client` | Analytics / misc |
+
+Stub vs real: a real Portal app has a stable `createdAt` and an internal `id` different from `externalId`. DCR UUIDs get a fresh stub on every GET.
+
+`PUT /v1/wallets/whitelist/<uuid>` asks for `x-api-key` (we do not have Phantom’s admin key).
 
 Phantom Connect’s first-party app `cf082b41-a3b1-4611-9d12-82000722769b` is a real PUBLIC allowlisted app (created 2026-04-14, redirect `https://connect.phantom.app/login/callback`). It **does not** advertise the device-code grant:
 
@@ -65,9 +79,9 @@ So we cannot silently switch the existing tokens onto that app, and we cannot co
 
 Any one of these unblocks address issuance:
 
-1. **A Phantom Portal app ID that KMS accepts**, set as `PHANTOM_APP_ID` / `PHANTOM_CLIENT_ID`, then a **new** device login (the current JWT is bound to the disabled DCR client). Create the app at [phantom.com/portal](https://phantom.com/portal). After login, `scripts/complete-phantom-wallet.mjs` (or `phantom wallet addresses`) should print Solana + Ethereum agent addresses.
-2. **Phantom enabling KMS for this DCR client** (or for device-flow DCR in general). Then the existing tokens can finish `getOrCreateWalletWithTag` without another login — until they expire.
-3. **A funded wallet the user already controls**, with the user signing locally (MetaMask / Phantom extension). This VM still cannot sign for that wallet. It can only prepare unsigned transactions.
+1. **A real Phantom Portal app ID** from [phantom.com/portal](https://phantom.com/portal) that KMS allowlists **and** that Hydra has given the device-code grant. Paste it as `PHANTOM_APP_ID`. A candidate is real if `GET /v1/wallets/whitelist/<id>` returns a stable `createdAt` and `id ≠ externalId`. Every first-party Connect app we found is real on that API but **lacks** the device-code grant. If your Portal app is the same, login has to happen on a machine that can complete the authorization-code redirect (your desktop Cursor / local `phantom login`), not this VM.
+2. **Phantom enabling KMS for DCR device-flow clients.** Both DCR UUIDs we registered look like whitelist stubs, so this is a Phantom-side policy change.
+3. **A funded wallet you already control**, with you signing locally (MetaMask / Phantom extension). This VM still cannot sign for that wallet. It can only prepare unsigned transactions.
 
 Once an agent Ethereum address exists, funding it from MetaMask is the documented Phantom path ([Agent wallets and your existing accounts](https://docs.phantom.com/phantom-mcp-server/account-types)). Do not send funds to a key generated in this VM.
 
@@ -85,13 +99,15 @@ The CLI’s `registerForDeviceFlow` sends a **self-chosen** `client_id`. A secon
 
 A **side-session** device login was started so the original tokens are not wiped until this client proves KMS works. Unused codes on this client: `LcFtqTwh` (~20:50 UTC), `Gdc7ctdz` (~21:02 UTC), `xxk79MWg` (21:12:55 UTC timeout). A replacement is minted only after the previous code dies.
 
-Rechecked 21:11 UTC 2 Sep 2026: first-client KMS is still `whitelist-disabled` for `4da950ac-7d6e-4bd1-81f7-3100e9e01876`. Phantom MCP `wallet_status` still times out (`-32001`). Connect JS also embeds `582739de-e73b-425c-a6f0-c34182faf9a0`; device-code auth against it returns `invalid_client`. Official Connect app `cf082b41-…` still lacks the device-code grant. Phantom’s own agent-kit README says MCP needs a Portal `PHANTOM_APP_ID`.
+Rechecked 21:11–21:16 UTC 2 Sep 2026: first-client KMS is still `whitelist-disabled` for `4da950ac-7d6e-4bd1-81f7-3100e9e01876`. Phantom MCP `wallet_status` still times out (`-32001`). Every extra UUID pulled from Connect JS is either a whitelist stub, a Datadog id, or a real app **without** the device-code grant. Phantom’s own agent-kit README says MCP needs a Portal `PHANTOM_APP_ID`.
 
 ## Required human action
 
-Device codes `LcFtqTwh`, `Gdc7ctdz`, and `xxk79MWg` expired unused. Phantom Connect approval has to happen in **your** browser; this VM cannot complete Google/Apple/wallet consent.
+Device codes `LcFtqTwh`, `Gdc7ctdz`, and `xxk79MWg` expired unused. Approving the live Hydra-assigned DCR code is still worth one empirical KMS test, but that client has the same stub whitelist row as the disabled first client.
 
-Until that click (or a KMS-allowlisted `PHANTOM_APP_ID`) exists:
+The action that actually unblocks addresses is a **Portal `PHANTOM_APP_ID`** (or Phantom turning KMS on for DCR). This VM cannot complete Google/Apple/wallet consent by itself.
+
+Until a real allowlisted app + login exists:
 
 - No agent Solana/Ethereum address
 - No legal deposit target
