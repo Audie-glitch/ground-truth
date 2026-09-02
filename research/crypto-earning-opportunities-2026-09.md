@@ -60,7 +60,7 @@ Needed from the participant:
 - An authenticated GitHub account and fork for opening the KeeperHub pull request.
 - A DoraHacks account and event registration.
 - A reachable email plus an X or Discord handle.
-- An EVM-compatible wallet address for a stablecoin payout. Never share its seed phrase or private key.
+- A self-custody wallet address on the payout network selected by the organizer. The listing confirms stablecoin payouts but does **not** name the chain; confirm it with KeeperHub before creating or funding a wallet. Never share its seed phrase or private key.
 
 Potentially needed later:
 
