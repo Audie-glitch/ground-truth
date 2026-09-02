@@ -33,7 +33,7 @@ Repository state changes quickly. Recheck issues and pull requests before claimi
 | [#2247: trace-method provider survey](https://github.com/keeperhub/keeperhub/issues/2247) | Accepted, good-first-issue, help-wanted, apparently unclaimed. | Useful research, but the bounty asks for a feature. |
 | [#2240: threshold-over-state trigger](https://github.com/keeperhub/keeperhub/issues/2240) | Accepted/help-wanted; unresolved design questions cover edge detection, re-arming, deduplication, and scaling. | Strong product value but too broad for quick work without maintainer decisions. |
 
-Accepted issues #2208 and #2211 already have pull requests. Duplicating them would waste effort.
+Already have PRs — do not duplicate: #2208 (PR #2215), #2211 (PR #2217), #2206 (PR #2213), #2230 (PR #2228), #2196 (PR #2197). GitHub timeline check 2 Sep 2026.
 
 ## Contribution gate for candidate #2105
 

@@ -54,3 +54,4 @@ Anything that looks faster than those three is either a bet with capital we do n
 - Immunefi bounty explorer (“Showing all 183 bounty programs,” 2 Sep 2026): https://immunefi.com/bug-bounty/
 - Ethereum Foundation bug bounty: https://ethereum.org/bug-bounty/
 - KeeperHub issue #2208 (accepted; PR #2215 exists): https://github.com/keeperhub/keeperhub/issues/2208
+- Additional claimed issues (do not duplicate): #2211→PR #2217, #2206→PR #2213, #2230→PR #2228, #2196→PR #2197 (GitHub timeline, 2 Sep 2026)

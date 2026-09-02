@@ -120,6 +120,41 @@ Lost seeds and phished wallets are how long-horizon holders actually go to zero.
 | Surplus you can automate monthly | Sanity-check sizing language. Not a request to send it. |
 | Funds, seeds, API keys | **No.** |
 
+## What this environment can actually do
+
+Probed from the Cloud Agent VM on **2 September 2026**. This is the constraint that matters for “gain assets from here.”
+
+| Capability | Evidence | Can it produce spendable mainnet crypto? |
+| --- | --- | --- |
+| Phantom MCP (`wallet_status`, `wallet_addresses`, `login` with `displayMode=text`) | All three calls returned `MCP error -32001: Request timed out` on two separate turns | **No.** No session, no address, no balance, no swap. A deposit address will not be published even if a later call succeeds. |
+| Wallet / RPC secrets in the process environment | `env` filter for `PHANTOM`, `SOLANA`, `WALLET`, `HELIUS`, `ALCHEMY`, `RPC` returned **empty** | **No.** Nothing to sign with. |
+| Solana CLI | `solana: command not found`. `rustc`/`cargo`/`node` are present | **No** mainnet SOL. CLI could be installed later for **devnet only**. |
+| Official Solana faucet / public devnet RPC | `curl` → `faucet.solana.com` HTTP 200; `api.devnet.solana.com` HTTP 200 | **No.** Devnet/testnet SOL has no market value and cannot be bridged to mainnet. Official faucet text: “does not distribute mainnet SOL.” |
+| Receive user funds | Policy + FTC: “Only scammers demand payment in cryptocurrency” in advance / to “protect” or grow money | **No. Refused.** |
+| Buy on an exchange | No KYC identity for this agent; no exchange API keys | **No** from this VM. The user can do this in their own name. |
+| Earn via KeeperHub / DoraHacks | Listing live; GitHub issues readable; **build window opens 6 Sep 2026** | **Not yet.** Competitive stablecoin prizes after judging. No implementation before Sep 6. |
+| Immunefi / security bounties | Live page: “Showing all 183 bounty programs” (2 Sep 2026, 16:01 UTC) | **Not from this session.** Requires in-scope research and KYC; out-of-scope exploit PoCs are disallowed. |
+| Staking / perps / swaps | Phantom `buy`, `perps_*`, `wallet_rebalance` exist in the MCP schema but are unreachable while login times out, and they need **existing** balances | **No** from zero. |
+
+**Conclusion:** this environment can research, read public repos, and later (after Sep 6, if you want) help ship a bounty PR. It cannot mint, unlock, or receive spendable crypto. Testnet faucets are not assets.
+
+## Verification log (2 Sep 2026)
+
+| Claim | Status | Source |
+| --- | --- | --- |
+| KeeperHub prizes, Sep 6–18 build window, stablecoin payouts | **Verified** | Fetched [dorahacks.io/hackathon/agent-economy/detail](https://dorahacks.io/hackathon/agent-economy/detail) |
+| BUIDL CTC Fall $15k, deadline 13 Sep 2026 23:59 ET, Attestcoin required | **Verified** (search index of the live listing; direct fetch timed out) | [dorahacks.io/hackathon/buidl-ctc-2026-fall/detail](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) |
+| Immunefi “183 bounty programs” | **Verified** | Live page text “Showing all 183 bounty programs”, metrics 2 Sep 2026 16:01 UTC |
+| OnlyDust closed | **Verified** | [app.onlydust.com](https://app.onlydust.com/) “Service discontinued” / “OnlyDust Has Closed” |
+| ETH staking 2.5% APR, 42.6M ETH, 34% staked | **Verified** | [ethereum.org/en/staking](https://ethereum.org/en/staking/) (page content dated 12 Feb 2025; site updated 1 Sep 2026) |
+| FTC: only scammers guarantee profits / demand crypto in advance | **Verified** | [consumer.ftc.gov cryptocurrency scams](https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams) (page dated May 2022) |
+| FBI IC3 2025 crypto complaint/loss totals | **Cited; PDF 500 this pass** | [FBI press release](https://www.fbi.gov/news/press-releases/cryptocurrency-and-ai-scams-bilk-americans-of-billions); [Decrypt IC3 write-up](https://decrypt.co/363486/11-4b-lost-to-crypto-scams-in-2025-fbi-internet-crime-report) |
+| ESMA 74–89% retail CFD accounts lose money | **Verified** | [ESMA 35-43-1000 PDF](https://www.esma.europa.eu/sites/default/files/library/esma35-43-1000_additional_information_on_the_agreed_product_intervention_measures_relating_to_contracts_for_differences_and_binary_options.pdf) |
+| Coinbase SOL ~3.69% APY | **Not re-fetched** | Cloudflare bot check. Treat as stale. |
+| Solana faucet is devnet/testnet only | **Verified** | [faucet.solana.com](https://faucet.solana.com/) |
+| Phantom MCP usable here | **Failed** | Timeouts documented above |
+| KeeperHub issues already claimed | **Verified** | GitHub API: #2208→PR #2215, #2211→PR #2217, #2206→PR #2213, #2230→PR #2228, #2196→PR #2197. Unclaimed inspect-only: #2247, #2242, #2241, #2240, #2105, #2097, #2062 |
+
 ## Sources
 
 - Blockworks / Messari token-mortality figures as reported: https://www.panews.io/articles/019fd9ff-ec5b-710a-8656-2d57731b587c
@@ -134,3 +169,5 @@ Lost seeds and phished wallets are how long-horizon holders actually go to zero.
 - ESMA CFD retail-loss analysis (35-43-1000): https://www.esma.europa.eu/sites/default/files/library/esma35-43-1000_additional_information_on_the_agreed_product_intervention_measures_relating_to_contracts_for_differences_and_binary_options.pdf
 - Solana faucets (devnet/testnet only): https://solana.com/developers/cookbook/development/airdrops-and-faucets
 - Environment probe (this VM): [environment-capabilities-2026-09.md](environment-capabilities-2026-09.md)
+- FTC, *What To Know About Cryptocurrency and Scams*: https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams
+- FBI press release on 2025 crypto/AI scam losses: https://www.fbi.gov/news/press-releases/cryptocurrency-and-ai-scams-bilk-americans-of-billions
