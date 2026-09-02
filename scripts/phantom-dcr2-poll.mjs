@@ -120,43 +120,62 @@ while (Date.now() < deadline) {
     process.exit(3);
   }
   const auth2Token = Auth2Token.fromAccessToken(tokens.access_token);
-  const body = JSON.stringify({
-    method: "getOrCreateWalletWithTag",
-    params: {
-      organizationId: orgId,
-      walletName: "App Wallet",
-      tag: clientId,
-      mnemonicLength: 24,
-      accounts: [
-        { curve: "ed25519", derivationPath: "m/44'/501'/0'/0'", addressFormat: "solana" },
-        { curve: "secp256k1", derivationPath: "m/44'/60'/0'/0/0", addressFormat: "ethereum" },
-      ],
+  const accounts = [
+    { curve: "ed25519", derivationPath: "m/44'/501'/0'/0'", addressFormat: "solana" },
+    { curve: "secp256k1", derivationPath: "m/44'/60'/0'/0/0", addressFormat: "ethereum" },
+  ];
+  const kmsAttempts = [
+    {
+      method: "getOrCreateWalletWithTag",
+      params: { organizationId: orgId, walletName: "App Wallet", tag: clientId, mnemonicLength: 24, accounts },
     },
-    timestampMs: Date.now(),
-  });
-  const stamp = await stamper.stamp({ data: Buffer.from(body, "utf-8") });
-  const kmsRes = await fetch("https://api.phantom.app/v1/wallets/kms/rpc", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${tokens.access_token}`,
-      "x-app-id": clientId,
-      "x-api-version": "2025-11-24",
-      "x-auth-user-id": auth2Token.sub,
-      "x-phantom-stamp": stamp,
-      "user-agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-      origin: "https://connect.phantom.app",
-      referer: "https://connect.phantom.app/",
-      "x-phantom-sdk-type": "server",
-      "x-phantom-sdk-version": "1.2.7",
-      "x-phantom-platform": "ext-sdk",
-      "x-phantom-client": "mcp",
+    {
+      method: "createWallet",
+      params: { organizationId: orgId, walletName: "App Wallet", accounts },
     },
-    body,
-  });
-  const kms = await kmsRes.json().catch(() => ({}));
-  if (!kmsRes.ok || kms.type === "whitelist-disabled" || !kms.result) {
+    {
+      method: "getOrganizationWallets",
+      params: { organizationId: orgId, limit: 20, offset: 0 },
+    },
+  ];
+
+  let kms = {};
+  let kmsRes = { ok: false, status: 0 };
+  let walletResult = null;
+  for (const attempt of kmsAttempts) {
+    const body = JSON.stringify({ ...attempt, timestampMs: Date.now() });
+    const stamp = await stamper.stamp({ data: Buffer.from(body, "utf-8") });
+    kmsRes = await fetch("https://api.phantom.app/v1/wallets/kms/rpc", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${tokens.access_token}`,
+        "x-app-id": clientId,
+        "x-api-version": "2025-11-24",
+        "x-auth-user-id": auth2Token.sub,
+        "x-phantom-stamp": stamp,
+        "user-agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        origin: "https://connect.phantom.app",
+        referer: "https://connect.phantom.app/",
+        "x-phantom-sdk-type": "server",
+        "x-phantom-sdk-version": "1.2.7",
+        "x-phantom-platform": "ext-sdk",
+        "x-phantom-client": "mcp",
+      },
+      body,
+    });
+    kms = await kmsRes.json().catch(() => ({}));
+    const listed = kms.result?.wallets || kms.result?.items;
+    walletResult =
+      kms.result?.walletId || kms.result?.id
+        ? kms.result
+        : Array.isArray(listed) && listed[0]
+          ? listed[0]
+          : null;
+    if (kmsRes.ok && walletResult) break;
+  }
+  if (!kmsRes.ok || kms.type === "whitelist-disabled" || !walletResult) {
     writeStatus({
       ok: false,
       stage: "kms",
@@ -166,7 +185,8 @@ while (Date.now() < deadline) {
     });
     process.exit(1);
   }
-  const walletId = kms.result.walletId || kms.result.id;
+  const walletId = walletResult.walletId || walletResult.id;
+  kms.result = { ...kms.result, ...walletResult };
   const now = Math.floor(Date.now() / 1000);
   const session = {
     walletId,
@@ -177,9 +197,9 @@ while (Date.now() < deadline) {
     createdAt: now,
     updatedAt: now,
   };
-  const accounts = [].concat(kms.result.accounts || []).concat(kms.result.derivedAccounts || []);
+  const derived = [].concat(kms.result.accounts || []).concat(kms.result.derivedAccounts || []);
   const addresses = {};
-  for (const account of accounts) {
+  for (const account of derived) {
     const address = account?.address || account?.publicAddress;
     if (typeof address !== "string" || !address) continue;
     const kind = String(account.addressFormat || account.addressType || account.curve || "").toLowerCase();

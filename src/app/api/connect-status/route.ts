@@ -12,6 +12,8 @@ type StatusFile = {
   user_code?: string;
   url?: string;
   t?: string;
+  type?: string;
+  detail?: string;
 };
 
 export async function GET() {
@@ -94,6 +96,9 @@ export async function GET() {
     url: connect.url ?? null,
     ttlLeftSec,
     waiting: connect.stage === "waiting" && ttlLeftSec > 0 && !session,
+    kmsBlocked: connect.stage === "kms",
+    kmsType: connect.type ?? null,
+    kmsDetail: connect.detail ?? null,
     source: usePortal ? "portal-app" : "dcr",
     userInput,
   });

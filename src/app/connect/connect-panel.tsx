@@ -21,6 +21,9 @@ type Status = {
   ttlLeftSec: number;
   waiting: boolean;
   source?: string;
+  kmsBlocked?: boolean;
+  kmsType?: string | null;
+  kmsDetail?: string | null;
   userInput?: {
     stage: string | null;
     hint: string | null;
@@ -199,6 +202,16 @@ export function ConnectPanel() {
         </Link>
         <Badge variant="outline">{status?.session ? "Agent session present" : "No agent wallet yet"}</Badge>
       </div>
+
+      {status?.kmsBlocked ? (
+        <Alert>
+          <AlertTitle>Connect approval reached Phantom, KMS still refused</AlertTitle>
+          <AlertDescription>
+            {status.kmsDetail ||
+              "This self-registered app is whitelist-disabled. Paste a real Portal App ID below, or share a MetaMask address."}
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
       {status?.ethereum ? (
         <Alert>
