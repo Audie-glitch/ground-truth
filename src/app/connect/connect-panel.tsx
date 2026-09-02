@@ -21,7 +21,24 @@ type Status = {
   ttlLeftSec: number;
   waiting: boolean;
   source?: string;
-  userInput?: { stage: string | null; hint: string | null; hasEthereum: boolean };
+  userInput?: {
+    stage: string | null;
+    hint: string | null;
+    hasEthereum: boolean;
+    ethereumAddress: string | null;
+  };
+};
+
+type Balances = {
+  ok: boolean;
+  funded?: boolean;
+  address?: string;
+  checkedAt?: string;
+  error?: string;
+  chains?: {
+    ethereum: { native: string; usdc: string; ok: boolean; error?: string };
+    base: { native: string; usdc: string; ok: boolean; error?: string };
+  };
 };
 
 export function ConnectPanel() {
@@ -29,6 +46,8 @@ export function ConnectPanel() {
   const [appId, setAppId] = useState("");
   const [ethereumAddress, setEthereumAddress] = useState("");
   const [busy, setBusy] = useState(false);
+  const [walletBusy, setWalletBusy] = useState(false);
+  const [balances, setBalances] = useState<Balances | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,6 +67,74 @@ export function ConnectPanel() {
       clearInterval(id);
     };
   }, []);
+
+  const inspectAddress = status?.ethereum || status?.userInput?.ethereumAddress || null;
+
+  useEffect(() => {
+    if (!inspectAddress) {
+      setBalances(null);
+      return;
+    }
+    let cancelled = false;
+    async function loadBalances() {
+      try {
+        const res = await fetch(
+          `/api/address-balances?address=${encodeURIComponent(inspectAddress!)}`,
+          { cache: "no-store" },
+        );
+        const data = (await res.json()) as Balances;
+        if (!cancelled) setBalances(data);
+      } catch {
+        if (!cancelled) setBalances({ ok: false, error: "Could not read public balances." });
+      }
+    }
+    void loadBalances();
+    return () => {
+      cancelled = true;
+    };
+  }, [inspectAddress]);
+
+  async function saveEthereumAddress(address: string) {
+    const res = await fetch("/api/connect-input", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ethereumAddress: address }),
+    });
+    const data = (await res.json()) as { ok: boolean; error?: string };
+    if (!res.ok || !data.ok) {
+      throw new Error(data.error || "Could not save that address.");
+    }
+  }
+
+  async function connectMetaMask() {
+    setWalletBusy(true);
+    try {
+      const provider = (
+        window as Window & {
+          ethereum?: { request: (args: { method: string }) => Promise<unknown> };
+        }
+      ).ethereum;
+      if (!provider) {
+        toast.error(
+          "No injected wallet in this browser. Open this page on your desktop with MetaMask installed.",
+        );
+        return;
+      }
+      const accounts = (await provider.request({ method: "eth_requestAccounts" })) as string[];
+      const address = accounts?.[0];
+      if (!address) {
+        toast.error("MetaMask did not return an account.");
+        return;
+      }
+      await saveEthereumAddress(address);
+      setEthereumAddress("");
+      toast.success("Saved the MetaMask address. Public balances are loading.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "MetaMask connect failed.");
+    } finally {
+      setWalletBusy(false);
+    }
+  }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -102,6 +189,48 @@ export function ConnectPanel() {
         </Alert>
       ) : null}
 
+      {inspectAddress && !status?.ethereum ? (
+        <Alert>
+          <AlertTitle>Your Ethereum address</AlertTitle>
+          <AlertDescription className="space-y-2">
+            <p className="font-mono break-all">{inspectAddress}</p>
+            <p>
+              This VM cannot sign for a personal MetaMask account. Use it to fund an agent address
+              once Phantom Connect succeeds, or keep it here so balances can be checked.
+            </p>
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
+      {balances ? (
+        <Alert>
+          <AlertTitle>
+            {balances.ok
+              ? balances.funded
+                ? "Public balances — funded"
+                : "Public balances — empty"
+              : "Public balances unavailable"}
+          </AlertTitle>
+          <AlertDescription>
+            {balances.ok && balances.chains ? (
+              <ul className="mt-1 space-y-1 font-mono text-xs">
+                <li>
+                  Ethereum: {balances.chains.ethereum.native} ETH · {balances.chains.ethereum.usdc}{" "}
+                  USDC
+                  {balances.chains.ethereum.error ? ` (${balances.chains.ethereum.error})` : ""}
+                </li>
+                <li>
+                  Base: {balances.chains.base.native} ETH · {balances.chains.base.usdc} USDC
+                  {balances.chains.base.error ? ` (${balances.chains.base.error})` : ""}
+                </li>
+              </ul>
+            ) : (
+              balances.error || "Lookup failed."
+            )}
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
       {status?.userInput?.stage && status.userInput.stage !== "empty" ? (
         <Alert>
           <AlertTitle>Saved input</AlertTitle>
@@ -119,6 +248,21 @@ export function ConnectPanel() {
           </AlertDescription>
         </Alert>
       ) : null}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Connect MetaMask</CardTitle>
+          <CardDescription>
+            Preferred if you already hold funds. This only reads the connected address and public
+            balances. It never asks for a seed or private key.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button type="button" size="lg" onClick={() => void connectMetaMask()} disabled={walletBusy}>
+            {walletBusy ? "Connecting…" : "Connect MetaMask"}
+          </Button>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

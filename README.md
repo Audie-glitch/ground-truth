@@ -12,9 +12,10 @@ claims.
    environment can and cannot do.
 
 The backtester is simulation only: it holds no keys and cannot move funds.
-Agent wallet setup is a separate page at `/connect` — approve Phantom Connect
-there, or paste a Portal App ID / an Ethereum address you already control.
-Never paste a seed phrase. Nothing here is financial advice.
+Agent wallet setup is a separate page at `/connect` — connect MetaMask to share
+an address you already control, approve Phantom Connect for a dedicated agent
+wallet, or paste a Portal App ID. Never paste a seed phrase. Nothing here is
+financial advice.
 
 ---
 

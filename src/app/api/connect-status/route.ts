@@ -54,10 +54,16 @@ export async function GET() {
     ? Math.max(0, Math.round(600 - (Date.now() - mintedMs) / 1000))
     : 0;
 
-  let userInput: { stage: string | null; hint: string | null; hasEthereum: boolean } = {
+  let userInput: {
+    stage: string | null;
+    hint: string | null;
+    hasEthereum: boolean;
+    ethereumAddress: string | null;
+  } = {
     stage: null,
     hint: null,
     hasEthereum: false,
+    ethereumAddress: null,
   };
   try {
     const verdict = JSON.parse(readFileSync("/tmp/phantom-user-input-status.json", "utf-8")) as {
@@ -73,6 +79,7 @@ export async function GET() {
     const provided = JSON.parse(
       readFileSync(join(homedir(), ".phantom-mcp", "user-provided.json"), "utf-8"),
     ) as { ethereumAddress?: string };
+    userInput.ethereumAddress = provided.ethereumAddress || null;
     userInput.hasEthereum = Boolean(provided.ethereumAddress);
   } catch {
     /* none */

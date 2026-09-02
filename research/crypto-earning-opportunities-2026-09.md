@@ -1,6 +1,6 @@
 # Verified crypto earning opportunities
 
-**Checked:** 2 September 2026  
+**Checked:** 2 September 2026 (rechecked Superteam + KeeperHub #2105 at 22:28 UTC)  
 **Scope:** Legitimate, no-capital developer work that can pay crypto or stablecoins. Competitive prizes are not guaranteed income.
 
 ## Ranked opportunities
