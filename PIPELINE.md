@@ -17,7 +17,7 @@ organizer's own page on that day.
 | 4 | [BUIDL CTC 2026 Fall](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) (Creditcoin / Attestcoin Protocol) | $10,000 / $3,000 / $2,000 | USD-denominated; payout asset not stated (ask in Discord `#buidl-ctc-qna`) | Open now, deadline Sep 13 23:59 ET | 46 submissions so far; most hackathon entries are shallow. Depth of Attestcoin integration is a core scoring criterion | Build now. Project: CreditPassport (see below). |
 | 5 | ETHOnline 2026, Arc (Circle) agentic and DeFi bounties | $1,667 x 3 tracks, plus $3,500 mainnet-readiness | USDC | Sep 4-16 | Requires frontend + backend + architecture diagram + video | Stretch: only if the KeeperHub work can be pointed at Arc (KeeperHub issue #2230 adds Arc testnet). |
 | 6 | KeeperHub main track, Best Integration into a Live Project | $2,000 / $1,200 / $800 | Stablecoins | Sep 6-18 | Needs a KeeperHub account, a funded testnet wallet, and a real third-party project on the other side | Phase 2 once you have a KeeperHub account. |
-| 7 | [3rd-Web-Hack](https://3rd-web-hack.devpost.com/) (Devpost) | $500 / $200 / $50 | USDT | Deadline Sep 27 | 86 participants, tiny pool, low bar | Adapt one of the builds above if its rules permit. |
+| 7 | [3rd-Web-Hack](https://3rd-web-hack.devpost.com/) (Devpost) | $500 / $200 / $50 | USDT | Deadline Sep 27 | 86 participants, tiny pool, low bar | Rules require a project "original and developed for the hackathon," so no re-entry of CreditPassport. Small fresh build scheduled Sep 19-26 if capacity allows. |
 | 8 | [Arbitrum Open House Singapore buildathon](https://web3voyager.com/event/arbitrum-open-house-singapore-online-buildathon) | $115,000 pool | Not stated | Sep 13 - Oct 4; existing projects allowed | Large field | Re-target the ETHOnline or CTC project after Sep 16. |
 | 9 | [Monad Metropolis](https://www.monad.xyz/developers/hackathons/metropolis) | $250,000 pool, $30k per track | Not stated | Sep 1 - Oct 13 | Very large field, startup-oriented | Only if items 1-4 are shipped early. |
 
@@ -57,6 +57,10 @@ share the username.
 - `creditpassport/agent`: type-checks, unit tests pass, verified live against
   Creditcoin testnet chain info (Sepolia attested ~36 blocks behind head).
 - `keeperhub/2240-state-threshold-trigger-design.md`: ready to post.
+- `creditpassport/web`: passport dashboard, verified against the local demo chain.
+- `creditpassport/docs/deck.pdf`: 10-slide deck; `creditpassport/SUBMISSION.md`:
+  deployment commands, form answers, and the human-only steps.
+- `research/demand-list-triage.md` and `x402-api/DESIGN.md`: the ETHOnline entry.
 
 ## Schedule
 
