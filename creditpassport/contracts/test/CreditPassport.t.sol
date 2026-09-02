@@ -95,6 +95,8 @@ contract CreditPassportTest is Test {
         assertEq(payments[0].payee, merchant);
         assertEq(payments[0].invoiceId, bytes32("INV-1"));
         assertEq(payments[0].queryId, _queryId(990, 3));
+        assertEq(payments[0].sourceBlock, 990);
+        assertEq(payments[0].sourceTxIndex, 3);
     }
 
     function test_execute_recordsLateInvoice() public {

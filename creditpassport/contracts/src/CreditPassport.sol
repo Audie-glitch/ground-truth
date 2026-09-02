@@ -52,6 +52,8 @@ contract CreditPassport is AttestedBase, Ownable {
         uint256 amount;
         uint64 dueBlock; // zero for undated transfers
         uint64 paidBlock;
+        uint64 sourceBlock; // block the proven transaction was included in
+        uint64 sourceTxIndex; // its index in that block, so the source tx is resolvable
         bytes32 queryId;
     }
 
@@ -153,10 +155,13 @@ contract CreditPassport is AttestedBase, Ownable {
     // Proof processing (called by AttestedBase after verification)
     // ---------------------------------------------------------------------------------------------
 
-    function _processAndEmitEvent(uint8 action, bytes32 queryId, uint64 blockHeight, bytes memory encodedTransaction)
-        internal
-        override
-    {
+    function _processAndEmitEvent(
+        uint8 action,
+        bytes32 queryId,
+        uint64 blockHeight,
+        uint64 txIndex,
+        bytes memory encodedTransaction
+    ) internal override {
         if (paymentRail == address(0)) revert SourcesNotSet();
 
         uint8 txType = EvmV1Decoder.getTransactionType(encodedTransaction);
@@ -165,10 +170,11 @@ contract CreditPassport is AttestedBase, Ownable {
         EvmV1Decoder.ReceiptFields memory receipt = EvmV1Decoder.decodeReceiptFields(encodedTransaction);
         if (receipt.receiptStatus != 1) revert SourceTransactionFailed();
 
+        Source memory source = Source({queryId: queryId, blockHeight: blockHeight, txIndex: txIndex});
         if (action == uint8(Action.InvoicePaid)) {
-            _recordInvoices(receipt, queryId);
+            _recordInvoices(receipt, source);
         } else if (action == uint8(Action.TokenTransfer)) {
-            _recordTransfers(receipt, queryId, blockHeight);
+            _recordTransfers(receipt, source);
         } else {
             revert InvalidAction(action);
         }
@@ -177,7 +183,14 @@ contract CreditPassport is AttestedBase, Ownable {
     /// @dev Every `InvoicePaid` log emitted by the registered rail is recorded. Logs with the same
     ///      signature from any other emitter are ignored, so a transaction that also touches a
     ///      look-alike contract cannot smuggle records in; if nothing came from the rail, revert.
-    function _recordInvoices(EvmV1Decoder.ReceiptFields memory receipt, bytes32 queryId) internal {
+    /// @dev Identity of the proven source transaction, threaded through the recording helpers.
+    struct Source {
+        bytes32 queryId;
+        uint64 blockHeight;
+        uint64 txIndex;
+    }
+
+    function _recordInvoices(EvmV1Decoder.ReceiptFields memory receipt, Source memory source) internal {
         EvmV1Decoder.LogEntry[] memory logs = EvmV1Decoder.getLogsByEventSignature(receipt, INVOICE_PAID_SIG);
         uint256 matched;
         for (uint256 i; i < logs.length; ++i) {
@@ -194,7 +207,9 @@ contract CreditPassport is AttestedBase, Ownable {
                     amount: amount,
                     dueBlock: dueBlock,
                     paidBlock: paidBlock,
-                    queryId: queryId
+                    sourceBlock: source.blockHeight,
+                    sourceTxIndex: source.txIndex,
+                    queryId: source.queryId
                 })
             );
             ++matched;
@@ -204,7 +219,7 @@ contract CreditPassport is AttestedBase, Ownable {
 
     /// @dev Plain ERC-20 transfers of the settlement token count as undated payments by `from`.
     ///      Mints (`from == 0`) are not payments and are skipped.
-    function _recordTransfers(EvmV1Decoder.ReceiptFields memory receipt, bytes32 queryId, uint64 blockHeight) internal {
+    function _recordTransfers(EvmV1Decoder.ReceiptFields memory receipt, Source memory source) internal {
         EvmV1Decoder.LogEntry[] memory logs = EvmV1Decoder.getLogsByEventSignature(receipt, TRANSFER_SIG);
         uint256 matched;
         for (uint256 i; i < logs.length; ++i) {
@@ -222,8 +237,10 @@ contract CreditPassport is AttestedBase, Ownable {
                     payee: address(uint160(uint256(log.topics[2]))),
                     amount: abi.decode(log.data, (uint256)),
                     dueBlock: 0,
-                    paidBlock: blockHeight,
-                    queryId: queryId
+                    paidBlock: source.blockHeight,
+                    sourceBlock: source.blockHeight,
+                    sourceTxIndex: source.txIndex,
+                    queryId: source.queryId
                 })
             );
             ++matched;

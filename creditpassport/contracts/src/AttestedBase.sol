@@ -51,10 +51,15 @@ abstract contract AttestedBase {
     /// @param action Caller-supplied discriminator telling the application what to look for.
     /// @param queryId Stable id of the proven transaction (chainKey, blockHeight, txIndex).
     /// @param blockHeight Source-chain block that included the transaction.
+    /// @param txIndex Position of the transaction in that block, as computed by the verifier.
     /// @param encodedTransaction Prover-encoded transaction and receipt bytes.
-    function _processAndEmitEvent(uint8 action, bytes32 queryId, uint64 blockHeight, bytes memory encodedTransaction)
-        internal
-        virtual;
+    function _processAndEmitEvent(
+        uint8 action,
+        bytes32 queryId,
+        uint64 blockHeight,
+        uint64 txIndex,
+        bytes memory encodedTransaction
+    ) internal virtual;
 
     /// @notice Verify one transaction's inclusion and continuity, then hand it to the application.
     function execute(
@@ -74,14 +79,14 @@ abstract contract AttestedBase {
         INativeQueryVerifier.ContinuityProof memory continuityProof =
             INativeQueryVerifier.ContinuityProof({lowerEndpointDigest: lowerEndpointDigest, roots: continuityRoots});
 
-        bytes32 queryId = _computeQueryId(chainKey, blockHeight, merkleProof);
+        (bytes32 queryId, uint64 txIndex) = _computeQueryId(chainKey, blockHeight, merkleProof);
         if (processedQueries[queryId]) revert QueryAlreadyProcessed(queryId);
 
         bool verified = VERIFIER.verifyAndEmit(chainKey, blockHeight, encodedTransaction, merkleProof, continuityProof);
         if (!verified) revert ProofVerificationFailed();
 
         processedQueries[queryId] = true;
-        _processAndEmitEvent(action, queryId, blockHeight, encodedTransaction);
+        _processAndEmitEvent(action, queryId, blockHeight, txIndex, encodedTransaction);
         emit QueryProcessed(queryId, blockHeight, action);
         return true;
     }
@@ -108,9 +113,10 @@ abstract contract AttestedBase {
         if (encodedTransactions.length != n || merkleProofs.length != n) revert BatchLengthMismatch();
 
         bytes32[] memory queryIds = new bytes32[](n);
+        uint64[] memory txIndexes = new uint64[](n);
         bool[] memory isNew = new bool[](n);
         for (uint256 i; i < n; ++i) {
-            queryIds[i] = _computeQueryId(chainKey, blockHeights[i], merkleProofs[i]);
+            (queryIds[i], txIndexes[i]) = _computeQueryId(chainKey, blockHeights[i], merkleProofs[i]);
             // A batch may legitimately contain the same transaction twice only through caller error;
             // treat the second occurrence as already processed.
             isNew[i] = !processedQueries[queryIds[i]];
@@ -128,7 +134,7 @@ abstract contract AttestedBase {
         for (uint256 i; i < n; ++i) {
             if (!isNew[i]) continue;
             processedQueries[queryIds[i]] = true;
-            _processAndEmitEvent(action, queryIds[i], blockHeights[i], encodedTransactions[i]);
+            _processAndEmitEvent(action, queryIds[i], blockHeights[i], txIndexes[i], encodedTransactions[i]);
             emit QueryProcessed(queryIds[i], blockHeights[i], action);
         }
     }
@@ -141,9 +147,9 @@ abstract contract AttestedBase {
     function _computeQueryId(uint64 chainKey, uint64 blockHeight, INativeQueryVerifier.MerkleProof memory merkleProof)
         internal
         view
-        returns (bytes32)
+        returns (bytes32 queryId, uint64 txIndex)
     {
-        uint256 txIndex = VERIFIER.calculateTxIndex(merkleProof);
-        return keccak256(abi.encodePacked(uint256(chainKey), blockHeight, txIndex));
+        txIndex = VERIFIER.calculateTxIndex(merkleProof);
+        queryId = keccak256(abi.encodePacked(uint256(chainKey), blockHeight, uint256(txIndex)));
     }
 }

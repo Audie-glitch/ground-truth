@@ -38,7 +38,9 @@ interface Deployments {
 function readDeployments(): Deployments {
   const dir = join(PROJECT_ROOT, "contracts", "deployments");
   const out: Deployments = {};
-  for (const file of ["source.json", "creditcoin.json"]) {
+  // DEPLOYMENT=local points at the anvil seed written by scripts/demo-local.sh.
+  const files = process.env.DEPLOYMENT?.trim() === "local" ? ["local.json"] : ["source.json", "creditcoin.json"];
+  for (const file of files) {
     const path = join(dir, file);
     if (!existsSync(path)) continue;
     try {

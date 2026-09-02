@@ -375,6 +375,16 @@
             "internalType": "uint64"
           },
           {
+            "name": "sourceBlock",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "sourceTxIndex",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
             "name": "queryId",
             "type": "bytes32",
             "internalType": "bytes32"
