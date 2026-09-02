@@ -299,9 +299,7 @@ export function ConnectPanel() {
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button asChild size="lg">
-                  <a href={status.url} target="_blank" rel="noreferrer">
-                    Open Phantom Connect
-                  </a>
+                  <a href="/connect/go">Open Phantom Connect</a>
                 </Button>
                 <Button
                   type="button"
