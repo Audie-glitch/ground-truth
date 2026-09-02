@@ -1,7 +1,10 @@
 export function formatUsd(value: number, maxFractionDigits?: number): string {
   const abs = Math.abs(value);
+  // Sub-cent precision matters for asset prices and per-trade fees, but zero
+  // should read as plain money rather than "$0.000000".
   const digits =
-    maxFractionDigits ?? (abs >= 1000 ? 0 : abs >= 1 ? 2 : abs >= 0.01 ? 4 : 6);
+    maxFractionDigits ??
+    (abs === 0 ? 2 : abs >= 1000 ? 0 : abs >= 1 ? 2 : abs >= 0.01 ? 4 : 6);
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",

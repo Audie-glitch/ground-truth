@@ -35,6 +35,10 @@ describe("formatUsd", () => {
     expect(formatUsd(12.345)).toBe("$12.35");
     expect(formatUsd(0.001234)).toBe("$0.001234");
   });
+
+  it("renders an empty balance as plain money, not six decimals", () => {
+    expect(formatUsd(0)).toBe("$0.00");
+  });
 });
 
 describe("formatUnits", () => {
