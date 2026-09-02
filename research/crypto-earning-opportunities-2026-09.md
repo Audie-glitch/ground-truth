@@ -36,6 +36,7 @@
 - [Circle Agent Marketplace](https://developers.circle.com/agent-stack/agent-marketplace) (23:08 UTC 2 Sep): Discovery API reports **1036** live x402 services. Buying needs a funded USDC wallet. Selling needs a payable x402 endpoint, OpenAPI spec, and a **payout wallet address** on a manual intake form (sanctions-screened). No self-serve listing without an address.
 - Encode Club’s 5–6 Sep event is IRL London and lists merchandise/pitch prizes, not a remote USDC bounty. Claw Earn’s public host is a `/lander` parking page.
 - Skyfire public hosts 403/404 from this VM (23:13 UTC). Not self-onboardable here.
+- CodeHawks `competitions.getCompetitions` (23:15 UTC): 45 contests, **0 live and 0 upcoming**. Newest window ended 16 Jul 2026 (BattleChain). Cantina `/api/competitions` is 404.
 
 ## KeeperHub candidate queue
 
