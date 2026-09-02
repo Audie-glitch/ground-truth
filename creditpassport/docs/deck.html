@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CreditPassport — BUIDL CTC 2026 Fall</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #0b0d10; color: #e7e9ee; font-family: -apple-system, "Segoe UI", Inter, Helvetica, Arial, sans-serif; }
+  .slide { width: 1280px; height: 720px; padding: 64px 80px; position: relative; page-break-after: always; overflow: hidden; background: #0b0d10; }
+  .slide:last-child { page-break-after: auto; }
+  .kicker { font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: #6ee7b7; margin-bottom: 14px; font-weight: 600; }
+  h1 { font-size: 56px; line-height: 1.05; margin: 0 0 18px; letter-spacing: -0.02em; }
+  h2 { font-size: 38px; line-height: 1.1; margin: 0 0 22px; letter-spacing: -0.015em; }
+  p, li { font-size: 21px; line-height: 1.45; color: #c9ced8; }
+  p.lead { font-size: 26px; color: #e7e9ee; max-width: 980px; }
+  ul { margin: 0; padding-left: 26px; }
+  li + li { margin-top: 8px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; }
+  .card { background: #12161b; border: 1px solid #222a33; border-radius: 14px; padding: 22px 24px; }
+  .card h3 { margin: 0 0 8px; font-size: 20px; color: #fff; }
+  .card p { font-size: 17px; margin: 0; color: #aeb6c2; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  table { border-collapse: collapse; width: 100%; font-size: 17px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #222a33; vertical-align: top; }
+  th { color: #8b95a5; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: .06em; }
+  td.mono { color: #9fdcff; font-size: 15px; }
+  .foot { position: absolute; left: 80px; right: 80px; bottom: 34px; display: flex; justify-content: space-between; font-size: 13px; color: #6b7280; }
+  .num { color: #6ee7b7; font-weight: 700; margin-right: 10px; }
+  .quote { font-size: 18px; color: #aeb6c2; border-left: 3px solid #2f3a47; padding-left: 14px; margin: 0 0 12px; }
+  .quote b { color: #e7e9ee; font-weight: 600; }
+  .big { font-size: 64px; font-weight: 700; letter-spacing: -0.03em; color: #6ee7b7; line-height: 1; }
+  .shot { border: 1px solid #222a33; border-radius: 12px; overflow: hidden; background: #000; max-height: 480px; }
+  .shot img { display: block; width: 100%; }
+  .formula { font-family: ui-monospace, Menlo, monospace; font-size: 18px; background: #12161b; border: 1px solid #222a33; border-radius: 10px; padding: 16px 18px; color: #d7dde6; }
+  .formula .k { color: #6ee7b7; }
+  .tag { display: inline-block; font-size: 13px; padding: 3px 9px; border-radius: 999px; border: 1px solid #2f3a47; color: #aeb6c2; margin-right: 6px; }
+  svg text { font-family: -apple-system, "Segoe UI", Inter, Helvetica, Arial, sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- 1. Title -->
+<section class="slide">
+  <div class="kicker">BUIDL CTC 2026 Fall · Attestcoin Protocol · AI track</div>
+  <h1>CreditPassport</h1>
+  <p class="lead">Credit history you can prove, not just claim. Payments that provably happened on another chain become a credit profile on Creditcoin, underwritten by an agent whose discretion is bounded on-chain. No oracle operator anywhere.</p>
+  <div style="margin-top:56px" class="cols-3">
+    <div class="card"><h3>Verified history</h3><p>Every record is an <span class="mono">InvoicePaid</span> log decoded from a receipt whose inclusion Creditcoin's verifier precompile checked.</p></div>
+    <div class="card"><h3>Bounded agent</h3><p>The agent scores and explains. The contract computes the maximum credit limit from verified data and refuses anything above it.</p></div>
+    <div class="card"><h3>Drawable credit</h3><p>Payers draw cUSD against the limit on Creditcoin and repay. Limits rise only with more proven history.</p></div>
+  </div>
+  <div class="foot"><span>creditpassport · Creditcoin CC3 testnet + Ethereum Sepolia</span><span>1</span></div>
+</section>
+
+<!-- 2. Problem -->
+<section class="slide">
+  <div class="kicker">Problem</div>
+  <h2>Credit needs history. History lives where payments happen.</h2>
+  <div class="cols">
+    <div>
+      <p>Moving a payment record from one chain to a lender on another requires either a centralized oracle that asserts "this address paid its invoices," or self-reported data. Both put a trusted party between the facts and the lender, and both are how credit data gets faked.</p>
+      <p>The same gap shows up everywhere people ask for portable reputation:</p>
+    </div>
+    <div>
+      <p class="quote"><b>"LinkedIn but for landlords and tenants"</b> — two-way verified rental history, r/SomebodyMakeThis</p>
+      <p class="quote"><b>"Checks if the software you paid for actually works"</b> — pre-payment milestone proof for freelancers, r/SideProject</p>
+      <p class="quote"><b>"Referral agreements with automated commission escrow"</b> — verbal promises lose money, r/SomebodyMakeThis</p>
+      <p class="quote"><b>"A CFA-like credential that verifies real code"</b> — Ask HN</p>
+    </div>
+  </div>
+  <div class="foot"><span>Demand signals collected Aug 2026 from Reddit and Hacker News</span><span>2</span></div>
+</section>
+
+<!-- 3. Insight -->
+<section class="slide">
+  <div class="kicker">Insight</div>
+  <h2>Attestcoin turns a source-chain receipt into something a Creditcoin contract can check itself.</h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li>Creditcoin attests Sepolia blocks continuously. On testnet the attestation trails the head by ~36 blocks, about 7 minutes.</li>
+        <li>The hosted prover returns Merkle inclusion + continuity proofs and the transaction bytes, including the receipt.</li>
+        <li>The verifier precompile at <span class="mono">0xFD2</span> checks the proof on-chain. <span class="mono">EvmV1Decoder</span> decodes the receipt's logs.</li>
+        <li>So a contract can enforce: "this payer paid this payee this amount by this block" without anyone asserting it.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>What that unlocks</h3>
+      <p>A credit profile assembled only from proven payments, an underwriting agent that can read it but not inflate it, and a credit line whose ceiling is a pure function of verified data. The trust roots are Creditcoin's attestation and the owner's registration of which source contracts count. Nothing else.</p>
+    </div>
+  </div>
+  <div class="foot"><span>docs.attestcoin.org · @gluwa/asc-contracts · @gluwa/usc-sdk</span><span>3</span></div>
+</section>
+
+<!-- 4. How it works -->
+<section class="slide">
+  <div class="kicker">How a payment becomes credit</div>
+  <h2>Five steps, two chains, zero oracles</h2>
+  <div class="cols-3" style="grid-template-columns: repeat(5, 1fr); gap: 16px;">
+    <div class="card"><h3><span class="num">1</span>Pay</h3><p>Payer settles an invoice through <span class="mono">PaymentRail</span> on Sepolia. The log carries amount, due block and paid block.</p></div>
+    <div class="card"><h3><span class="num">2</span>Attest</h3><p>Creditcoin attests the Sepolia block a few minutes later.</p></div>
+    <div class="card"><h3><span class="num">3</span>Prove</h3><p>The agent fetches inclusion and continuity proofs, singly or ten at a time sharing one continuity proof.</p></div>
+    <div class="card"><h3><span class="num">4</span>Verify</h3><p><span class="mono">CreditPassport</span> asks the precompile to verify, decodes the receipt, keeps only rail logs, records on-time or late.</p></div>
+    <div class="card"><h3><span class="num">5</span>Underwrite</h3><p>The agent scores the verified history, writes a memo, sets a limit the contract caps. The payer draws cUSD.</p></div>
+  </div>
+  <p style="margin-top:36px">Lateness is decided by <span class="mono">dueBlock</span> and <span class="mono">paidBlock</span> fixed in the source log at payment time, never by whoever submits the proof.</p>
+  <div class="foot"><span>Sequence diagram in README.md</span><span>4</span></div>
+</section>
+
+<!-- 5. Architecture -->
+<section class="slide">
+  <div class="kicker">Architecture</div>
+  <h2 style="margin-bottom:10px">Two chains, one prover, one agent</h2>
+  <svg width="1120" height="470" viewBox="0 0 1120 470" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6ee7b7"/></marker>
+      <marker id="arrg" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8b95a5"/></marker>
+    </defs>
+    <!-- Sepolia lane -->
+    <rect x="10" y="20" width="330" height="430" rx="16" fill="#0f1318" stroke="#243040"/>
+    <text x="30" y="52" fill="#8b95a5" font-size="14" letter-spacing="2">ETHEREUM SEPOLIA · SOURCE</text>
+    <rect x="30" y="80" width="290" height="86" rx="12" fill="#161c24" stroke="#2c3a4a"/>
+    <text x="48" y="112" fill="#fff" font-size="18" font-weight="600">PaymentRail.sol</text>
+    <text x="48" y="138" fill="#aeb6c2" font-size="14">payInvoice(id, payee, amount, dueBlock)</text>
+    <text x="48" y="156" fill="#6ee7b7" font-size="14">emit InvoicePaid(…, paidBlock)</text>
+    <rect x="30" y="186" width="290" height="60" rx="12" fill="#161c24" stroke="#2c3a4a"/>
+    <text x="48" y="212" fill="#fff" font-size="18" font-weight="600">TestUSD (tUSD)</text>
+    <text x="48" y="234" fill="#aeb6c2" font-size="14">settlement token, 6 decimals</text>
+    <rect x="30" y="360" width="290" height="70" rx="12" fill="#161c24" stroke="#2c3a4a"/>
+    <text x="48" y="388" fill="#fff" font-size="18" font-weight="600">Payer</text>
+    <text x="48" y="410" fill="#aeb6c2" font-size="14">pays invoices; later draws cUSD on Creditcoin</text>
+    <line x1="175" y1="360" x2="175" y2="168" stroke="#6ee7b7" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- Middle: attestation + prover + agent -->
+    <rect x="380" y="20" width="330" height="430" rx="16" fill="#0f1318" stroke="#243040"/>
+    <text x="400" y="52" fill="#8b95a5" font-size="14" letter-spacing="2">ATTESTCOIN INFRASTRUCTURE</text>
+    <rect x="400" y="80" width="290" height="70" rx="12" fill="#161c24" stroke="#2c3a4a"/>
+    <text x="418" y="108" fill="#fff" font-size="18" font-weight="600">Creditcoin attestation</text>
+    <text x="418" y="132" fill="#aeb6c2" font-size="14">Sepolia blocks attested, ~7 min lag</text>
+    <rect x="400" y="170" width="290" height="70" rx="12" fill="#161c24" stroke="#2c3a4a"/>
+    <text x="418" y="198" fill="#fff" font-size="18" font-weight="600">Hosted prover</text>
+    <text x="418" y="222" fill="#aeb6c2" font-size="14">getProof / getBatchProof (≤10, 1000 blocks)</text>
+    <rect x="400" y="290" width="290" height="140" rx="12" fill="#13201a" stroke="#2f5d47"/>
+    <text x="418" y="318" fill="#fff" font-size="18" font-weight="600">Underwriting agent</text>
+    <text x="418" y="342" fill="#aeb6c2" font-size="14">scan → wait attestation → prove → preflight</text>
+    <text x="418" y="362" fill="#aeb6c2" font-size="14">→ execute / executeBatch → score → memo</text>
+    <text x="418" y="382" fill="#aeb6c2" font-size="14">→ underwrite(score, limit ≤ cap, memoURI)</text>
+    <text x="418" y="410" fill="#6ee7b7" font-size="14">deterministic score · LLM writes only the narrative</text>
+    <line x1="340" y1="123" x2="400" y2="115" stroke="#8b95a5" stroke-width="2" marker-end="url(#arrg)"/>
+    <line x1="545" y1="240" x2="545" y2="290" stroke="#6ee7b7" stroke-width="2" marker-end="url(#arr)"/>
+    <line x1="545" y1="150" x2="545" y2="170" stroke="#8b95a5" stroke-width="2" marker-end="url(#arrg)"/>
+
+    <!-- Creditcoin lane -->
+    <rect x="750" y="20" width="360" height="430" rx="16" fill="#0f1318" stroke="#243040"/>
+    <text x="770" y="52" fill="#8b95a5" font-size="14" letter-spacing="2">CREDITCOIN CC3 TESTNET · EXECUTION</text>
+    <rect x="770" y="80" width="320" height="200" rx="12" fill="#161c24" stroke="#2c3a4a"/>
+    <text x="788" y="108" fill="#fff" font-size="18" font-weight="600">CreditPassport.sol</text>
+    <text x="788" y="134" fill="#aeb6c2" font-size="14">AttestedBase: chain binding, dedup by query id,</text>
+    <text x="788" y="152" fill="#aeb6c2" font-size="14">execute + executeBatch via precompile 0xFD2</text>
+    <text x="788" y="176" fill="#aeb6c2" font-size="14">EvmV1Decoder: status + InvoicePaid logs</text>
+    <text x="788" y="200" fill="#aeb6c2" font-size="14">profiles, payments, maxCreditLimit(user)</text>
+    <text x="788" y="224" fill="#aeb6c2" font-size="14">underwrite() only by agent, limit ≤ policy cap</text>
+    <text x="788" y="248" fill="#6ee7b7" font-size="14">draw() / repay() in cUSD</text>
+    <rect x="770" y="300" width="320" height="60" rx="12" fill="#161c24" stroke="#2c3a4a"/>
+    <text x="788" y="326" fill="#fff" font-size="18" font-weight="600">TestUSD (cUSD)</text>
+    <text x="788" y="348" fill="#aeb6c2" font-size="14">credit pool held by the passport contract</text>
+    <rect x="770" y="380" width="320" height="50" rx="12" fill="#161c24" stroke="#2c3a4a"/>
+    <text x="788" y="411" fill="#fff" font-size="16" font-weight="600">Web app · passport, proofs, memo, status</text>
+    <line x1="690" y1="360" x2="770" y2="180" stroke="#6ee7b7" stroke-width="2" marker-end="url(#arr)"/>
+  </svg>
+  <div class="foot"><span>contracts/ · agent/ · web/</span><span>5</span></div>
+</section>
+
+<!-- 6. Attestcoin depth -->
+<section class="slide">
+  <div class="kicker">Attestcoin Protocol utilisation</div>
+  <h2>Every layer of the protocol is exercised, and tested against real prover output</h2>
+  <table>
+    <tr><th>Where</th><th>Attestcoin surface</th><th>Why it matters</th></tr>
+    <tr><td class="mono">AttestedBase.execute</td><td>INativeQueryVerifier.verifyAndEmit (single), calculateTxIndex</td><td>Inclusion + continuity verified on-chain; query id derivation identical to ASCBase for replay protection</td></tr>
+    <tr><td class="mono">AttestedBase.executeBatch</td><td>verifyAndEmit batch overload, shared continuity proof</td><td>Up to 10 payments imported in one transaction; not in the tutorials</td></tr>
+    <tr><td class="mono">CreditPassport._processAndEmitEvent</td><td>EvmV1Decoder.decodeReceiptFields, getLogsByEventSignature</td><td>Receipt status checked; only logs from the registered rail count</td></tr>
+    <tr><td class="mono">agent/src/proofs.ts</td><td>@gluwa/usc-sdk ProofBuilder.getProof / getBatchProof, waitUntilHeightAttested</td><td>Waits for attestation, fetches proofs, flattens batches into contract arguments</td></tr>
+    <tr><td class="mono">agent/src/proofs.ts</td><td>PrecompileBlockProver.verifySingle, PrecompileChainInfoProvider</td><td>Off-chain dry run before spending gas; live attestation lag in the UI</td></tr>
+    <tr><td class="mono">test/RealProverBytes.t.sol</td><td>Captured prover txBytes for a live Sepolia transaction</td><td>Decoder reproduces the Sepolia receipt field-for-field; execute() rejects it only for lacking a rail log</td></tr>
+  </table>
+  <p style="margin-top:22px"><span class="tag">32 Foundry tests</span><span class="tag">7 agent unit tests</span><span class="tag">real proof verified by 0xFD2 via eth_call from the repo</span></p>
+  <div class="foot"><span>npm run cli -- verify · fetches a proof for any Sepolia tx and asks the precompile, no key, no gas</span><span>6</span></div>
+</section>
+
+<!-- 7. Bounded underwriting -->
+<section class="slide">
+  <div class="kicker">AI track · the agent decides, the proof bounds it</div>
+  <h2>An agent you do not have to trust</h2>
+  <div class="cols">
+    <div>
+      <p>The agent reads only what the contract verified, computes a deterministic score (0–1000) from punctuality, depth, tenure, volume and recency, and writes an underwriting memo. When a model key is configured, a language model writes the two-sentence narrative from the computed facts. It never produces a number.</p>
+      <p>Then it calls <span class="mono">underwrite(user, score, limit, memoURI)</span>. The contract computes the ceiling itself and reverts above it.</p>
+    </div>
+    <div>
+      <div class="formula">
+        <div><span class="k">datedCap</span>   = 50% × datedVolume × onTime / (onTime + late)</div>
+        <div><span class="k">undatedCap</span> = 25% × undatedVolume</div>
+        <div><span class="k">if</span> late &gt; onTime <span class="k">then</span> datedCap = 0</div>
+        <div><span class="k">maxCreditLimit</span> = datedCap + undatedCap</div>
+        <div style="margin-top:10px; color:#8b95a5">require(limit ≤ maxCreditLimit &amp;&amp; limit ≥ drawn)</div>
+      </div>
+      <p style="margin-top:18px; font-size:18px">Demo: Alice, 6 proven invoices, 5 on time → score 814, cap 606.25 cUSD, agent extends 606. Bob, 1 on time, 2 late → score 477, cap 0, agent extends 0.</p>
+    </div>
+  </div>
+  <div class="foot"><span>agent/src/scoring.ts · CreditPassport.maxCreditLimit</span><span>7</span></div>
+</section>
+
+<!-- 8. Security -->
+<section class="slide">
+  <div class="kicker">Security model</div>
+  <h2>What an attacker would have to do</h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li><b>Fake a payment log.</b> Logs are accepted only from the registered rail; a look-alike contract emitting <span class="mono">InvoicePaid</span> is ignored, and a transaction with no rail log reverts.</li>
+        <li><b>Replay a proof.</b> Query id (chainKey, block, txIndex) is marked before the hook runs; batches skip processed entries and revert only if nothing is new.</li>
+        <li><b>Use another chain.</b> Proofs must carry the chain key fixed at deployment.</li>
+      </ul>
+    </div>
+    <div>
+      <ul>
+        <li><b>Prove a failed transaction.</b> Receipt status is checked; reverted source transactions record nothing.</li>
+        <li><b>Backdate a payment.</b> Due and paid blocks come from the source log fixed at payment time.</li>
+        <li><b>Bribe the agent.</b> The agent's maximum is a pure function of verified history. A compromised agent can under-extend, never over-extend, and cannot lower a limit below what is drawn.</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top:20px">Trust roots: Creditcoin's attestation of Sepolia, and the owner's registration of the rail and token addresses. There is no oracle operator to compromise.</p>
+  <div class="foot"><span>Every claim above has a Foundry test in contracts/test</span><span>8</span></div>
+</section>
+
+<!-- 9. Demo -->
+<section class="slide">
+  <div class="kicker">Demo</div>
+  <h2 style="margin-bottom:14px">A passport, end to end</h2>
+  <div class="cols" style="grid-template-columns: 1.15fr 1fr; gap: 28px;">
+    <div class="shot"><img src="screenshots/passport-alice.png" alt="Passport page for the demo payer"></div>
+    <div>
+      <p style="font-size:18px">Score, credit limit and available credit at the top; the agent's memo with its factor table; every verified payment with the source block and its Creditcoin verification transaction; the on-chain cap breakdown; and the underwriting history.</p>
+      <p style="font-size:18px">Two rows share one Creditcoin transaction: they were imported together through <span class="mono">executeBatch</span>.</p>
+      <div class="formula" style="font-size:14px; margin-top:12px">
+$ npm run cli -- verify<br>
+tx        0x197cff58…68ec0<br>
+block     11622748 (latest attested 11622750)<br>
+proof     fetched in 82 ms: 8 Merkle siblings, 3 continuity roots<br>
+verifier  precompile 0xFD2 on Creditcoin says VALID
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Local demo: scripts/demo-local.sh · Testnet: see README for addresses</span><span>9</span></div>
+</section>
+
+<!-- 10. Status -->
+<section class="slide">
+  <div class="kicker">Status</div>
+  <h2>What exists today</h2>
+  <div class="cols-3">
+    <div class="card"><h3>Contracts</h3><p>AttestedBase, CreditPassport, PaymentRail, TestUSD. 32 tests including genuine prover bytes. Deploy scripts for both chains.</p></div>
+    <div class="card"><h3>Agent</h3><p>Single and batch proof submission with off-chain preflight, deterministic scoring, memos as data: URIs, status API, CLI for pay / prove / underwrite / profile / verify.</p></div>
+    <div class="card"><h3>Web</h3><p>Passport dashboard with live attestation lag and agent queue. Empty, loading and error states.</p></div>
+  </div>
+  <div style="margin-top:28px" class="cols">
+    <div>
+      <h3 style="margin:0 0 8px; font-size:20px">Deployed on CC3 testnet</h3>
+      <p style="font-size:17px" class="mono" id="addresses">CreditPassport: see README · PaymentRail (Sepolia): see README</p>
+    </div>
+    <div>
+      <h3 style="margin:0 0 8px; font-size:20px">Roadmap</h3>
+      <ul style="font-size:17px">
+        <li>Ethereum mainnet as source (chain key 3) and more rails: ERC-3009 transfers, payroll, subscriptions</li>
+        <li>Creditcoin-native lenders consuming passports as collateral signals</li>
+        <li>Attestcoin write-ability to push approved lines back to the source chain</li>
+        <li>Scanned-statement ingestion via the same verify-not-trust pattern</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>github: creditpassport/ in the submission repository</span><span>10</span></div>
+</section>
+
+</body>
+</html>
