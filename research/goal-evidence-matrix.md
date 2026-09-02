@@ -14,7 +14,7 @@
 | Submit contribution to the earning program | No KeeperHub PR or DoraHacks BUIDL exists | **Not achieved** | Requires the participant's authenticated GitHub fork, DoraHacks account, contact details, and truthful eligibility. |
 | Verify acceptance or judging result | No PR acceptance or official judging result exists | **Not achieved** | Inspect authoritative PR and DoraHacks state after submission. |
 | Inspect wallet access and balances | First-client login succeeded; KMS still `whitelist-disabled` for `4da950ac-…` as of 21:11 UTC 2 Sep 2026. Hydra-assigned DCR `b90d07cd-…` has the same **stub** whitelist row, so it is unlikely to pass KMS. No `session.json`, no addresses, no balances | **Not achieved** | Need a **real** Portal app ID (whitelist `id ≠ externalId`, stable `createdAt`) that also has the device-code grant, then a new device login. |
-| Execute a legal acquisition on a funded wallet | No address and no capital | **Not achieved** | Provision agent addresses, then fund from the user's MetaMask/Phantom if they choose, then execute only a concrete non-fraudulent action. |
+| Execute a legal acquisition on a funded wallet | No address and no capital. KeeperHub feature bounty build window still starts Sep 6 | **Not achieved** | Need agent addresses plus user funding, or a post-Sep-6 bounty submission to an address the user controls. |
 | Verify crypto assets gained | No transaction or payout exists | **Not achieved** | Require an onchain transfer or balance change at an address the participant controls. Never publish or take custody of wallet secrets. |
 
 ## Current blockers

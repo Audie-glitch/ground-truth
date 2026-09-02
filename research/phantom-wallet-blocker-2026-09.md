@@ -88,7 +88,9 @@ Once an agent Ethereum address exists, funding it from MetaMask is the documente
 ## Retry command (no secrets in git)
 
 ```bash
+node scripts/refresh-phantom-session.mjs
 node scripts/complete-phantom-wallet.mjs
+node scripts/check-phantom-app-id.mjs <app-id>
 ```
 
 Reads `~/.phantom-mcp/auth2-stamper.json`, pulls `organization_id` from userinfo, calls KMS with a browser-like UA, and writes `session.json` only if a `walletId` comes back. It never prints tokens.
@@ -99,7 +101,7 @@ The CLI’s `registerForDeviceFlow` sends a **self-chosen** `client_id`. A secon
 
 A **side-session** device login was started so the original tokens are not wiped until this client proves KMS works. Unused codes on this client: `LcFtqTwh` (~20:50 UTC), `Gdc7ctdz` (~21:02 UTC), `xxk79MWg` (21:12:55 UTC timeout), `VmcfamKw` (21:24:20 UTC timeout). A replacement is minted only after the previous code dies.
 
-Rechecked 21:11–21:26 UTC 2 Sep 2026: first-client KMS is still `whitelist-disabled` for `4da950ac-7d6e-4bd1-81f7-3100e9e01876`. The first-client access token was ~5 minutes from expiry; `scripts/refresh-phantom-session.mjs` refreshed it to ~3600s. `GET https://api.phantom.app/portal/v1/apps` exists but returns 401 with the wallet-tag bearer (Portal uses a different login). This VM’s Phantom MCP process was started with the **literal** env value `${PHANTOM_APP_ID}` — Cursor never substituted a real Portal ID. Phantom MCP `wallet_status` still times out (`-32001`). Every extra UUID pulled from Connect JS is either a whitelist stub, a Datadog id, or a real app **without** the device-code grant.
+Rechecked 21:11–21:28 UTC 2 Sep 2026: first-client KMS is still `whitelist-disabled` for `4da950ac-7d6e-4bd1-81f7-3100e9e01876`. Every KMS RPC tried with that token (`getOrCreatePhantomOrganization`, `listPendingMigrations`, `listWallets`, `getOrganization`, `getOrCreateWalletWithTag`) returns the same 403. A VM browser pass on the live Connect URL showed only Google/Apple sign-in — no existing Phantom session. The first-client access token was ~5 minutes from expiry; `scripts/refresh-phantom-session.mjs` refreshed it to ~3600s. `GET https://api.phantom.app/portal/v1/apps` exists but returns 401 with the wallet-tag bearer (Portal uses a different login). This VM’s Phantom MCP process was started with the **literal** env value `${PHANTOM_APP_ID}` — Cursor never substituted a real Portal ID. Phantom MCP `wallet_status` still times out (`-32001`). Every extra UUID pulled from Connect JS is either a whitelist stub, a Datadog id, or a real app **without** the device-code grant.
 
 ## Required human action
 
