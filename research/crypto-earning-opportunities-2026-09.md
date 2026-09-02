@@ -1,0 +1,77 @@
+# Verified crypto earning opportunities
+
+**Checked:** 2 September 2026  
+**Scope:** Legitimate, no-capital developer work that can pay crypto or stablecoins. Competitive prizes are not guaranteed income.
+
+## Ranked opportunities
+
+| Rank | Opportunity | Reward and deadline | Effort and eligibility | Risk | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| 1 | [KeeperHub feature bounty](https://dorahacks.io/hackathon/agent-economy/detail) | $1,000 in stablecoins: two $500 winners; build window Sep 6–18 | Medium–high; software engineering; 18+, solo or team, sanctions restrictions | No capital risk; competition and time risk | Best direct-to-crypto route. Ship a mergeable feature to the open-source repository. Do not implement before Sep 6. |
+| 2 | [BUIDL CTC 2026 Fall](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) | $15,000 pool: $10k/$3k/$2k; deadline Sep 13, 23:59 ET | High; working Attestcoin integration, testnet deployment, README, deck, and video; solo allowed with legal and sanctions restrictions | High execution risk; payout asset is not stated | Strong upside, but only three winners and no verified crypto payout. |
+| 3 | [KeeperHub live-project integration](https://dorahacks.io/hackathon/agent-economy/detail) | $4,000 in stablecoins: $2k/$1.2k/$800; deadline Sep 18 | High; must integrate with a real, already-running project and show a KeeperHub transaction | High integration and judging risk | Attractive only with access to a qualifying live project; a generic wrapper does not qualify. |
+| 4 | [Immunefi bug bounties](https://immunefi.com/bug-bounty/) | 183 active programs; maxima from thousands to millions; stablecoin payouts are common | Very high security expertise; program-specific KYC and proof-of-concept rules | Severe legal and operational risk outside published scope | Legitimate, but not quick. Stay strictly inside scope and safe-harbor terms. |
+| 5 | [BLI Legal Tech Hackathon 2](https://dorahacks.io/hackathon/legal-hack-2026) | $20,000 pool; deadline Nov 1 | High; legal, compliance, AI, or blockchain product | High time risk; payout form not verified | Longer-horizon fallback, not yet proven to pay crypto. |
+
+## Dead ends checked
+
+- [OnlyDust](https://app.onlydust.com/) has closed.
+- No active September contest was verified on Code4rena or Cantina.
+- Gitcoin has no currently verified open application round.
+- Bountycaster's current developer filter returned no open posts.
+- Superteam search results that appeared active were historical pages marked completed.
+
+## KeeperHub candidate queue
+
+Repository state changes quickly. Recheck issues and pull requests before claiming anything.
+
+| Candidate | Evidence on Sep 2 | Decision |
+| --- | --- | --- |
+| [#2105: OpenAPI workflow-call response examples](https://github.com/keeperhub/keeperhub/issues/2105) | Accepted and confirmed; no linked or open PR found. Current `buildPathEntry` defines read and write 200-response schemas without examples. A focused unit suite already exists. | Primary candidate after Sep 6: narrow, testable, useful, and likely mergeable. |
+| [#2097: protocol-action preflight and idempotency](https://github.com/keeperhub/keeperhub/issues/2097) | Accepted and confirmed; no linked or open PR found. | High safety value, but check overlap with #2004 and #2207 first. |
+| [#2062: onboarding ID glossary and cross-links](https://github.com/keeperhub/keeperhub/issues/2062) | Accepted with maintainer-narrowed scope; no linked PR found. | Low-risk documentation fallback; weaker “feature” fit. |
+| [#2247: trace-method provider survey](https://github.com/keeperhub/keeperhub/issues/2247) | Accepted, good-first-issue, help-wanted, apparently unclaimed. | Useful research, but the bounty asks for a feature. |
+| [#2240: threshold-over-state trigger](https://github.com/keeperhub/keeperhub/issues/2240) | Accepted/help-wanted; unresolved design questions cover edge detection, re-arming, deduplication, and scaling. | Strong product value but too broad for quick work without maintainer decisions. |
+
+Accepted issues #2208 and #2211 already have pull requests. Duplicating them would waste effort.
+
+## Contribution gate for candidate #2105
+
+KeeperHub's contribution policy requires:
+
+- Target the `staging` branch.
+- Reference accepted issue #2105 in the title, for example `fix(openapi): #2105 add workflow response examples`, and use `Closes #2105` in the pull-request body.
+- Use Node.js 24+ and pnpm.
+- Follow test-first development with `pnpm exec vitest run tests/unit/openapi-route.test.ts`.
+- Run `pnpm fix` and `pnpm type-check` before submission.
+- Commit no credentials, private keys, API keys, or `.env` files.
+
+The current source confirms the issue precisely: `app/api/openapi/route.ts` has separate hardcoded read and write success schemas with no whole-response examples, while `tests/unit/openapi-route.test.ts` is the focused verification surface. No dependency, database, wallet, or mainnet transaction is required.
+
+## Resources and blockers
+
+Needed from the participant:
+
+- Confirmation that they are 18+ and physically located outside sanctions-restricted regions.
+- An authenticated GitHub account and fork for opening the KeeperHub pull request.
+- A DoraHacks account and event registration.
+- A reachable email plus an X or Discord handle.
+- An EVM-compatible wallet address for a stablecoin payout. Never share its seed phrase or private key.
+
+Potentially needed later:
+
+- Official faucet tokens for testnet-only integration work.
+- A KeeperHub organization API key stored as a secret environment variable, never pasted into chat or committed.
+- A demo video and, for the main integration track, a public testnet transaction link.
+
+Not needed: investment capital, trading deposits, exchange API keys, seed phrases, or private keys.
+
+## Execution order
+
+1. Confirm participant eligibility.
+2. Recheck #2105 and the open pull-request list when the build window opens Sep 6.
+3. Comment to claim the issue before coding so contributors do not duplicate work.
+4. Implement with a failing test first, then run the focused suite and required repository checks.
+5. Open a pull request against `staging`.
+6. Register and submit a separate BUIDL for the KeeperHub feature bounty with the source link and required evidence.
+7. Treat an accepted PR and a submitted BUIDL as progress only. Earnings are verified only after an official winner result and an onchain payout to the participant's own wallet.
