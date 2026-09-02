@@ -141,3 +141,13 @@ A conservative sequence that does **not** chase quick gains:
 - OpenChainBench validator yield methodology: https://openchainbench.com/benchmarks/validator-yield
 
 Secondary / treat as opinion, not authority: chaingain.io, earnifyhub.com, ft.games blog yield roundups. They are useful for mapping product categories; their APY tables are not official.
+
+## Session addendum (same day)
+
+Checked from this Cloud Agent environment after the note above was written.
+
+- **Phantom MCP:** `wallet_status` and `wallet_addresses` both timed out. No address was retrieved and none will be published. That is correct: publishing a deposit address from an AI session is itself a scam pattern.
+- **Solana faucet:** Official [faucet.solana.com](https://faucet.solana.com/) states it is for developers and **does not distribute mainnet SOL**. Devnet/testnet tokens cannot be moved to mainnet. Cookbook: [airdrops and faucets](https://solana.com/developers/cookbook/development/airdrops-and-faucets).
+- **KeeperHub listing re-verified:** [dorahacks.io/hackathon/agent-economy](https://dorahacks.io/hackathon/agent-economy/detail) still matches the table: feature bounty two × $500 stablecoins; main track $4,000 ranked; build window **Sep 6–18, 2026**; payouts in stablecoins after winners confirm details. Do not implement before Sep 6.
+- **Retail leverage loss rate (official, adjacent market):** ESMA’s CFD analysis found **74–89% of retail investor accounts lose money**, average losses €1,600–€29,000. Source: [ESMA 35-43-1000](https://www.esma.europa.eu/sites/default/files/library/esma35-43-1000_additional_information_on_the_agreed_product_intervention_measures_relating_to_contracts_for_differences_and_binary_options.pdf). Crypto perps are the same product family with worse volatility.
+- **“Free SOL” taxonomy:** There is no reliable meaningful free mainnet SOL from a standing start. Phantom does not give away SOL. “Connect wallet to claim” is the standard drainer hook. Summary consistent with [this MEXC explainer](https://www.mexc.com/learn/article/can-you-really-get-free-solana-what-works-and-what-drains-your-wallet/1) (exchange blog, not a regulator).
