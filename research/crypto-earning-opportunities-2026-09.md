@@ -28,6 +28,11 @@
 - [the402.ai](https://api.the402.ai/health) (22:56 UTC 2 Sep): still `status=paused` for “compliance review” since 2026-08-02. Escrow/subscription crons last succeeded 2 Aug.
 - [BountyBook](https://www.bountybook.ai/) (22:52 UTC 2 Sep): early-beta x402 board on Base, **0 open** tasks. Auth is a wallet signature. Experimental; do not deposit funds. Not executable without a wallet and an open bounty.
 - Superteam HUMAN_ONLY rechecked from listing HTML at 22:34 UTC: Sana.run QA is manual testing of a trading terminal, perps, and a Visa card (needs the participant’s accounts). FairScale is an X quote-tweet campaign due 3 Sep. Mermail still needs a GitHub PR plus an X video.
+- Sherlock contests API (23:03 UTC 2 Sep): 50 contests across 5 pages, 49 `FINISHED`, 1 `SHERLOCK_JUDGING` (Tare). No live contest.
+- [Drips Stellar Wave](https://www.drips.network/wave/stellar) (23:04 UTC): “There are no active or upcoming Waves at the moment.” Past waves 1–8 only. Needs GitHub + KYC + a Stellar wallet anyway.
+- [SolFoundry](https://github.com/SolFoundry/solfoundry) open “issues” are a pile of PRs stuffing the same Solana address into titles. Not a credible payout path. Do not add another PR; this VM has no `gh` login.
+- Daydreams TaskMarket / Agoragentic / Dework (gigs.sh, rechecked 23:03 UTC): docs or APIs exist, but each requires a funded Base/EVM wallet this VM does not have. Do not generate a deposit key here.
+- Casper Agentic Buildathon 2026 and Eolas x Algo Agent Skills Hackathon are closed (Jul 2026 / Mar 2025).
 
 ## KeeperHub candidate queue
 
