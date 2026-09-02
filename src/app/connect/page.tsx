@@ -8,10 +8,10 @@ export default function ConnectPage() {
       <header className="mb-6 space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Agent wallet setup</h1>
         <p className="text-pretty leading-relaxed text-muted-foreground">
-          Connect MetaMask here if you already have funds, or open Phantom Connect so this agent
-          can receive a dedicated Ethereum address. Preview can send you straight to the live
-          Connect page. After that address exists, send to it from MetaMask. Do not send funds to
-          any key generated in chat.
+          A signable agent wallet needs a real Phantom Portal App ID, or a Connect approval that
+          Phantom KMS will actually honor. Self-registered Connect apps are currently rejected.
+          After an Ethereum address exists, fund it from MetaMask. Do not send funds to any key
+          generated in chat.
         </p>
       </header>
       <ConnectPanel />

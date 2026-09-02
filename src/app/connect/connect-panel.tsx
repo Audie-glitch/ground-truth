@@ -269,25 +269,53 @@ export function ConnectPanel() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Connect MetaMask</CardTitle>
+          <CardTitle>1. Paste a Phantom Portal App ID</CardTitle>
           <CardDescription>
-            Preferred if you already hold funds. This only reads the connected address and public
-            balances. It never asks for a seed or private key.
+            Create an app at{" "}
+            <a className="underline" href="https://phantom.com/portal" target="_blank" rel="noreferrer">
+              phantom.com/portal
+            </a>
+            , then paste the App ID. That is the path most likely to provision a signable agent
+            wallet. Never paste a seed phrase or private key.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button type="button" size="lg" onClick={() => void connectInjectedWallet()} disabled={walletBusy}>
-            {walletBusy ? "Connecting…" : "Connect MetaMask"}
-          </Button>
+          <form onSubmit={submit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="appId">Phantom App ID</Label>
+              <Input
+                id="appId"
+                name="appId"
+                autoComplete="off"
+                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                value={appId}
+                onChange={(event) => setAppId(event.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ethereumAddress">Or an Ethereum address you already control</Label>
+              <Input
+                id="ethereumAddress"
+                name="ethereumAddress"
+                autoComplete="off"
+                placeholder="0x…"
+                value={ethereumAddress}
+                onChange={(event) => setEthereumAddress(event.target.value)}
+              />
+            </div>
+            <Button type="submit" disabled={busy}>
+              {busy ? "Saving…" : "Save for the agent"}
+            </Button>
+          </form>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Approve Phantom Connect</CardTitle>
+          <CardTitle>2. Approve Phantom Connect</CardTitle>
           <CardDescription>
-            This opens Phantom in your browser. Sign in with Google or Apple. This VM cannot complete that
-            step. Unused codes refresh automatically.
+            Sign in with Google or Apple. Unused codes refresh automatically. The current
+            self-registered app is a stub whitelist row, so KMS may still refuse after approval.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -329,43 +357,16 @@ export function ConnectPanel() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Or unblock without Connect</CardTitle>
+          <CardTitle>3. Connect MetaMask</CardTitle>
           <CardDescription>
-            Paste a Phantom Portal App ID from{" "}
-            <a className="underline" href="https://phantom.com/portal" target="_blank" rel="noreferrer">
-              phantom.com/portal
-            </a>
-            , or an Ethereum address you already control. Never paste a seed phrase or private key.
+            Reads the injected address and public ETH/USDC balances only. This VM cannot sign for
+            a personal MetaMask account.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={submit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="appId">Phantom App ID</Label>
-              <Input
-                id="appId"
-                name="appId"
-                autoComplete="off"
-                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                value={appId}
-                onChange={(event) => setAppId(event.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="ethereumAddress">Your Ethereum address</Label>
-              <Input
-                id="ethereumAddress"
-                name="ethereumAddress"
-                autoComplete="off"
-                placeholder="0x…"
-                value={ethereumAddress}
-                onChange={(event) => setEthereumAddress(event.target.value)}
-              />
-            </div>
-            <Button type="submit" disabled={busy}>
-              {busy ? "Saving…" : "Save for the agent"}
-            </Button>
-          </form>
+          <Button type="button" size="lg" onClick={() => void connectInjectedWallet()} disabled={walletBusy}>
+            {walletBusy ? "Connecting…" : "Connect MetaMask"}
+          </Button>
         </CardContent>
       </Card>
     </div>
