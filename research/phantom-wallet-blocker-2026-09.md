@@ -85,6 +85,16 @@ The CLI’s `registerForDeviceFlow` sends a **self-chosen** `client_id`. A secon
 
 A **side-session** device login was started so the original tokens are not wiped until this client proves KMS works. Code `LcFtqTwh` expired unused at 20:50 UTC. A replacement code is minted on the same Hydra-assigned client when the previous one dies; approval is still required before KMS can be retested.
 
+## Required human action
+
+Device codes `LcFtqTwh` and `Gdc7ctdz` expired unused. A later code is minted only after the previous one dies. Phantom Connect approval has to happen in **your** browser; this VM cannot complete Google/Apple/wallet consent.
+
+Until that click (or a KMS-allowlisted `PHANTOM_APP_ID`) exists:
+
+- No agent Solana/Ethereum address
+- No legal deposit target
+- No executable swap, airdrop claim, or on-chain buy from this environment
+
 ## Completion status
 
 No agent address, no balance, no transaction. The goal is not achieved.
