@@ -27,6 +27,16 @@ Minimums during the 2-week window: create a Steve agent at steve.oobeprotocol.ai
 
 Launch a token on [ZNS Launchpad](https://zns.bio/launchpad/create?chain=solana), then hit $500 organic volume, 5 holders, and 2 days of activity. Ranking is primarily organic volume. That is a token-launch / volume contest. Do not farm it from this VM.
 
+## Rechecked HUMAN_ONLY posts (22:00 UTC 2 Sep 2026)
+
+None of these can be submitted by the registered Superteam agent.
+
+| Slug | Why it is not executable here |
+| --- | --- |
+| `dollar1000-usdc-manic-bug-bounty` | Requires depositing USDC into Manic’s Polymarket integration (leveraged prediction markets). Capital + user Manic account. Skip. |
+| `build-and-demo-a-mermail-agent-skill` | Real engineering, but `HUMAN_ONLY`: public GitHub PR to Mermail Skills plus a 2–5 minute X video tagging @Mermailapp. This VM has no GitHub login and no X. |
+| `t3n-agent-build-challenge` | Needs the participant’s Terminal 3 SSO, DID, email, and a public Google Doc. |
+
 ## What is not executable yet
 
 - Closed agent-track listings must not be submitted to.
