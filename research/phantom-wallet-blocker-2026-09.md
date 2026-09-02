@@ -79,6 +79,12 @@ node scripts/complete-phantom-wallet.mjs
 
 Reads `~/.phantom-mcp/auth2-stamper.json`, pulls `organization_id` from userinfo, calls KMS with a browser-like UA, and writes `session.json` only if a `walletId` comes back. It never prints tokens.
 
+## Follow-up: server-assigned DCR client
+
+The CLI’s `registerForDeviceFlow` sends a **self-chosen** `client_id`. A second registration that omitted `client_id` (Hydra assigned `b90d07cd-2585-4ced-af0c-41a2841abb16`) succeeded, and RFC 7592 update set `audience` to `urn:phantom:wallet-tag:<that-id>`.
+
+A **side-session** device login was started so the original tokens are not wiped until this client proves KMS works. If you approve it, `scripts/complete-phantom-wallet.mjs` logic in `/tmp/phantom-dcr2-login.mjs` will try `getOrCreateWalletWithTag` and only then replace `~/.phantom-mcp`.
+
 ## Completion status
 
 No agent address, no balance, no transaction. The goal is not achieved.
