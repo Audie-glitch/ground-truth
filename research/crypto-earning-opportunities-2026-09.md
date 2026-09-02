@@ -48,6 +48,8 @@ KeeperHub's contribution policy requires:
 
 The current source confirms the issue precisely: `app/api/openapi/route.ts` has separate hardcoded read and write success schemas with no whole-response examples, while `tests/unit/openapi-route.test.ts` is the focused verification surface. No dependency, database, wallet, or mainnet transaction is required.
 
+The clone's default branch is `staging`, and its HEAD matched the freshly fetched `origin/staging` commit `d249519` during this check. GitHub search returned zero open pull requests referencing `2105`. OpenAPI 3.1 uses a bare `examples` array inside a Schema Object, while a Media Type Object uses either a singular `example` value or a named `examples` map. Because #2105 specifically asks for values on both hardcoded response schemas and KeeperHub already uses schema-level `examples` arrays, schema-level arrays are the most consistent implementation candidate. Recheck all of this after Sep 6.
+
 ## Resources and blockers
 
 Needed from the participant:
