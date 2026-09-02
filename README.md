@@ -1,13 +1,150 @@
-# Crypto accumulation research
+# Gaining crypto assets: a tool and the research behind it
 
-Evidence-backed notes on earning and accumulating crypto without trading for speed, surrendering custody, or trusting guaranteed-return claims.
+Two things live here, both aimed at the same question — how to accumulate crypto
+without trading for speed, surrendering custody, or trusting guaranteed-return
+claims.
 
-## Reports
+1. **Ground Truth**, a strategy backtester and paper-trading desk you can run
+   locally. It replays trading rules against real historical prices with fees
+   and slippage charged on every fill.
+2. **Research notes** in [`research/`](research/), covering legitimate earning
+   paths (bounties, grants, hackathons, paid open-source work) and what this
+   environment can and cannot do.
 
-- [`research/gaining-crypto-assets.md`](research/gaining-crypto-assets.md) — the plan: BTC as core, recurring buys from surplus income, hold through drawdowns. Includes what this Cloud Agent environment can and cannot do.
-- [`research/crypto-returns-2026-09.md`](research/crypto-returns-2026-09.md) — strategy scorecard: what is slow and positive EV vs fast and negative EV for retail.
-- [`research/crypto-earning-opportunities-2026-09.md`](research/crypto-earning-opportunities-2026-09.md) — verified bounties and hackathons, ranking, required resources, and the KeeperHub contribution queue.
-- [`research/environment-capabilities-2026-09.md`](research/environment-capabilities-2026-09.md) — live audit of what this Cloud Agent VM can actually execute without taking user funds.
-- [`research/goal-evidence-matrix.md`](research/goal-evidence-matrix.md) — requirement-by-requirement completion evidence and unresolved blockers.
+**Nothing here is a wallet, a bot, or a place to send funds.** There is no
+deposit path and no withdrawal path, no keys are held, and no code here can move
+money. Nothing here is financial advice.
 
-This is not a wallet, bot, or a place to send funds. Nothing here is financial advice. I cannot receive, hold, or grow your money.
+---
+
+# Ground Truth
+
+Point it at a real asset, pick a trading rule, and it replays that rule against
+real historical daily prices with exchange fees and slippage charged on every
+fill — then shows the result next to the only benchmark that matters: buying
+once and doing nothing.
+
+## Why it exists
+
+"How do I make quick gains?" is a question that mostly gets answered by people
+selling something. This is the version of that question you can actually check:
+run the strategy, pay the real costs, and compare it to the do-nothing baseline.
+The usual answer is that the do-nothing baseline wins, and seeing that on your
+own chosen asset is more convincing than being told.
+
+The **Strategy shootout** tab is the fastest way to see this: it runs every
+built-in strategy at its default settings over the same window and ranks them.
+
+## Running it
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:43117.
+
+No API keys and no environment variables are required. Market data comes from
+CoinGecko's public endpoints, which are keyless but rate limited; responses are
+cached in-process so that dragging a parameter slider does not hammer the API.
+If you do get rate limited, the app says so and keeps working with cached data.
+
+```bash
+npm test      # unit tests for the simulation engine
+npm run lint
+npm run build
+```
+
+## The strategies
+
+| Strategy | Rule |
+| --- | --- |
+| Buy & hold | Buy once on day one, hold to the end. The benchmark. |
+| Dollar-cost average | Split the same capital into equal buys on a fixed schedule. |
+| Moving-average crossover | Hold while a fast moving average is above a slow one. |
+| RSI mean reversion | Buy when RSI is oversold, sell when it is overbought. |
+| Breakout momentum | Buy N-day highs, exit on a trailing stop. |
+| Quick-flip scalper | Buy any dip, take a small profit, repeat. |
+
+The quick-flip scalper is included deliberately. It is the shape most "quick
+gains" advice actually takes, and it is the clearest demonstration of how a
+strategy can win the large majority of its individual trades while still losing
+to buy-and-hold once fees and spread are paid on every one of them.
+
+## How the simulation works
+
+- **Data.** Daily closes from CoinGecko, up to 365 days (the keyless tier's
+  limit). One point per UTC day.
+- **Fills.** A strategy decides using data available at bar `i` and fills at
+  that same bar's close. No rule may read a future bar.
+- **Costs.** A fee (default 0.10%, a typical exchange taker fee) is charged on
+  the notional of every fill, and slippage (default 0.05%) worsens the
+  execution price on both sides. Both are adjustable.
+- **Accounting.** Cash and units are tracked explicitly rather than as a return
+  stream, so costs are charged against real notional the way an exchange would.
+- **Metrics.** Total return, annualised return, max drawdown from the running
+  peak, annualised volatility, Sharpe at a zero risk-free rate, order count,
+  total fees, win rate over completed round trips, and time in market.
+
+### What it deliberately does not model
+
+These all make backtested results look better than reality, so treat every
+number here as an optimistic upper bound:
+
+- **Intraday movement.** With daily closes, a stop or take-profit triggers at
+  the next daily close rather than the moment price crosses it.
+- **Liquidity.** Slippage is a flat percentage. Real slippage grows with order
+  size and explodes in thin markets, which is exactly where "quick gains"
+  strategies tend to operate.
+- **Survivorship.** The asset list is today's top coins by market cap. Coins
+  that went to zero are not in it, so any conclusion drawn about "crypto"
+  generally is biased upward.
+- **Taxes**, funding rates, borrow costs, and exchange downtime.
+- **Fitting.** Tuning parameters until a backtest looks good fits the rule to
+  that window. A rule that wins on one asset over one window and loses on the
+  next was fitted, not discovered.
+
+## Project layout
+
+```
+src/lib/indicators.ts   SMA, Wilder's RSI, rolling high, drawdown, dispersion
+src/lib/strategies.ts   Strategy definitions, parameters, and signal generation
+src/lib/backtest.ts     The simulation engine and performance metrics
+src/lib/coingecko.ts    Market data with in-process caching and retry
+src/lib/paper.ts        Paper-trading order logic (pure, fully tested)
+src/lib/paper-store.ts  localStorage persistence via useSyncExternalStore
+src/app/api/            Route handlers for markets, backtest, and comparison
+src/components/         The desk UI
+```
+
+The paper account lives entirely in your browser's `localStorage`. Clearing site
+data resets it, and so does the Reset button.
+
+---
+
+# Research notes
+
+- [`research/gaining-crypto-assets.md`](research/gaining-crypto-assets.md) — the
+  plan: BTC as core, recurring buys from surplus income, hold through drawdowns.
+  Includes what this Cloud Agent environment can and cannot do.
+- [`research/crypto-returns-2026-09.md`](research/crypto-returns-2026-09.md) —
+  strategy scorecard: what is slow and positive EV vs fast and negative EV for
+  retail.
+- [`research/crypto-earning-opportunities-2026-09.md`](research/crypto-earning-opportunities-2026-09.md)
+  — verified bounties and hackathons, ranking, required resources, and the
+  KeeperHub contribution queue.
+- [`research/environment-capabilities-2026-09.md`](research/environment-capabilities-2026-09.md)
+  — live audit of what this Cloud Agent VM can actually execute without taking
+  user funds.
+- [`research/goal-evidence-matrix.md`](research/goal-evidence-matrix.md) —
+  requirement-by-requirement completion evidence and unresolved blockers.
+
+Ground Truth is the executable counterpart to the scorecard in those notes: the
+research argues that fast trading is negative expected value for retail, and the
+backtester lets you check that claim against whichever asset and window you
+choose rather than taking it on faith.
+
+## Not financial advice
+
+Past performance of a rule on past data is not evidence that the rule works.
+Nothing here is a recommendation to buy or sell anything.
