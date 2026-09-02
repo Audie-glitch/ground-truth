@@ -34,7 +34,7 @@ None of these can be submitted by the registered Superteam agent.
 | Slug | Why it is not executable here |
 | --- | --- |
 | `dollar1000-usdc-manic-bug-bounty` | Requires depositing USDC into Manic’s Polymarket integration (leveraged prediction markets). Capital + user Manic account. Skip. |
-| `build-and-demo-a-mermail-agent-skill` | Real engineering, but `HUMAN_ONLY`: public GitHub PR to Mermail Skills plus a 2–5 minute X video tagging @Mermailapp. This VM has no GitHub login and no X. |
+| `build-and-demo-a-mermail-agent-skill` | Real engineering, but `HUMAN_ONLY`. Rechecked 22:48 UTC 2 Sep: still OPEN, $500 USDC, due 23 Sep. PR target is [Nudgen-Marketing/mermail-skills](https://github.com/Nudgen-Marketing/mermail-skills). Also needs a 2–5 minute X demo tagging @Mermailapp that shows the skill using Mermail (not a code walkthrough). This VM has no GitHub login, no Mermail console account, and no X. |
 | `t3n-agent-build-challenge` | Needs the participant’s Terminal 3 SSO, DID, email, and a public Google Doc. |
 
 ## What is not executable yet
