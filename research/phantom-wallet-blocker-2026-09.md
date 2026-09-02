@@ -83,7 +83,7 @@ Reads `~/.phantom-mcp/auth2-stamper.json`, pulls `organization_id` from userinfo
 
 The CLI’s `registerForDeviceFlow` sends a **self-chosen** `client_id`. A second registration that omitted `client_id` (Hydra assigned `b90d07cd-2585-4ced-af0c-41a2841abb16`) succeeded, and RFC 7592 update set `audience` to `urn:phantom:wallet-tag:<that-id>`.
 
-A **side-session** device login was started so the original tokens are not wiped until this client proves KMS works. If you approve it, `scripts/complete-phantom-wallet.mjs` logic in `/tmp/phantom-dcr2-login.mjs` will try `getOrCreateWalletWithTag` and only then replace `~/.phantom-mcp`.
+A **side-session** device login was started so the original tokens are not wiped until this client proves KMS works. Code `LcFtqTwh` expired unused at 20:50 UTC. A replacement code is minted on the same Hydra-assigned client when the previous one dies; approval is still required before KMS can be retested.
 
 ## Completion status
 
