@@ -20,6 +20,8 @@ type Status = {
   url: string | null;
   ttlLeftSec: number;
   waiting: boolean;
+  source?: string;
+  userInput?: { stage: string | null; hint: string | null; hasEthereum: boolean };
 };
 
 export function ConnectPanel() {
@@ -97,6 +99,24 @@ export function ConnectPanel() {
         <Alert>
           <AlertTitle>Agent Ethereum address</AlertTitle>
           <AlertDescription className="font-mono break-all">{status.ethereum}</AlertDescription>
+        </Alert>
+      ) : null}
+
+      {status?.userInput?.stage && status.userInput.stage !== "empty" ? (
+        <Alert>
+          <AlertTitle>Saved input</AlertTitle>
+          <AlertDescription>
+            {status.userInput.stage === "no-device-grant"
+              ? status.userInput.hint ||
+                "That Portal app does not have the device-code grant. Run phantom login on your desktop and paste only the Ethereum address."
+              : status.userInput.stage === "not-portal-app"
+                ? "That App ID is not a real Portal whitelist row."
+                : status.userInput.stage === "ethereum-only"
+                  ? "Stored your Ethereum address. The agent still cannot sign for it from this VM."
+                  : status.userInput.stage === "portal-waiting"
+                    ? "Your Portal App ID has a device-code grant. Use the Connect button below."
+                    : `Status: ${status.userInput.stage}`}
+          </AlertDescription>
         </Alert>
       ) : null}
 

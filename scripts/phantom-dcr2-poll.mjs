@@ -2,10 +2,11 @@ import fs from "fs";
 import path from "path";
 import { Auth2Stamper, Auth2Token, decodeJwtClaims } from "/home/ubuntu/.local/node_modules/@phantom/auth2/dist/index.js";
 
-const sessionDir = "/tmp/phantom-dcr2";
+const sessionDir = process.env.PHANTOM_DCR_DIR || "/tmp/phantom-dcr2";
 const storageFile = path.join(sessionDir, "auth2-stamper.json");
-const statusFile = "/tmp/phantom-dcr2-status.json";
-const device = JSON.parse(fs.readFileSync("/tmp/phantom-dcr2-device.json", "utf-8"));
+const statusFile = process.env.PHANTOM_DCR_STATUS || "/tmp/phantom-dcr2-status.json";
+const deviceFile = process.env.PHANTOM_DCR_DEVICE || "/tmp/phantom-dcr2-device.json";
+const device = JSON.parse(fs.readFileSync(deviceFile, "utf-8"));
 const clientId = device.clientId;
 
 function writeStatus(obj) {
