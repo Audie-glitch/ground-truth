@@ -11,9 +11,10 @@ claims.
    paths (bounties, grants, hackathons, paid open-source work) and what this
    environment can and cannot do.
 
-**Nothing here is a wallet, a bot, or a place to send funds.** There is no
-deposit path and no withdrawal path, no keys are held, and no code here can move
-money. Nothing here is financial advice.
+The backtester is simulation only: it holds no keys and cannot move funds.
+Agent wallet setup is a separate page at `/connect` — approve Phantom Connect
+there, or paste a Portal App ID / an Ethereum address you already control.
+Never paste a seed phrase. Nothing here is financial advice.
 
 ---
 

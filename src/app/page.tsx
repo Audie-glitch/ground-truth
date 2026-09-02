@@ -34,8 +34,12 @@ export default async function Home() {
           Test a trading strategy against real historical crypto prices, with
           exchange fees and slippage charged on every fill, and see it measured
           against the only benchmark that matters: buying once and doing
-          nothing. This tool connects to no wallet, holds no keys, and cannot
-          move funds.
+          nothing. The backtester itself holds no keys. Agent wallet setup lives
+          on the{" "}
+          <a href="/connect" className="underline underline-offset-4 hover:text-foreground">
+            Connect
+          </a>{" "}
+          page.
         </p>
       </header>
 

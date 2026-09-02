@@ -38,6 +38,8 @@ yarn-error.log*
 auth2-stamper.json
 session.json
 agent-registration.json
+addresses.json
+user-provided.json
 
 # Superteam Earn agent API key / claim material
 .superteam-earn/
