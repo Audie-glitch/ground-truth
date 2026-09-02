@@ -499,7 +499,7 @@ function MetricsGrid({ result }: { result: BacktestResult }) {
       />
       <MetricTile
         label="Volatility"
-        value={formatPct(m.volatility, 0)}
+        value={formatPlainPct(m.volatility, 0)}
         hint="Annualised standard deviation of daily account returns."
       />
       <MetricTile
