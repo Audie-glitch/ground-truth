@@ -6,8 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const out = join(here, "..", "out");
-const dest = join(here, "..", "..", "abi");
-mkdirSync(dest, { recursive: true });
+const dests = [join(here, "..", "..", "abi"), join(here, "..", "..", "web", "src", "lib", "abi")];
 
 const artifacts = {
   CreditPassport: "CreditPassport.sol/CreditPassport.json",
@@ -15,8 +14,11 @@ const artifacts = {
   TestUSD: "TestUSD.sol/TestUSD.json",
 };
 
-for (const [name, rel] of Object.entries(artifacts)) {
-  const artifact = JSON.parse(readFileSync(join(out, rel), "utf8"));
-  writeFileSync(join(dest, `${name}.json`), JSON.stringify(artifact.abi, null, 2) + "\n");
-  console.log(`wrote abi/${name}.json (${artifact.abi.length} entries)`);
+for (const dest of dests) {
+  mkdirSync(dest, { recursive: true });
+  for (const [name, rel] of Object.entries(artifacts)) {
+    const artifact = JSON.parse(readFileSync(join(out, rel), "utf8"));
+    writeFileSync(join(dest, `${name}.json`), JSON.stringify(artifact.abi, null, 2) + "\n");
+  }
+  console.log(`wrote ${Object.keys(artifacts).length} ABIs to ${dest}`);
 }

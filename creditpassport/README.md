@@ -61,8 +61,13 @@ Three parts:
    fetches proofs from the hosted prover, dry-runs them against the precompile,
    submits singles or batches, then scores and underwrites. Exposes a JSON
    status endpoint for the web app.
-3. **Web** (`web/`, coming next): passport view with verified payments, proof
-   links, score, limit, memo, and live attestation lag.
+3. **Web** (`web/`, Next.js). Passport view: score, limit, available credit,
+   the agent's memo with its factor table, every verified payment with links to
+   the source transaction and its Creditcoin verification, the on-chain cap
+   breakdown, underwriting history, and a live status strip with attestation
+   lag and agent queue.
+
+![Passport page](docs/screenshots/passport-alice.png)
 
 ### Where Attestcoin is used
 
@@ -120,6 +125,9 @@ forge script script/DeploySource.s.sol   --rpc-url sepolia            --private-
 forge script script/DeployPassport.s.sol --rpc-url creditcoin_testnet --private-key $TESTNET_DEPLOYER_PRIVATE_KEY --broadcast
 node scripts/export-abi.mjs
 
+# web (reads contracts/deployments/*.json; DEPLOYMENT=local for the anvil demo)
+cd ../web && npm install && npm run dev              # http://127.0.0.1:43331
+
 # agent
 cd ../agent && npm install && cp .env.example .env   # set AGENT_PRIVATE_KEY
 npm run cli -- chains                                # which chains Creditcoin attests, and how far behind
@@ -132,6 +140,20 @@ The agent reads contract addresses from `contracts/deployments/*.json` written
 by the deploy scripts, or from `*_ADDRESS` environment variables.
 
 Status endpoint while the agent runs: `http://127.0.0.1:47391/status`.
+
+### Local demo without testnet funds
+
+```bash
+scripts/demo-local.sh                                # anvil + mock verifier + seeded passports
+cd web && DEPLOYMENT=local npm run dev               # browse the seeded passports
+cd agent && DEPLOYMENT=local CREDITCOIN_RPC_URL=http://127.0.0.1:48545 \
+  AGENT_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+  npm run cli -- underwrite 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+```
+
+The mock verifier accepts any well-formed proof, so this exercises decoding,
+policy, underwriting, and the UI, not attestation. `npm run cli -- verify`
+exercises the real prover and precompile against the live testnet with no key.
 
 ## Tests
 
@@ -159,8 +181,10 @@ abi/                                   exported ABIs shared by agent and web
 
 ## Status
 
-- [x] Contracts, tests, deploy scripts
+- [x] Contracts, 32 tests (including real prover output), deploy scripts
 - [x] Agent with single and batch proof submission, scoring, memos, status API
+- [x] Real proof fetched and verified by the Creditcoin precompile from this repo (`verify`)
+- [x] Web app
+- [x] Local demo environment
 - [ ] Testnet deployment (needs a funded deployer key)
-- [ ] Web app
 - [ ] Deck, demo video, submission
