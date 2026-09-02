@@ -97,13 +97,13 @@ Reads `~/.phantom-mcp/auth2-stamper.json`, pulls `organization_id` from userinfo
 
 The CLI’s `registerForDeviceFlow` sends a **self-chosen** `client_id`. A second registration that omitted `client_id` (Hydra assigned `b90d07cd-2585-4ced-af0c-41a2841abb16`) succeeded, and RFC 7592 update set `audience` to `urn:phantom:wallet-tag:<that-id>`.
 
-A **side-session** device login was started so the original tokens are not wiped until this client proves KMS works. Unused codes on this client: `LcFtqTwh` (~20:50 UTC), `Gdc7ctdz` (~21:02 UTC), `xxk79MWg` (21:12:55 UTC timeout). A replacement is minted only after the previous code dies.
+A **side-session** device login was started so the original tokens are not wiped until this client proves KMS works. Unused codes on this client: `LcFtqTwh` (~20:50 UTC), `Gdc7ctdz` (~21:02 UTC), `xxk79MWg` (21:12:55 UTC timeout), `VmcfamKw` (21:24:20 UTC timeout). A replacement is minted only after the previous code dies.
 
 Rechecked 21:11–21:16 UTC 2 Sep 2026: first-client KMS is still `whitelist-disabled` for `4da950ac-7d6e-4bd1-81f7-3100e9e01876`. Phantom MCP `wallet_status` still times out (`-32001`). Every extra UUID pulled from Connect JS is either a whitelist stub, a Datadog id, or a real app **without** the device-code grant. Phantom’s own agent-kit README says MCP needs a Portal `PHANTOM_APP_ID`.
 
 ## Required human action
 
-Device codes `LcFtqTwh`, `Gdc7ctdz`, and `xxk79MWg` expired unused. Approving the live Hydra-assigned DCR code is still worth one empirical KMS test, but that client has the same stub whitelist row as the disabled first client.
+Device codes `LcFtqTwh`, `Gdc7ctdz`, `xxk79MWg`, and `VmcfamKw` expired unused. Approving the live Hydra-assigned DCR code is still worth one empirical KMS test, but that client has the same stub whitelist row as the disabled first client.
 
 The action that actually unblocks addresses is a **Portal `PHANTOM_APP_ID`** (or Phantom turning KMS on for DCR). This VM cannot complete Google/Apple/wallet consent by itself.
 
