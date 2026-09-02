@@ -14,6 +14,8 @@ const USAGE = `CreditPassport agent
   chains                                List source chains Creditcoin attests, with latest heights
   pay --payee <addr> --amount <units> [--due-in <blocks>] [--late] [--invoice <id>]
                                         Demo payer flow on Sepolia: mint tUSD if needed, approve, pay an invoice
+  verify [sepoliaTxHash]                Fetch an Attestcoin proof for any Sepolia transaction (a recent one if
+                                        omitted) and dry-run the Creditcoin verifier precompile. No key, no gas.
   prove <sepoliaTxHash> [--action InvoicePaid|TokenTransfer]
                                         Wait for attestation, fetch the proof, submit it to CreditPassport
   underwrite <payer>                    Score and underwrite a payer now
@@ -86,6 +88,53 @@ async function main(): Promise<void> {
         const name = c.chainName.startsWith("0x") ? toUtf8String(c.chainName).replace(/\0+$/, "") : c.chainName;
         console.log(`chainKey ${c.chainKey}  ${name} (chainId ${c.chainId})  attested height ${latest.exists ? latest.height : "-"}`);
       }
+      return;
+    }
+
+    case "verify": {
+      const placeholder = "0x0000000000000000000000000000000000000001";
+      const chains = connect({
+        ...cfg,
+        creditPassport: cfg.creditPassport || placeholder,
+        paymentRail: cfg.paymentRail || placeholder,
+        settlementToken: cfg.settlementToken || placeholder,
+      });
+      const proofs = new ProofService(cfg, chains.creditcoin);
+      const attested = await proofs.latestAttestedHeight();
+      let txHash = args[0];
+
+      if (!txHash) {
+        // Find a recent successful transaction with logs inside an attested block.
+        for (let h = attested - 2; h > attested - 40 && !txHash; h--) {
+          const block = await chains.sepolia.getBlock(h, true);
+          for (const tx of block?.prefetchedTransactions ?? []) {
+            const rc = await chains.sepolia.getTransactionReceipt(tx.hash);
+            if (rc?.status === 1 && rc.logs.length > 0 && rc.logs.length < 6) {
+              txHash = tx.hash;
+              break;
+            }
+          }
+        }
+        if (!txHash) throw new Error("no recent transaction with logs found in the last 40 attested blocks");
+      }
+
+      const receipt = await chains.sepolia.getTransactionReceipt(txHash);
+      if (!receipt) throw new Error("transaction not found on the source chain");
+      console.log(`tx        ${txHash}`);
+      console.log(`block     ${receipt.blockNumber} (latest attested ${attested}, ${receipt.blockNumber <= attested ? "attested" : "NOT yet attested"})`);
+      console.log(`logs      ${receipt.logs.length}, status ${receipt.status}`);
+      if (receipt.blockNumber > attested) {
+        console.log("block not attested yet; wait a few minutes and retry");
+        return;
+      }
+      const t0 = Date.now();
+      const proof = await proofs.getProof(txHash);
+      console.log(`proof     fetched in ${Date.now() - t0} ms: header ${proof.headerNumber}, txIndex ${proof.txIndex}, ${proof.merkleProof.siblings.length} Merkle siblings, ${proof.continuityProof.roots.length} continuity roots, ${(proof.txBytes.length - 2) / 2} tx bytes`);
+      console.log(`queryId   ${queryIdFor(proof.chainKey, proof.headerNumber, proof.txIndex)}`);
+      const t1 = Date.now();
+      const ok = await proofs.preverify(proof);
+      console.log(`verifier  precompile 0xFD2 on Creditcoin says ${ok ? "VALID" : "INVALID"} (${Date.now() - t1} ms, eth_call, no gas)`);
+      process.exitCode = ok ? 0 : 2;
       return;
     }
 

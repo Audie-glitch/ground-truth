@@ -17,7 +17,7 @@ contract DeployPassport is Script {
         uint64 sourceChainKey = uint64(vm.envOr("SOURCE_CHAIN_KEY", uint256(1)));
         uint256 poolSize = vm.envOr("CREDIT_POOL", uint256(1_000_000e6));
 
-        string memory source = vm.readFile("./deployments/source.json");
+        string memory source = vm.readFile("deployments/source.json");
         address rail = vm.parseJsonAddress(source, ".paymentRail");
         address settlementToken = vm.parseJsonAddress(source, ".settlementToken");
 
@@ -46,6 +46,6 @@ contract DeployPassport is Script {
         vm.serializeAddress(json, "paymentRail", rail);
         vm.serializeAddress(json, "settlementToken", settlementToken);
         string memory out = vm.serializeAddress(json, "creditPassport", address(passport));
-        vm.writeJson(out, "./deployments/creditcoin.json");
+        vm.writeJson(out, "deployments/creditcoin.json");
     }
 }
