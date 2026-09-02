@@ -10,6 +10,7 @@
 import fs from "fs";
 import path from "path";
 import { spawn } from "child_process";
+import { fileURLToPath } from "url";
 import { Auth2Stamper, _deriveNonce } from "/home/ubuntu/.local/node_modules/@phantom/auth2/dist/index.js";
 
 const sessionDir = "/tmp/phantom-dcr2";
@@ -123,7 +124,7 @@ async function mint() {
 }
 
 function startPoller() {
-  const child = spawn("node", ["/tmp/phantom-dcr2-poll.mjs"], {
+  const child = spawn("node", [path.join(path.dirname(fileURLToPath(import.meta.url)), "phantom-dcr2-poll.mjs")], {
     detached: true,
     stdio: ["ignore", fs.openSync("/tmp/phantom-dcr2-login.log", "a"), fs.openSync("/tmp/phantom-dcr2-login.log", "a")],
   });

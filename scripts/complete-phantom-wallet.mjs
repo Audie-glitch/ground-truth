@@ -172,6 +172,24 @@ if (!res.ok || data.type === "whitelist-disabled" || data.error) {
   process.exit(1);
 }
 
+function publicAddresses(wallet) {
+  const accounts = []
+    .concat(wallet?.accounts || [])
+    .concat(wallet?.derivedAccounts || [])
+    .concat(wallet?.walletAccounts || []);
+  const out = {};
+  for (const account of accounts) {
+    const address = account?.address || account?.publicAddress;
+    if (typeof address !== "string" || !address) continue;
+    const kind = String(account.addressFormat || account.addressType || account.curve || "").toLowerCase();
+    if (kind.includes("sol") || (!address.startsWith("0x") && address.length >= 32)) out.solana = address;
+    if (kind.includes("eth") || kind.includes("secp") || /^0x[0-9a-fA-F]{40}$/.test(address)) {
+      out.ethereum = address;
+    }
+  }
+  return out;
+}
+
 const wallet = data.result || data;
 const walletId = wallet.walletId || wallet.id;
 if (!walletId) {
@@ -197,4 +215,8 @@ fs.writeFileSync(
   ),
   { mode: 0o600 },
 );
-console.log(JSON.stringify({ ok: true, walletId, organizationId: "present" }));
+const addresses = publicAddresses(wallet);
+if (addresses.ethereum || addresses.solana) {
+  fs.writeFileSync(path.join(sessionDir, "addresses.json"), JSON.stringify(addresses, null, 2), { mode: 0o600 });
+}
+console.log(JSON.stringify({ ok: true, walletId, organizationId: "present", ...addresses }));

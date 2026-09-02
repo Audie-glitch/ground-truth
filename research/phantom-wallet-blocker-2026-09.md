@@ -1,7 +1,7 @@
 # Phantom agent wallet: login succeeded, KMS still blocked
 
 **Probed:** 2 September 2026, this Cloud Agent VM.  
-**Live:** 22:00 UTC — first-client tokens still valid (~57 min). KMS still `whitelist-disabled` for `4da950ac-…`. No `session.json`. Hydra DCR code `sc6aC7ET` still unused. Watcher `maxMints` raised to 36 so unused timeouts keep reminting across automated continuations. Latest `@phantom/mcp-server@1.2.7` ships **no** first-party App ID. Official MCP docs say “No App ID required”; `@phantom/cli` and [phantom-agent-kit](https://github.com/phantom/phantom-agent-kit) say DCR is unsupported and `PHANTOM_APP_ID` from Portal is required. VM browser has no Phantom/Google/Apple session.  
+**Live:** 22:07 UTC — first-client tokens still valid. KMS still `whitelist-disabled`. No `session.json`. Connect JS also embeds stub UUID `2b4308d3-…` (invalid_client for device flow). First-party apps `cf082b41`, `a61bc25e`, `457ad40e`, `7e9bb222` remain real whitelist rows **without** the device-code grant. Hydra DCR reminted unused code `H7ajubqm` at 22:07:34 UTC. `scripts/show-agent-addresses.mjs` prints public Solana/ETH addresses once a session exists.  
 **Goal relevance:** without a provisioned agent wallet there is no Solana or Ethereum address, no balance, and no legal on-chain acquisition to execute.
 
 This note replaces the earlier “Phantom MCP only times out” finding. Device-code login now works. Wallet creation does not.
@@ -57,6 +57,7 @@ That UUID came from RFC 7591 dynamic client registration (`DCRClient.registerFor
 | `a61bc25e-…` | Real (created 2026-04-10) | No | Connect SSO `login/start` prod client |
 | `457ad40e-…` / `7e9bb222-…` | Real (Melee / Bonk demo apps) | No | From Connect homepage JS |
 | `00000000-0000-…` | Real sandbox row | `invalid_client` | Connect init sandbox |
+| `2b4308d3-…` (Connect JS, next to Melee/Bonk) | **Stub** | `invalid_client` | Rechecked 22:02 UTC 2 Sep |
 | `582739de-…`, Datadog IDs | Stub or not an OAuth client | `invalid_client` | Analytics / misc |
 
 Stub vs real: a real Portal app has a stable `createdAt` and an internal `id` different from `externalId`. DCR UUIDs get a fresh stub on every GET.
@@ -91,6 +92,7 @@ Once an agent Ethereum address exists, funding it from MetaMask is the documente
 ```bash
 node scripts/refresh-phantom-session.mjs
 node scripts/complete-phantom-wallet.mjs
+node scripts/show-agent-addresses.mjs
 node scripts/check-phantom-app-id.mjs <app-id>
 ```
 
