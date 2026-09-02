@@ -41,6 +41,16 @@ collisions:
   need you; the build does not, and it is the only window open for code
   today, so it is being built now.
 
+## ETHOnline entry (decided 2 Sep, from the demand list)
+
+A paid API agents call over x402: text-based bank statement PDFs to
+arithmetic-verified CSV, priced per page in USDC. Targets Hedera's x402 track
+($2k x 3), Bazantic's "Agentify a new API" ($1k), and Arc's agentic track
+($1,667), and keeps earning after the event. Design in `x402-api/DESIGN.md`;
+triage of the whole list in `research/demand-list-triage.md`. No code before
+Sep 4 (ETHGlobal rule). Extra user step: create a bazantic.com account and
+share the username.
+
 ## Built so far
 
 - `creditpassport/contracts`: 30 passing Foundry tests, deploy scripts.
