@@ -1,7 +1,7 @@
 # Phantom agent wallet: login succeeded, KMS still blocked
 
 **Probed:** 2 September 2026, this Cloud Agent VM.  
-**Live:** 22:56 UTC 2 Sep 2026 — first-client KMS still `whitelist-disabled` for `4da950ac-…` (`scripts/complete-phantom-wallet.mjs`). Access token `exp` ~23:41 UTC; refresh reported `refreshed:false` with ~44 minutes left. No `session.json` / `addresses.json` / `user-provided.json`. Hydra DCR still waiting on unused code `HJKrPsak` (minted 22:50:37 UTC). `/connect` auto-prompts an injected wallet once per tab when MetaMask/Phantom is present, and can copy the Connect link.  
+**Live:** 23:13 UTC 2 Sep 2026 — first-client KMS still `whitelist-disabled` for `4da950ac-…`. Both DCR clients (`4da950ac-…`, `b90d07cd-…`) still classify as **stub** whitelist rows (`createdAt` = request time, 0 redirects). Official MCP docs still say “No App ID required”; `@phantom/cli@1.2.7` source still says DCR is unsupported and you must provide `PHANTOM_APP_ID`. Hydra DCR waiting on unused code `RCGDQVq9` (minted 23:12:08 UTC). No `session.json` / `addresses.json` / `user-provided.json`.  
 **Goal relevance:** without a provisioned agent wallet there is no Solana or Ethereum address, no balance, and no legal on-chain acquisition to execute.
 
 This note replaces the earlier “Phantom MCP only times out” finding. Device-code login now works. Wallet creation does not.
