@@ -31,6 +31,7 @@ import {
 import {
   formatDate,
   formatPct,
+  formatPctMagnitude,
   formatPlainPct,
   formatUnits,
   formatUsd,
@@ -425,7 +426,7 @@ function Verdict({ result }: { result: BacktestResult }) {
             <>
               The strategy came out{" "}
               <span className="font-medium text-emerald-400">
-                {formatPct(Math.abs(delta))} ahead
+                {formatPctMagnitude(delta)} ahead
               </span>
               , at the cost of {result.metrics.tradeCount} trades and a{" "}
               {formatPct(result.metrics.maxDrawdown)} worst drawdown.
@@ -434,7 +435,7 @@ function Verdict({ result }: { result: BacktestResult }) {
             <>
               Doing nothing beat it by{" "}
               <span className="font-medium text-amber-400">
-                {formatPct(Math.abs(delta)).replace("+", "")}
+                {formatPctMagnitude(delta)}
               </span>
               .
             </>

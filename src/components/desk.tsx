@@ -60,6 +60,12 @@ export function Desk({ initialCoins, initialError }: Props) {
     return FALLBACK_COINS.map((c) => ({ ...c }));
   }, [coins]);
 
+  // A coin chosen from the offline fallback list may not survive once the live
+  // list loads, which would leave the picker showing nothing.
+  const selectedCoinId = assets.some((a) => a.id === coinId)
+    ? coinId
+    : (assets[0]?.id ?? coinId);
+
   const openBacktest = useCallback((id: string) => {
     setCoinId(id);
     setTab("backtest");
@@ -88,7 +94,7 @@ export function Desk({ initialCoins, initialError }: Props) {
       <TabsContent value="backtest">
         <BacktestLab
           assets={assets}
-          coinId={coinId}
+          coinId={selectedCoinId}
           onCoinIdChange={setCoinId}
         />
       </TabsContent>
@@ -96,7 +102,7 @@ export function Desk({ initialCoins, initialError }: Props) {
       <TabsContent value="shootout">
         <StrategyShootout
           assets={assets}
-          coinId={coinId}
+          coinId={selectedCoinId}
           onCoinIdChange={setCoinId}
         />
       </TabsContent>

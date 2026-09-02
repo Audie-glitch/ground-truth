@@ -23,6 +23,11 @@ export function formatPct(value: number, digits = 1): string {
   return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(digits)}%`;
 }
 
+/** Size of a gap, for prose that already says which side is ahead. */
+export function formatPctMagnitude(value: number, digits = 1): string {
+  return `${(Math.abs(value) * 100).toFixed(digits)}%`;
+}
+
 /** For values already expressed in percentage points, such as API deltas. */
 export function formatPctPoints(value: number, digits = 1): string {
   return `${value >= 0 ? "+" : ""}${value.toFixed(digits)}%`;
