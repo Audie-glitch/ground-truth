@@ -1,0 +1,3 @@
+[submodule "creditpassport/contracts/lib/forge-std"]
+	path = creditpassport/contracts/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
