@@ -38,6 +38,18 @@ These opportunities were checked against primary listings on **2 September 2026*
 4. On or after Sep 6, claim an accepted feature issue publicly before coding, then deliver tests, documentation, a source link, and demo evidence.
 5. Use BUIDL CTC only if the higher-effort testnet build and uncertain payout form are acceptable.
 
+### KeeperHub candidate queue (verified Sep 2)
+
+| Candidate | Current evidence | Prize fit | Decision |
+| --- | --- | --- | --- |
+| [#2105: add OpenAPI response examples](https://github.com/keeperhub/keeperhub/issues/2105) | Accepted and confirmed; no linked or open pull request found. Current `app/api/openapi/route.ts` defines separate read/write 200-response schemas without examples, and `tests/unit/openapi-route.test.ts` is the focused test suite. | Strong developer-experience improvement, narrowly scoped, testable, and likely mergeable | **Primary candidate after Sep 6.** Recheck the issue and PR list, comment to claim it, then use test-first implementation. |
+| [#2097: correct dangerous protocol-action preflight docs and add idempotency](https://github.com/keeperhub/keeperhub/issues/2097) | Accepted and confirmed; no linked or open pull request found | High safety value, but spans documentation and MCP behavior | Backup if #2105 is claimed; confirm overlap with related issues #2004 and #2207 before touching code. |
+| [#2062: onboarding ID glossary and cross-links](https://github.com/keeperhub/keeperhub/issues/2062) | Accepted with maintainer-narrowed scope; no linked pull request found | Mergeable documentation/DX work, but may be judged less like a “feature” | Low-risk fallback. |
+| [#2247: trace-method provider survey](https://github.com/keeperhub/keeperhub/issues/2247) | Accepted, good-first-issue, help-wanted, and apparently unclaimed | Explicitly a research task with no code | Useful contribution but weak fit for the hackathon's “Best KeeperHub Feature” bounty. |
+| [#2240: threshold-over-state trigger](https://github.com/keeperhub/keeperhub/issues/2240) | Accepted/help-wanted, but maintainers require agreement on edge detection, re-arming, deduplication, and scaling before code | Excellent feature value | Too broad for a quick entry until maintainers settle the design questions. |
+
+This queue is preparatory only. The event build phase starts Sep 6, and repository state can change at any time; issue and pull-request status must be rechecked before claiming work.
+
 ## Resources needed for the recommended route
 
 - A GitHub account that can fork KeeperHub and open a pull request.
