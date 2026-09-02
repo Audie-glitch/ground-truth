@@ -7,9 +7,9 @@ Legal no-capital payouts on Superteam Earn can go to a human claimant after an a
 | Check | Result |
 | --- | --- |
 | Agent API base | `https://superteam.fun` (`POST /api/agents` returns 201) |
-| `GET /api/agents/listings/live?take=20` | 9 listings, **all already have winners** (deadlines Feb–Jul 2026) |
-| `GET /api/listings?take=50` | 28 currently open listings at 22:28 UTC 2 Sep 2026 |
-| Open listings with `agentAccess=AGENT_ALLOWED` | Still only `zns-sol` ($500 USDC, due 9 Sep) and `steve-agent-arena-launch-your-agent-and-win-500-usdc` ($500 USDC, due 16 Sep) |
+| `GET /api/agents/listings/live?take=20` | Rechecked 22:56 UTC: still 9 listings, **all `isWinnersAnnounced: true`** (announced Feb–Jul 2026). Do not submit. |
+| `GET /api/listings?take=50` | 28 currently open listings at 22:56 UTC 2 Sep 2026 |
+| Open listings with `agentAccess=AGENT_ALLOWED` | Still only `zns-sol` ($500 USDC, due 9 Sep) and `steve-agent-arena-launch-your-agent-and-win-500-usdc` ($500 USDC, due 16 Sep). Agent details endpoint still 404 for those slugs. |
 | Agent details endpoint for those slugs | 404 |
 | Listing HTML | JS-rendered; `__NEXT_DATA__` plus a live browser pass confirmed full requirements at 21:53 UTC |
 

@@ -1,6 +1,6 @@
 # Verified crypto earning opportunities
 
-**Checked:** 2 September 2026 (rechecked Superteam, Code4rena, and ETHOnline at 22:39 UTC)  
+**Checked:** 2 September 2026 (rechecked Superteam, Code4rena, ETHOnline prizes, KeeperHub #2105, the402, AgentHansa, and Collaborators at 22:56 UTC)  
 **Scope:** Legitimate, no-capital developer work that can pay crypto or stablecoins. Competitive prizes are not guaranteed income.
 
 ## Ranked opportunities
@@ -8,7 +8,7 @@
 | Rank | Opportunity | Reward and deadline | Effort and eligibility | Risk | Verdict |
 | --- | --- | --- | --- | --- | --- |
 | 1 | [KeeperHub feature bounty](https://dorahacks.io/hackathon/agent-economy/detail) | $1,000 in stablecoins: two $500 winners; build window Sep 6–18 | Medium–high; software engineering; 18+, solo or team, sanctions restrictions | No capital risk; competition and time risk | Best direct-to-crypto route. Ship a mergeable feature to the open-source repository. Do not implement before Sep 6. |
-| 2 | [ETHOnline 2026](https://ethglobal.com/events/ethonline2026) | Async remote hackathon Sep 4–16; ETHGlobal lists $100k+ partner prizes. Hedera published $15k including a $6k x402 agentic-payments track ($2k × 3). | High; public GitHub repo, demo video under 5 minutes, ETHGlobal application. Official prize page returned HTTP 500 from this VM at 22:39 UTC; Hedera split verified via [Genfinity 27 Aug 2026](https://genfinity.io/2026/08/27/hedera-15k-bounties-ethonline-2026-agentic-payments-tokenization/). | Prize rail not confirmed as on-chain USDC from the official page (Cloudflare/500). Competitive. | Next calendar opening (starts Sep 4). Do not start a submission until the participant has an ETHGlobal account and this VM can read the official prize rules. |
+| 2 | [ETHOnline 2026](https://ethglobal.com/events/ethonline2026) | Async remote hackathon Sep 4–16. Official prize page now HTTP 200 (22:56 UTC). Partner totals on that page: The Graph $15k, Hedera $15k, Arc $10k, World $7k, 1inch $7k, ENS $5k, Uniswap Foundation $5k, Ledger $5k, Privy $5k, Bazantic $3k, Chainlink $2.5k. Hedera’s largest track is still $6k x402 agentic payments ($2k × 3). | High; public GitHub repo, demo video, ETHGlobal application. The Graph “Start Fresh” pool forbids project-specific prior code. | Competitive. Prize rails are sponsor-specific (not a guaranteed on-chain USDC payout from this VM). | Official rules are readable. Do **not** start project-specific code before Sep 4 (would burn Start Fresh). Still needs the participant’s ETHGlobal account and a public GitHub repo they control. See [`ethonline-2026-prizes.md`](ethonline-2026-prizes.md). |
 | 3 | [BUIDL CTC 2026 Fall](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) | $15,000 pool: $10k/$3k/$2k; deadline Sep 13, 23:59 ET | High; Attestcoin integration, testnet deploy, README, deck, video, plus each member’s legal name, email, and country. Rechecked 22:09 UTC 2 Sep: still open (11 days). | High execution risk; prize is USD-denominated, **not** confirmed as crypto | Not executable from this VM: no GitHub login, no DoraHacks account, and no participant identity. Do not start a CTC build until those exist. |
 | 4 | [KeeperHub live-project integration](https://dorahacks.io/hackathon/agent-economy/detail) | $4,000 in stablecoins: $2k/$1.2k/$800; deadline Sep 18 | High; must integrate with a real, already-running project and show a KeeperHub transaction | High integration and judging risk | Attractive only with access to a qualifying live project; a generic wrapper does not qualify. |
 | 5 | [Immunefi bug bounties](https://immunefi.com/bug-bounty/) | Official explorer: “Showing all 183 bounty programs,” metrics updated 2 Sep 2026 16:01 UTC. Visible maxima include Ethena $3M and DeXe $500k | Very high security expertise; program-specific KYC and proof-of-concept rules | Severe legal and operational risk outside published scope | Legitimate, but not quick. Stay strictly inside scope and safe-harbor terms. |
@@ -18,14 +18,14 @@
 ## Dead ends checked
 
 - [OnlyDust](https://app.onlydust.com/) has closed.
-- Code4rena’s public audits list (22:38 UTC 2 Sep) shows no live 2026 contest; the newest listed window (Rujira) ended 16 Jan 2026. Cantina’s competitions page timed out / has no public JSON API.
+- Code4rena’s public audits list (22:56 UTC 2 Sep): 25 audits, 24 `Completed`, one `Reporting` (Rujira, window ended 16 Jan 2026). No live contest. Cantina’s competitions page timed out / has no public JSON API.
 - Gitcoin has no currently verified open application round.
 - Bountycaster's current developer filter returned no open posts.
 - Superteam search results that appeared active were historical pages marked completed.
-- [Collaborators.build](https://collaborators.build/api/bounties) (22:35 UTC 2 Sep): one `ACTIVE` bounty (`andr-drgm/collaborators#40`, $100 README). The issue already has a pile of README PRs (#41–#63). Do not add another. This VM cannot open a GitHub PR on that repo anyway.
-- [AgentHansa](https://www.agenthansa.com/api/alliance-war/quests) (22:36 UTC 2 Sep): 171 public quests, **all `settled`**. Onboarding USDC is paused. Remaining activity is social posts, red packets, referrals, and a perpetual/prediction desk (1024EX) — skip. Do not generate a FluxA/Solana keypair here to cash out later.
+- [Collaborators.build](https://collaborators.build/api/bounties) (22:56 UTC 2 Sep): still one `ACTIVE` bounty (README / “Enchance README”). Do not add another. This VM cannot open a GitHub PR on that repo anyway.
+- [AgentHansa](https://www.agenthansa.com/api/alliance-war/quests) (22:56 UTC 2 Sep): public quest payload now 50 items, **all `settled`**. Onboarding USDC remains paused. Skip red packets / 1024EX perps. Do not generate a FluxA/Solana keypair here.
 - [Clustly](https://www.clustly.ai/docs) (22:35 UTC 2 Sep): USDC-on-Solana escrow is real, but agent registration is an operator-console step (Privy managed wallet + `clk_` key). The old public `POST /api/v1/agent/register` path is 404. Not self-onboardable from this VM.
-- [the402.ai](https://api.the402.ai/health) (22:52 UTC 2 Sep): API `status=paused` for “compliance review” since 2026-08-02. Homepage: “temporarily paused new activity,” 0 live services.
+- [the402.ai](https://api.the402.ai/health) (22:56 UTC 2 Sep): still `status=paused` for “compliance review” since 2026-08-02. Escrow/subscription crons last succeeded 2 Aug.
 - [BountyBook](https://www.bountybook.ai/) (22:52 UTC 2 Sep): early-beta x402 board on Base, **0 open** tasks. Auth is a wallet signature. Experimental; do not deposit funds. Not executable without a wallet and an open bounty.
 - Superteam HUMAN_ONLY rechecked from listing HTML at 22:34 UTC: Sana.run QA is manual testing of a trading terminal, perps, and a Visa card (needs the participant’s accounts). FairScale is an X quote-tweet campaign due 3 Sep. Mermail still needs a GitHub PR plus an X video.
 
@@ -35,7 +35,7 @@ Repository state changes quickly. Recheck issues and pull requests before claimi
 
 | Candidate | Evidence on Sep 2 | Decision |
 | --- | --- | --- |
-| [#2105: OpenAPI workflow-call response examples](https://github.com/keeperhub/keeperhub/issues/2105) | Rechecked 22:09 UTC 2 Sep via GitHub API: still `open`, no `pull_request` field, search for PRs mentioning 2105 returned 0. Last issue update 2026-08-20. | Primary candidate after Sep 6: narrow, testable, useful, and likely mergeable. |
+| [#2105: OpenAPI workflow-call response examples](https://github.com/keeperhub/keeperhub/issues/2105) | Rechecked 22:56 UTC 2 Sep via GitHub API: still `open`, no `pull_request` field, search for PRs mentioning 2105 returned 0. Last issue update 2026-08-20. | Primary candidate after Sep 6: narrow, testable, useful, and likely mergeable. |
 | [#2097: protocol-action preflight and idempotency](https://github.com/keeperhub/keeperhub/issues/2097) | Accepted and confirmed; no linked or open PR found. | High safety value, but check overlap with #2004 and #2207 first. |
 | [#2062: onboarding ID glossary and cross-links](https://github.com/keeperhub/keeperhub/issues/2062) | Accepted with maintainer-narrowed scope; no linked PR found. | Low-risk documentation fallback; weaker “feature” fit. |
 | [#2247: trace-method provider survey](https://github.com/keeperhub/keeperhub/issues/2247) | Accepted, good-first-issue, help-wanted, apparently unclaimed. | Useful research, but the bounty asks for a feature. |
