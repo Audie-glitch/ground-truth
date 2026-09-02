@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -106,14 +106,14 @@ export function ConnectPanel() {
     }
   }
 
-  async function connectMetaMask() {
+  const connectInjectedWallet = useCallback(async () => {
     setWalletBusy(true);
     try {
-      const provider = (
-        window as Window & {
-          ethereum?: { request: (args: { method: string }) => Promise<unknown> };
-        }
-      ).ethereum;
+      const injected = window as Window & {
+        ethereum?: { request: (args: { method: string }) => Promise<unknown> };
+        phantom?: { ethereum?: { request: (args: { method: string }) => Promise<unknown> } };
+      };
+      const provider = injected.ethereum || injected.phantom?.ethereum;
       if (!provider) {
         toast.error(
           "No injected wallet in this browser. Open this page on your desktop with MetaMask installed.",
@@ -123,18 +123,36 @@ export function ConnectPanel() {
       const accounts = (await provider.request({ method: "eth_requestAccounts" })) as string[];
       const address = accounts?.[0];
       if (!address) {
-        toast.error("MetaMask did not return an account.");
+        toast.error("The wallet did not return an account.");
         return;
       }
       await saveEthereumAddress(address);
       setEthereumAddress("");
-      toast.success("Saved the MetaMask address. Public balances are loading.");
+      try {
+        const res = await fetch("/api/connect-status", { cache: "no-store" });
+        setStatus((await res.json()) as Status);
+      } catch {
+        /* poller will pick it up */
+      }
+      toast.success("Saved the connected address. Public balances are loading.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "MetaMask connect failed.");
+      toast.error(error instanceof Error ? error.message : "Wallet connect failed.");
     } finally {
       setWalletBusy(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    const injected = window as Window & { ethereum?: unknown };
+    if (!injected.ethereum) return;
+    try {
+      if (sessionStorage.getItem("gt-injected-autostart")) return;
+      sessionStorage.setItem("gt-injected-autostart", "1");
+    } catch {
+      return;
+    }
+    void connectInjectedWallet();
+  }, [connectInjectedWallet]);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -258,7 +276,7 @@ export function ConnectPanel() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button type="button" size="lg" onClick={() => void connectMetaMask()} disabled={walletBusy}>
+          <Button type="button" size="lg" onClick={() => void connectInjectedWallet()} disabled={walletBusy}>
             {walletBusy ? "Connecting…" : "Connect MetaMask"}
           </Button>
         </CardContent>
@@ -279,11 +297,27 @@ export function ConnectPanel() {
                 Code <span className="font-mono text-foreground">{status.userCode}</span> · {minutes}m{" "}
                 {seconds.toString().padStart(2, "0")}s left
               </p>
-              <Button asChild size="lg">
-                <a href={status.url} target="_blank" rel="noreferrer">
-                  Open Phantom Connect
-                </a>
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button asChild size="lg">
+                  <a href={status.url} target="_blank" rel="noreferrer">
+                    Open Phantom Connect
+                  </a>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(status.url!);
+                      toast.success("Copied the Connect link.");
+                    } catch {
+                      toast.error("Could not copy the link.");
+                    }
+                  }}
+                >
+                  Copy link
+                </Button>
+              </div>
             </>
           ) : (
             <p className="text-sm text-muted-foreground">
