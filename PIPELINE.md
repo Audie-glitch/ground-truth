@@ -114,6 +114,11 @@ Ordered by urgency. Each is a few minutes.
 8. Demo videos: I record the screen; you upload to YouTube or Loom and paste
    the link in the submission form. If a track wants narration, I write the
    script.
+9. For the ETHOnline x402 entry: a bazantic.com account (share the username),
+   and a Hedera ECDSA testnet account from the Hedera Developer Portal, funded
+   with testnet HBAR, USDC `0.0.429274` associated, testnet USDC from
+   faucet.circle.com; store as secrets `HEDERA_ACCOUNT_ID` and
+   `HEDERA_PRIVATE_KEY` (testnet only). Details in `x402-api/DESIGN.md`.
 
 ## Rules I am respecting
 

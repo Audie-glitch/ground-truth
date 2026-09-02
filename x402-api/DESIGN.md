@@ -82,17 +82,36 @@ are found; no real customer data ever enters the repo.
 
 ## x402 integration
 
-- Server: Node (Hono) with the x402 middleware guarding `/v1/parse`. Price
-  computed from the probe (pages), so the 402 quotes the exact amount.
-- Networks: whatever the sponsor tracks accept. Hedera's track requires their
-  facilitator and Hedera testnet USDC; Arc's requires USDC on Arc testnet via
-  Agent Stack / Nanopayments; Base Sepolia as the universal fallback. The
-  middleware supports a list of accepted networks; the client picks one.
-- Client: a tiny reference agent (TypeScript) that probes, pays, parses, and
-  writes the CSV, so judges can run the full loop from a terminal. A second
-  example wires the same call into a Bazantic recipe for the Bazantic bounty.
-- Facilitator: sponsor-provided where available; otherwise the open x402
-  facilitator on testnet.
+Verified 2 Sep 2026 (library versions and sponsor infrastructure; no project
+code written):
+
+- Protocol: x402 v2. Server middleware `@x402/hono` 2.24 on `hono` 4.13;
+  client `@x402/fetch` or the v2 `x402Client` with per-network schemes.
+- Hedera track: the open Blocky402 facilitator
+  (`https://api.testnet.blocky402.com`, no API key) settles `exact` payments on
+  `hedera:testnet`; the facilitator co-signs as fee payer, so the 402
+  requirements must carry `extra.feePayer` from its `GET /supported`. Client
+  signer from `@x402/hedera` (`createClientHederaSigner`, `ExactHederaScheme`).
+  USDC on Hedera testnet is token `0.0.429274`; paying accounts must associate
+  it. Reference repo: github.com/hedera-dev/x402-hedera.
+- Arc track: USDC on Arc testnet through Circle's Agent Stack / Nanopayments;
+  confirm the facilitator on Sep 4 from docs.arc.io.
+- Base Sepolia via the Coinbase facilitator as the universal fallback.
+- Server: Hono with the x402 middleware guarding `/v1/parse`; the price is
+  computed from the probe (pages), so the 402 quotes the exact amount. Accepted
+  networks are a list; the client picks one.
+- Client: a reference agent (TypeScript) that probes, pays, parses, and writes
+  the CSV, runnable from a terminal by judges. A second example wires the same
+  call into a Bazantic recipe.
+- PDF text extraction: `pdfjs-dist` 6.x (or `unpdf` as the lighter wrapper),
+  both current on npm.
+
+Human prerequisites for the Hedera track (**you**, before Sep 7): a Hedera
+ECDSA testnet account from the Hedera Developer Portal, funded with testnet
+HBAR from the portal faucet, USDC `0.0.429274` associated, testnet USDC from
+faucet.circle.com (choose Hedera Testnet). Store as Cloud Agent secrets
+`HEDERA_ACCOUNT_ID` and `HEDERA_PRIVATE_KEY` (testnet only). A second account
+for the receiving side is convenient but not required.
 
 ## Deliverables mapped to bounties
 
