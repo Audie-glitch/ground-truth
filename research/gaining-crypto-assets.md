@@ -4,7 +4,11 @@
 **Horizon this note assumes:** 5–10+ years, through at least one full drawdown.  
 **Not financial advice.** Past returns compress as the asset matures. Recheck live prices, taxes, and local law before acting.
 
-Companion scorecard of individual strategies: [crypto-returns-2026-09.md](crypto-returns-2026-09.md).
+Companion notes:
+
+- Strategy scorecard: [crypto-returns-2026-09.md](crypto-returns-2026-09.md)
+- Developer bounties (optional income, not the plan): [crypto-earning-opportunities-2026-09.md](crypto-earning-opportunities-2026-09.md)
+- What this VM can execute: [environment-capabilities-2026-09.md](environment-capabilities-2026-09.md)
 
 ## The rethink
 
@@ -19,6 +23,17 @@ If the goal is to **own more crypto over time**, the working model is a savings 
 5. Keep keys (or a regulated wrapper) under **your** control.
 
 Earning as an engineer can *feed* that plan — salary or freelance converted on payday — but a contest deadline is not a strategy. I will not receive funds, hold a wallet, or place trades.
+
+## What is actually possible in this environment
+
+Probed 2 September 2026. Full table: [environment-capabilities-2026-09.md](environment-capabilities-2026-09.md).
+
+Short version:
+
+- No wallet secrets, no Phantom session (auth calls timed out), no linked secret store.
+- This VM **cannot** buy, swap, claim, or take deposits.
+- Devnet faucets can mint worthless test tokens. Not done; not assets.
+- The only legitimate no-fund routes are (1) paid engineering paid to **your** wallet later, or (2) **you** buy on a licensed venue you control.
 
 ## What the long record actually says
 
@@ -72,7 +87,7 @@ Skip leverage, futures, and “earn 20% on your BTC” products. Those turn a lo
 
 ### 4. Let time do the work; treat yield as a rounding error
 
-If you hold ETH, staking from the official path (solo, a researched pool, or a regulated product) compounds a few percent a year. SOL staking product rates sit in the same low-single-digit band (Coinbase recently ~3.7%).
+If you hold ETH, staking from the official path (solo, a researched pool, or a regulated product) compounds a few percent a year. SOL staking product rates sit in the same low-single-digit band (Coinbase **3.57% APY**, ~69.2% of SOL staked, rechecked 2 Sep 2026).
 
 That is worth doing **after** the position exists and you understand lockups and smart-contract risk. It is not how you get the position.
 
@@ -113,8 +128,9 @@ Lost seeds and phished wallets are how long-horizon holders actually go to zero.
 - Bitcoin rolling CAGR (date-sensitive): https://btcoak.com/rolling-cagr
 - Case for Bitcoin, asset CAGR charts: https://casebitcoin.com/charts
 - Ethereum.org staking (live APR / ETH staked): https://ethereum.org/en/staking/
-- Coinbase SOL staking product rate: https://www.coinbase.com/en-br/earn/staking/solana
+- Coinbase SOL staking product rate (3.57% APY as of 2 Sep 2026): https://www.coinbase.com/en-br/earn/staking/solana
 - Lump-sum vs DCA (equities, risk-adjusted framing): https://quantdecoded.com/en/dollar-cost-averaging-vs-lump-sum-century-of-evidence
 - Lump-sum vs DCA (BTC/ETH 2021–2026 test): https://hduynam99.substack.com/p/lump-sum-vs-dca-comparison-ls-wins
 - ESMA CFD retail-loss analysis (35-43-1000): https://www.esma.europa.eu/sites/default/files/library/esma35-43-1000_additional_information_on_the_agreed_product_intervention_measures_relating_to_contracts_for_differences_and_binary_options.pdf
 - Solana faucets (devnet/testnet only): https://solana.com/developers/cookbook/development/airdrops-and-faucets
+- Environment probe (this VM): [environment-capabilities-2026-09.md](environment-capabilities-2026-09.md)
