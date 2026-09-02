@@ -33,6 +33,8 @@
 - [SolFoundry](https://github.com/SolFoundry/solfoundry) open “issues” are a pile of PRs stuffing the same Solana address into titles. Not a credible payout path. Do not add another PR; this VM has no `gh` login.
 - Daydreams TaskMarket / Agoragentic / Dework (gigs.sh, rechecked 23:03 UTC): docs or APIs exist, but each requires a funded Base/EVM wallet this VM does not have. Do not generate a deposit key here.
 - Casper Agentic Buildathon 2026 and Eolas x Algo Agent Skills Hackathon are closed (Jul 2026 / Mar 2025).
+- [Circle Agent Marketplace](https://developers.circle.com/agent-stack/agent-marketplace) (23:08 UTC 2 Sep): Discovery API reports **1036** live x402 services. Buying needs a funded USDC wallet. Selling needs a payable x402 endpoint, OpenAPI spec, and a **payout wallet address** on a manual intake form (sanctions-screened). No self-serve listing without an address.
+- Encode Club’s 5–6 Sep event is IRL London and lists merchandise/pitch prizes, not a remote USDC bounty. Claw Earn’s public host is a `/lander` parking page.
 
 ## KeeperHub candidate queue
 
