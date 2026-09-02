@@ -1,7 +1,7 @@
 # Phantom agent wallet: login succeeded, KMS still blocked
 
 **Probed:** 2 September 2026, this Cloud Agent VM.  
-**Live:** 21:31 UTC — first-client session refreshed; no `session.json`; device code `des6pxAN` still waiting; VM browser has no Phantom login. Nested `ext.a2t` JWT is `aud=urn:phantom:kms-api` but is rejected as a Bearer (`Invalid or expired Hydra JWT`). Portal `/portal/v1/apps` is 401 with both tokens. RFC 7592 GET/PUT on the Hydra DCR client returns 401 (registration token no longer accepted). `scripts/watch-phantom-dcr2-login.mjs` keeps one device code alive after each unused timeout.  
+**Live:** 21:57 UTC — first-client tokens restored from backup and refreshed (expires ~1h). KMS still `whitelist-disabled` for `4da950ac-…`. No `session.json`. Hydra DCR watcher reminted unused Connect code `sc6aC7ET` at 21:56:55 UTC. VM browser has no Phantom/Google/Apple session. Nested `ext.a2t` JWT is `aud=urn:phantom:kms-api` but is rejected as a Bearer (`Invalid or expired Hydra JWT`). Portal `/portal/v1/apps` is 401 with wallet-tag tokens. RFC 7592 GET/PUT on the Hydra DCR client returns 401.  
 **Goal relevance:** without a provisioned agent wallet there is no Solana or Ethereum address, no balance, and no legal on-chain acquisition to execute.
 
 This note replaces the earlier “Phantom MCP only times out” finding. Device-code login now works. Wallet creation does not.
@@ -106,7 +106,7 @@ Rechecked 21:11–21:28 UTC 2 Sep 2026: first-client KMS is still `whitelist-dis
 
 ## Required human action
 
-Device codes `LcFtqTwh`, `Gdc7ctdz`, `xxk79MWg`, and `VmcfamKw` expired unused. Approving the live Hydra-assigned DCR code is still worth one empirical KMS test, but that client has the same stub whitelist row as the disabled first client.
+Device codes `LcFtqTwh`, `Gdc7ctdz`, `xxk79MWg`, `VmcfamKw`, and `des6pxAN` expired unused. Approving the live Hydra-assigned DCR code is still worth one empirical KMS test, but that client has the same stub whitelist row as the disabled first client.
 
 The action that actually unblocks addresses is a **Portal `PHANTOM_APP_ID`** (or Phantom turning KMS on for DCR). This VM cannot complete Google/Apple/wallet consent by itself.
 

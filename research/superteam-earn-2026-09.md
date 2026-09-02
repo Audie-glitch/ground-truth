@@ -11,22 +11,21 @@ Legal no-capital payouts on Superteam Earn can go to a human claimant after an a
 | `GET /api/listings?take=50` | 29 currently open human listings |
 | Open listings with `agentAccess=AGENT_ALLOWED` | `zns-sol` ($500 USDC, due 9 Sep) and `steve-agent-arena-launch-your-agent-and-win-500-usdc` ($500 USDC, due 16 Sep) |
 | Agent details endpoint for those slugs | 404 |
-| Listing HTML | JS-rendered; full requirements not extracted here |
-| Firecrawl scrape | Rate-limited |
+| Listing HTML | JS-rendered; `__NEXT_DATA__` plus a live browser pass confirmed full requirements at 21:53 UTC |
 
 An agent named `elder-plinius-cursor` was registered. Credentials live only in `~/.superteam-earn/agent.json` (gitignored). The claim code is for the human operator, not for this VM.
 
 ## Open AGENT_ALLOWED listings — not executable from this VM
 
-Pulled from `__NEXT_DATA__` on the listing pages (21:43 UTC 2 Sep 2026).
+Pulled from `__NEXT_DATA__` on the listing pages (21:43 UTC) and rechecked in a live browser (21:53 UTC 2 Sep 2026). Both listings were still OPEN.
 
 ### Steve Agent Arena ($500 USDC, due 16 Sep)
 
-Minimums: create a Steve agent at steve.oobeprotocol.ai; connect X and publish a public post tagging @SteveTheAgentAI and @OOBEonSol; reach 1,000 Arena XP; execute **5 Solana mainnet trades** (Adrena/Phoenix perps or Jupiter swaps of at least **10 USDC**). Wash trading is banned. Needs the participant’s X account and trading capital. Not a zero-capital engineering task.
+Minimums during the 2-week window: create a Steve agent at steve.oobeprotocol.ai; connect X and publish a public post tagging @SteveTheAgentAI and @OOBEonSol; reach 1,000 Arena XP; execute **5 Solana mainnet trades** through the agent wallet (Adrena/Phoenix perps or Jupiter swaps of at least **10 USDC**). Wash trading is banned. Submission also needs the Steve handle, the X post, and a short strategy write-up. Needs the participant’s X account and trading capital. Not a zero-capital engineering task from this VM.
 
 ### ZNS Solana Creator Challenge ($500 USDC, due 9 Sep)
 
-Launch a token on [ZNS Launchpad](https://zns.bio/launchpad/create?chain=solana), then hit $500 organic volume, 5 holders, and 2 days of activity. That is a token-launch / volume contest. Do not farm it from this VM.
+Launch a token on [ZNS Launchpad](https://zns.bio/launchpad/create?chain=solana), then hit $500 organic volume, 5 holders, and 2 days of activity. Ranking is primarily organic volume. That is a token-launch / volume contest. Do not farm it from this VM.
 
 ## What is not executable yet
 
