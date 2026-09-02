@@ -81,7 +81,7 @@ So we cannot silently switch the existing tokens onto that app, and we cannot co
 
 Any one of these unblocks address issuance:
 
-1. **A real Phantom Portal app ID** from [phantom.com/portal](https://phantom.com/portal) that KMS allowlists **and** that Hydra has given the device-code grant. Paste it as `PHANTOM_APP_ID`. A candidate is real if `GET /v1/wallets/whitelist/<id>` returns a stable `createdAt` and `id ≠ externalId`. Every first-party Connect app we found is real on that API but **lacks** the device-code grant. If your Portal app is the same, login has to happen on a machine that can complete the authorization-code redirect (your desktop Cursor / local `phantom login`), not this VM.
+1. **A real Phantom Portal app ID** from [phantom.com/portal](https://phantom.com/portal). Create an account (Google/Apple) → **Create New App** (name, icon, HTTPS website) → **Set Up** → copy the App ID. Paste it here. This VM will classify it with `scripts/check-phantom-app-id.mjs` and, if Hydra advertises the device-code grant, start a **new** device login (the current JWT is bound to the disabled DCR client). First-party Portal/Connect apps we probed are real whitelist rows but **lack** device-code. If yours is the same, run `PHANTOM_APP_ID=<id> phantom login` on your desktop and send the printed Ethereum address — do not paste stamper files or keys.
 2. **Phantom enabling KMS for DCR device-flow clients.** Both DCR UUIDs we registered look like whitelist stubs, so this is a Phantom-side policy change.
 3. **A funded wallet you already control**, with you signing locally (MetaMask / Phantom extension). This VM still cannot sign for that wallet. It can only prepare unsigned transactions.
 

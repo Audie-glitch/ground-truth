@@ -28,7 +28,7 @@ Repository state changes quickly. Recheck issues and pull requests before claimi
 
 | Candidate | Evidence on Sep 2 | Decision |
 | --- | --- | --- |
-| [#2105: OpenAPI workflow-call response examples](https://github.com/keeperhub/keeperhub/issues/2105) | Accepted and confirmed; no linked or open PR found. Current `buildPathEntry` defines read and write 200-response schemas without examples. A focused unit suite already exists. | Primary candidate after Sep 6: narrow, testable, useful, and likely mergeable. |
+| [#2105: OpenAPI workflow-call response examples](https://github.com/keeperhub/keeperhub/issues/2105) | Rechecked 22:09 UTC 2 Sep via GitHub API: still `open`, no `pull_request` field, search for PRs mentioning 2105 returned 0. Last issue update 2026-08-20. | Primary candidate after Sep 6: narrow, testable, useful, and likely mergeable. |
 | [#2097: protocol-action preflight and idempotency](https://github.com/keeperhub/keeperhub/issues/2097) | Accepted and confirmed; no linked or open PR found. | High safety value, but check overlap with #2004 and #2207 first. |
 | [#2062: onboarding ID glossary and cross-links](https://github.com/keeperhub/keeperhub/issues/2062) | Accepted with maintainer-narrowed scope; no linked PR found. | Low-risk documentation fallback; weaker “feature” fit. |
 | [#2247: trace-method provider survey](https://github.com/keeperhub/keeperhub/issues/2247) | Accepted, good-first-issue, help-wanted, apparently unclaimed. | Useful research, but the bounty asks for a feature. |
