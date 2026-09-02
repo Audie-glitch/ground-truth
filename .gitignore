@@ -39,6 +39,9 @@ auth2-stamper.json
 session.json
 agent-registration.json
 
+# Superteam Earn agent API key / claim material
+.superteam-earn/
+
 # vercel
 .vercel
 
