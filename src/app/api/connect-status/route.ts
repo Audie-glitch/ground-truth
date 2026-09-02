@@ -52,9 +52,10 @@ export async function GET() {
   const connect = usePortal ? portal : dcr2;
 
   const mintedMs = connect.t ? Date.parse(connect.t) : NaN;
-  const ttlLeftSec = Number.isFinite(mintedMs)
-    ? Math.max(0, Math.round(600 - (Date.now() - mintedMs) / 1000))
-    : 0;
+  const ttlLeftSec =
+    connect.stage === "waiting" && Number.isFinite(mintedMs)
+      ? Math.max(0, Math.round(600 - (Date.now() - mintedMs) / 1000))
+      : 0;
 
   let userInput: {
     stage: string | null;
