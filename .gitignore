@@ -33,6 +33,12 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Phantom agent session (tokens / stamper keys)
+.phantom-mcp/
+auth2-stamper.json
+session.json
+agent-registration.json
+
 # vercel
 .vercel
 

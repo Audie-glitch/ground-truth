@@ -126,7 +126,7 @@ Probed from the Cloud Agent VM on **2 September 2026**. This is the constraint t
 
 | Capability | Evidence | Can it produce spendable mainnet crypto? |
 | --- | --- | --- |
-| Phantom MCP (`wallet_status`, `wallet_addresses`, `login` with `displayMode=text`) | All three calls returned `MCP error -32001: Request timed out` on two separate turns | **No.** No session, no address, no balance, no swap. A deposit address will not be published even if a later call succeeds. |
+| Phantom MCP / CLI | Device login succeeded 2 Sep 2026 ~20:17 UTC. userinfo has `organization_id`. KMS returns `whitelist-disabled` for the DCR client. MCP tools still `-32001` | **No** addresses yet. Details: [phantom-wallet-blocker-2026-09.md](phantom-wallet-blocker-2026-09.md) |
 | Wallet / RPC secrets in the process environment | `env` filter for `PHANTOM`, `SOLANA`, `WALLET`, `HELIUS`, `ALCHEMY`, `RPC` returned **empty** | **No.** Nothing to sign with. |
 | Solana CLI | `solana: command not found`. `rustc`/`cargo`/`node` are present | **No** mainnet SOL. CLI could be installed later for **devnet only**. |
 | Official Solana faucet / public devnet RPC | `curl` → `faucet.solana.com` HTTP 200; `api.devnet.solana.com` HTTP 200 | **No.** Devnet/testnet SOL has no market value and cannot be bridged to mainnet. Official faucet text: “does not distribute mainnet SOL.” |
@@ -152,7 +152,7 @@ Probed from the Cloud Agent VM on **2 September 2026**. This is the constraint t
 | ESMA 74–89% retail CFD accounts lose money | **Verified** | [ESMA 35-43-1000 PDF](https://www.esma.europa.eu/sites/default/files/library/esma35-43-1000_additional_information_on_the_agreed_product_intervention_measures_relating_to_contracts_for_differences_and_binary_options.pdf) |
 | Coinbase SOL ~3.69% APY | **Not re-fetched** | Cloudflare bot check. Treat as stale. |
 | Solana faucet is devnet/testnet only | **Verified** | [faucet.solana.com](https://faucet.solana.com/) |
-| Phantom MCP usable here | **Failed** | Timeouts documented above |
+| Phantom MCP usable here | **Auth only** | Tokens exist; KMS `whitelist-disabled`; MCP still times out. See [phantom-wallet-blocker-2026-09.md](phantom-wallet-blocker-2026-09.md) |
 | KeeperHub issues already claimed | **Verified** | GitHub API: #2208→PR #2215, #2211→PR #2217, #2206→PR #2213, #2230→PR #2228, #2196→PR #2197. Unclaimed inspect-only: #2247, #2242, #2241, #2240, #2105, #2097, #2062 |
 
 ## Sources

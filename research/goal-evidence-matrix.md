@@ -13,7 +13,9 @@
 | Execute repository contribution | No production code or external claim has been made | **Not achieved** | Build window opens Sep 6. User design approval and eligibility confirmation remain unresolved. |
 | Submit contribution to the earning program | No KeeperHub PR or DoraHacks BUIDL exists | **Not achieved** | Requires the participant's authenticated GitHub fork, DoraHacks account, contact details, and truthful eligibility. |
 | Verify acceptance or judging result | No PR acceptance or official judging result exists | **Not achieved** | Inspect authoritative PR and DoraHacks state after submission. |
-| Verify crypto assets gained | No transaction or payout exists | **Not achieved** | Require an official winner result plus an onchain stablecoin transfer to the participant's own wallet. Never publish or take custody of wallet secrets. |
+| Inspect wallet access and balances | Device-code login succeeded; KMS wallet create returned `whitelist-disabled` for the DCR app. No `session.json`, no addresses, no balances | **Not achieved** | See [`phantom-wallet-blocker-2026-09.md`](phantom-wallet-blocker-2026-09.md). Need a KMS-allowlisted `PHANTOM_APP_ID` or Phantom to enable this DCR client. |
+| Execute a legal acquisition on a funded wallet | No address and no capital | **Not achieved** | Provision agent addresses, then fund from the user's MetaMask/Phantom if they choose, then execute only a concrete non-fraudulent action. |
+| Verify crypto assets gained | No transaction or payout exists | **Not achieved** | Require an onchain transfer or balance change at an address the participant controls. Never publish or take custody of wallet secrets. |
 
 ## Current blockers
 

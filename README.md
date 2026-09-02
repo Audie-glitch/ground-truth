@@ -138,6 +138,9 @@ data resets it, and so does the Reset button.
   user funds.
 - [`research/goal-evidence-matrix.md`](research/goal-evidence-matrix.md) —
   requirement-by-requirement completion evidence and unresolved blockers.
+- [`research/phantom-wallet-blocker-2026-09.md`](research/phantom-wallet-blocker-2026-09.md) —
+  device-code login succeeded; Phantom KMS still refuses the DCR app
+  (`whitelist-disabled`). No agent address yet.
 
 Ground Truth is the executable counterpart to the scorecard in those notes: the
 research argues that fast trading is negative expected value for retail, and the

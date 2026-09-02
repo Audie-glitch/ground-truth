@@ -14,7 +14,7 @@ This is the inventory of what *this session* can execute. It is not a trading pl
 | Linked Cursor environment / secrets store | None | `cursor-cloud` `environment-info`: `environment: null`, `build: null` |
 | Network egress | Unrestricted | Same tool: `egress.restricted: false` |
 | Phantom MCP | Server reports `ready`. Tools exist for status, addresses, balances, swaps, transfers, Hyperliquid perps | Tool catalog |
-| Phantom session | **Not usable.** `wallet_status`, `login` (`displayMode: text`), and `wallet_addresses` each timed out (MCP error `-32001`), repeatedly | 6 failed calls this session |
+| Phantom session | **Auth yes, wallet no.** Device code `PRs7Fxb4` was approved; tokens and userinfo `organization_id` exist. KMS `getOrCreateWalletWithTag` returns `whitelist-disabled` for DCR app `4da950ac-…`. No `session.json`, no addresses | [`phantom-wallet-blocker-2026-09.md`](phantom-wallet-blocker-2026-09.md), 2 Sep 2026 20:35 UTC |
 | User message queue | Empty | `get-message-queue` |
 | Ability to receive user funds | **Refused and technically unsupported.** No address we control; no secret store; no custody role | Policy + missing keys |
 
@@ -22,8 +22,8 @@ This is the inventory of what *this session* can execute. It is not a trading pl
 
 | Path | Executable here now? | Why |
 | --- | --- | --- |
-| Take user deposits and “grow” them | **No** | Would require custody. Refused. Also no wallet. |
-| Swap / transfer / perps via Phantom | **No** | Tools exist but every auth/address call timed out. Even if connected later, speculative “quick gain” trades will not be executed. |
+| Take user deposits and “grow” them | **No** | No agent address to receive into. Will not generate a hot key on this VM. A Phantom *agent* wallet funded from the user's MetaMask is the official path once KMS is unblocked. |
+| Swap / transfer / perps via Phantom | **No** | Login tokens exist, but KMS will not issue a wallet for the DCR app (`whitelist-disabled`). MCP tools still time out (`-32001`). |
 | Buy on a regulated exchange | **No** | Needs the user’s KYC identity and fiat. Not available to this agent. |
 | Claim mainnet faucets / airdrops | **No** | Need a funded address the claimant controls. We have neither. |
 | Official Solana **devnet** `requestAirdrop` | Technically yes, to *any* pubkey | [Solana `requestAirdrop`](https://solana.com/docs/rpc/http/requestairdrop) is public. **Not done.** Devnet SOL has no market value. Generating a keypair on this ephemeral VM would be bad custody, not an asset. |
@@ -36,7 +36,7 @@ This is the inventory of what *this session* can execute. It is not a trading pl
 
 ## Legitimate no-fund conclusion
 
-There is **no path in this VM that produces mainnet crypto assets today** without either (a) the user sending money — which is refused — or (b) winning competitive paid work later.
+There is **no path in this VM that produces mainnet crypto assets today**. A Phantom agent wallet cannot be created while KMS returns `whitelist-disabled`. Generating a hot key here and asking for a deposit is refused. Paid engineering later, or the user buying on an exchange they control, remain the legal no-agent-wallet routes.
 
 The only legitimate no-capital routes that remain open:
 
@@ -55,3 +55,4 @@ Anything that looks faster than those three is either a bet with capital we do n
 - Ethereum Foundation bug bounty: https://ethereum.org/bug-bounty/
 - KeeperHub issue #2208 (accepted; PR #2215 exists): https://github.com/keeperhub/keeperhub/issues/2208
 - Additional claimed issues (do not duplicate): #2211→PR #2217, #2206→PR #2213, #2230→PR #2228, #2196→PR #2197 (GitHub timeline, 2 Sep 2026)
+- Phantom KMS blocker after successful device login: [phantom-wallet-blocker-2026-09.md](phantom-wallet-blocker-2026-09.md)
