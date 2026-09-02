@@ -50,7 +50,7 @@ The current source confirms the issue precisely: `app/api/openapi/route.ts` has 
 
 The clone's default branch is `staging`, and its HEAD matched the freshly fetched `origin/staging` commit `d249519` during this check. GitHub search returned zero open pull requests referencing `2105`. OpenAPI 3.1 uses a bare `examples` array inside a Schema Object, while a Media Type Object uses either a singular `example` value or a named `examples` map. Because #2105 specifically asks for values on both hardcoded response schemas and KeeperHub already uses schema-level `examples` arrays, schema-level arrays are the most consistent implementation candidate. Recheck all of this after Sep 6.
 
-Build feasibility was verified without changing KeeperHub source: the required Node.js 24 runtime and pnpm 10 were activated, the frozen lockfile installed successfully, and `pnpm exec vitest run tests/unit/openapi-route.test.ts` passed all **27 tests** on the Sep 2 `staging` commit. This is baseline evidence only; it is not submission code and does not satisfy the bounty.
+Build feasibility was verified without changing KeeperHub source: the required Node.js 24 runtime and pnpm 10 were activated, the frozen lockfile installed successfully, and `pnpm exec vitest run tests/unit/openapi-route.test.ts` passed all **27 tests** on the Sep 2 `staging` commit. `pnpm check` also passed with one pre-existing oversized-fixture warning. A fresh-clone `pnpm type-check` initially failed because generated registries were absent; the documented `pnpm discover-plugins` step generated them, after which type-check passed with no tracked source changes. This is baseline evidence only; it is not submission code and does not satisfy the bounty.
 
 ## Resources and blockers
 
