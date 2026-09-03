@@ -145,7 +145,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   leftover LL redemption / LL+veYFI
   distributors, Twyne Aave V3
   operators (Sourcify), TermMax TMX
-  OFT, and Horizen ZenStaker (no submittable finding).
+  OFT, Balancer V3
+  CompositeLiquidityRouter, and
+  Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.
 - `research/ethonline-uniswap-sdks-720.md`: file-level fix for

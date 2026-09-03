@@ -7225,10 +7225,10 @@ finding. Not submitted.
   do not settle.
 
 Remaining Balancer 23 Jun
-rows: CompositeLiquidityRouter,
-ProtocolFeeController, and the
-V3 factory / oracle factory
-set. Not submitted.
+rows: ProtocolFeeController
+and the V3 factory / oracle
+factory set (CompositeLiquidityRouter
+logged below). Not submitted.
 
 ## 2026-09-03: Yearn stYFI leftover LL redemption / LL+veYFI distributors (`69e262e`)
 
@@ -7357,6 +7357,63 @@ already-logged
 approve-and-call pattern.
 Not submitted.
 
+## 2026-09-03: Balancer V3 CompositeLiquidityRouter (Sourcify)
+
+Immunefi program `balancer`
+($1,000,000, `kyc: false`).
+23 Jun 2026 row
+CompositeLiquidityRouter (V2)
+`0xb21A…5c8A`. Sourcify exact
+match. Extract under
+`/tmp/balancer-clr`. The V3
+Router row is already logged.
+No mainnet interaction.
+
+Files:
+`contracts/CompositeLiquidityRouter.sol`
+(hooks + wrap helpers).
+
+Checked for: a hook that
+mints BPT to the router; wrap
+that pulls a stranger;
+unwrap that sends tokens to
+`msg.sender` instead of
+`params.sender`.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- External add/remove
+  functions `saveSender
+  (msg.sender)` and
+  `_vault.unlock` into
+  `onlyVault` hooks.
+  `params.sender` is that
+  caller.
+- Unbalanced / proportional
+  add send BPT `to:
+  params.sender`. Tokens are
+  `_takeTokenIn` from that
+  sender (Permit2 / ETH
+  wrap).
+- Proportional remove burns
+  BPT `from: params.sender`
+  and `_sendTokenOut` to
+  them after optional buffer
+  unwrap. `minAmountsOut` is
+  checked per token.
+- Buffer wrap/unwrap is the
+  Vault’s
+  `erc4626BufferWrapOrUnwrap`.
+  Uninitialized buffers
+  revert. Query paths are
+  static-call only.
+
+Remaining Balancer 23 Jun
+rows: ProtocolFeeController
+and the V3 factory / oracle
+factory set. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -7483,9 +7540,9 @@ LL+veYFI distributors
 (`69e262e`) are logged;
 remaining Yearn is Vault
 V3.1.0 if wanted. Balancer V3
-Router (23 Jun, Sourcify) is
-logged; remaining Balancer is
-CompositeLiquidityRouter /
+Router + CompositeLiquidityRouter
+(23 Jun, Sourcify) are logged;
+remaining Balancer is
 ProtocolFeeController /
 factories. Remaining
 Lista leftover slices (new-contracts
