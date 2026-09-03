@@ -18323,6 +18323,94 @@ Instadapp is Avocado,
 Fluid, and
 `inst-governance`.
 
+## 2026-09-03: Instadapp Avocado leftover (`0bc1dd9`)
+
+Immunefi program
+`instadapp` ($500,000,
+`kyc: false`). DSA on
+the same program is
+already logged. This
+slice is Avocado.
+Local clone
+`/tmp/instadapp-avocado`
+at `0bc1dd9`. No
+mainnet interaction.
+
+Files:
+`contracts/AvoDepositManager.sol`,
+`AvocadoMultisig/AvocadoMultisig.sol`,
+`AvocadoMultisig/AvocadoMultisigCore.sol`,
+`AvoForwarder.sol`,
+`AvoFactory.sol`.
+
+Checked for: a stranger
+`cast` on another
+user’s Avocado;
+withdraw of pooled
+deposit-token without
+auth; flashloan
+callback that runs
+unsigned actions;
+forwarder execute that
+targets the wrong
+wallet.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `cast` requires
+  `msg.sender ==
+  avoForwarder`.
+  Signatures recover
+  allowed signers
+  (ordered, enough
+  for `requiredSigners`).
+  Digest includes
+  chain salt. Nonce
+  −1 occupies a
+  non-sequential slot.
+  `castAuthorized`
+  uses the same
+  verifier without the
+  forwarder.
+- `executeOperation`
+  requires a
+  transient hash of
+  the callback data +
+  `initiator == this`.
+  `_callTargets`
+  requires its own
+  transient hash.
+- Forwarder
+  `executeV1` is
+  `onlyBroadcaster`
+  and deploys /
+  calls the Avocado
+  for `from_` +
+  `index_`.
+- Deposit manager
+  `depositOnBehalf`
+  only pulls tokens
+  in. `requestWithdraw`
+  is `onlyAvocado`.
+  Source / referral
+  request is
+  permissionless but
+  `processWithdraw`
+  is `onlyAuths` and
+  pays the stored
+  `to`. Balances are
+  off-chain by
+  design. Auths are
+  trusted operators.
+  `systemWithdraw`
+  is `onlyAuths`.
+
+Not submitted. Remaining
+Instadapp is Fluid and
+`inst-governance`.
+
 ## 2026-09-03: Stader Penalty / PoolSelector / PoolUtils / Config leftover (`9d4a921`)
 
 Immunefi program
@@ -19832,8 +19920,10 @@ realloc leftover
 leftover exhausted);
 Instadapp DSA leftover
 (`fef062a`) is logged
+and Avocado leftover
+(`0bc1dd9`) is logged
 (remaining Instadapp is
-Avocado / Fluid /
+Fluid /
 `inst-governance`);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
