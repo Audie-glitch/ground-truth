@@ -667,9 +667,44 @@ Result: no user-exploitable finding.
 
 Not submitted. Payment requires user KYC.
 
+## 2026-09-03: Origin BridgedWOETHStrategy (origin-dollar `4fa0602`)
+
+Same Immunefi program. In-scope Base proxy
+`0x80c864704DD06C3693ed5179190786EE38ACf835` and bridged wOETH
+`0xD8724322f44E5c58D7A815F542036fb17DbbF839` (added 1 Sep 2026).
+Local clone `/tmp/origin-dollar`. No mainnet interaction.
+
+Files: `contracts/strategies/BridgedWOETHStrategy.sol`,
+`contracts/token/BridgedWOETH.sol`.
+
+Checked for: user mint of OETHb against unbacked wOETH; permissionless
+oracle snapshot inflation; vault withdraw of strategy inventory;
+bridged-token mint/burn.
+
+Result: no user-exploitable finding.
+
+- Vault `deposit` / `withdraw` / `depositAll` revert. `withdrawAll`
+  is a no-op. Inventory moves only through
+  `depositBridgedWOETH` / `withdrawBridgedWOETH`, both
+  governor-or-strategist. Mint happens before the wOETH pull and
+  burn after the OETHb pull; `nonReentrant` plus a revert on a
+  failed transfer keeps the two legs atomic.
+- `updateWOETHOraclePrice` is permissionless but only stores
+  `oracle.price(bridgedWOETH)`. The stored price must stay `> 1e18`,
+  never decrease, and not jump more than `maxPriceDiffBps` (≤ 100%)
+  from the last snapshot. A user cannot invent a price. A manipulated
+  oracle spike that gets snapshotted cannot be walked back; Origin’s
+  rules treat third-party oracle behavior and accounting without an
+  extractable path as out of scope. `checkBalance` uses the stored
+  price and is documented to underreport when stale.
+- `BridgedWOETH` mint/burn are `MINTER_ROLE` / `BURNER_ROLE`.
+  `transferToken` cannot rescue wOETH or WETH.
+
+Not submitted.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. the402.ai still paused. No KeeperHub implementation before the
-6 Sep build window. Remaining Immunefi time-box: Origin
-`BridgedWOETHStrategy` if still unreviewed, or a newly added program.
+6 Sep build window. Remaining Origin slice: WOETH CCIP zapper /
+`BaseBridgeHelperModule` if still unreviewed.
