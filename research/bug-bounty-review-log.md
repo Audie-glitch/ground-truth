@@ -1138,11 +1138,73 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: OpenZeppelin BaseCustomCurve / BaseAsyncSwap (`2ae32be`)
+
+Same Immunefi program (`openzeppelin`). Local clone
+`/tmp/oz-uniswap-hooks`. No mainnet interaction.
+
+Files: `src/base/{BaseCustomAccounting,BaseCustomCurve,BaseAsyncSwap}.sol`.
+
+Checked for: hook-owned 6909 claims paying a swapper more than
+the hook holds; exact-out async skip leaking the other pool;
+native `msg.value` refund under/over-pay; LP add/remove via the
+PoolManager bypassing the hook.
+
+Result: no user-exploitable finding.
+
+- `BaseCustomAccounting` blocks direct pool LP
+  (`LiquidityOnlyViaHook`), checks deadline and principal
+  slippage, and refunds unused native `msg.value` after
+  verifying it covered `amount0`.
+- `BaseCustomCurve` swaps take/settle 6909 claims the hook
+  minted on add. Output size is `_getUnspecifiedAmount`
+  (subclass). A bad curve can lose the hook’s own LP, not
+  another pool’s reserves. One `_poolKey` per instance.
+- `BaseAsyncSwap` only intercepts exact-in: it takes the
+  specified amount as claims and returns a delta that nets
+  that amount to 0. Exact-out is left to the PoolManager.
+  Multi-pool 6909 mixing is a documented implementer warning.
+
+Not submitted.
+
+## 2026-09-03: 1inch Fusion SimpleSettlement (`b68b27b`)
+
+Immunefi program `1inch-SmartContracts` ($500,000, `kyc: true`).
+In-scope repo `1inch/fusion-protocol` added 10 Jun 2026. Local
+clone `/tmp/1inch-fusion`. No mainnet interaction.
+
+Files: `contracts/{Settlement,SimpleSettlement}.sol`.
+
+Checked for: surplus fee exceeding remaining taking amount;
+whitelist matching a colliding 10-byte suffix; Dutch-auction
+rate bump going negative and under-charging the taker.
+
+Result: no user-exploitable finding.
+
+- Surplus share is only the excess of net taking over a
+  Ceil-scaled estimate, times `protocolSurplusFee` (capped at
+  100). That extra is added to the protocol fee so the maker
+  still receives at least the estimate.
+- Whitelist compares `uint80(uint160(taker))` (lowest 10
+  bytes) plus a time-gated list. A 2^80 collision is not a
+  practical extract. Fills before `allowedTime` revert.
+- Rate bump is interpolated and then reduced by a gas bump;
+  making amount is divided by `1 + bump`, taking amount is
+  Ceil-multiplied. After the auction it is 0.
+- Mainnet `Settlement` additionally caps `tx.priorityFee` vs
+  `basefee` (governance spec). That can fail a fill; it does
+  not move extra tokens.
+
+`FeeTaker` itself lives in the limit-order-protocol dependency
+and was not re-reviewed here.
+
+Not submitted.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do
 not execute. All other open listings are `HUMAN_ONLY`. the402.ai
 still paused. No KeeperHub implementation before the 6 Sep build
-window. Skip Sky (legacy Maker) and Money on Chain. Remaining OZ
-hooks: BaseCustomCurve / BaseAsyncSwap. Remaining TruFin: none
-in the public staker crate.
+window. Skip Sky and Money on Chain. Remaining 1inch Fusion:
+`WhitelistRegistry` / `PowerPod` if they gate fills. Remaining
+OZ hooks: none of the money-moving general/fee/base files.
