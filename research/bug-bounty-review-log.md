@@ -38061,6 +38061,272 @@ Remaining listed:
 exchange
 pages only.
 
+## 2026-09-03: Avalanche leftover ICTT TokenHome + TokenRemote leftover (`0b68b03`)
+
+Immunefi program
+`avalanche`
+($100,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`ava-labs/icm-contracts`
+`0b68b03c`.
+Extract
+`/tmp/avax-ictt`.
+No mainnet
+writes.
+
+Files:
+`contracts/ictt/TokenHome/TokenHome.sol`,
+`ERC20TokenHomeUpgradeable.sol`,
+`contracts/ictt/TokenRemote/TokenRemote.sol`,
+`ERC20TokenRemoteUpgradeable.sol`.
+
+Checked for:
+a stranger
+`send` that
+pulls another
+account's
+tokens; a
+Teleporter
+receive that
+pays
+`msg.sender`;
+an unregistered
+remote that
+unlocks home
+collateral.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Home
+  `send` /
+  `addCollateral`
+  `safeTransferFrom`
+  the caller.
+  Remote
+  `send` burns
+  the caller
+  after
+  spending
+  allowance.
+- Home
+  `_receiveTeleporterMessage`
+  requires a
+  registered
+  and
+  collateralized
+  remote, then
+  deducts that
+  remote's
+  transferred
+  balance and
+  pays the
+  recorded
+  recipient.
+- Remote
+  receive
+  requires
+  source ==
+  home
+  blockchain
+  and origin
+  == home
+  address,
+  then mints
+  to the
+  recorded
+  recipient.
+- Multi-hop
+  routes
+  through
+  home; zero
+  scaled
+  amount
+  refunds
+  `multiHopFallback`.
+
+Do not file
+transfer of
+the caller's
+tokens or
+Teleporter-
+gated
+withdraw to
+the recorded
+recipient.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+avalanchego /
+libevm /
+snowtrace
+bridged tokens
+(skip unless a
+small money
+path is
+isolated).
+
+## 2026-09-03: Berachain leftover webapps leftover
+
+Immunefi program
+`berachain-webapps`
+($10,000,
+`kyc: true`).
+Unique unused
+standing program
+(separate from
+`berachain`
+contracts
+leftovers).
+Listed assets
+are berachain.com
+/ honeypaper /
+ecosystem /
+safe /
+buildabera
+pages only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+website pages
+only.
+On-chain
+Berachain
+leftovers are
+already logged
+under
+`berachain`.
+
+## 2026-09-03: Ava Labs leftover website leftover
+
+Immunefi program
+`avalabs`
+($10,000,
+`kyc: true`).
+Unique unused
+standing program
+(separate from
+`avalanche`
+ICTT leftover).
+Listed assets
+are avax.network
+/ explorer /
+API / Core
+wallet store
+and Wallet SDK
+docs only (no
+in-scope
+ICTT contract
+URL on this
+slug).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+website / SDK
+pages only.
+
+## 2026-09-03: BlockPI leftover website leftover
+
+Immunefi program
+`blockpinetwork`
+($5,000,
+`kyc: false`).
+Unique unused
+standing program.
+Listed assets
+are blockpi.io
+and dashboard
+only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+website only.
+
+## 2026-09-03: Unstoppable leftover wallet leftover
+
+Immunefi program
+`unstoppablewallet`
+($1,000,
+`kyc: false`).
+Unique unused
+standing program.
+Listed assets
+are Apple /
+Play wallet
+store pages
+only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+mobile wallet
+store pages
+only.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -40167,6 +40433,22 @@ Ofza leftover website leftover
 (`ofza-1`; KYC) is logged;
 EdgeX leftover website leftover
 (`edgex`; KYC) is logged;
+Avalanche leftover ICTT
+TokenHome + TokenRemote leftover
+(`0b68b03`; KYC) is logged
+(remaining listed is avalanchego /
+libevm / snowtrace bridged tokens);
+Berachain leftover webapps leftover
+(`berachain-webapps`; KYC) is
+logged;
+Ava Labs leftover website leftover
+(`avalabs`; KYC) is logged;
+BlockPI leftover website leftover
+(`blockpinetwork`; no KYC) is
+logged;
+Unstoppable leftover wallet leftover
+(`unstoppablewallet`; no KYC) is
+logged;
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed

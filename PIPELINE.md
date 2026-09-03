@@ -4,13 +4,18 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~10:55 UTC. Dates verified against each
+Status as of 3 September 2026, ~11:00 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~10:55 UTC;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~11:00 UTC;
 246 programs; no Sep 2026 launches; Immunefi leftover ETH Splitter leftover is logged;
+Avalanche leftover ICTT TokenHome + TokenRemote leftover is logged;
+Berachain leftover webapps leftover is logged;
+Ava Labs leftover website leftover is logged;
+BlockPI leftover website leftover is logged;
+Unstoppable leftover wallet leftover is logged;
 Cosmos leftover solidity-ibc-eureka leftover is logged;
 1inch leftover infrastructure leftover is logged;
 Exodus leftover website leftover is logged;
@@ -219,6 +224,12 @@ Cosmos leftover solidity-ibc-eureka leftover is logged;
 Exodus leftover website leftover is logged;
 Ofza leftover website leftover is logged;
 EdgeX leftover website leftover is logged;
+Avalanche leftover ICTT TokenHome + TokenRemote leftover is logged;
+Berachain leftover webapps leftover is logged;
+Ava Labs leftover website leftover is logged;
+BlockPI leftover website leftover is logged;
+Unstoppable leftover wallet leftover is logged;
+Immunefi leftover ETH Splitter leftover is logged;
 Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
 KeeperHub
@@ -1027,6 +1038,26 @@ Ofza leftover website leftover
 (`ofza-1`; KYC) is logged.
 EdgeX leftover website leftover
 (`edgex`; KYC) is logged.
+Avalanche leftover ICTT
+TokenHome + TokenRemote leftover
+(`0b68b03`; KYC) is logged
+(remaining listed is avalanchego /
+libevm / snowtrace bridged tokens).
+Berachain leftover webapps leftover
+(`berachain-webapps`; KYC) is
+logged.
+Ava Labs leftover website leftover
+(`avalabs`; KYC) is logged.
+BlockPI leftover website leftover
+(`blockpinetwork`; no KYC) is
+logged.
+Unstoppable leftover wallet leftover
+(`unstoppablewallet`; no KYC) is
+logged.
+Immunefi leftover ETH Splitter leftover
+(Sourcify) is logged (listed SC leftover
+exhausted; remaining listed is websites
++ Primacy of Impact).
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
@@ -1797,6 +1828,19 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`ofza-1`; KYC),
   EdgeX leftover website leftover
   (`edgex`; KYC),
+  Avalanche leftover ICTT
+  TokenHome + TokenRemote leftover
+  (`0b68b03`; KYC),
+  Berachain leftover webapps leftover
+  (`berachain-webapps`; KYC),
+  Ava Labs leftover website leftover
+  (`avalabs`; KYC),
+  BlockPI leftover website leftover
+  (`blockpinetwork`; no KYC),
+  Unstoppable leftover wallet leftover
+  (`unstoppablewallet`; no KYC),
+  Immunefi leftover ETH Splitter leftover
+  (Sourcify),
   Serai leftover bitcoin-serai
   leftover (`4b89cf02`; KYC),
   Pragma leftover cairo oracle
