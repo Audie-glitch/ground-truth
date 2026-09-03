@@ -24473,6 +24473,154 @@ Base vaults Sourcify
 404. PoolAccountant
 and strategies are
 not listed assets.
+
+## 2026-09-03: Lido easy-track leftover factories leftover (`3183d1f`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Easy
+Track motion /
+payout leftover is
+already logged on
+the same pin. This
+slice is the leftover
+NO / MEV-relay /
+vault-hub /
+OperatorGrid / CSM
+settle factories.
+Local clone
+`/tmp/lido-easy-track`
+at `3183d1f`. No
+mainnet interaction.
+
+Files:
+`contracts/EVMScriptFactories/{Add,Activate,Deactivate}NodeOperators.sol`,
+`IncreaseNodeOperatorStakingLimit.sol`,
+`IncreaseVettedValidatorsLimit.sol`,
+`SetNodeOperator{Names,RewardAddresses}.sol`,
+`ChangeNodeOperatorManagers.sol`,
+`SetVettedValidatorsLimits.sol`,
+`UpdateTargetValidatorLimits.sol`,
+`{Add,Edit,Remove}MEVBoostRelays.sol`,
+`CSMSettleELStealingPenalty.sol`,
+`CSMSetVettedGateTree.sol`,
+`{Curated,SDVT}SubmitExitRequestHashes.sol`,
+`contracts/EVMScriptFactories/vaultFactories/{VaultsAdapter,ForceValidatorExitsInVaultHub,SocializeBadDebtInVaultHub,SetLiabilitySharesTargetInVaultHub,RegisterGroupsInOperatorGrid,RegisterTiersInOperatorGrid,AlterTiersInOperatorGrid,UpdateVaultsFeesInOperatorGrid,UpdateGroupsShareLimitInOperatorGrid,SetJailStatusInOperatorGrid}.sol`.
+
+Checked for: a
+stranger factory
+that builds a
+payout or staking-
+limit script for
+an attacker NO;
+VaultsAdapter
+`withdrawETH` /
+`forceValidatorExit`
+without the
+executor.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Trusted-caller
+  factories
+  (`Add/Activate/DeactivateNodeOperators`,
+  names / reward /
+  managers, MEV
+  relays, CSM
+  settle / vetted
+  tree, SDVT exit
+  hashes, vault-hub
+  / OperatorGrid)
+  require
+  `onlyTrustedCaller(_creator)`.
+  Easy Track stores
+  `keccak256(factory.createEVMScript(creator, calldata))`
+  and
+  `enactMotion`
+  recreates with
+  that same pair.
+- `IncreaseNodeOperatorStakingLimit`
+  is not a trusted
+  caller. Creator
+  must be the NO
+  `rewardAddress`.
+  Limit can only
+  rise and cannot
+  exceed
+  `totalSigningKeys`.
+- `IncreaseVettedValidatorsLimit`
+  allows the
+  reward address or
+  a
+  `MANAGE_SIGNING_KEYS`
+  manager for that
+  operator id.
+  Same limit
+  bounds.
+- `CuratedSubmitExitRequestHashes`
+  requires the
+  first request’s
+  NO reward
+  address ==
+  creator and
+  validates the
+  rest via
+  `SubmitExitRequestHashesUtils`.
+  Script only
+  calls
+  `submitExitRequestsHash`.
+- `VaultsAdapter`
+  mutators are
+  `evmScriptExecutor`
+  only.
+  `withdrawETH` and
+  `setValidatorExitFeeLimit`
+  are trusted
+  caller.
+  `receive()` is a
+  donation for
+  EIP-7002 fees.
+  Bad-debt
+  socialize
+  requires both
+  vaults share a
+  node operator.
+
+Do not file
+trusted-caller
+privilege, a NO
+raising its own
+vetted limit up
+to deposited keys,
+permissionless
+enact after the
+wait, or
+executor-only
+VaultsAdapter
+calls.
+
+Not submitted.
+Remaining
+in already-opened
+Lido trees:
+aragon-apps
+Voting /
+DisputableVoting /
+Agreement;
+dual-governance
+TiebreakerSubCommittee
+/ wrappers; CSM
+MerkleGateFactory /
+ValidatorStrikes /
+HashConsensus /
+MetaRegistry.
+Listed easy-track
+leftover factories
+are exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -24816,6 +24964,11 @@ leftover (`27e7d4e`) is
 logged (listed Lido
 aave-delivery leftover
 exhausted).
+Lido easy-track leftover
+factories leftover
+(`3183d1f`) is logged
+(listed easy-track leftover
+factories exhausted).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -25183,7 +25336,12 @@ Lido aave-delivery adapters
 leftover (`27e7d4e`) is
 logged (listed Lido
 aave-delivery leftover
-exhausted);
+exhausted).
+Lido easy-track leftover
+factories leftover
+(`3183d1f`) is logged
+(listed easy-track leftover
+factories exhausted);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
 rETH2 / Oracles /
