@@ -17612,6 +17612,129 @@ unstake, crank
 `create_canonical_stake`
 / delinquent upgrade.
 
+## 2026-09-03: Marinade admin / validator / update leftover (`b8fe3f8`)
+
+Immunefi program
+`marinade` ($250,000,
+`kyc: false`). User /
+LP and crank /
+withdraw-stake leftovers
+on pin `b8fe3f8` are
+already logged. This
+slice is admin config,
+validator management,
+and the remaining crank
+update / delinquent
+paths. Local clone
+`/tmp/marinade-lsp`.
+No mainnet interaction.
+
+Files:
+`instructions/admin/change_authority.rs`,
+`config_marinade.rs`,
+`config_lp.rs`,
+`config_validator_system.rs`,
+`initialize.rs`,
+`management/add_validator.rs`,
+`remove_validator.rs`,
+`set_validator_score.rs`,
+`emergency_unstake.rs`,
+`partial_unstake.rs`,
+`crank/update.rs`,
+`create_canonical_stake.rs`,
+`finalize_delinquent_upgrade.rs`.
+
+Checked for: a stranger
+changing admin /
+fees / authorities;
+validator add that
+skips the manager;
+emergency unstake that
+sends SOL to the
+caller; update that
+mints mSOL to a
+stranger or withdraws
+rewards off the reserve
+PDA.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `change_authority`,
+  `config_marinade`,
+  and `config_lp`
+  require
+  `admin_authority`.
+  Reward / delayed-
+  unstake / withdraw-
+  stake / deposit fees
+  are capped.
+  `config_lp`
+  re-validates min ≤
+  max. `min_deposit`
+  may be 0 or
+  `u64::MAX` (deposit
+  stop), documented.
+- Validator manager
+  (not a stranger)
+  adds / removes /
+  scores / emergency-
+  unstakes / partial-
+  unstakes.
+  Add creates a
+  0-space PDA flag.
+  Remove sends the
+  flag’s rent to
+  `operational_sol_account`
+  (`has_one`).
+  Emergency unstake
+  requires score 0,
+  listed stake +
+  vote, and
+  deactivates via the
+  deposit PDA. Partial
+  unstake is capped at
+  the validator’s
+  score target; unused
+  split rent returns
+  to the payer.
+- `initialize` takes
+  a zeroed state,
+  empty mSOL mint
+  with PDA mint
+  authority, and
+  reserve PDA bump.
+- Crank `update` is
+  permissionless.
+  Extra / deactivated
+  lamports withdraw
+  to the reserve PDA
+  via the withdraw
+  PDA. Protocol fee
+  mints mSOL to the
+  configured treasury
+  at the pre-update
+  price. Deactivated
+  rent goes to
+  `operational_sol_account`
+  only.
+- `finalize_delinquent_upgrade`
+  only walks the
+  upgrade cursor and
+  writes validator
+  active balances
+  back from the
+  snapshot. No SOL
+  leaves the program.
+
+Not submitted. Remaining
+Marinade listed GitHub
+is `create_canonical_stake`
+split / list-realloc
+details if a later
+tree adds them.
+
 ## 2026-09-03: Stader Penalty / PoolSelector / PoolUtils / Config leftover (`9d4a921`)
 
 Immunefi program
@@ -18327,14 +18450,15 @@ plus cp-swap leftover
 leftover exhausted);
 Marinade liquid-staking
 leftover (`b8fe3f8`) is
-logged (remaining
-Marinade is admin
-config / validator
-management / update /
-delinquent upgrade);
-Marinade crank /
+logged; Marinade crank /
 withdraw-stake leftover
-(`b8fe3f8`) is logged;
+and admin / validator /
+update leftover
+(`b8fe3f8`) are logged
+(listed Marinade leftover
+exhausted aside from
+`create_canonical_stake`
+split details);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
 dissolve / rewards /
