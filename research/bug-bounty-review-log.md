@@ -72366,3 +72366,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a snapshot-request background worker as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank.rs` / `status_cache` / `bank_forks`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Chainlink leftover remaining CCIP Solana leftover (`c73892d`)
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after CCIP EVM leftover / VRF leftover. Official `smartcontractkit/chainlink-ccip` `c73892d` (`c73892d4d33926195eee87b77013883e650a833c`). Opened listed `chains/solana/contracts/programs/{lockrelease-token-pool,burnmint-token-pool,ccip-offramp,ccip-router}/src/lib.rs` plus lockrelease `context.rs`. Extract `/tmp/ccip-sol/`. Do not rematch CCIP EVM leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `release_or_mint_tokens` that pays a stranger; `withdraw_liquidity` that drains the pool to the caller; `execute` that mints without an allowed offramp.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Lockrelease `TokenOfframp.authority` is the offramp PDA (`EXTERNAL_TOKEN_POOLS_SIGNER`). `allowed_offramp` must be a router-owned PDA for `(remote_chain_selector, offramp_program)`. `validate_release_or_mint` then rate-limits and RMN-curses before `release_tokens` to `release_or_mint.receiver`.
+- Onramp `lock_or_burn` requires `authority == state.config.router_onramp_authority`. Config / router / RMN / allow-list mutators are owner or upgrade-authority gated.
+- `withdraw_liquidity` / `provide_liquidity` require `authority == state.config.rebalancer` and `can_accept_liquidity`. Burnmint mint/burn uses the same validate helpers; mint authority transfer is owner/multisig path.
+- Offramp `commit` / `execute` / `manually_execute` take OCR report context. Router `ccip_send` is the sender-initiated lock path, not a stranger mint.
+
+Do not file a pool release as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink CCIP Sui / Aptos / chainlink-evm / OCR / core node / websites if still unused.
