@@ -111,9 +111,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   DeFi Saver V3 executor + FL + auth,
   exchangeV3 + sell, Morpho Blue, Liquity V2,
   Fluid T1 + Dex T2–T4, Aave V3 + GHO/Umbrella,
-  Comp V2/V3, Spark, Liquity V1, CurveUsd core +
-  advanced/transient, Euler V2, LlamaLend core
-  (`e623f20`),
+  Aave V4 + leftover Aave V2, Comp V2/V3, Spark,
+  Liquity V1, CurveUsd, Euler V2, LlamaLend,
+  Maker MCD, TxSaver, triggers, EtherFi / Lido
+  + leftover utils (`e623f20`),
   Jito interceptor (`dbd8ce4`) and restaking
   vault path (`db90840`),
   and Horizen ZenStaker (no submittable finding).

@@ -4339,6 +4339,105 @@ Result: no user-exploitable finding.
 DeFi Saver V3 treated as exhausted. Not
 submitted.
 
+## 2026-09-03: DeFi Saver leftover Aave V2 (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction. Aave V3 / V4 already
+logged; this is `contracts/actions/aave/`.
+
+Files: `contracts/actions/aave/{AaveSupply,
+AaveBorrow,AaveWithdraw,AavePayback,
+AaveCollateralSwitch,AaveClaimAAVE,
+AaveClaimStkAave,AaveUnstake}.sol`,
+`helpers/{AaveHelper,MainnetAaveAddresses}.sol`.
+`AaveSubProxy` only registers boost/repay
+bundles against hardcoded Aave V2 market
+`0xB53C…c5`.
+
+Checked for: borrow through a fake
+AddressesProvider that then
+`withdrawTokens` a caller-chosen amount;
+payback leftover that sweeps more than the
+unused pull; claim of another account’s
+stkAave rewards.
+
+Result: no user-exploitable finding.
+
+- `market` is an unvalidated
+  AddressesProvider. Borrow then
+  `withdrawTokens(tokenAddr, amount)` —
+  owner-or-bot fake-target, same class as
+  Comp / Spark. Withdraw sends via the
+  pool to `to` (max uses a `to`-balance
+  delta). The 1–2 wei faucet top-up is
+  hardcoded `DYDX_FL_FEE_FAUCET`.
+- Payback caps at `getWholeDebt`. After
+  repay it `withdrawTokens(_from,
+  tokensAfter)` — the entire remaining
+  wallet balance of that token, not only
+  unused pull. Recipe leftover footgun to
+  `from`, not a third-party extract.
+- Claims / unstake hit hardcoded stkAave
+  `0x4da2…0f5`. `amount == 0` on unstake
+  only starts cooldown.
+
+## 2026-09-03: DeFi Saver EtherFi + Lido + leftover utils (`e623f20`)
+
+Same program and clone.
+
+Files: `contracts/actions/etherfi/{EtherFiStake,
+EtherFiStakeFromLido,EtherFiWrap,EtherFiUnwrap}.sol`,
+`lido/{LidoStake,LidoWrap,LidoUnwrap}.sol`,
+`utils/{ExecuteCall,SendToken,SendTokens,
+PullToken,TransferNFT,ChangeProxyOwner,
+HandleAuth,PermitToken,TokenizedVaultAdapter,
+KingClaim,SDaiWrap,SDaiUnwrap}.sol`.
+
+Checked for: stake that sends more eETH /
+stETH than the deposit minted; Lido ETH
+call that a fake recipient can keep;
+ERC4626 vault that `withdrawTokens` of a
+requested amount; `ExecuteCall` that a
+strategy bot can aim at an arbitrary
+target; `KingClaim` of another wallet’s
+merkle allocation.
+
+Result: no user-exploitable finding.
+
+- EtherFi / Lido addresses are hardcoded
+  (eETH `0x35fA…ac2`, weETH `0xCd5f…b7ee`,
+  liquidity pool, deposit adapter, stETH /
+  wstETH). Stake / wrap send only the
+  received-balance delta. Lido stake/wrap
+  require the ETH call to succeed.
+  `StakeFromLido` approves the adapter and
+  passes an empty permit (`deadline =
+  max`); `minAmountOut` is user-set.
+- `TokenizedVaultAdapter` takes a
+  caller-chosen ERC4626. Deposit/mint pull
+  `vault.asset()`. A fake vault can keep
+  the pull — owner-or-bot. Redeem/withdraw
+  use the vault’s `from` allowance.
+  Slippage (`minOutOrMaxIn`) is checked.
+  Sky staked USDS uses a hardcoded vault +
+  referral on mainnet.
+- `ExecuteCall` / `SendToken*` /
+  `ChangeProxyOwner` are owner-or-bot
+  recipe primitives. `PermitToken` relays
+  an exact EIP-2612 signature and requires
+  the nonce to increment. `KingClaim`
+  claims for `address(this)` on hardcoded
+  `0x6Db2…B64` and sends the KING delta.
+  `SDaiWrap` deposits to hardcoded sDAI.
+
+Remaining DFS folders without a dedicated
+pass: `renzo`, `sky`, `pendle`, `yearn`,
+`summerfi`, `uniswap`, `insta`, `lsv`,
+`merkel`, `fee`, `checkers`, leftover
+utils (`CreateSub` / `UpdateSub` /
+`ToggleSub` / wrap-ETH). Not submitted.
+
 ## 2026-09-03: 0x Settler execute + Permit2 + RFQ/UniV3 (`1df9087`)
 
 Immunefi program `0x` ($1,000,000, `kyc: true`).
@@ -4477,8 +4576,12 @@ CurveUsd core, CurveUsd advanced/transient,
 Euler V2, LlamaLend core, LlamaLend leftover +
 swapper, Aave V4 sig/premium, Aave V4 money
 actions, Maker MCD, TxSaver leftover, and
-triggers (`e623f20`) are logged. DeFi Saver V3
-is exhausted. 0x Settler execute / Permit2 /
+triggers, leftover Aave V2, EtherFi / Lido,
+and leftover utils (`e623f20`) are logged.
+Remaining DFS folders: `renzo` / `sky` /
+`pendle` / `yearn` / `summerfi` / `uniswap`
+/ `insta` / `lsv` / `merkel` / `fee` /
+`checkers`. 0x Settler execute / Permit2 /
 RFQ / UniV3 / AllowanceHolder / BridgeSettler
 entry (`1df9087`) is logged; remaining 0x is
 per-DEX adapters and bridge adapters. Next
@@ -4492,7 +4595,7 @@ updated 2 Sep), Index Coop etherscan set
 `restaking_*` at `db90840` are exhausted),
 Enzyme Blue adapters added as etherscan
 addresses after Apr 2026 (Bebop / ThreeOneThird /
-SharesSplitter). Superteam API rechecked 04:05 UTC
+SharesSplitter). Superteam API rechecked 03:50 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
