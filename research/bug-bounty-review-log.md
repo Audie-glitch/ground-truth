@@ -68266,3 +68266,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a local SQLite event index as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner (actors wrappers / types / lib).
+
+## 2026-09-03: Jito leftover remaining priority-fee-distribution leftover (`ce1dfb6`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after mev-programs tip leftover. Official `jito-foundation/jito-programs` `ce1dfb6`. Opened listed `mev-programs/programs/priority-fee-distribution/src/{lib,state,merkle_proof}.rs`. Do not rematch tip-payment / tip-distribution leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `transfer_priority_fee_tips` pulling another wallet; `claim` paying a proof that does not bind `claimant` + amount; `close_priority_fee_distribution_account` sending leftovers to the cranker.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `initialize_priority_fee_distribution_account` requires the signer to be the vote account’s node pubkey. Config is a singleton; `update_config` is authority-only. `go_live_epoch` starts at `u64::MAX`.
+- `transfer_priority_fee_tips` is a signed `system_instruction::transfer` from `from` into the current-epoch PFDA. Before go-live it only increments `total_lamports_transferred` and returns (no pull).
+- `claim` verifies `hashv([0, hashv(claimant || amount)])` against the uploaded root, inits a once-only `CLAIM_STATUS` PDA, and caps `max_total_claim` / `max_num_nodes`. The upload authority must also sign. `close_priority_fee_distribution_account` after `expires_at` sends leftovers to `config.expired_funds_account` and rent to the validator vote account.
+
+Do not file a self-funded PFDA transfer as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` (if still unused).
