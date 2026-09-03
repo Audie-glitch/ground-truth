@@ -6211,6 +6211,145 @@ VeLista lock / airdrop. Extra
 Finance leftover listed Solidity is
 EXTRA token. Not submitted.
 
+## 2026-09-03: Lista leftover price-feed oracles (`fa5dfa5`)
+
+Same Immunefi program `listadao` ($1,000,000,
+`kyc: false`). Same clone
+`/tmp/reviews/lista-new-contracts` at
+`fa5dfa5`. Program text still
+excludes third-party oracle data
+(not oracle-manipulation / flash-loan
+attacks). No mainnet interaction.
+
+Files: `src/oracle/{LisAsterPriceFeed,
+wNLPPriceFeed,AtlasOracleAdaptor}.sol`,
+`src/oracle/priceFeed/sUSDSPriceFeed.sol`.
+
+Checked for: a feed that lets a
+caller set the answer; scale that
+wraps a negative Atlas price into
+a huge unsigned; wNLP / sUSDS rate
+that a stranger can inflate on-chain
+without touching the wrapper.
+
+Result: no user-exploitable finding.
+Not submitted.
+
+- LisAsterPriceFeed is
+  `ASTER * 0.8` from ResilientOracle
+  `peek`. No admin. `getRoundData`
+  stamps `block.timestamp`.
+- AtlasOracleAdaptor rescales 1e18
+  → 1e8. `ans <= 0` becomes 0
+  (ResilientOracle INVALID_PRICE).
+- wNLP and sUSDS multiply the
+  wrapper `convert` / `getNlpByWnlp`
+  rate by `peek(underlying)`. Rate
+  has no timestamp (documented).
+  Constructor / constants pin
+  addresses.
+
+Remaining Lista: VeLista lock /
+airdrop. Extra Finance leftover
+listed Solidity is EXTRA token.
+Not submitted.
+
+## 2026-09-03: Yearn stYFI July leftover (YBC / funding / bonus / team) (`69e262e`)
+
+Immunefi program `yearnfinance`
+($200,000, `kyc: false`). July 1
+2026 adds: Weight Aggregator
+`0x6973…ECd7`, YBC Weight
+Aggregator `0xADB7…8D9`, YBC
+`0xd6AF…B315`, YBC Reward
+Distributor `0x5310…bbe1`, YBC
+Election `0xe166…206C`, Bonus
+Recipient `0xf03a…9e4C`, Team
+Registry `0x9da4…2F29`, Team
+impl `0xa59B…BF43`, Team
+Accountant `0x1c22…DFD6`,
+Revenue Recipient `0x5B5A…9587`,
+Revenue Price Oracle
+`0xC1f9…E2E`, Funding
+Distributor `0xbCc9…116b`,
+Bonus Distributor `0xA660…1116`,
+Bonus Price Oracle `0x7e41…b416`,
+Staking Middleware
+`0x24b2…0A86`. Official tree
+[yearn/stYFI](https://github.com/yearn/stYFI)
+at `69e262e`. No mainnet
+interaction.
+
+Files: `contracts/ybc/{YBC,
+YBCElection,YBCRewardDistributor,
+YBCWeightAggregator,
+YBCBonusRecipient}.vy`,
+`contracts/{WeightAggregator,
+FundingDistributor,BonusDistributor,
+Team,TeamRegistry,TeamAccountant,
+RewardClaimer,RewardDistributor}.vy`.
+
+Checked for: YBC claim that pays
+the caller instead of the member
+without a claimer gate; election
+execute of a failed vote; funding
+claim by a non-team; bonus claim
+by a non-owner; RewardClaimer
+that claims a stranger’s
+components into the caller.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- YBC `add_member` /
+  `remove_member` are
+  `msg.sender == self` via
+  operator `call`. Election
+  execute is permissionless
+  only after the proposal
+  epoch + 1 and `_passed`.
+  Members cannot vote their
+  own expulsion.
+- YBCRewardDistributor
+  `claim` requires
+  `claimers[msg.sender]` and
+  pays the claimer. RewardClaimer
+  is the intended claimer: it
+  calls `claim(msg.sender)`
+  then transfers to
+  `_recipient` (default caller).
+- FundingDistributor `claim`
+  is `msg.sender == team` and
+  `registry.is_team`. Refund
+  does not unwind `used`.
+  Team `claim_funding` is
+  owner-only.
+  `return_funding` is
+  permissionless donate-back.
+- BonusDistributor `claim` is
+  `ITeam(_team).owner()`.
+  `finalize_period` is
+  operator-or-unset.
+- WeightAggregator hooks
+  require `depositors
+  [msg.sender]`. YBCWeightAggregator
+  member hooks require
+  `upstream_members`; stake
+  hooks require
+  `upstream_weights`.
+- RewardDistributor `claim`
+  pays `msg.sender` and
+  unpacks that caller as a
+  registered component.
+
+Remaining Yearn stYFI: Feb 2026
+core (StakedYFI / liquid lockers /
+veYFI distributor) if a later
+pass wants it. Twyne / Hashflow
+still unreviewed. Remaining
+Lista: VeLista lock / airdrop.
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -6305,10 +6444,13 @@ logged. Next unreviewed Immunefi
 GitHub-or-recent trees: Extra Finance
 EXTRA token; Twyne June-2026 wrappers
 (`aPT22Oct2026`, EVC) $50k no KYC;
-Hashflow factory/pool/router (8 Jun);
-Yearn stYFI (1 Jul, $200k, no KYC).
-Remaining Lista is
-oracles / VeLista lock / airdrop.
+Hashflow factory/pool/router (8 Jun).
+Yearn stYFI July leftover (YBC /
+funding / bonus / team, `69e262e`)
+is logged; remaining Yearn stYFI is
+Feb 2026 core if wanted. Remaining
+Lista is VeLista lock / airdrop
+(price-feed oracles logged).
 Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
