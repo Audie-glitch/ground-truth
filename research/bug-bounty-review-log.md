@@ -30128,6 +30128,271 @@ rows, and
 other-chain
 twins.
 
+## 2026-09-03: Veda leftover BoringVault leftover (Sourcify)
+
+Immunefi program
+`veda`
+($1,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+`exact_match`
+BoringVault
+`0xf0bb20865277aBd641a307eCe5Ee04E79073416C`,
+AccountantWithRateProviders
+`0xEa23aC6D7D11f6b181d6B98174D334478ADAe6b0`
++ sibling
+`0xc315D6e14DDCDC7407784e2Caf815d131Bc1D3E7`,
+BoringSolver
+`0xe3F8fa039fF7A8Fe42fA2C6e9DC8565EcE6f7042`,
+ManagerWithMerkleVerification
+`0xaFa8c08bedB2eC1bbEb64A7fFa44c604e7cca68d`,
+and BoringOnChainQueue
+`0x77A2fd42F8769d8063F2E75061FC200014E41Edf`.
+Several listed
+addresses Sourcify
+404. Extract
+`/tmp/veda-vault`
+/ `/tmp/veda-acct`
+/ `/tmp/veda-mgr`
+/ `/tmp/veda-queue`
+/ `/tmp/veda-solver`.
+No mainnet
+interaction.
+
+Files:
+`src/base/BoringVault.sol`,
+`src/base/Roles/AccountantWithRateProviders.sol`,
+`src/base/Roles/ManagerWithMerkleVerification.sol`,
+`src/base/Roles/BoringQueue/BoringOnChainQueue.sol`,
+`src/base/Roles/TellerWithMultiAssetSupport.sol`.
+
+Checked for: a
+stranger `enter` /
+`exit` of another
+user's shares;
+queue cancel /
+replace of
+someone else's
+request; solver
+fill that pays
+the caller;
+manager vault
+calls without a
+merkle proof.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- BoringVault
+  `enter` / `exit`
+  / `manage` are
+  `requiresAuth`
+  (MINTER /
+  BURNER /
+  MANAGER).
+  `enter`
+  `transferFrom`s
+  `from`; `exit`
+  burns `from`
+  and pays `to`.
+- Queue
+  `requestOnChainWithdraw`
+  / permit pull
+  `msg.sender`
+  shares and
+  queue that
+  sender.
+  Cancel /
+  replace
+  `onlyRequestUser(request.user, msg.sender)`
+  and refund
+  `request.user`.
+  `solveOnChainWithdraws`
+  is
+  `requiresAuth`;
+  it transfers
+  shares to the
+  solver then
+  `safeTransferFrom`s
+  assets from the
+  solver to each
+  `requests[i].user`.
+- Manager
+  `manageVaultWithMerkleVerification`
+  / flash loan are
+  `requiresAuth`.
+- Accountant
+  `updateExchangeRate`
+  / fee setters
+  `requiresAuth`;
+  `claimFees` must
+  be called by
+  the vault.
+- Teller
+  `deposit` /
+  `depositWithPermit`
+  are public
+  `requiresAuth`
+  and pull
+  `msg.sender`.
+  `refundDeposit`
+  / `bulkDeposit`
+  / `bulkWithdraw`
+  are role-gated.
+  ERC20 deposit
+  `enter`s from
+  `msg.sender`.
+
+Do not file
+auth-gated
+enter / exit,
+solver fill of
+matured requests
+to the request
+user, manager
+merkle-gated
+vault calls, or
+first-depositor
+share inflation.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH vault /
+accountant /
+manager / queue
+types is
+exhausted.
+Remaining listed:
+Sourcify-404 ETH
+rows and
+other-chain
+twins.
+
+## 2026-09-03: Immutable leftover RootERC20Bridge leftover (Sourcify)
+
+Immunefi program
+`immutable`
+($1,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+`exact_match`
+RootERC20BridgeFlowRate
+`0x177EaFe0f1F3359375B1728dae0530a75C83E154`
+behind proxy
+`0xBa5E35E26Ae59c7aea6F029B68c6460De2d13eB6`
+and
+RootAxelarBridgeAdaptor
+`0xE2E91C1Ae2873720C3b975a8034e887A35323345`
+behind proxy
+`0x4f49B53928A71E553bB1B0F66a5BcB54Fd4E8932`.
+Extract
+`/tmp/imm-bridge`
+/ `/tmp/imm-axelar`.
+No mainnet
+interaction.
+
+Files:
+`src/root/RootERC20Bridge.sol`,
+`src/root/flowrate/RootERC20BridgeFlowRate.sol`,
+`src/root/RootAxelarBridgeAdaptor.sol`.
+
+Checked for: a
+stranger deposit
+that spends
+another user's
+tokens; adaptor
+bypass on
+withdraw; queue
+finalise that
+pays the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `deposit` /
+  `depositETH`
+  pull
+  `msg.sender`
+  (or wrap WETH
+  from
+  `msg.sender`).
+  `depositTo` /
+  `depositToETH`
+  let the caller
+  name the child
+  receiver and
+  pay with the
+  caller's tokens.
+- `onMessageReceive`
+  is
+  `onlyBridgeAdaptor`.
+  Withdraw pays
+  `receiver` from
+  the decoded
+  payload.
+- Flow-rate
+  queue: large /
+  unknown /
+  activated
+  withdrawals
+  enqueue;
+  `finaliseQueuedWithdrawal(receiver, index)`
+  is
+  permissionless
+  after the delay
+  and pays that
+  `receiver`, not
+  the caller.
+- Axelar adaptor
+  `sendMessage`
+  is
+  `CallerNotBridge`;
+  `_execute`
+  requires the
+  registered child
+  chain + adaptor
+  then
+  `rootBridge.onMessageReceive`.
+
+Do not file
+permissionless
+finalise of a
+matured queued
+withdrawal to
+that receiver,
+adaptor-only
+withdraw, or
+admin
+rate-control.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH root-bridge
+types is
+exhausted.
+Remaining listed:
+other-chain /
+child-chain
+twins and
+Sourcify-404
+rows.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -31534,6 +31799,20 @@ TokenManager leftover
 RWADynamicOracle /
 SanityCheck / 404s /
 other-chain);
+Veda leftover BoringVault leftover
+(Sourcify BoringVault /
+AccountantWithRateProviders /
+ManagerWithMerkleVerification /
+BoringOnChainQueue / Teller;
+KYC) is logged (remaining
+listed is Sourcify-404 ETH
+rows / other-chain);
+Immutable leftover
+RootERC20Bridge leftover
+(Sourcify RootERC20BridgeFlowRate
+/ RootAxelarBridgeAdaptor; KYC)
+is logged (remaining listed is
+other-chain / child-chain twins);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

@@ -30,7 +30,9 @@ AdlHandler leftover is logged; GMX leftover
 V1 Avalanche twins leftover is logged;
 USDT0 leftover
 is logged; Ondo Finance leftover is logged;
-Hyperlane leftover is logged). KeeperHub
+Hyperlane leftover is logged; Veda leftover
+is logged; Immutable leftover is logged).
+KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -394,6 +396,16 @@ Ondo Finance leftover TokenManager leftover
 BasicRecipient; KYC) is logged
 (remaining listed is RWADynamicOracle /
 SanityCheck / 404s / other-chain).
+Veda leftover BoringVault leftover
+(Sourcify BoringVault / Accountant /
+Manager / Queue / Teller; KYC) is logged
+(remaining listed is Sourcify-404 ETH
+rows / other-chain).
+Immutable leftover RootERC20Bridge leftover
+(Sourcify RootERC20BridgeFlowRate /
+RootAxelarBridgeAdaptor; KYC) is logged
+(remaining listed is other-chain /
+child-chain twins).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -962,6 +974,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   KYC),
   Ondo Finance leftover
   TokenManager leftover
+  (Sourcify; KYC),
+  Veda leftover BoringVault leftover
+  (Sourcify; KYC),
+  Immutable leftover
+  RootERC20Bridge leftover
   (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
