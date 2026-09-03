@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~07:30 UTC. Dates verified against each
+Status as of 3 September 2026, ~07:50 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
@@ -120,9 +120,10 @@ Lido leftovers in already-opened trees
 are exhausted).
 Nexus Mutual cover / pool / staking leftover
 (`9e88562`) is logged. Nexus Mutual claims leftover
-(`9e88562`) is logged (remaining listed
-GitHub is Assessment / Ramm / LimitOrders /
-CoverBroker / legacy).
+(`9e88562`) is logged. Nexus Mutual leftover
+modules leftover (`9e88562`) is logged
+(remaining listed is governance + NFT /
+viewers).
 Hydration DCA leftover (`672e02f`) is logged.
 Hydration pool leftover (`672e02f`) is logged
 (remaining listed is liquidity-mining /

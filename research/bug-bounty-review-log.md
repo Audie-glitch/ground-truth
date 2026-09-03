@@ -25131,8 +25131,11 @@ Claims / Assessment
 / Ramm / LimitOrders
 / CoverBroker leftover
 is logged.
+Leftover modules leftover
+is logged.
 Remaining listed is
-legacy modules.
+governance + NFT /
+viewers.
 
 ## 2026-09-03: Nexus Mutual claims leftover (`9e88562`)
 
@@ -25226,7 +25229,11 @@ submitted.
 Not submitted.
 Remaining Nexus
 listed GitHub:
-legacy modules.
+leftover modules leftover
+is logged.
+Remaining listed is
+governance + NFT /
+viewers.
 ## 2026-09-03: dHEDGE leftover (Sourcify)
 
 Immunefi program
@@ -26109,9 +26116,13 @@ Nexus Mutual cover / pool /
 staking leftover (`9e88562`) is
 logged.
 Nexus Mutual claims leftover
+(`9e88562`) is logged.
+Nexus Mutual leftover
+modules leftover
 (`9e88562`) is logged
 (remaining listed is
-legacy modules).
+governance + NFT /
+viewers).
 Hydration DCA leftover
 (`672e02f`) is logged.
 Hydration pool leftover
@@ -26527,9 +26538,13 @@ Nexus Mutual cover / pool /
 staking leftover (`9e88562`) is
 logged.
 Nexus Mutual claims leftover
+(`9e88562`) is logged.
+Nexus Mutual leftover
+modules leftover
 (`9e88562`) is logged
 (remaining listed is
-legacy modules).
+governance + NFT /
+viewers).
 Hydration DCA leftover
 (`672e02f`) is logged.
 Hydration pool leftover
@@ -26713,3 +26728,186 @@ Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub
 implementation before the 6 Sep build window. No
 ETHOnline project code before 4 Sep 16:00 UTC.
+
+## 2026-09-03: Nexus Mutual leftover modules leftover (`9e88562`)
+
+Immunefi program
+`Nexus Mutual`
+($25,000, `kyc: false`).
+Cover / pool / staking
+and Claims / Assessments /
+Ramm / LimitOrders /
+CoverBroker leftovers
+are already logged.
+This slice is leftover
+modules plus TokenController,
+CoverProducts, SwapOperator,
+SafeTracker, and NXMToken.
+Local clone
+`/tmp/nexusmutual` at
+`9e88562` (“feat: symbiotic
+setup and slash tests
+(#1507)”). No mainnet
+interaction.
+
+Files:
+`contracts/modules/legacy/LegacyClaimProofs.sol`,
+`contracts/modules/legacy/LegacyMCR.sol`,
+`contracts/modules/legacy/LegacyAssessment.sol`,
+`contracts/modules/legacy/LegacyClaimsData.sol`,
+`contracts/modules/legacy/LegacyMemberRoles.sol`,
+`contracts/modules/token/TokenController.sol`,
+`contracts/modules/token/NXMToken.sol`,
+`contracts/modules/cover/CoverProducts.sol`,
+`contracts/modules/capital/SwapOperator.sol`,
+`contracts/modules/capital/SafeTracker.sol`.
+
+Checked for: a
+stranger
+`unstakeAllForBatch`
+that steals NXM;
+`withdrawRewards` to
+the caller;
+`mint` / `operatorTransfer`
+without a listed
+module; `placeOrder`
+without a governor
+swap request;
+`transferAssetToSafe`
+from a stranger;
+`setProducts` without
+the advisory board.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `LegacyClaimProofs.addProof`
+  only emits
+  `ProofAdded`.
+- `LegacyMCR.updateMCR`
+  is permissionless
+  and only writes
+  the MCR snapshot.
+  `updateMCRInternal`
+  is `onlyInternal`.
+- `LegacyAssessment.stake`
+  pulls NXM from
+  `msg.sender`.
+  `unstake` pays
+  `to` from the
+  caller’s stake.
+  `unstakeAllFor` is
+  TokenController
+  only.
+  `unstakeAllForBatch`
+  is permissionless
+  but always pays
+  each listed
+  staker, not the
+  caller.
+  `STAKE_LOCKUP_PERIOD`
+  is a view-only
+  leftover constant
+  and is not a
+  theft path.
+  `withdrawRewards`
+  mints to the
+  staker.
+  `withdrawRewardsTo`
+  mints to a
+  destination chosen
+  by the staker.
+  `startAssessment`
+  is `onlyInternal`.
+  `castVotes` is
+  `onlyMember`.
+  `submitFraud` is
+  governance.
+  `processFraud`
+  needs a stored
+  merkle root.
+- `LegacyClaimsData`
+  writers are
+  `onlyInternal`
+  except
+  `setUserClaimVotePausedOn`
+  and
+  `updateUintParameters`,
+  which require
+  governance.
+- `LegacyMemberRoles.switchMembership`
+  moves the caller’s
+  NXM to
+  `newAddress`.
+  `migrateMembers`
+  only copies
+  already-stored
+  members into the
+  registry.
+  `recoverETH` sends
+  ETH to the Pool.
+- TokenController
+  `operatorTransfer`
+  is Cover only.
+  `burnFrom` is
+  Cover / Ramm.
+  `mint` is Ramm
+  only and only
+  to a member.
+  `switchMembership`
+  is Registry only.
+  `withdrawNXM`
+  calls
+  `stakingPool.withdraw`
+  with the caller’s
+  token ids.
+  Ownership offers
+  are the current
+  manager / proposed
+  manager.
+  Reward and stake
+  mint / burn /
+  deposit / withdraw
+  are the matching
+  staking pool.
+- NXMToken `mint` /
+  `operatorTransfer` /
+  whitelist writes
+  are `onlyOperator`.
+  `burn` burns
+  `msg.sender`.
+  `burnFrom` uses
+  allowance.
+- CoverProducts
+  product / type
+  writes are
+  `onlyAdvisoryBoard`.
+- SwapOperator
+  `requestAssetSwap`
+  is Governor.
+  `placeOrder` /
+  `closeOrder` /
+  Enzyme swaps /
+  `recoverAsset` are
+  `onlyController`.
+  Supported recoveries
+  go to the Pool.
+- SafeTracker
+  `updateCoverReInvestmentUSDC`
+  is the Safe.
+  `transferAssetToSafe`
+  is Governor.
+  `transfer` /
+  `transferFrom` only
+  emit when
+  `amount == 0` or
+  the caller is the
+  Pool.
+
+Not submitted.
+Remaining Nexus
+listed GitHub:
+governance + NFT /
+viewers.
