@@ -67983,3 +67983,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a template-driven genesis builder as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Aave leftover remaining protocol-v2 Configurator leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after CollateralManager leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `contracts/protocol/lendingpool/LendingPoolConfigurator.sol`. Do not rematch LendingPool / AddressesProvider leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `batchInitReserve` / `configureReserveAsCollateral` without pool admin; LTV > threshold listing that instant-liquidates; `setPoolPause` without emergency admin.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `onlyPoolAdmin` requires `addressesProvider.getPoolAdmin() == msg.sender`. That gate covers init / token upgrades / borrow enable / collateral params / freeze / reserve factor / IR strategy. `setPoolPause` is `onlyEmergencyAdmin`.
+- `configureReserveAsCollateral` requires `ltv <= liquidationThreshold`. If threshold != 0, bonus must be `> 100%` and `threshold * bonus <= 100%`. Disabling collateral (threshold 0) or `deactivateReserve` calls `_checkNoLiquidity` (aToken underlying balance 0 and liquidity rate 0).
+- Token proxies are `InitializableImmutableAdminUpgradeabilityProxy` with this configurator as admin. This contract does not move user tokens.
+
+Do not file an admin-gated v2 configurator as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: v2 AToken / debt tokens / v2 AaveOracle.
+
