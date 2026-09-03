@@ -9797,6 +9797,110 @@ DeltaSwap + May 2026
 vault leftover are
 logged. Not submitted.
 
+## 2026-09-03: Zest Protocol V2 market + vault leftover (`f2fce52`)
+
+Immunefi program
+`zest-protocol-v2`
+($100,000, `kyc: false`,
+Clarity / Stacks). Listed
+Hiro principals under
+`SP1A27…ADJ7`:
+`v0-6-market` (newest
+listed market),
+`v0-market-vault`,
+`v0-assets`, `v0-egroup`,
+six `v0-vault-*`
+(sBTC / STX / stSTX /
+USDC / USDH / stSTXbtc)
+plus DAO executor /
+multisig / treasury.
+Official
+`Zest-Protocol/zest-v2-contracts`
+`f2fce52` (2026-09-02)
+has `v0-8-market` as the
+current tree. Hiro
+`v0-6-market` source
+pulled read-only
+(`/tmp/zest-v06.json`).
+Repo extract under
+`/tmp/zest-v2`. No
+mainnet interaction.
+
+Files:
+`mainnet/contracts/market/{v0-8-market,v0-market-vault}.clar`,
+`vault/v0-vault-sbtc.clar`,
+Hiro `v0-6-market.clar`.
+
+Checked for: collateral
+add that credits a
+stranger; remove that
+pays a non-owner;
+`borrow` without a
+health check; `repay`
+that writes off another
+account without a pull;
+`liquidate` of a healthy
+or same-block borrower;
+vault `system-borrow`
+without market auth.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `collateral-add` /
+  `supply-collateral-add`
+  / `repay` /
+  `liquidate` require
+  `contract-caller ==
+  tx-sender`. Account is
+  `contract-caller`.
+  Vault `receive-tokens`
+  pulls that account.
+- `collateral-remove` /
+  `borrow` credit an
+  optional receiver but
+  still debit
+  `contract-caller`.
+  Borrow and remove
+  check egroup LTV
+  after the change.
+- Market-vault money
+  paths are
+  `check-impl-auth`
+  (`contract-caller ==
+  impl`). `set-impl` is
+  `dao-executor`.
+- Vault
+  `system-borrow` /
+  `system-repay` are
+  `check-caller-auth`
+  (authorized-contract
+  map, DAO-set). Caps
+  bind available assets
+  and `CAP-DEBT`.
+- Liquidation requires
+  `current-ltv >=
+  LTV-LIQ-PARTIAL`,
+  rejects
+  `last-borrow-block ==
+  stacks-block-height`,
+  then repay + seize
+  with `min-collateral-
+  expected`. Same-block
+  oracle borrow is
+  blocked. v0-6 Hiro
+  source has the same
+  auth / same-block /
+  healthy gates.
+
+Remaining Zest leftover:
+DAO executor / multisig
+/ treasury and the
+zvstBTC strategy vault
+(in-repo, not a listed
+Hiro row). Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -9944,7 +10048,13 @@ Immunefi ENS audit
 competition (web-only,
 KYC, ends 14 Sep) is
 out of this track.
-Next
+Zest Protocol V2
+`v0-6-market` +
+market-vault + sBTC vault
+(`f2fce52` / Hiro) are
+logged. Remaining Zest is
+DAO + zvstBTC strategy
+vault. Next
 unreviewed Immunefi
 GitHub-or-recent trees:
 Olympus V1Migrator + Cooler
