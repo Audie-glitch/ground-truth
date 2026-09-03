@@ -25613,10 +25613,11 @@ EVM leftover is
 logged.
 Leftover pallets leftover
 is logged.
-Remaining listed is
-adapters / fees /
-oracle / tx-payment /
-xcm-rate-limiter.
+Leftover adapters leftover
+is logged (listed
+Hydration leftover that
+a public tree would
+open is exhausted).
 
 ## 2026-09-03: Velvet Capital leftover (Sourcify)
 
@@ -25920,10 +25921,11 @@ Not submitted.
 Hydration leftover
 pallets leftover is
 logged.
-Remaining listed is
-adapters / fees /
-oracle / tx-payment /
-xcm-rate-limiter.
+Leftover adapters leftover
+is logged (listed
+Hydration leftover that
+a public tree would
+open is exhausted).
 
 ## 2026-09-03: Beefy Finance leftover (Sourcify)
 
@@ -26578,11 +26580,14 @@ Hydration EVM leftover
 (`672e02f`) is logged.
 Hydration leftover
 pallets leftover
+(`672e02f`) is logged.
+Hydration leftover
+adapters leftover
 (`672e02f`) is logged
-(remaining listed is
-adapters / fees /
-oracle / tx-payment /
-xcm-rate-limiter).
+(listed Hydration leftover
+that a public tree
+would open is
+exhausted).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
@@ -27019,11 +27024,14 @@ Hydration EVM leftover
 (`672e02f`) is logged.
 Hydration leftover
 pallets leftover
+(`672e02f`) is logged.
+Hydration leftover
+adapters leftover
 (`672e02f`) is logged
-(remaining listed is
-adapters / fees /
-oracle / tx-payment /
-xcm-rate-limiter).
+(listed Hydration leftover
+that a public tree
+would open is
+exhausted).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
@@ -27625,6 +27633,116 @@ submitted.
 Not submitted.
 Remaining Hydration
 listed GitHub:
-adapters / fees /
-oracle / tx-payment /
+leftover adapters leftover
+is logged (listed
+Hydration leftover that
+a public tree would
+open is exhausted).
+
+## 2026-09-03: Hydration leftover adapters leftover (`672e02f`)
+
+Immunefi program
+`Hydration`
+($222,222, `kyc: false`).
+DCA, pool, staking,
+EVM, and leftover
+pallets leftovers are
+already logged. This
+slice is leftover
+listed adapters /
+fees / oracle /
+tx-payment /
 xcm-rate-limiter.
+Local sparse clone
+`/tmp/hydration-node`
+at `672e02f`. No
+mainnet interaction.
+
+Files:
+`pallets/dynamic-fees/src/lib.rs`,
+`pallets/dynamic-evm-fee/src/lib.rs`,
+`pallets/ema-oracle/src/lib.rs`,
+`pallets/transaction-multi-payment/src/lib.rs`,
+`pallets/transaction-pause/src/lib.rs`,
+`pallets/xcm-rate-limiter/src/lib.rs`,
+`runtime/adapters/src/lib.rs`,
+`runtime/adapters/src/xcm_exchange.rs`,
+`runtime/adapters/src/price.rs`.
+
+Checked for: a
+stranger
+`set_asset_fee` or
+`set_external_oracle`
+that rewrites
+prices; `set_currency`
+that changes another
+account; unsigned
+`dispatch_permit`
+without a valid
+signature that
+spends someone
+else.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Dynamic-fees
+  `set_asset_fee` /
+  `remove_asset_fee`
+  are
+  `AuthorityOrigin`.
+  Dynamic EVM fee
+  has no public
+  calls.
+- EMA oracle
+  whitelist /
+  register /
+  authorize writes
+  are
+  `AuthorityOrigin`.
+  `set_external_oracle`
+  needs
+  `AuthorizedAccounts`
+  for that
+  `(source, pair)`.
+- `set_currency`
+  writes only the
+  signer.
+  `add_currency` /
+  `remove_currency`
+  /
+  `reset_payment_currency`
+  are
+  `AcceptedCurrencyOrigin`.
+  Unsigned
+  `dispatch_permit`
+  validates the
+  permit first and
+  charges `from`.
+  Signed
+  `dispatch_permit`
+  is a paymaster
+  and still
+  validates the
+  permit.
+- Transaction-pause
+  is `UpdateOrigin`.
+  XCM rate-limiter
+  has no
+  extrinsics.
+- Adapters are
+  runtime hooks.
+  `XcmAssetExchanger`
+  trades from the
+  configured temp
+  account after the
+  XCM executor
+  deposits `give`.
+
+Not submitted.
+Listed Hydration
+leftover that a
+public tree would
+open is exhausted.

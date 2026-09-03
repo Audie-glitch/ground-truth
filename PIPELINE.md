@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~07:50 UTC. Dates verified against each
+Status as of 3 September 2026, ~07:55 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
@@ -130,9 +130,10 @@ Hydration pool leftover (`672e02f`) is logged.
 Hydration staking leftover (`672e02f`) is
 logged. Hydration EVM leftover (`672e02f`)
 is logged. Hydration leftover pallets leftover
-(`672e02f`) is logged (remaining listed is
-adapters / fees / oracle / tx-payment /
-xcm-rate-limiter).
+(`672e02f`) is logged. Hydration leftover
+adapters leftover (`672e02f`) is logged
+(listed Hydration leftover that a public
+tree would open is exhausted).
 Beefy Finance leftover (Sourcify Polygon
 vault / strategy sample) is logged.
 StakeWise Mainnet leftover (Sourcify
