@@ -2542,6 +2542,142 @@ Result: no user-exploitable finding.
   Withdraw sends only if idle USDC covers the
   request; otherwise it tries 4626 withdraw first.
 
+## 2026-09-03: Lombard mailbox admin + consortium valset (`09d5e76`)
+
+Same Lombard Finance program and clone as the token_pool /
+ratio_oracle pass above. This pass only covers leftover
+admin paths that that write-up did not list.
+
+Files: `programs/mailbox/src/instructions/{enable_inbound_message_path,admin}.rs`,
+`programs/consortium/src/instructions/update_valset.rs`,
+`utils/session_payloads.rs` (`UpdateValSetPayload` +
+`validate_valset`).
+
+Result: no user-exploitable finding.
+
+- Inbound-path enable and treasury / fee / pause-unpause
+  are admin-only `init` / config writes.
+- `update_valset` requires a current-epoch
+  `ValidatedPayload`, hash-matching session payload,
+  `epoch == current+1`, incrementing height, unique
+  non-zero weights, and `sum(weights) >= threshold`.
+  Trusted notary set.
+
+Not submitted. Payouts need Immunefi KYC.
+
+## 2026-09-03: Sky FarmOwner (`dss-flappers` `6f3c910` / `beam`)
+
+Immunefi Sky ($10,000,000, no KYC). In-scope 17 Aug add
+`FarmOwner.sol` (paired with already-reviewed `SBEBeam`).
+Local clone `/tmp/reviews/dss-flappers` at `6f3c910`.
+No mainnet interaction.
+
+File: `src/FarmOwner.sol`.
+
+Checked for: a non-ward calling farm admin; recovered
+tokens stranded or sent to the caller; ownership escape
+without a ward.
+
+Result: no user-exploitable finding.
+
+- Every forwarded farm method is `auth` (`wards==1`).
+  Constructor relies the deployer. `rely` / `deny` are
+  ward-gated.
+- `recoverERC20` pulls to this contract (the farm owner)
+  then `transfer`s `tokenAmount` to ward-chosen `to`.
+  Comment documents no fee-on-transfer. Pre-existing
+  dust of the same token would ride along or cause the
+  transfer to fail — trusted ward, not an external
+  drain.
+- `nominateNewOwner` / `acceptOwnership` can move farm
+  ownership off this adapter. Trusted wards (Pause
+  Proxy / SBEBeam).
+
+Not submitted.
+
+## 2026-09-03: Alchemix V3 core money paths (`ea6f58b`)
+
+Immunefi program `alchemix-1` ($150,000 USDC, `kyc:
+false`, live). Scope is
+`github.com/alchemix-finance/v3/tree/master/src`
+(added 6 Apr 2026). The 2025 audit competition is
+closed; this is the standing bounty. Local clone
+`/tmp/reviews/alchemix-v3` at `ea6f58b`. No mainnet
+interaction.
+
+Files: `AlchemistV3.sol` (`deposit`, `withdraw`,
+`mint` / `mintFrom`, `burn`, `repay`, `liquidate` /
+`batchLiquidate` / `_doLiquidation` /
+`calculateLiquidation`, `redeem`, `selfLiquidate`,
+`_earmark`, `_sync`, `_computeUnrealizedAccount`,
+`_addDebt` / `_subDebt` / `_subCollateralBalance`,
+converters), `Transmuter.sol` (create / claim /
+pokeMatured), `AlTokenV3.sol` (`burn` / `burnFrom`),
+`AlchemistTokenVault.sol`.
+
+Checked for: a deposit that credits without a transfer;
+withdraw past the min-collateral lock; mint without an
+NFT owner / allowance; same-block mint-repay; burn of
+earmarked debt that starves the transmuter; repay that
+fees a third party into insolvency; liquidation of a
+healthy account or seizure above realized collateral;
+permissionless `redeem`; transmuter claim that over-
+redeems the alchemist; alUSD burnFrom without allowance.
+
+Result: no exploitable finding on this pass.
+
+- `deposit` writes collateral then `transferFrom`. Cap
+  is `_mytSharesDeposited + amount`. `tokenId == 0`
+  mints an NFT to `recipient`; a non-zero id accepts
+  donated MYT (no owner check). Donation cannot mint
+  debt.
+- `withdraw` is NFT-owner only, earmarks + syncs, locks
+  `mulDivUp(debtShares, minimumCollateralization, 1e18)`,
+  then `_validate`. The
+  `collateralBalance > _mytSharesDeposited` clamp only
+  fires when one account already exceeds global tracked
+  shares (prior insolvency / drift).
+- `mint` / `mintFrom` owner-or-allowance; `_addDebt`
+  requires `collateralValue >= mulDivUp(newDebt, minCR,
+  1e18)`. Same-block mint↔repay/burn is blocked both
+  ways. `burn` only hits unearmarked debt and caps at
+  `totalSyntheticsIssued - transmuter.totalLocked()`.
+- `repay` can target any position. Protocol fee is taken
+  from the position’s collateral on the earmarked slice
+  only (`fee < earmarkedYield` while debt drops by the
+  full credit), so a grief-repay cannot push a
+  min-CR position under the lock by fee alone. Pulled
+  MYT goes to the transmuter; fee MYT from the position
+  goes to `protocolFeeReceiver`.
+- `liquidate` no-ops on a healthy account (`CR >
+  collateralizationLowerBound`) or a zero-price MYT
+  share. Earmarked debt is force-repaid from the
+  account first. `_doLiquidation` clamps seize / debt
+  burn to realized shares and `account.debt`. Residual
+  unhealthy + zero collateral uses `_clearableDebt`.
+  Liquidator fee is taken from seized MYT or the fee
+  vault, never minted.
+- `redeem` is `onlyTransmuter`. Survival / earmark
+  weights are Q128 packed; `amount` is capped to live
+  earmarked. Fee is skipped if tracked MYT cannot cover
+  it.
+- Transmuter `createRedemption` locks synthetics under
+  both `depositCap` and `alchemist.totalSyntheticsIssued`.
+  `claimRedemption` is owner-only, not same-block, burns
+  the NFT, scales by an up-rounded bad-debt ratio, redeems
+  only the shortfall vs already-held MYT, and returns
+  leftover synthetics on shortfall. `pokeMatured` only
+  frees the active cap.
+- `AlTokenV3.burnFrom` deducts allowance unless
+  `msg.sender == account`, then optional xERC20 burner
+  limits. Token vault: anyone deposits, only authorized
+  withdraws.
+
+Remaining Alchemix `src/`: `strategies/`, `adapters/`,
+`router/`, `MYTStrategy`, `AlchemistETHVault`,
+`AlchemistAllocator`, `AlchemistGate`, `StakingGraph`.
+
+
 Not submitted.
 
 ## 2026-09-03: Origin ARM CapManager + Morpho/Silo 4626 wrappers (`2322537`)
@@ -2638,7 +2774,7 @@ Not submitted.
 
 ## Next candidates
 
-Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
+Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
 the full `diamond-pau` facet tree at `1b6743a`,
 Intuition MultiVault / AtomWallet / curves / emissions /
 registry / `TrustSwapAndBridgeRouter` (`bb34cc2`),
@@ -2649,23 +2785,26 @@ adapters + zappers, Origin ARM CapManager + Morpho/Silo
 4626 wrappers, Origin xOGN ExponentialStaking
 (`eff0d3d`), Origin CrossChain master/remote
 (`4fa0602`), Lombard SVM asset_router / bridge /
-bascule / mailbox / `lombard_token_pool` /
-`ratio_oracle` (`09d5e76`), Leather extension RPC /
-PSBT approval, OZ Confidential v0.5.3 including
-hooked/votes/omnibus/observer/cap modules (`4a4f6c7`),
-and Money on Chain V2 core/queue/V4 swapper
-(`d770477`) are exhausted. Origin in-scope Solidity
-listed as remaining is exhausted. Remaining MoC:
-governance machines and live Rootstock v1 proxies if
-a later pass wants addresses rather than the V2 tree.
-Superteam API rechecked 03:25 UTC 3 Sep: still 28
-open listings.
+bascule / mailbox / token_pool / ratio_oracle / valset
+(`09d5e76`), Leather extension RPC / PSBT approval, OZ
+Confidential v0.5.3 including hooked/votes/omnibus/
+observer/cap modules (`4a4f6c7`), Money on Chain V2
+core/queue/V4 swapper (`d770477`), Sky FarmOwner, and
+Alchemix V3 alchemist + transmuter + alUSD + token-vault
+are exhausted. Origin in-scope Solidity listed as
+remaining is exhausted. Remaining Alchemix: strategies /
+adapters / router / MYT / ETH vault / StakingGraph.
+Remaining MoC: governance machines and live Rootstock
+v1 proxies if a later pass wants addresses rather than
+the V2 tree. Superteam API rechecked 03:25 UTC 3 Sep:
+still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the
 participant's PR, Mermail MCP, and X demo. T3N Vendor
 Receipts is built (`t3n-vendor-receipts/`); remaining
 work is Terminal 3 SSO. NectarFi is a creator campaign.
+Manic $1k bug bounty is `HUMAN_ONLY`.
 the402.ai still paused. 1inch Fusion settlement /
 whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
 Remaining OZ hooks: none of the money-moving
@@ -2673,16 +2812,20 @@ general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
 file theoretical reports. USDT0’s 1 Sep add is Stellar
 explorer, not a Solidity GitHub tree. Sherlock
-`https://audits.sherlock.xyz/api/contests` has 301
-items; the only non-FINISHED row as of 03:01 UTC 3 Sep
-is contest `1234` (Tare) in `SHERLOCK_JUDGING`.
-Hedera Harness #8 still `open`, 0 comments, 0 HOL-Guard
-PRs; file-level plan is in
+`https://audits.sherlock.xyz/api/contests` is paginated
+(301 items); pages 1–5 as of 03:13 UTC 3 Sep show the
+only non-FINISHED row as contest `1234` (Tare) in
+`SHERLOCK_JUDGING`. Code4rena API: 25 audits, 24
+`Completed`, 1 `Reporting` (Rujira, window ended Jan
+2026). Hedera Harness #8 still `open`, 0 comments, 0
+HOL-Guard PRs; file-level plan is in
 `research/ethonline-hedera-harness-8.md` (read-only
 clone `/tmp/hedera-harness` at `e045b10`). Rechecked
 03:20 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
-CreditPassport deployer still 0 Sepolia ETH / 0 tCTC.
-No KeeperHub implementation before the 6 Sep build
-window. No ETHOnline project code before 4 Sep 16:00
-UTC.
+CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
+official CTC HTML still blocked by DoraHacks “Human
+Verification” (last good count 47 BUIDLs / 203 hackers,
+deadline 13 Sep 2026 23:59 ET). No KeeperHub
+implementation before the 6 Sep build window. No
+ETHOnline project code before 4 Sep 16:00 UTC.

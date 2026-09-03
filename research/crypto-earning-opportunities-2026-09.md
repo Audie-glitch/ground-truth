@@ -1,6 +1,6 @@
 # Verified crypto earning opportunities
 
-**Checked:** 3 September 2026 03:07 UTC (DoraHacks CTC + KeeperHub #2105 + Lombard SVM mint/GMP)  
+**Checked:** 3 September 2026 03:13 UTC (DoraHacks CTC + KeeperHub #2105 + Lombard leftover SVM + Alchemix V3)  
 **Scope:** Legitimate, no-capital developer work that can pay crypto or stablecoins. Competitive prizes are not guaranteed income.
 
 ## Ranked opportunities
@@ -19,7 +19,7 @@
 ## Dead ends checked
 
 - [OnlyDust](https://app.onlydust.com/) has closed.
-- Code4rena’s public audits list (22:56 UTC 2 Sep): 25 audits, 24 `Completed`, one `Reporting` (Rujira, window ended 16 Jan 2026). No live contest. Cantina’s competitions page timed out / has no public JSON API.
+- Code4rena’s public audits list (03:13 UTC 3 Sep): 25 audits, 24 `Completed`, one `Reporting` (Rujira, window ended 16 Jan 2026). No live contest. Cantina’s competitions page timed out / has no public JSON API.
 - Gitcoin has no currently verified open application round.
 - Bountycaster's current developer filter returned no open posts.
 - Superteam search results that appeared active were historical pages marked completed.
@@ -29,7 +29,7 @@
 - [the402.ai](https://api.the402.ai/health) (22:56 UTC 2 Sep): still `status=paused` for “compliance review” since 2026-08-02. Escrow/subscription crons last succeeded 2 Aug.
 - [BountyBook](https://www.bountybook.ai/) (22:52 UTC 2 Sep): early-beta x402 board on Base, **0 open** tasks. Auth is a wallet signature. Experimental; do not deposit funds. Not executable without a wallet and an open bounty.
 - Superteam HUMAN_ONLY rechecked from listing HTML at 22:34 UTC: Sana.run QA is manual testing of a trading terminal, perps, and a Visa card (needs the participant’s accounts). FairScale is an X quote-tweet campaign due 3 Sep. Mermail still needs a GitHub PR plus an X video.
-- Sherlock contests API (23:03 UTC 2 Sep): 50 contests across 5 pages, 49 `FINISHED`, 1 `SHERLOCK_JUDGING` (Tare). No live contest.
+- Sherlock contests API (03:13 UTC 3 Sep): paginated, 301 total; pages 1–5 still show only `1234` Tare in `SHERLOCK_JUDGING`. No live contest.
 - [Drips Stellar Wave](https://www.drips.network/wave/stellar) (23:04 UTC): “There are no active or upcoming Waves at the moment.” Past waves 1–8 only. Needs GitHub + KYC + a Stellar wallet anyway.
 - [SolFoundry](https://github.com/SolFoundry/solfoundry) open “issues” are a pile of PRs stuffing the same Solana address into titles. Not a credible payout path. Do not add another PR; this VM has no `gh` login.
 - Daydreams TaskMarket / Agoragentic / Dework (gigs.sh, rechecked 23:03 UTC): docs or APIs exist, but each requires a funded Base/EVM wallet this VM does not have. Do not generate a deposit key here.
@@ -45,7 +45,7 @@ Repository state changes quickly. Recheck issues and pull requests before claimi
 
 | Candidate | Evidence on Sep 2 | Decision |
 | --- | --- | --- |
-| [#2105: OpenAPI workflow-call response examples](https://github.com/keeperhub/keeperhub/issues/2105) | Rechecked 02:34 UTC 3 Sep: issue still `open` + `accepted` + `confirmed`. GitHub search `repo:KeeperHub/keeperhub 2105 type:pr` returned **0**. Last issue update 2026-08-20. Patch spec in `keeperhub/2105-openapi-response-examples.md`. | Primary candidate after Sep 6. Do not implement against upstream before the build window. |
+| [#2105: OpenAPI workflow-call response examples](https://github.com/keeperhub/keeperhub/issues/2105) | Rechecked 03:12 UTC 3 Sep: issue still `open` + `accepted` + `confirmed`. GitHub search `repo:KeeperHub/keeperhub 2105 type:pr` returned **0**. Last issue update 2026-08-20. Patch spec in `keeperhub/2105-openapi-response-examples.md`. | Primary candidate after Sep 6. Do not implement against upstream before the build window. |
 | [#2097: protocol-action preflight and idempotency](https://github.com/keeperhub/keeperhub/issues/2097) | Accepted and confirmed; no linked or open PR found. | High safety value, but check overlap with #2004 and #2207 first. |
 | [#2062: onboarding ID glossary and cross-links](https://github.com/keeperhub/keeperhub/issues/2062) | Accepted with maintainer-narrowed scope; no linked PR found. | Low-risk documentation fallback; weaker “feature” fit. |
 | [#2247: trace-method provider survey](https://github.com/keeperhub/keeperhub/issues/2247) | Accepted, good-first-issue, help-wanted, apparently unclaimed. | Useful research, but the bounty asks for a feature. |
