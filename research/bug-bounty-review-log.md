@@ -21932,6 +21932,228 @@ impl
 Sourcify 404 on
 chain 137.
 
+## 2026-09-03: Lido lido-l2 + circuit-breaker + vesting + stonks leftover (`badf17c` / `6829a5a` / `580f802` / `a7812a4`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Listed
+GitHub trees include
+`core`, `lido-l2`,
+`lido-l2-with-steth`,
+`circuit-breaker`,
+`lido-vesting-escrow`,
+`stonks`,
+`dual-governance`,
+CSM, easy-track, and
+others. This slice is
+the four leftover
+trees that were not
+yet in this log.
+Local clones
+`/tmp/lidofinance-lido-l2`
+at `badf17c`,
+`/tmp/lidofinance-circuit-breaker`
+at `6829a5a`,
+`/tmp/lidofinance-lido-vesting-escrow`
+at `580f802`, and
+`/tmp/lidofinance-stonks`
+at `a7812a4`. No
+mainnet interaction.
+
+Files:
+`lido-l2/contracts/{BridgingManager,BridgeableTokens}.sol`,
+`optimism/{L1,L2}ERC20TokenBridge.sol`,
+`optimism/CrossDomainEnabled.sol`,
+`arbitrum/{L1,L2}ERC20TokenGateway.sol`,
+`arbitrum/InterchainERC20TokenGateway.sol`,
+`arbitrum/L1CrossDomainEnabled.sol`,
+`arbitrum/libraries/{L1,L2}OutboundDataParser.sol`,
+`token/{ERC20Bridged,ERC20Metadata}.sol`,
+`circuit-breaker/src/{CircuitBreaker,Registry}.sol`,
+`lido-vesting-escrow/contracts/{VestingEscrow,VestingEscrowFactory}.vy`,
+`stonks/contracts/{Stonks,Order,AssetRecoverer}.sol`.
+
+Checked for: a
+stranger finalize
+that unlocks L1
+tokens without a
+matching L2 burn;
+Arbitrum `from`
+spoof that pulls
+another user’s
+allowance; L2 mint
+by a non-messenger;
+circuit-breaker
+pause by a
+non-pauser; vesting
+`recover_erc20` that
+drains locked
+tokens; Stonks
+order that settles
+to the caller or
+skips the CoW
+price check.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Optimism L1
+  `depositERC20` is
+  EOA-only;
+  `depositERC20To`
+  pulls
+  `msg.sender`.
+  Withdraw finalize
+  requires the
+  messenger and
+  `xDomainMessageSender
+  == l2TokenBridge`,
+  then transfers
+  locked L1 tokens
+  to `to_`. L2
+  withdraw burns
+  `msg.sender` and
+  messages L1.
+  `finalizeDeposit`
+  mints only after
+  the same
+  messenger check.
+  Tokens are
+  immutable pair
+  filters.
+- Arbitrum L1
+  `outboundTransfer`
+  decodes `from`
+  from calldata
+  only when
+  `msg.sender` is
+  the router;
+  otherwise `from`
+  is `msg.sender`.
+  Finalize inbound
+  requires the
+  Inbox bridge +
+  outbox
+  `l2ToL1Sender ==
+  counterpartGateway`.
+  L2 outbound burns
+  the decoded `from`
+  (router-trusted
+  or `msg.sender`)
+  and inbound mint
+  is
+  counterpart-only.
+- `BridgingManager.
+  initialize` is
+  once. Enable /
+  disable deposits
+  and withdrawals
+  are role-gated.
+  `ERC20Bridged`
+  mint/burn is
+  `onlyBridge`.
+  Metadata set is
+  empty-string
+  once.
+- CircuitBreaker
+  `registerPauser`
+  is admin-only.
+  `pause` requires
+  the live
+  registered
+  pauser, is
+  single-use
+  (unregisters),
+  and reentrancy-
+  guarded.
+  `heartbeat` also
+  requires a live
+  registered
+  pauser.
+- Vesting
+  implementation
+  cannot be
+  initialized.
+  Clones require
+  `balanceOf >=
+  amount`. `claim`
+  is recipient-only
+  and caps at
+  vested-unclaimed.
+  `revoke_unvested`
+  / `revoke_all`
+  pay the factory
+  owner.
+  `recover_erc20`
+  of the vesting
+  token is limited
+  to
+  `balance -
+  (locked +
+  unclaimed)` and
+  pays the
+  recipient.
+- Stonks
+  `placeOrder` is
+  admin/manager,
+  non-reentrant,
+  and transfers
+  `TOKEN_FROM` into
+  a clone. Order
+  `initialize` is
+  once (impl is
+  pre-initialized).
+  CoW
+  `isValidSignature`
+  checks hash,
+  expiry,
+  cancellation,
+  global pause, and
+  oracle price vs
+  stored limit ±
+  tolerance /
+  improvement.
+  `recoverTokenFrom`
+  after expiry
+  returns sell
+  tokens to Stonks;
+  `recoverERC20`
+  cannot take
+  `tokenFrom`.
+  Receiver is
+  baked at
+  initialize
+  (defaults to
+  AGENT).
+
+Not submitted.
+Lido `core` submit /
+withdrawal and
+StakingRouter leftover
+are already logged on
+`2da0f48`. Remaining
+Lido listed GitHub:
+`lido-l2-with-steth`,
+`aave-delivery-infrastructure`,
+`governance-crosschain-bridges`,
+`mev-boost-relay-allowed-list`,
+`community-staking-module`,
+`easy-track`,
+`dual-governance`,
+`aragon-apps`, and
+0.8.25 vaults.
+Oracle / keys-api /
+validator-ejector /
+council-daemon /
+oz-merkle-tree /
+onchain-mon are
+ops or web, not
+this leftover
+slice.
+
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -22240,6 +22462,14 @@ whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
 (`58b8a42` / `0768267`) is logged
 (listed 1inch SmartContracts
 leftover exhausted).
+Lido `lido-l2` + circuit-breaker +
+vesting-escrow + stonks leftover
+(`badf17c` / `6829a5a` / `580f802` /
+`a7812a4`) is logged (remaining Lido
+is `lido-l2-with-steth` /
+`dual-governance` / CSM /
+easy-track / governance bridges /
+0.8.25 vaults).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -22558,11 +22788,16 @@ Lido core submit /
 withdrawal leftover
 (`2da0f48`) is logged.
 Lido StakingRouter leftover
-(`2da0f48`) is logged
+(`2da0f48`) is logged.
+Lido `lido-l2` +
+circuit-breaker +
+vesting-escrow + stonks
+leftover is logged
 (remaining Lido is
+`lido-l2-with-steth` /
 CSM / dual-governance /
-easy-track / L2 /
-circuit-breaker /
+easy-track /
+governance bridges /
 oracle / 0.8.25 vaults);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
