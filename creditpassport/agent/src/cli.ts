@@ -1,7 +1,22 @@
-import { Contract, MaxUint256, Wallet, formatUnits, keccak256, parseUnits, toUtf8Bytes, toUtf8String } from "ethers";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import {
+  AbiCoder,
+  Contract,
+  ContractFactory,
+  Interface,
+  MaxUint256,
+  Wallet,
+  formatUnits,
+  keccak256,
+  parseUnits,
+  toUtf8Bytes,
+  toUtf8String,
+  type InterfaceAbi,
+} from "ethers";
 import { Agent, parseProfile } from "./agent.js";
 import { ABI, EXPLORERS, connect, describeRevert, fn } from "./chain.js";
-import { loadConfig, requireAgentKey, requireDeployed } from "./config.js";
+import { PROJECT_ROOT, loadConfig, requireAgentKey, requireDeployed } from "./config.js";
 import { memoFromDataUri } from "./memo.js";
 import { ACTION, executeArgs, padGas, queryIdFor, ProofService, type ActionName } from "./proofs.js";
 import { startStatusServer } from "./server.js";
@@ -16,6 +31,9 @@ const USAGE = `CreditPassport agent
                                         Demo payer flow on Sepolia: mint tUSD if needed, approve, pay an invoice
   verify [sepoliaTxHash]                Fetch an Attestcoin proof for any Sepolia transaction (a recent one if
                                         omitted) and dry-run the Creditcoin verifier precompile. No key, no gas.
+  livecheck [sepoliaTxHash]             Run CreditPassport.execute against the REAL Creditcoin verifier via
+                                        eth_call (deploy + execute inside one constructor). Finds a recent
+                                        attested ERC-20 transfer if no hash is given. No key, no gas.
   prove <sepoliaTxHash> [--action InvoicePaid|TokenTransfer]
                                         Wait for attestation, fetch the proof, submit it to CreditPassport
   underwrite <payer>                    Score and underwrite a payer now
@@ -135,6 +153,108 @@ async function main(): Promise<void> {
       const ok = await proofs.preverify(proof);
       console.log(`verifier  precompile 0xFD2 on Creditcoin says ${ok ? "VALID" : "INVALID"} (${Date.now() - t1} ms, eth_call, no gas)`);
       process.exitCode = ok ? 0 : 2;
+      return;
+    }
+
+    case "livecheck": {
+      const placeholder = "0x0000000000000000000000000000000000000001";
+      const chains = connect({
+        ...cfg,
+        creditPassport: cfg.creditPassport || placeholder,
+        paymentRail: cfg.paymentRail || placeholder,
+        settlementToken: cfg.settlementToken || placeholder,
+      });
+      const proofs = new ProofService(cfg, chains.creditcoin);
+      const attested = await proofs.latestAttestedHeight();
+      const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
+      // Pick a transaction whose receipt has an ERC-20 Transfer log with a non-zero sender.
+      let txHash = args[0];
+      let token: string | undefined;
+      let from: string | undefined;
+      const pickTransfer = (logs: readonly { address: string; topics: readonly string[]; data: string }[]) =>
+        logs.find(
+          (l) =>
+            l.topics[0] === TRANSFER_TOPIC &&
+            l.topics.length === 3 &&
+            l.data.length === 66 &&
+            BigInt(l.topics[1] ?? "0x0") !== 0n,
+        );
+      if (txHash) {
+        const rc = await chains.sepolia.getTransactionReceipt(txHash);
+        if (!rc) throw new Error("transaction not found on Sepolia");
+        const log = pickTransfer(rc.logs);
+        if (!log) throw new Error("that transaction has no ERC-20 Transfer log");
+        token = log.address;
+        from = `0x${(log.topics[1] ?? "").slice(26)}`;
+      } else {
+        outer: for (let h = attested - 2; h > attested - 60; h--) {
+          const block = await chains.sepolia.getBlock(h, true);
+          for (const tx of block?.prefetchedTransactions ?? []) {
+            const rc = await chains.sepolia.getTransactionReceipt(tx.hash);
+            if (!rc || rc.status !== 1 || rc.logs.length === 0 || rc.logs.length > 4) continue;
+            const log = pickTransfer(rc.logs);
+            if (log) {
+              txHash = tx.hash;
+              token = log.address;
+              from = `0x${(log.topics[1] ?? "").slice(26)}`;
+              break outer;
+            }
+          }
+        }
+        if (!txHash || !token || !from) throw new Error("no attested ERC-20 transfer found in the last 60 blocks");
+      }
+
+      console.log(`tx        ${txHash}`);
+      console.log(`token     ${token}`);
+      console.log(`payer     ${from}`);
+      const proof = await proofs.getProof(txHash);
+      console.log(`proof     header ${proof.headerNumber}, txIndex ${proof.txIndex}, ${proof.merkleProof.siblings.length} siblings, ${proof.continuityProof.roots.length} continuity roots`);
+
+      const artifact = JSON.parse(readFileSync(join(PROJECT_ROOT, "abi", "LivePrecompileCheck.json"), "utf8")) as {
+        abi: InterfaceAbi;
+        bytecode: string;
+      };
+      const factory = new ContractFactory(artifact.abi, artifact.bytecode);
+      const deployTx = await factory.getDeployTransaction(
+        {
+          action: ACTION.TokenTransfer,
+          chainKey: proof.chainKey,
+          blockHeight: proof.headerNumber,
+          encodedTransaction: proof.txBytes,
+          merkleRoot: proof.merkleProof.root,
+          siblings: proof.merkleProof.siblings.map((s) => ({ hash: s.hash, isLeft: s.isLeft })),
+          lowerEndpointDigest: proof.continuityProof.lowerEndpointDigest,
+          continuityRoots: proof.continuityProof.roots,
+        },
+        token,
+        from,
+      );
+
+      console.log(`calling   eth_call on ${new URL(cfg.creditcoinRpcUrl).host}: deploy TestUSD + CreditPassport, setSources, execute (no gas, nothing persisted)`);
+      const passportIface = new Interface(ABI.CreditPassport);
+      const returned = await chains.creditcoin.call({ data: deployTx.data, gasLimit: 30_000_000 });
+      if (!returned || returned === "0x") throw new Error("the RPC returned no data for the creation call");
+      const outcomeType = "tuple(bool recorded, bytes reason, address payer, address payee, uint256 amount, uint256 paymentCount, bytes32 queryId)";
+      const [outcome] = AbiCoder.defaultAbiCoder().decode([outcomeType], returned) as unknown as [
+        { recorded: boolean; reason: string; payer: string; payee: string; amount: bigint; paymentCount: bigint; queryId: string },
+      ];
+      if (outcome.recorded) {
+        console.log(
+          `result    RECORDED on the live verifier: payer ${outcome.payer} -> payee ${outcome.payee}, amount ${outcome.amount.toString()} raw units, ${outcome.paymentCount.toString()} payment(s), queryId ${outcome.queryId}`,
+        );
+        console.log("          precompile 0xFD2 accepted the proof, EvmV1Decoder decoded the receipt, CreditPassport recorded the transfer.");
+        return;
+      }
+      let reason = outcome.reason;
+      try {
+        const p = passportIface.parseError(outcome.reason);
+        if (p) reason = `${p.name}(${p.args.map(String).join(", ")})`;
+      } catch {
+        // leave raw
+      }
+      console.log(`result    REJECTED by CreditPassport.execute: ${reason}`);
+      process.exitCode = 2;
       return;
     }
 

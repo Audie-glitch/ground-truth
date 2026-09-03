@@ -78,6 +78,7 @@ Three parts:
 | `AttestedBase._computeQueryId` | `calculateTxIndex`, same derivation as `ASCBase` |
 | `CreditPassport._processAndEmitEvent` | `EvmV1Decoder.decodeReceiptFields`, `getLogsByEventSignature` |
 | `agent/src/proofs.ts` | `@gluwa/usc-sdk` `ProofBuilder.getProof` / `getBatchProof`, `waitUntilHeightAttested`, `PrecompileChainInfoProvider`, `PrecompileBlockProver.verifySingle` for off-chain pre-flight |
+| `contracts/src/checks/LivePrecompileCheck.sol` + `livecheck` | The whole contract path executed against the live verifier precompile through `eth_call`, before any deployment |
 
 ### What the agent may and may not decide
 
@@ -152,8 +153,18 @@ cd agent && DEPLOYMENT=local CREDITCOIN_RPC_URL=http://127.0.0.1:48545 \
 ```
 
 The mock verifier accepts any well-formed proof, so this exercises decoding,
-policy, underwriting, and the UI, not attestation. `npm run cli -- verify`
-exercises the real prover and precompile against the live testnet with no key.
+policy, underwriting, and the UI, not attestation. Two commands exercise the
+real infrastructure with no key and no gas:
+
+- `npm run cli -- verify` fetches a proof for a live Sepolia transaction and
+  asks the verifier precompile whether it is valid.
+- `npm run cli -- livecheck` goes further: it runs CreditPassport itself against
+  the live precompile. A throwaway `LivePrecompileCheck` contract deploys a
+  passport, registers a token, and calls `execute` with a real proof, all inside
+  one constructor executed through `eth_call`; the outcome comes back as the
+  creation call's return data. On 3 Sep 2026 it recorded a real Sepolia ERC-20
+  transfer (payer, payee, amount, query id) on a passport that existed only for
+  the duration of the call. Nothing is deployed and nothing is spent.
 
 ## Tests
 
@@ -184,6 +195,7 @@ abi/                                   exported ABIs shared by agent and web
 - [x] Contracts, 32 tests (including real prover output), deploy scripts
 - [x] Agent with single and batch proof submission, scoring, memos, status API
 - [x] Real proof fetched and verified by the Creditcoin precompile from this repo (`verify`)
+- [x] Full `execute` path (verify, decode, record) run against the live precompile via `eth_call` (`livecheck`)
 - [x] Web app
 - [x] Local demo environment
 - [ ] Testnet deployment (needs a funded deployer key)

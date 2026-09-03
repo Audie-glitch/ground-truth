@@ -185,8 +185,9 @@
     <tr><td class="mono">agent/src/proofs.ts</td><td>@gluwa/usc-sdk ProofBuilder.getProof / getBatchProof, waitUntilHeightAttested</td><td>Waits for attestation, fetches proofs, flattens batches into contract arguments</td></tr>
     <tr><td class="mono">agent/src/proofs.ts</td><td>PrecompileBlockProver.verifySingle, PrecompileChainInfoProvider</td><td>Off-chain dry run before spending gas; live attestation lag in the UI</td></tr>
     <tr><td class="mono">test/RealProverBytes.t.sol</td><td>Captured prover txBytes for a live Sepolia transaction</td><td>Decoder reproduces the Sepolia receipt field-for-field; execute() rejects it only for lacking a rail log</td></tr>
+    <tr><td class="mono">checks/LivePrecompileCheck.sol</td><td>Deploy + setSources + execute inside one constructor, run via eth_call on CC3 testnet</td><td>Real Sepolia ERC-20 transfer recorded on a passport that lived only for the call: verifier, decoder and ledger proven end to end before deployment</td></tr>
   </table>
-  <p style="margin-top:22px"><span class="tag">32 Foundry tests</span><span class="tag">7 agent unit tests</span><span class="tag">real proof verified by 0xFD2 via eth_call from the repo</span></p>
+  <p style="margin-top:22px"><span class="tag">32 Foundry tests</span><span class="tag">7 agent unit tests</span><span class="tag">real proof verified by 0xFD2 via eth_call</span><span class="tag">full execute() run on the live precompile via eth_call (livecheck)</span></p>
   <div class="foot"><span>npm run cli -- verify · fetches a proof for any Sepolia tx and asks the precompile, no key, no gas</span><span>6</span></div>
 </section>
 

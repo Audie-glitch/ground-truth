@@ -13,6 +13,8 @@ const artifacts = {
   PaymentRail: "PaymentRail.sol/PaymentRail.json",
   TestUSD: "TestUSD.sol/TestUSD.json",
 };
+// The live check needs creation bytecode, not only the ABI.
+const withBytecode = { LivePrecompileCheck: "LivePrecompileCheck.sol/LivePrecompileCheck.json" };
 
 for (const dest of dests) {
   mkdirSync(dest, { recursive: true });
@@ -21,4 +23,11 @@ for (const dest of dests) {
     writeFileSync(join(dest, `${name}.json`), JSON.stringify(artifact.abi, null, 2) + "\n");
   }
   console.log(`wrote ${Object.keys(artifacts).length} ABIs to ${dest}`);
+}
+
+const primary = dests[0];
+for (const [name, rel] of Object.entries(withBytecode)) {
+  const artifact = JSON.parse(readFileSync(join(out, rel), "utf8"));
+  writeFileSync(join(primary, `${name}.json`), JSON.stringify({ abi: artifact.abi, bytecode: artifact.bytecode.object }, null, 2) + "\n");
+  console.log(`wrote abi/${name}.json with bytecode`);
 }
