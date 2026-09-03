@@ -30370,9 +30370,12 @@ security leftover
 SecurityModule) is logged.
 Derive leftover assets leftover
 (`96796a6` WrappedERC20 /
-Option / Perp) is logged
-(remaining listed is
-StandardManager / PMRM /
+Option / Perp) is logged.
+Derive leftover StandardManager leftover
+(`96796a6` StandardManager +
+BaseManager bid / fee /
+settle) is logged
+(remaining listed is PMRM /
 feeds);
 Royco leftover (Sourcify
 factory + Makina strategy;
@@ -34105,3 +34108,98 @@ Perp assets.
 Remaining listed:
 StandardManager /
 PMRM / feeds.
+
+## 2026-09-03: Derive leftover StandardManager leftover (`96796a6`)
+
+Immunefi program
+`derive`
+($50,000, `kyc: false`).
+Matching / cash /
+auction / assets
+leftovers are already
+logged. This slice is
+listed
+`StandardManager`
+plus inherited
+`BaseManager`
+bid / fee / settle
+paths. Official clone
+`/tmp/derive-v2-core`
+at `96796a6`.
+No mainnet interaction.
+
+Files:
+`src/risk-managers/StandardManager.sol`,
+`src/risk-managers/BaseManager.sol`.
+
+Checked for: a
+stranger
+`executeBid` that
+moves a solvent
+account; `payLiquidationFee`
+by a non-auction
+caller;
+`handleAdjustment`
+that skips the
+margin check on a
+risk-adding trade;
+`settleOptions` that
+pays the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `handleAdjustment`
+  is `onlyAccounts`.
+  Live auctions
+  block transfers.
+  Risk-adding
+  trades require
+  post-trade IM
+  (or MM for a
+  trusted risk
+  assessor).
+  Reducing-only
+  trades bypass.
+- `executeBid` /
+  `payLiquidationFee`
+  are
+  `onlyLiquidations`.
+  Bid cash goes to
+  the liquidated
+  account; fee cash
+  goes to the named
+  recipient.
+- `settleOptions` /
+  `settlePerpsWithIndex`
+  credit that
+  account's cash
+  from expired
+  options / realized
+  perp pnl. They do
+  not pay
+  `msg.sender`.
+- Owner sets
+  markets / oracles /
+  margin params.
+  Guardian pauses
+  adjustments.
+
+Do not file
+permissionless
+expired-option
+settle, trusted
+assessor MM vs IM,
+or owner oracle /
+margin privilege
+as stranger theft.
+
+Not submitted.
+Listed leftover is
+StandardManager +
+BaseManager money
+paths. Remaining
+listed: PMRM /
+feeds.
