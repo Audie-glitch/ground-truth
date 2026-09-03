@@ -31452,8 +31452,20 @@ Order Book leftover
 / OrderBook / USDG / Timelock
 V1+V2 / StakedGlp) is logged
 (remaining listed is Avax
-twins and Sourcify-404
+twins leftover logged
+below and Sourcify-404
 Staked Glp Distributor);
+GMX leftover V1 Avalanche
+twins leftover (Sourcify
+Router / OrderBook /
+StakedGlp / RewardTracker /
+RewardDistributor / Vester /
+GMX / EsGMX) is logged
+(listed leftover that
+Sourcify opens is
+exhausted; remaining is
+404 Vault / GlpManager /
+RewardRouterV2 / trackers);
 Kiln DeFi leftover ETH vault
 core leftover (Sourcify; KYC)
 is logged (remaining listed
@@ -31493,7 +31505,8 @@ AdlUtils / GlpBalance /
 Chainlink providers /
 ChainReader) is logged
 (remaining listed is Avax
-twins, Sourcify-404 Staked
+twins leftover logged
+below, Sourcify-404 Staked
 Glp Distributor, and
 same-type utils);
 USDT0 leftover ETH adapter +
@@ -37482,3 +37495,166 @@ xcm-support / `xcm`
 / traits support
 crates (no user-fund
 extrinsics).
+
+## 2026-09-03: GMX leftover V1 Avalanche twins leftover (Sourcify)
+
+Immunefi program
+`gmx` ($5,000,000).
+Arb V1 / V2 leftovers
+already logged. This
+slice is listed
+Avalanche (chain
+`43114`) twins that
+Sourcify opens.
+Extract `/tmp/gmx-avax`.
+No mainnet writes.
+
+Sourcify `exact_match`:
+Router
+`0x5F719c2F1095F7B9Fc68a68e35B51194f4b6abe8`,
+GMX
+`0x62edc0692BD897D2295872a9FFCac5425011c661`,
+EsGMX
+`0xFf1489227BbAAC61a9209A08929E4c2a526DdD17`,
+Extended Gmx Tracker
+`0xB0D12Bf95CC1341d6C845C978daaf36F70b5910d`
+(`RewardTracker`),
+Fee Glp Tracker
+`0xd2D1162512F927a7e282Ef43a362659E4F2a728F`
+(`RewardTracker`),
+Staked Gmx Distributor
+`0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a`,
+Fee Gmx Distributor
+`0x03f349b3cc4f200d7fae4d8ddaf1507f5a40d356`,
+Fee Glp Distributor
+`0x1de098faf30bd74f22753c28db17a2560d4f5554`,
+Gmx Vester
+`0x472361d3cA5F49c8E633FB50385BfaD1e018b445`,
+Glp Vester
+`0x62331A7Bd1dfB3A7642B7db50B5509E57CA3154A`,
+Staked Glp
+`0x5643F4b25E36478eE1E90418d5343cb6591BcB9d`,
+Order Book
+`0x4296e307f108B2f583FF2F7B7270ee7831574Ae5`.
+
+Sourcify 404 (skip):
+Vault, Glp Manager,
+Reward RouterV2, GLP,
+BnGMX, USDG, most
+trackers, Bonus / Staked
+Glp distributors.
+
+Files:
+`contracts/core/Router.sol`,
+`contracts/core/OrderBook.sol`,
+`contracts/staking/StakedGlp.sol`,
+`contracts/staking/RewardTracker.sol`,
+`contracts/staking/RewardDistributor.sol`,
+`contracts/staking/Vester.sol`,
+`contracts/gmx/GMX.sol`,
+`contracts/gmx/EsGMX.sol`,
+`contracts/tokens/MintableBaseToken.sol`.
+
+Checked for: a
+stranger
+`pluginTransfer` without
+plugin approval;
+OrderBook `cancel` that
+refunds the caller
+someone else's order;
+`stakeForAccount` /
+`claimForAccount` /
+`depositForAccount`
+without handler;
+`distribute` paying a
+non-tracker; GMX `mint`
+by a non-minter;
+StakedGlp transfer
+during cooldown.
+
+Result: no
+user-exploitable
+finding. Not
+submitted. Same
+types as already-
+reviewed Arb V1
+contracts; Avax
+bytecode matches
+those gates.
+
+- Router `swap` /
+  `directPoolDeposit`
+  pull `msg.sender`.
+  `pluginTransfer` /
+  plugin position
+  helpers require a
+  gov-listed plugin
+  **and**
+  `approvedPlugins[account][plugin]`.
+- OrderBook create
+  binds `msg.sender`
+  and pulls that
+  account via
+  `pluginTransfer`.
+  Cancel refunds
+  `msg.sender`'s
+  mapped order.
+  Execute is
+  permissionless
+  settlement of that
+  stored order.
+- RewardTracker
+  `stake` / `unstake`
+  / `claim` bind
+  `msg.sender`.
+  `*ForAccount` paths
+  are handler-only.
+- RewardDistributor
+  `distribute` is
+  `rewardTracker`-only.
+  Token withdraw /
+  interval set are
+  gov / admin.
+- Vester `deposit` /
+  `claim` / `withdraw`
+  bind `msg.sender`.
+  `depositForAccount` /
+  `claimForAccount` /
+  `transferStakeValues`
+  are handler-only.
+- StakedGlp transfer
+  respects
+  `glpManager`
+  cooldown, then
+  handler-stakes to
+  the recipient.
+- GMX / EsGMX
+  `mint` / `burn` are
+  `onlyMinter`.
+  `setMinter` is
+  `onlyGov`.
+
+Do not file
+handler-gated
+`*ForAccount`,
+plugin-approved
+`pluginTransfer`,
+permissionless
+order execute, or
+gov minter mint as
+stranger theft.
+
+Not submitted.
+Listed Avax leftover
+that Sourcify opens
+is exhausted at the
+opened-contract
+level. Remaining
+listed: Sourcify-404
+Vault / GlpManager /
+RewardRouterV2 /
+trackers /
+distributors, Arb
+Sourcify-404 Staked
+Glp Distributor, and
+same-type V2 utils.

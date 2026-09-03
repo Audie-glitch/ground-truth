@@ -26,7 +26,9 @@ On-Chain v1 leftover is logged; Kiln DeFi
 leftover is logged; Acala leftover is logged;
 Acala leftover ORML leftover is logged;
 Ostium leftover is logged; GMX leftover V2
-AdlHandler leftover is logged; USDT0 leftover
+AdlHandler leftover is logged; GMX leftover
+V1 Avalanche twins leftover is logged;
+USDT0 leftover
 is logged; Ondo Finance leftover is logged;
 Hyperlane leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
@@ -363,8 +365,16 @@ GMX leftover V2 AdlHandler leftover
 (Sourcify Arb AdlHandler / AdlUtils /
 GlpBalance / Chainlink providers /
 ChainReader) is logged (remaining listed
-is Avax twins, Sourcify-404 Staked Glp
-Distributor, and same-type utils).
+is Avax twins leftover logged below,
+Sourcify-404 Staked Glp Distributor,
+and same-type utils).
+GMX leftover V1 Avalanche twins leftover
+(Sourcify Router / OrderBook / StakedGlp
+/ RewardTracker / RewardDistributor /
+Vester / GMX / EsGMX) is logged (listed
+leftover that Sourcify opens is
+exhausted; remaining is 404 Vault /
+GlpManager / RewardRouterV2 / trackers).
 USDT0 leftover ETH adapter + Arb OFT
 (Sourcify OAdapterUpgradeable /
 OUpgradeable / ArbitrumExtensionV2;
@@ -934,6 +944,8 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   bridge leftover (`cde2abf`),
   Acala leftover ORML leftover
   (`33bc94a`),
+  GMX leftover V1 Avalanche
+  twins leftover (Sourcify),
   Ostium leftover vault /
   trading (Sourcify; KYC),
   GMX leftover V2 AdlHandler leftover
