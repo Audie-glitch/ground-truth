@@ -44329,3 +44329,152 @@ permissionless;
 periphery-v3
 emergency / kyc /
 migration.
+
+## 2026-09-03: Folks Finance leftover hub pools, oracle node, and adapters (`7f631fe`)
+
+Immunefi program
+`folksfinance`
+($200,000, `kyc: true`).
+Spoke + hub loan
+leftover already
+logged. This slice
+is listed hub
+pools, one oracle
+node, and
+Wormhole / CCIP /
+Hub adapters.
+Official clone
+`/tmp/folks-xchain`
+`7f631fe`.
+No mainnet writes.
+
+Files:
+`contracts/hub/HubPool.sol`,
+`HubCircleTokenPool.sol`,
+`HubNonBridgedTokenPool.sol`,
+`contracts/hub/logic/HubPoolLogic.sol`,
+`contracts/oracle/nodes/PriceDeviationSameOracleCircuitBreakerNode.sol`,
+`contracts/bridge/WormholeDataAdapter.sol`,
+`CCIPDataAdapter.sol`,
+`HubAdapter.sol`.
+
+Checked for: a
+stranger
+`mintFToken` /
+`updatePoolWithWithdraw`;
+adapter
+`receiveWormholeMessages`
+from a non-relayer
+or wrong peer;
+CCIP receive from
+an unlisted
+adapter;
+HubAdapter
+`sendMessage`
+that bridges
+tokens for a
+non-router.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- HubPool
+  deposit /
+  withdraw /
+  borrow / repay
+  / liquidation
+  accounting and
+  fToken
+  mint / burn
+  are
+  `LOAN_MANAGER_ROLE`.
+  `getSendTokenMessage`
+  and
+  `clearTokenFees`
+  are
+  `HUB_ROLE`.
+  `verifyReceiveToken`
+  requires the
+  source to be
+  the registered
+  spoke for that
+  chain.
+  Circle pool
+  `_sendToken`
+  transfers the
+  underlying to
+  the selected
+  adapter.
+- Circuit-breaker
+  node compares
+  two parent
+  prices and
+  reverts or
+  falls back
+  when deviation
+  exceeds
+  tolerance or
+  both parents
+  share a type.
+  No token
+  movement.
+- Wormhole
+  `sendMessage`
+  is
+  `onlyBridgeRouter`.
+  `receiveWormholeMessages`
+  is
+  `onlyWormholeRelayer`
+  and requires
+  the source
+  adapter to
+  match
+  `getChainAdapter`.
+- CCIP
+  `_ccipReceive`
+  (router-gated
+  by
+  CCIPReceiver)
+  checks source
+  selector +
+  peer adapter
+  before
+  `bridgeRouter.receiveMessage`.
+- HubAdapter
+  `sendMessage`
+  is
+  `onlyBridgeRouter`
+  and can only
+  target the hub
+  chain.
+
+Do not file
+role-gated pool
+index updates,
+permissionless
+`updateInterestIndexes`,
+or
+relayer-authenticated
+cross-chain
+delivery, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Folks
+Finance hub pool
++ adapter leftover
+is exhausted at
+the opened-file
+level. Remaining
+listed: Exact
+Match live
+addresses if
+docs resolve
+them, and other
+oracle node
+types if still
+unused.
