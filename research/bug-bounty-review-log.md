@@ -150,6 +150,45 @@ Result: no exploitable finding.
 
 Time spent: roughly 70 minutes. No Immunefi report. Next Immunefi candidate is
 1inch Aqua (KYC required to be paid).
+## 2026-09-03: 1inch Aqua core and swap-vm entry (KYC program, $100k max)
+
+Read in full: `aqua/src/*` (Aqua.sol, AquaApp.sol, AquaRouter.sol, Balance.sol,
+IAqua.sol; 342 lines) and `swap-vm/src/SwapVM.sol` (order hashing, quote/swap
+entry, transfer-in path with Aqua push/pull and native ETH handling), plus the
+`TransientLock`/`TransientLockUnsafe` libraries from solidity-utils.
+
+Checked for: virtual-balance accounting bounds (ship/dock/pull/push), duplicate
+tokens in ship/dock, docked-strategy behaviour, checks-effects-interactions
+around `transferFrom`, uint248 packing overflow/underflow, reentrancy on
+per-order transient locks, signature vs Aqua-mode hashing consistency, msg.value
+handling with WETH.
+
+Result: no finding at this depth.
+
+- `pull` and `push` update packed balances before any token movement; checked
+  arithmetic bounds pulls to what the maker shipped and blocks pushes to docked
+  or non-existent strategies. Docking requires the full token list, so partial
+  docks and duplicates revert. Shipped strategies are immutable per
+  (maker, app, hash) forever, including after docking.
+- "Unsafe" in `TransientLockUnsafeLib` refers only to slot addressing for
+  mapping-derived slots; `lock()` still reverts when already held, so a taker
+  callback cannot re-enter the same order.
+- Aqua-mode orders hash as `keccak256(abi.encode(order))` without a domain
+  separator; that is consistent with `Aqua.ship` hashing the same bytes and
+  needs no signature, so cross-domain replay is not a concern for them.
+- Not reviewed: the opcode instruction set (XYC curves, pegged-swap math, TWAP
+  decay, fee accounting, invalidators, whitelist), roughly 6,000 lines. That is
+  where a real finding would live and it needs a multi-day pass with the test
+  suite, not a time-box.
+
+Useful for the ETHOnline "Build an Aqua App" bounty ($5,000): an Aqua app is a
+contract that (1) inherits `AquaApp`, (2) is the `app` makers `ship` a strategy
+to while keeping tokens in their own wallets, (3) prices and settles swaps
+against `AQUA.safeBalances`, pulling maker tokens with `AQUA.pull` and requiring
+the taker's `AQUA.push` inside a `nonReentrantStrategy` lock via
+`_safeCheckAquaPush`. The swap-vm router is the reference app; a smaller
+purpose-built app (a fixed-spread stablecoin pair, or an RFQ-style strategy) is
+a realistic hackathon deliverable.
 
 ## Next candidates
 
