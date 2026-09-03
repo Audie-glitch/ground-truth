@@ -38642,6 +38642,163 @@ two Sourcify
 and Primacy
 of Impact.
 
+## 2026-09-03: Wormhole leftover remaining Solana + Sui NTT leftover (`250d810`)
+
+Immunefi program
+`wormhole`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after EVM NTT
+leftover
+(`250d810`).
+Official
+`wormhole-foundation/native-token-transfers`
+`250d810`.
+Extract
+`/tmp/wh-ntt-full`
+`solana/` +
+`sui/`.
+No mainnet
+writes.
+
+Files:
+`solana/programs/example-native-token-transfers/src/instructions/transfer.rs`,
+`redeem.rs`,
+`release_inbound.rs`,
+`transceivers/wormhole/instructions/receive_message.rs`,
+`sui/packages/ntt/sources/ntt.move`,
+`sui/packages/wormhole_transceiver/sources/wormhole_transceiver.move`.
+
+Checked for:
+a stranger
+`transfer`
+that spends
+another
+wallet;
+`redeem` /
+`release`
+that mints
+to the
+caller;
+a VAA
+`receive`
+that skips
+peer check.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Solana
+  `transfer_burn`
+  /
+  `transfer_lock`
+  pull
+  `from`
+  via a
+  session
+  authority
+  seeded by
+  `from.owner`
+  + args
+  hash, then
+  burn or
+  lock into
+  custody.
+  Outbox
+  records
+  that
+  sender and
+  recipient.
+- `receive_message`
+  requires a
+  `PostedVaa`
+  whose
+  emitter
+  matches
+  the
+  transceiver
+  peer PDA.
+- `redeem`
+  votes a
+  validated
+  transceiver
+  message
+  and
+  records
+  the
+  message
+  recipient
+  on a
+  content-
+  addressed
+  inbox
+  item.
+- `release_inbound_*`
+  is
+  permissionless
+  after
+  quorum +
+  delay and
+  pays the
+  inbox
+  item's
+  associated
+  token
+  account
+  (`authority
+  ==
+  recipient_address`).
+- Sui
+  `transfer_*`
+  burns or
+  locks the
+  ticket
+  coins
+  (caller-
+  supplied).
+  `validate_message`
+  consumes a
+  VAA and
+  checks the
+  peer.
+  `redeem`
+  votes that
+  validated
+  message.
+  `release`
+  `public_transfer`s
+  minted /
+  unlocked
+  coins to
+  the
+  recorded
+  recipient.
+
+Do not file
+transfer of
+the
+signer's
+tokens or
+permissionless
+release of
+a
+quorum-
+attested
+NTT
+message to
+the
+recorded
+recipient.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+Relayer 404.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -40781,6 +40938,11 @@ that Sourcify opens is
 exhausted; remaining listed
 is two proxy 404s /
 Primacy of Impact);
+Wormhole leftover remaining
+Solana + Sui NTT leftover
+(`250d810`; KYC) is
+logged (remaining listed is
+Relayer 404);
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
