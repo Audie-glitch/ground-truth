@@ -164,8 +164,12 @@ Autonolas leftover remaining
 L2 dispenser + veOLAS leftover is logged;
 Autonolas leftover remaining
 Bridge2Burner + BuyBack leftover is logged;
+Autonolas leftover remaining
+marketplace leftover is logged;
 The Graph leftover remaining
 Arb Horizon + payments leftover is logged;
+The Graph leftover remaining
+Curation + Dispute leftover is logged;
 Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
 KeeperHub
@@ -790,16 +794,34 @@ L2 dispenser + veOLAS leftover
 (Sourcify Polygon / OP
 dispenser + ETH veOLAS; KYC)
 is logged (remaining listed
-is marketplace /
-registries).
+is ServiceRegistry /
+ServiceManager / governance /
+LiquidityManager /
+Tokenomics after
+marketplace leftover is
+leftover-logged).
 Autonolas leftover remaining
 Bridge2Burner + BuyBack leftover
 (Sourcify Polygon / OP
 Bridge2Burner + ETH Burner /
 BuyBackBurnerUniswap; KYC)
 is logged (remaining listed
-is marketplace /
-registries).
+is ServiceRegistry /
+ServiceManager / governance /
+LiquidityManager /
+Tokenomics after
+marketplace leftover is
+leftover-logged).
+Autonolas leftover remaining
+marketplace leftover
+(Sourcify MechMarketplace /
+Karma / balance trackers /
+registries; KYC) is logged
+(remaining listed is
+ServiceRegistry /
+ServiceManager / governance /
+LiquidityManager /
+Tokenomics).
 The Graph leftover remaining
 Arb Horizon + payments leftover
 (Sourcify HorizonStaking /
@@ -809,8 +831,20 @@ BillingConnector /
 L1GraphTokenGateway; KYC)
 is logged (remaining listed
 is L2GraphTokenGateway 404 /
-Curation / DisputeManager /
-SubgraphService).
+L2GNS / AllocationExchange /
+GraphTallyCollector after
+Curation + Dispute leftover
+is leftover-logged).
+The Graph leftover remaining
+Curation + Dispute leftover
+(Sourcify ETH Curation /
+DisputeManager + Arb
+L2Curation / DisputeManager /
+SubgraphService; KYC) is
+logged (remaining listed is
+L2GraphTokenGateway 404 /
+L2GNS / AllocationExchange /
+GraphTallyCollector).
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
@@ -1507,8 +1541,14 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Autonolas leftover remaining
   Bridge2Burner + BuyBack leftover
   (Sourcify; KYC),
+  Autonolas leftover remaining
+  marketplace leftover
+  (Sourcify; KYC),
   The Graph leftover remaining
   Arb Horizon + payments leftover
+  (Sourcify; KYC),
+  The Graph leftover remaining
+  Curation + Dispute leftover
   (Sourcify; KYC),
   Serai leftover bitcoin-serai
   leftover (`4b89cf02`; KYC),

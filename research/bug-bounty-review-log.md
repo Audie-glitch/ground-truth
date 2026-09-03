@@ -34387,7 +34387,14 @@ Bridge2Burner
 (now leftover-
 logged);
 marketplace /
-registries.
+registries
+(now leftover-
+logged);
+ServiceRegistry /
+ServiceManager /
+governance /
+LiquidityManager /
+Tokenomics.
 
 ## 2026-09-03: Zerion leftover ETH Premium Purchaser leftover (Sourcify)
 
@@ -35029,7 +35036,14 @@ Bridge2Burner
 (now leftover-
 logged);
 marketplace /
-registries.
+registries
+(now leftover-
+logged);
+ServiceRegistry /
+ServiceManager /
+governance /
+LiquidityManager /
+Tokenomics.
 
 ## 2026-09-03: Pragma leftover cairo oracle leftover (`83094b9`)
 
@@ -35261,9 +35275,14 @@ user KYC.
 Remaining listed:
 marketplace /
 registries
-(MechMarketplace /
-factories /
-Karma).
+(now leftover-
+logged);
+remaining
+ServiceRegistry /
+ServiceManager /
+governance /
+LiquidityManager /
+Tokenomics.
 Gnosis /
 Arbitrum
 Bridge2Burner
@@ -35457,9 +35476,12 @@ L2GraphTokenGateway
 404 /
 Curation /
 DisputeManager /
-SubgraphService /
+SubgraphService
+(now leftover-
+logged);
 L2GNS /
-AllocationExchange.
+AllocationExchange /
+GraphTallyCollector.
 
 ## 2026-09-03: Serai leftover bitcoin-serai leftover (`4b89cf02`)
 
@@ -35561,6 +35583,358 @@ crypto +
 bitcoin leftover);
 primacy of
 impact.
+
+## 2026-09-03: Autonolas leftover remaining marketplace leftover (Sourcify)
+
+Immunefi program
+`autonolas`
+($5,000,
+`kyc: true`).
+Already leftover-
+logged as ETH
+Depository +
+Treasury, L2
+dispenser +
+veOLAS, and
+Bridge2Burner +
+BuyBack.
+Sourcify ETH
+MechMarketplace
+impl
+`0x6B149a00E40cC6C148992C6AADd232d958C35Fa3`,
+MechMarketplaceProxy
+`0x3d6494CE09a9f40c0B5a92BdBD7c7A9b0e3912b1`,
+Karma
+`0xB01B4154047e51F01b22017079367341ea73d744`,
+KarmaProxy
+`0xf0B1Fc3A3D412Ea73136925B831D6203De310650`,
+MechFactoryFixedPriceToken
+`0xF95BfBBA428dfb454Cd59C9c2d309bd6452d12A8`,
+MechFactoryFixedPriceNative
+`0x3515a36AF270070635Fa3E957e006aaF6078e658`,
+BalanceTrackerFixedPriceToken
+`0x897aee2e6F3d37740D334C55Caea2e0caC82aa14`,
+BalanceTrackerFixedPriceNative
+`0x528befb0F8c6a988C9F42345DA6d053d66b3B9B6`,
+AgentRegistry
+`0x2F1f7D38e4772884b88f3eCd8B6b9faCdC319112`,
+ComponentRegistry
+`0x15bd56669F57192a97dF41A2aa8f4403e9491776`,
+RegistriesManager
+`0x9eC9156dEF5C613B2a7D4c46C383F9B58DfcD6fE`,
+StakingFactory
+`0xEBdde456EA288b49f7D5975E7659bA1Ccf607efc`.
+Extract
+`/tmp/olas-mech-impl`,
+`/tmp/olas-mech-proxy`,
+`/tmp/olas-karma`,
+`/tmp/olas-karma-proxy`,
+`/tmp/olas-mechfact-token`,
+`/tmp/olas-mechfact-native`,
+`/tmp/olas-bal-token`,
+`/tmp/olas-bal-native`,
+`/tmp/olas-agent-reg`,
+`/tmp/olas-comp-reg`,
+`/tmp/olas-reg-mgr`,
+`/tmp/olas-stake-fact`.
+No mainnet
+writes.
+
+Files:
+`contracts/MechMarketplace.sol`,
+`contracts/BalanceTrackerBase.sol`,
+`contracts/mechs/native/BalanceTrackerFixedPriceNative.sol`,
+`contracts/mechs/token/BalanceTrackerFixedPriceToken.sol`,
+`contracts/Karma.sol`,
+`contracts/UnitRegistry.sol`,
+`contracts/staking/StakingFactory.sol`.
+
+Checked for:
+a stranger
+request that
+debits another
+account;
+permissionless
+deliver that
+pays a
+stranger's
+balance to the
+caller;
+registry
+create that
+pulls another
+account's
+tokens.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `MechMarketplace.request`
+  /
+  `requestBatch`
+  record
+  `requester =
+  msg.sender`
+  and call
+  marketplace-only
+  `checkAndRecordDeliveryRates{value: msg.value}(msg.sender, ...)`.
+- `create`
+  requires
+  `msg.sender`
+  to be the
+  service
+  owner or
+  service
+  multisig.
+  `deliverMarketplace`
+  requires
+  `checkMech(msg.sender)`.
+- Native
+  `depositFor`
+  credits the
+  named
+  account with
+  `msg.value`.
+  Token
+  `deposit` /
+  `depositFor`
+  `transferFrom(msg.sender)`.
+  `processPayment`
+  pays
+  `msg.sender`'s
+  mech
+  balance.
+  `drain` is
+  permissionless
+  of
+  `collectedFees`
+  to the
+  hardcoded
+  `drainer`.
+- `UnitRegistry.create`
+  /
+  `updateHash`
+  are
+  manager-only
+  NFT mint /
+  hash update
+  (no token
+  pull).
+  `StakingFactory.createStakingInstance`
+  is
+  permissionless
+  CREATE2 of a
+  new proxy
+  (no token
+  pull).
+  `Karma` is
+  reputation
+  accounting
+  only.
+
+Do not file
+marketplace
+request that
+debits
+`msg.sender`,
+deposit-for-named
+account that
+pulls the
+caller, or
+permissionless
+`drain` of
+already-collected
+marketplace
+fees to the
+recorded
+drainer.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+ServiceRegistry /
+ServiceManager /
+governance
+(GovernorOLAS /
+Timelock /
+VoteWeighting) /
+LiquidityManager /
+Tokenomics /
+remaining
+L2 factories.
+
+## 2026-09-03: The Graph leftover remaining Curation + Dispute leftover (Sourcify)
+
+Immunefi program
+`thegraph`
+($50,000,
+`kyc: true`).
+Already leftover-
+logged as ETH
+L1 staking and
+Arb Horizon +
+payments.
+Sourcify ETH
+Curation proxy
+`0x8FE00a685Bcb3B2cc296ff6FfEaB10acA4CE1538`
+(impl
+`0xDeb46851907fd85DD475780CcE2eE0D67c969825`),
+ETH
+DisputeManager
+proxy
+`0x97307b963662cCA2f7eD50e38dCC555dfFc4FB0b`
+(impl
+`0x444c138bf2B151F28a713b0EE320240365A5BFC2`),
+Arb L2Curation
+proxy
+`0x22d78fb4bc72e191C765807f8891B5e1785C8014`
+(impl
+`0xD6e26e680FeF5cEc449b74298AA98B8CA67eCf96`),
+Arb
+DisputeManager
+proxy
+`0x2FE023a575449AcB698648eD21276293Fa176f96`
+(impl
+`0x40B17388b078d24ccC6bd3D3d64E475a7b0383Fb`),
+Arb
+SubgraphService
+proxy
+`0xb2Bb92d0DE618878E438b55D5846cfecD9301105`
+(impl
+`0x03a2D29d5CaC0373A73f29c8D03B08e634A86939`).
+Extract
+`/tmp/graph-curation-impl`,
+`/tmp/graph-dispute-impl`,
+`/tmp/graph-l2curation-impl`,
+`/tmp/graph-arb-dispute-impl`,
+`/tmp/graph-subgraph-svc-impl`.
+No mainnet
+writes.
+
+Files:
+`contracts/curation/Curation.sol`,
+`contracts/disputes/DisputeManager.sol`,
+`contracts/l2/curation/L2Curation.sol`,
+`contracts/DisputeManager.sol`,
+`contracts/SubgraphService.sol`.
+
+Checked for:
+mint that
+spends another
+account's GRT;
+burn of
+another
+account's
+signal;
+dispute
+deposit that
+pulls another
+account;
+permissionless
+slash of a
+healthy
+indexer.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- ETH
+  `Curation.mint`
+  `pullTokens`
+  `msg.sender`
+  then mints
+  signal to
+  the curator.
+  `burn`
+  requires the
+  curator to
+  own the
+  signal and
+  pays
+  `msg.sender`.
+  `collect` is
+  staking-only
+  bookkeeping.
+- L2
+  `Curation.mint`
+  is the same
+  pull-from-
+  curator
+  path.
+  `mintTaxFree`
+  is
+  `onlyGNS`
+  and still
+  pulls
+  `msg.sender`.
+  `collect` is
+  SubgraphService-
+  only.
+- ETH
+  `DisputeManager.createQueryDispute`
+  /
+  `createIndexingDispute`
+  `_pullSubmitterDeposit`
+  from
+  `msg.sender`.
+  Accept /
+  reject /
+  draw are
+  arbitrator-only.
+- Arb
+  Horizon
+  `DisputeManager`
+  `create*`
+  `pullTokens(msg.sender, disputeDeposit)`.
+- `SubgraphService.collect`
+  is
+  `enforceService`
+  (registered
+  indexer).
+  `slash` is
+  `onlyDisputeManager`.
+  `closeStaleAllocation`
+  is
+  permissionless
+  resize-to-zero
+  of a stale
+  non-altruistic
+  allocation
+  (no token
+  steal).
+
+Do not file
+curation mint
+that pulls
+the caller,
+burn of the
+caller's own
+signal,
+fisherman
+dispute
+deposit that
+pulls
+`msg.sender`,
+or
+arbitrator-gated
+slash.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+L2GraphTokenGateway
+404 /
+L2GNS /
+AllocationExchange /
+GraphTallyCollector /
+Governor /
+TokenLockWallet.
 
 ## Next candidates
 
@@ -37447,16 +37821,34 @@ L2 dispenser + veOLAS leftover
 (Sourcify Polygon / OP
 dispenser + ETH veOLAS; KYC)
 is logged (remaining listed
-is marketplace /
-registries);
+is ServiceRegistry /
+ServiceManager / governance /
+LiquidityManager /
+Tokenomics after
+marketplace leftover is
+leftover-logged);
 Autonolas leftover remaining
 Bridge2Burner + BuyBack leftover
 (Sourcify Polygon / OP
 Bridge2Burner + ETH Burner /
 BuyBackBurnerUniswap; KYC)
 is logged (remaining listed
-is marketplace /
-registries);
+is ServiceRegistry /
+ServiceManager / governance /
+LiquidityManager /
+Tokenomics after
+marketplace leftover is
+leftover-logged);
+Autonolas leftover remaining
+marketplace leftover
+(Sourcify MechMarketplace /
+Karma / balance trackers /
+registries; KYC) is logged
+(remaining listed is
+ServiceRegistry /
+ServiceManager / governance /
+LiquidityManager /
+Tokenomics);
 The Graph leftover remaining
 Arb Horizon + payments leftover
 (Sourcify HorizonStaking /
@@ -37466,8 +37858,20 @@ BillingConnector /
 L1GraphTokenGateway; KYC)
 is logged (remaining listed
 is L2GraphTokenGateway 404 /
-Curation / DisputeManager /
-SubgraphService);
+L2GNS / AllocationExchange /
+GraphTallyCollector after
+Curation + Dispute leftover
+is leftover-logged);
+The Graph leftover remaining
+Curation + Dispute leftover
+(Sourcify ETH Curation /
+DisputeManager + Arb
+L2Curation / DisputeManager /
+SubgraphService; KYC) is
+logged (remaining listed is
+L2GraphTokenGateway 404 /
+L2GNS / AllocationExchange /
+GraphTallyCollector);
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
