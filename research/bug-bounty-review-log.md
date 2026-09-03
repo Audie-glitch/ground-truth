@@ -25917,6 +25917,113 @@ this pass is
 exhausted at the
 opened-pallet
 level.
+## 2026-09-03: Beefy Finance leftover (Sourcify)
+
+Immunefi program
+`Beefy Finance`
+($75,000, `kyc: false`).
+Unique no-KYC listed
+slice. All 243 listed
+smart contracts are
+Polygon vault /
+strategy addresses.
+First-30 Sourcify
+sample: 23 open, 7
+404. Extract
+`/tmp/beefy`. No
+mainnet interaction.
+
+Listed Sourcify-open
+sample:
+`BeefyVaultV6` (11 in
+sample, including
+`0xfEcf784F48125ccb7d8855cdda7C5ED6b5024Cb3`
+`match` and
+`0x9f3B96a2Dd55aa904bC5476Ffe66E74a53f6b420`
+`exact_match`);
+`StrategyCommonChefLP`
+`0x315324Bcd724b8CF01FfE6d04F029328f595e126`;
+`StrategyCommonChefReferrerLP`
+`0xC32CCCfF0777C145e7d658081D141ec8A38f8133`;
+`StrategyCommonChefSingle`
+`0xf2F5C13686b79b92dC73F6Bb1D2663329658EC87`;
+`StrategyPolygonBifiMaxi`
+`0xD126BA764D2fA052Fc14Ae012Aef590Bc6aE0C4f`;
+`StrategyCurveATricrypto`
+`0x0C0C75AF434519AB96E34EB3bbEea726324d6264`;
+`StrategyCurveAaveRen`
+`0xAccf2f81F8c13e8D97ee272D141b6f4B613aB46D`;
+`StrategyDFYNDualFarmRewardPoolLP` (3);
+`StrategyDFYNRewardPoolLP`;
+`StrategyPolyCatDyfnLP`.
+
+Checked for: stranger
+vault `withdraw` that
+pays without burning
+the caller; strategy
+`withdraw` /
+`retireStrat` without
+the vault; public
+`earn` that sends
+vault `want` to a
+non-strategy.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Vault `deposit`
+  `transferFrom`
+  `msg.sender` then
+  mints shares to
+  that sender.
+  `withdraw` burns
+  the caller and
+  pays that caller.
+- Public `earn`
+  forwards idle
+  `want` to the
+  configured
+  `strategy` only.
+- Strategy
+  `withdraw` /
+  `retireStrat` are
+  `msg.sender ==
+  vault`. Harvest
+  `onlyEOA` takes
+  the configured
+  call fee from
+  rewards.
+- `proposeStrat` /
+  `upgradeStrat`
+  are `onlyOwner`.
+  `panic` is
+  `onlyManager`.
+
+Do not file first-
+depositor inflation,
+public `earn`, owner
+strat upgrade, or
+harvest call-fee as
+a stranger drain.
+
+Not submitted.
+Listed leftover is
+the Sourcify-open
+Polygon
+`BeefyVaultV6` +
+common chef / DFYN /
+Curve / BIFI-maxi
+strategies in the
+sampled slice.
+Remaining listed:
+other Polygon vaults
+(7 of first 30
+Sourcify 404;
+unsampled addresses
+not fetched).
+
 
 ## Next candidates
 
@@ -26345,6 +26452,11 @@ Core / factory / router / farm /
 vesting / airdrop) is logged
 (remaining listed is two BSC
 addresses Sourcify 404).
+Beefy Finance leftover (Sourcify
+Polygon `BeefyVaultV6` + common
+chef / DFYN / Curve / BIFI-maxi
+strategies) is logged (remaining
+listed is other Polygon vaults).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -26785,6 +26897,13 @@ vesting / airdrop) is
 logged (remaining listed
 is two BSC addresses
 Sourcify 404);
+Beefy Finance leftover
+(Sourcify Polygon
+`BeefyVaultV6` + common
+chef / DFYN / Curve /
+BIFI-maxi strategies) is
+logged (remaining listed
+is other Polygon vaults);
 Beets stS
 (`877087b`) + token
 leftover is logged

@@ -126,10 +126,11 @@ Nexus Mutual governance leftover
 (`9e88562`) is logged (listed Nexus
 Mutual GitHub leftover exhausted).
 Hydration DCA leftover (`672e02f`) is logged.
-Hydration pool leftover (`672e02f`) is logged
-(remaining listed is liquidity-mining /
-staking / LBP / referrals / route-executor /
-EVM adapters).
+Hydration pool leftover (`672e02f`) is logged.
+Hydration staking leftover (`672e02f`) is logged.
+Hydration EVM leftover (`672e02f`) is logged
+(listed Hydration leftover in this pass is
+exhausted at the opened-pallet level).
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis
@@ -166,6 +167,10 @@ Mars Ecosystem leftover (Sourcify BSC
 Core / factory / router / farm / vesting
 / airdrop) is logged (remaining listed is
 two BSC addresses Sourcify 404).
+Beefy Finance leftover (Sourcify Polygon
+`BeefyVaultV6` + common chef / DFYN /
+Curve / BIFI-maxi strategies) is logged
+(remaining listed is other Polygon vaults).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /
