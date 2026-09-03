@@ -21805,6 +21805,133 @@ slot and V3 Keeper /
 osToken / other
 vaults.
 
+## 2026-09-03: Rhino.fi deposit leftover (Sourcify)
+
+Immunefi program
+`Rhino.fi` /
+`rhinofi` ($2,000,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Sourcify-open
+listed proxies:
+Optimism
+`0x0bCa65bf4b4c8803d2f0B49353ed57CAAF3d66Dc`
+impl
+`0x87627c7E586441EeF9eE3C28B66662e897513f33`;
+BSC
+`0xB80A582fa430645A043bB4f6135321ee01005fEf`
+impl
+`0x5ab2790bE0ADe18af686f38C5321Af1D8daa3192`;
+Arbitrum
+`0x10417734001162ea139e8b044dfe28dbb8b28ad0`
+impl
+`0x2cA9f060e4A50434265dC38c7f539C5bC630E368`
+all `exact_match`
+`DVFDepositContract`
++ `BridgeVM` (solc
+0.8.4, identical
+source). ARB / BSC /
+MATIC MultiSigs
+Sourcify `match`
+`GnosisSafeProxy` →
+`GnosisSafeL2`.
+Extract `/tmp/rhino`.
+No mainnet
+interaction.
+
+Files:
+`DVFDepositContract.sol`,
+`BridgeVM.sol`.
+
+Checked for: a
+stranger withdraw
+that pulls escrow
+tokens; `withdrawVmFunds`
+paid to the caller;
+`BridgeVM.execute`
+without owner;
+deposit that credits
+without
+`transferFrom`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `depositWithId` /
+  `depositWithPermit`
+  `safeTransferFrom`
+  `msg.sender`.
+  Native deposit
+  only emits
+  `msg.value`.
+  `commitmentId` is
+  off-chain; an
+  invalid id does
+  not move tokens
+  back.
+- All withdraw /
+  `addFunds` /
+  `removeFunds` /
+  `swapWithData` /
+  `withdrawWithData`
+  paths are
+  `authorized`.
+  `authorize` is
+  owner. Program
+  text: no
+  assumption of
+  authorized-account
+  access.
+- `BridgeVM` is
+  deployed by the
+  deposit contract
+  (`createVMContract`
+  public only while
+  `vm == 0`).
+  `execute` is
+  `onlyOwner` (the
+  deposit contract).
+- `withdrawVmFunds`
+  is permissionless
+  but transfers
+  stuck VM tokens /
+  ETH to the VM
+  owner (escrow),
+  not the caller.
+- Unused storage
+  `depositsDisallowed`
+  / `maxDepositAmount`
+  / `processedWithdrawalIds`
+  are not checked
+  on deposit (no
+  on-chain limit
+  advertised).
+
+Do not file
+authorized-operator
+withdraws or
+custodial-bridge
+centralization.
+
+Not submitted.
+Listed leftover is
+the OP / BSC / ARB
+`DVFDepositContract`
+impls + listed
+Gnosis safes.
+Remaining listed:
+zkEVM bridge /
+zkSync bridge
+Sourcify 404;
+Polygon bridge
+impl
+`0x717D0Bf97Ce58E14945F5e0320EE98381aeadDAf`
+Sourcify 404 on
+chain 137.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -22119,6 +22246,12 @@ Oracles / MerkleDistributor /
 Vesting / genesis vault migrate)
 is logged (remaining listed is
 DAO Module Sourcify 404).
+Rhino.fi deposit leftover
+(Sourcify OP / BSC / ARB
+`DVFDepositContract`) is logged
+(remaining listed is zkEVM /
+zkSync / Polygon impl Sourcify
+404).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -22439,6 +22572,13 @@ Vesting / genesis vault
 migrate) is logged
 (remaining listed is DAO
 Module Sourcify 404);
+Rhino.fi deposit leftover
+(Sourcify OP / BSC / ARB
+`DVFDepositContract`) is
+logged (remaining listed
+is zkEVM / zkSync /
+Polygon impl Sourcify
+404);
 Beets stS
 (`877087b`) + token
 leftover is logged
