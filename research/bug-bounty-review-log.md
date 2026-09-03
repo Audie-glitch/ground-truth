@@ -426,10 +426,51 @@ Result: no user-exploitable finding.
 
 Not submitted. Payment requires user KYC. Remaining sBTC slice: `wsts`.
 
+## 2026-09-03: Origin CompoundingStakingStrategy (origin-dollar, no KYC)
+
+Unofficial Immunefi program `originprotocol` ($1M, `kyc: false`). The 1 Sep
+2026 asset adds were the existing OUSD / wOUSD / Vault / Curve AMO
+proxies. Reviewed the newer native-staking strategy instead: view
+`0xb7992eFDa9aBBaC3522336A626191D198fa37145` and proxy
+`0x25e1d468B14005716111d5e8464573e5135275f4` were added 22 Jun 2026.
+Local clone `/tmp/origin-dollar`. No mainnet interaction.
+
+Files: `contracts/strategies/NativeStaking/CompoundingStakingStrategy.sol`
+(storage + implementation), `interfaces/strategies/CompoundingStakingTypes.sol`.
+Did not review `BeaconProofsLib` SSZ internals.
+
+Checked for: user withdraw; share-price inflation via donated WETH/ETH;
+double-count of pending deposits vs validator balances; permissionless
+proofs rewriting NAV; registrator pulling to a non-vault recipient.
+
+Result: no user-exploitable finding.
+
+- `deposit` / `depositAll` are vault-only. `withdraw` allows the
+  registrator but `_withdraw` requires the recipient to be the vault.
+  `validatorWithdrawal` is registrator-only and only requests an EIP-7002
+  sweep back to this strategy’s 0x02 credentials.
+- `checkBalance` is `lastVerifiedEthBalance + WETH.balanceOf(this)`.
+  `stakeEth` unwraps WETH and adds the same amount to
+  `lastVerifiedEthBalance`. Wrapping ETH subtracts
+  `min(lastVerified, amount)` so swept ETH is not double-counted with
+  WETH. Permissionless `verifyBalances` sets lastVerified to pending
+  deposits + proven validator balances + the snapped ETH balance, then
+  clears the snap.
+- `verifyDeposit` refuses a processed slot after an unverified snap so a
+  deposit cannot leave `depositList` before `verifyBalances` has used
+  that snap. First deposits to new pubkeys are capped and serialized
+  (`firstDeposit`) to bound front-run loss; that loss is documented and
+  deducted from lastVerified when `verifyValidator` sees wrong
+  credentials.
+- Donated ETH sits in `receive()` until the next snap/verify. Donated
+  WETH raises `checkBalance` immediately and gifts existing vault
+  holders; it does not let a later minter extract others’ funds.
+
+Not submitted. Beacon-proof library and vault rebase interaction were
+not fully read.
+
 ## Next candidates
 
-Origin Protocol contracts added to Immunefi on **1 Sep 2026** (no KYC,
-$1M max) or sBTC `wsts`. Superteam `AGENT_ALLOWED` is still only Steve
-Arena and ZNS — do not execute. the402.ai still paused. Quantus audit
-comp submissions closed 25 Aug. No KeeperHub implementation before the
-6 Sep build window.
+sBTC `wsts` (KYC) or Origin `BeaconProofsLib`. Superteam `AGENT_ALLOWED`
+is still only Steve Arena and ZNS — do not execute. the402.ai still
+paused. No KeeperHub implementation before the 6 Sep build window.
