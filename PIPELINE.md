@@ -121,9 +121,10 @@ are exhausted).
 Nexus Mutual cover / pool / staking leftover
 (`9e88562`) is logged. Nexus Mutual claims leftover
 (`9e88562`) is logged. Nexus Mutual leftover
-modules leftover (`9e88562`) is logged
-(remaining listed is governance + NFT /
-viewers).
+modules leftover (`9e88562`) is logged.
+Nexus Mutual governance leftover
+(`9e88562`) is logged (listed Nexus
+Mutual GitHub leftover exhausted).
 Hydration DCA leftover (`672e02f`) is logged.
 Hydration pool leftover (`672e02f`) is logged
 (remaining listed is liquidity-mining /

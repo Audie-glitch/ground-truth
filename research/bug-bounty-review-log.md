@@ -25133,9 +25133,10 @@ Claims / Assessment
 is logged.
 Leftover modules leftover
 is logged.
-Remaining listed is
-governance + NFT /
-viewers.
+Governance leftover
+is logged (listed
+Nexus Mutual GitHub
+leftover exhausted).
 
 ## 2026-09-03: Nexus Mutual claims leftover (`9e88562`)
 
@@ -25231,9 +25232,10 @@ Remaining Nexus
 listed GitHub:
 leftover modules leftover
 is logged.
-Remaining listed is
-governance + NFT /
-viewers.
+Governance leftover
+is logged (listed
+Nexus Mutual GitHub
+leftover exhausted).
 ## 2026-09-03: dHEDGE leftover (Sourcify)
 
 Immunefi program
@@ -26119,10 +26121,13 @@ Nexus Mutual claims leftover
 (`9e88562`) is logged.
 Nexus Mutual leftover
 modules leftover
+(`9e88562`) is logged.
+Nexus Mutual
+governance leftover
 (`9e88562`) is logged
-(remaining listed is
-governance + NFT /
-viewers).
+(listed Nexus Mutual
+GitHub leftover
+exhausted).
 Hydration DCA leftover
 (`672e02f`) is logged.
 Hydration pool leftover
@@ -26541,10 +26546,13 @@ Nexus Mutual claims leftover
 (`9e88562`) is logged.
 Nexus Mutual leftover
 modules leftover
+(`9e88562`) is logged.
+Nexus Mutual
+governance leftover
 (`9e88562`) is logged
-(remaining listed is
-governance + NFT /
-viewers).
+(listed Nexus Mutual
+GitHub leftover
+exhausted).
 Hydration DCA leftover
 (`672e02f`) is logged.
 Hydration pool leftover
@@ -26909,5 +26917,136 @@ submitted.
 Not submitted.
 Remaining Nexus
 listed GitHub:
-governance + NFT /
-viewers.
+governance leftover
+is logged (listed
+Nexus Mutual GitHub
+leftover exhausted).
+
+## 2026-09-03: Nexus Mutual governance leftover (`9e88562`)
+
+Immunefi program
+`Nexus Mutual`
+($25,000, `kyc: false`).
+Cover / pool / staking,
+claims, and leftover
+modules leftovers are
+already logged. This
+slice is governance
+plus CoverNFT /
+StakingNFT / viewers.
+Local clone
+`/tmp/nexusmutual` at
+`9e88562`. No mainnet
+interaction.
+
+Files:
+`contracts/modules/governance/Governor.sol`,
+`contracts/modules/governance/Registry.sol`,
+`contracts/modules/governance/NXMaster.sol`,
+`contracts/modules/governance/TemporaryGovernance.sol`,
+`contracts/modules/governance/VotePower.sol`,
+`contracts/modules/governance/Governance.sol`,
+`contracts/modules/governance/UpgradeableProxy.sol`,
+`contracts/modules/cover/CoverNFT.sol`,
+`contracts/modules/cover/CoverViewer.sol`,
+`contracts/modules/cover/CoverNFTDescriptor.sol`,
+`contracts/modules/staking/StakingNFT.sol`,
+`contracts/modules/assessment/AssessmentLib.sol`.
+
+Checked for: a
+stranger
+`join` without KYC
+that drains the
+Pool; `execute` that
+runs unpassed
+transactions;
+`migrate` /
+`migrateMembers`
+from a random
+caller; CoverNFT
+`mint` without the
+operator.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `join` needs the
+  exact `JOIN_FEE`
+  and a KYC-auth
+  EIP-712
+  signature. Fee
+  goes to the Pool.
+- `switchTo` moves
+  the caller’s
+  membership.
+  `switchFor` is
+  MemberRoles only.
+  `leave` is the
+  member and cannot
+  be an AB seat.
+- Pause propose /
+  confirm needs two
+  different
+  emergency admins.
+  Contract deploy /
+  upgrade / add /
+  remove and AB
+  swap are
+  Governor.
+- `Registry.migrate`
+  and
+  `NXMaster.migrate`
+  /
+  `transferOwnershipToRegistry`
+  are the live GV
+  address.
+  `migrateMembers`
+  is MemberRoles.
+- `Governor.propose`
+  is AB.
+  `proposeAdvisoryBoardSwap`
+  is a member over
+  the threshold.
+  `execute` is
+  permissionless
+  after the
+  timelock only if
+  For > Against and
+  quorum /
+  threshold hold.
+  AB execute still
+  requires an AB
+  caller.
+- `TemporaryGovernance.execute`
+  is the AB
+  multisig.
+- Legacy
+  `Governance.createProposal`
+  is a member.
+  `triggerAction`
+  is
+  permissionless
+  after Accepted +
+  wait. `rejectAction`
+  is AB.
+- CoverNFT `mint` is
+  operator.
+  Transfers need
+  owner or
+  approval.
+  StakingNFT `mint`
+  is the matching
+  staking pool.
+- VotePower,
+  CoverViewer,
+  CoverNFTDescriptor,
+  and AssessmentLib
+  are views /
+  metadata.
+
+Not submitted.
+Listed Nexus Mutual
+GitHub leftover is
+exhausted.
