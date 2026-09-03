@@ -34,7 +34,8 @@ V1 Avalanche twins leftover is logged;
 USDT0 leftover
 is logged; Ondo Finance leftover is logged;
 Hyperlane leftover is logged; Veda leftover
-is logged; Immutable leftover is logged).
+is logged; Immutable leftover is logged;
+Stargate leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -422,6 +423,11 @@ Immutable leftover RootERC20Bridge leftover
 RootAxelarBridgeAdaptor; KYC) is logged
 (remaining listed is other-chain /
 child-chain twins).
+Stargate leftover ETH pools leftover
+(Sourcify StargatePoolNative / USDC /
+USDT / TokenMessaging / Staking; KYC)
+is logged (remaining listed is METIS /
+mETH twins / other FeeLib / other-chain).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1001,6 +1007,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Immutable leftover
   RootERC20Bridge leftover
   (Sourcify; KYC),
+  Stargate leftover ETH
+  pools leftover (Sourcify;
+  KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover

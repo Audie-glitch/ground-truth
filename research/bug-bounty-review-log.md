@@ -30393,6 +30393,166 @@ twins and
 Sourcify-404
 rows.
 
+## 2026-09-03: Stargate leftover ETH pools leftover (Sourcify)
+
+Immunefi program
+`stargate`
+($10,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+`match`
+StargatePoolNative
+`0x77b2043768d28E9C9aB44E1aBfC95944bcE57931`,
+StargatePoolUSDC
+`0xc026395860Db2d07ee33e05fE50ed7bD583189C7`,
+StargatePoolMigratable
+(USDT)
+`0x933597a323Eb81cAe705C5bC29985172fd5A3973`,
+StargateStaking
+`0xFF551fEDdbeDC0AeE764139cCD9Cb644Bb04A6BD`,
+TokenMessaging
+`0x6d6620eFa72948C5f68A3C8646d58C00d3f4A980`,
+Treasurer
+`0x1041D127b2d4BC700F0F563883bC689502606918`,
+StargateMultiRewarder
+`0x5871A7f88b0f3F5143Bf599Fd45F8C0Dc237E881`,
+and FeeLibV1
+`0x3E368B6C95c6fEfB7A16dCc0D756389F3c658a06`.
+Extract
+`/tmp/sg-pool-native`
+/ `/tmp/sg-pool-usdc`
+/ `/tmp/sg-pool-usdt`
+/ `/tmp/sg-staking`
+/ `/tmp/sg-msg`
+/ `/tmp/sg-treas`
+/ `/tmp/sg-reward`
+/ `/tmp/sg-feeth`.
+No mainnet
+interaction.
+
+Files:
+`src/StargatePool.sol`,
+`src/StargatePoolNative.sol`,
+`src/StargateBase.sol`,
+`src/messaging/TokenMessaging.sol`,
+`src/peripheral/rewarder/StargateStaking.sol`,
+`src/peripheral/Treasurer.sol`.
+
+Checked for: a
+stranger deposit
+that spends
+another user's
+tokens; redeem
+that burns
+someone else's
+LP; send that
+pulls a victim;
+retry receive
+that pays the
+caller; staking
+withdraw of
+another user's
+shares.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- ERC20 pool
+  `_inflow`
+  `transferFrom`s
+  `_from`.
+  `deposit` /
+  `sendToken`
+  pass
+  `msg.sender`.
+  Native pool
+  charges
+  `msg.value`.
+  LP mints to the
+  named receiver;
+  `redeem` /
+  `redeemSend`
+  `burnFrom`
+  `msg.sender`.
+- `receiveTokenBus`
+  / `receiveTokenTaxi`
+  are
+  `onlyCaller(tokenMessaging)`
+  and pay the
+  decoded
+  `_receiver`.
+  `retryReceiveToken`
+  is
+  permissionless
+  after a hash
+  match and pays
+  that cached
+  `_receiver`.
+- TokenMessaging
+  `_lzReceive`
+  is Endpoint
+  `OAppReceiver`
+  gated and
+  forwards to the
+  asset's Stargate
+  impl.
+- Staking
+  `deposit` pulls
+  `msg.sender`.
+  `depositTo` is
+  contract-caller
+  only and still
+  pulls
+  `msg.sender`.
+  Withdraw /
+  claim debit
+  `msg.sender`.
+- Treasurer
+  `withdrawTreasuryFee`
+  is admin +
+  listed Stargate
+  only. Pool
+  treasury /
+  planner
+  withdraws are
+  `onlyCaller`.
+
+Do not file
+permissionless
+retry of a
+cached failed
+receive to that
+receiver,
+treasurer /
+planner fee
+withdraw, or
+Endpoint-gated
+bus / taxi
+credit as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH pool /
+staking /
+messaging types
+is exhausted.
+Remaining listed:
+METIS / mETH
+pool twins,
+other FeeLibV1
+rows, and
+other-chain
+deployments.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -31831,6 +31991,14 @@ RootERC20Bridge leftover
 / RootAxelarBridgeAdaptor; KYC)
 is logged (remaining listed is
 other-chain / child-chain twins);
+Stargate leftover ETH pools leftover
+(Sourcify StargatePoolNative /
+StargatePoolUSDC /
+StargatePoolMigratable /
+TokenMessaging / Staking;
+KYC) is logged (remaining
+listed is METIS / mETH twins
+/ other FeeLib / other-chain);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
