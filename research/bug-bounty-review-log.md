@@ -61194,3 +61194,22 @@ Result: no user-exploitable finding. Not submitted.
 Do not file payload-recipient mints, claimer-gated fee claims, caller-owned burns, below-threshold Bascule skips, or admin/multisig mint limits as stranger theft.
 
 Not submitted. Payment requires user KYC. Listed leftover that official GitHub opens for Lombard Sui move packages is exhausted at the opened-file level. Remaining listed: Starknet cairo packages.
+
+## 2026-09-03: Lombard leftover Starknet cairo packages leftover (`0358a40`)
+
+Immunefi program `lombard-finance` ($250,000, `kyc: true`). Follow-on leftover after Sui move packages (`68ea553`). Official clone `/tmp/lombard-starknet` `0358a40`. Opened `packages/token/src/lbtc/token.cairo`, `packages/asset_router/src/asset_router.cairo`, `packages/consortium/src/consortium.cairo`, `packages/bascule/src/bascule.cairo`, `packages/stake_and_bake/src/stake_and_bake.cairo`. No mainnet writes. No exploit PoCs.
+
+Checked for: a stranger `permissioned_mint` / `mint` that credits the caller; reused deposit payloads; `redeem` that burns a victim; `stake_and_bake` that stakes another user's mint without permit; Bascule `validate_withdrawal` that skips reported deposits; consortium `check_proof` that accepts duplicate signer weight.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `lbtc::permissioned_mint` / `permissioned_burn` are `only_token_admin`. ERC20 hooks pause transfers. No public mint.
+- `AssetRouter.mint` requires `to_chain == tx.chain_id + LOMBARD_STARKNET_IDENTIFIER`, nonzero recipient and amount. `_validate_and_mint` SHA-256s the selector-prefixed deposit payload, rejects used hashes, records the hash, then `consortium.check_proof`. Optional Bascule `validate_withdrawal` when the bascule address is set. `permissioned_mint` credits the **supplied `recipient`** (bound into the signed payload). `btc_locked_amount` increases by `amount`.
+- `redeem` is public but burns **`get_caller_address()`** via `permissioned_burn` for the full `amount`, mints the burn commission to treasury, and decrements `btc_locked_amount` by `amount_after_fee`. Requires withdrawals enabled, `amount > fee`, dust check, and locked BTC ≥ after-fee.
+- `consortium.check_proof` recovers secp256k1 signers to Eth addresses, looks up current-epoch weights, and **deduplicates** recovered addresses (`insert_if_unique`) before summing. Zero signatures are skipped. Threshold must be met. `set_initial_validator_set` is app-governor, once, epoch ≠ 0. `set_next_validator_set` requires `epoch == current + 1` plus a proof over the new-valset payload hash.
+- `bascule.validate_withdrawal` is `WITHDRAWAL_VALIDATOR`. A `Reported` id becomes `Withdrawn` once. Already-withdrawn aborts. Unreported ids below `validate_threshold` are allowed and then marked withdrawn (documented drawbridge policy). `report_deposits` is `DEPOSIT_REPORTER`; already-reported ids warn instead of revert.
+- `stake_and_bake` is `only_token_admin`. It calls `asset_router.mint` (recipient from the consortium-signed args), then `permit` + `transferFrom` **that recipient** for `amount` if allowance is short, takes `fee` (capped `MAX_FEE` 100000) to treasury, and `vault.deposit(remaining, receiver: recipient)`. `min_mint` is a slippage check.
+
+Do not file payload-recipient mints, caller-owned redeem burns, claimer/token-admin stake-and-bake, or below-threshold Bascule skips as stranger theft.
+
+Not submitted. Payment requires user KYC. Listed leftover that official GitHub opens for Lombard Sui move packages and Starknet cairo packages is exhausted at the opened-file level. Remaining listed: none from this Lombard GitHub slice.
