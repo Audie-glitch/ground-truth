@@ -17168,6 +17168,89 @@ inactive + MorphoVault
 V2 + polygon /
 arbitrum.
 
+## 2026-09-03: Harvest ZeroLend / CompoundV3 / Idle leftover (`0364901`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Prior
+Harvest slices on pin
+`0364901` are already
+logged. This slice is
+ZeroLend fold wrappers,
+Compound III Comet,
+and Idle. Local clone
+`/tmp/harvest-strategy`.
+No mainnet interaction.
+
+Files:
+`contracts/strategies/zerolend/ZerolendFoldStrategyMainnet_*.sol`,
+`ZerolendFoldStrategyFIXMainnet_WBTC.sol`,
+`compoundV3/CompoundStrategy.sol`,
+`idle/IdleStrategy.sol`.
+
+Checked for: a stranger
+redeeming Comet /
+idleTokens; withdraw
+that pays more than
+supplied minus fee;
+fold callback that is
+not Balancer; salvage
+of aTokens / idle
+receipts.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- ZeroLend Mainnet
+  contracts inherit
+  `AaveFoldStrategy`
+  (already logged).
+  They only set
+  ZeroLend aToken /
+  debtToken / ZERO
+  reward and fold
+  factors (e.g. 870 /
+  899 / 1000). The
+  FIX WBTC variant
+  inherits
+  `AaveFoldStrategyFIX`.
+  No new money path.
+- Compound III
+  `baseToken` must
+  match `underlying`.
+  Supply / withdraw
+  go to that Comet.
+  Fee is a slice of
+  `current − stored`
+  supplied. Withdraw
+  and hard-work are
+  `restricted`.
+  Salvage refuses
+  underlying / reward
+  / market.
+- Idle mints
+  `idleToken` whose
+  `token()` must match
+  `underlying`. Redeem
+  uses helper
+  `getRedeemPrice` + 1
+  wei. When
+  `protected`, a
+  rising redeem price
+  reverts (virtual-
+  price guard).
+  Withdraw / hard-work
+  are `restricted`.
+  Salvage refuses
+  idle receipts.
+
+Not submitted. Remaining
+Harvest is inactive +
+MorphoVault V2 +
+polygon / arbitrum
+trees.
+
 ## 2026-09-03: Marinade crank / withdraw-stake leftover (`b8fe3f8`)
 
 Immunefi program
@@ -18029,12 +18112,13 @@ leftover and Convex /
 Aura / Aave fold leftover
 and Penpie / Notional /
 StakeDAO / Yel leftover
-are logged
+and ZeroLend /
+CompoundV3 / Idle
+leftover are logged
 (remaining Harvest is
-ZeroLend / CompoundV3 /
-Idle / inactive +
-MorphoVault V2 + polygon
-/ arbitrum);
+inactive + MorphoVault
+V2 + polygon /
+arbitrum);
 ICHI oneToken leftover
 (`4873873`) is logged;
 Yearn yCRV token +
