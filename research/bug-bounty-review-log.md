@@ -1763,16 +1763,88 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Sky diamond-pau UniV4 / DualPool / PSM3 / remaining facets (`1b6743a`)
+
+Same Immunefi program (`sky`) and clone `/tmp/diamond-pau`
+at `1b6743a`. No mainnet interaction. Completes the
+in-scope facet tree after the Aave/LZ/Pendle and
+Maple/farms/wraps/Curve/PSM passes.
+
+Files: `src/facets/uniswap-v4/UniswapV4Facet.sol`,
+`src/facets/dual-pool/DualPoolFacet.sol`,
+`src/facets/psm3/PSM3Facet.sol`,
+`src/facets/dai-usds/DAIUSDSFacet.sol`,
+`src/facets/usds/USDSFacet.sol`,
+`src/facets/basin/BasinFacet.sol`,
+`src/facets/centrifuge/CentrifugeFacet.sol`,
+`src/facets/spark-vault/SparkVaultFacet.sol`,
+`src/facets/superstate/SuperstateFacet.sol`,
+`src/facets/merkl/MerklFacet.sol`,
+`src/facets/nfat-halo/NFATHaloFacet.sol`,
+`src/facets/nfat-prime/NFATPrimeFacet.sol`.
+
+Checked for: a fabricated UniV4 `PoolKey` that bypasses
+slippage/rate limits; DualPool hook return values that
+under-report spend; PSM3/Basin receiver other than the
+proxy; Centrifuge transfer to a caller-chosen recipient;
+Merkl `toggleOperator` for an unlisted operator; NFAT
+Halo issue that credits `gem` off-proxy; leftover
+Permit2 allowances.
+
+Result: no user-exploitable finding.
+
+- UniV4 mint/increase require admin tick limits and
+  `hooks == 0`. NFT recipient is the proxy. Increase
+  checks `ownerOf == proxy`. Decrease sends
+  `TAKE_PAIR` to the proxy; PositionManager still
+  gates who can modify a tokenId. Swap hashes the
+  caller `PoolKey` to `poolId`; a fabricated key has
+  no `maxSlippage` and reverts. Permit2 allowances
+  are set to `block.timestamp` then cleared.
+- DualPool measures spend/receipt by proxy balance
+  diffs, not hook return values. Deposit requires
+  `previewWithdraw(shares)` value ≥ paid ×
+  `maxSlippage`. Withdraw requires allocator mins ≥
+  preview × slippage (governance floor if the
+  allocator is compromised). Unset poolId reverts.
+- PSM3 deposit/withdraw receiver is the proxy.
+  Immutable `psm`. Rate limits per asset. Basin is
+  the same shape plus `minSharesOut` /
+  `minConversionRate`. DAIUSDS is 1:1 through
+  immutable `daiUSDS`. USDS `mint` draws to the
+  admin-set vault buffer then `transferFrom`s to the
+  proxy; `burn` is the reverse and restores the mint
+  key.
+- Centrifuge cancel/claim only require that the
+  matching key **exists**. `transferShares` pays the
+  admin `recipients[centrifugeId]` via the vault's
+  spoke. Request id is always 0 (documented).
+- SparkVault `take` burns `LIMIT_SPARK_VAULT_TAKE`
+  then `take`s into the proxy. Superstate
+  `subscribe` is USDC→USTB on immutable addresses
+  and clears the USDC allowance. Merkl
+  `toggleOperator` requires a
+  `(distributor, operator)` key; user is the proxy.
+- NFAT Halo `issue` measures `gem` received on the
+  proxy; `to` is the facility NFT recipient and is
+  part of the issue rate-limit key. One tokenId per
+  facility. Interest is capped by admin
+  `maxAnnualGrowthRate`. Repay spends from the proxy
+  and clears allowance. Prime subscribe/withdraw/
+  collect rate-limit actual `gem` deltas; `data` is
+  allocator-chosen on a key-gated facility.
+
+`diamond-pau` facet sources at `1b6743a` are exhausted.
+
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
-diamond-pau core + CCTP/4626/7540/OTC/transfer/Ethena +
-Aave/AaveV4/LayerZero/Pendle/UniV3 + Maple / farms /
-wraps / Curve / Lite PSM, and Intuition MultiVault /
+the full `diamond-pau` facet tree at `1b6743a`, and
+Intuition MultiVault /
 AtomWallet / curves / emissions / registry are exhausted.
-Remaining Sky `diamond-pau` facets: UniV4, DualPool, PSM3,
-DAIUSDS, Basin, Centrifuge, SparkVault, Superstate,
-Merkl, NFAT Halo/Prime. Remaining Intuition:
+Remaining Intuition:
 `TrustSwapAndBridgeRouter` (Base, not in the v2 repo).
 Superteam API rechecked 02:50 UTC 3 Sep: 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
