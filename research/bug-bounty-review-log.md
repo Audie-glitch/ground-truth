@@ -41170,6 +41170,8 @@ Filecoin leftover remaining go-data-transfer leftover
 (`8a94d94`) is logged.
 Filecoin leftover remaining go-crypto leftover
 (`91b77aa`) is logged.
+Filecoin leftover remaining go-address leftover
+(`73c8a46`) is logged.
 Wormhole leftover remaining CosmWasm token-bridge leftover
 (`c58827e`) is logged.
 Wormhole leftover remaining CosmWasm core leftover
@@ -41182,6 +41184,8 @@ Wormhole leftover remaining wormchain leftover
 (`c58827e`) is logged.
 Wormhole leftover remaining node leftover
 (`c58827e`) is logged.
+Wormhole leftover remaining Algorand Aptos Near leftover
+(`c58827e`) is logged.
 Remaining listed Hedera: hashed transaction-tool website.
 Remaining listed Filecoin: remaining go-* / lotus non-miner.
 
@@ -41193,7 +41197,7 @@ Do not rematch Filecoin builtin-actors, boost, go-f3,
 lotus miner, FVM, proofs-api, proofs-ffi, or proofs.
 Do not rematch filecoin.io website leftover.
 Do not rematch filecoin-ffi, go-graphsync, paired,
-go-data-transfer, or go-crypto leftover.
+go-data-transfer, go-crypto, or go-address leftover.
 Do not rematch ZKsync bootloader, interpreter,
 storage_models, proof_running_system, zk_ee,
 zkos-wrapper, or airbender verifier.
@@ -64452,3 +64456,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file signer-approved lock/burn or claim-gated release to the VAA recipient as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: Relayer Sourcify 404.
+
+## 2026-09-03: Filecoin leftover remaining go-address leftover (`73c8a46`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after go-crypto leftover. Official clone `/tmp/filecoin-goaddr` at `73c8a46` (`chore: set CODEOWNERS (#62)`). Opened `address.go`, `constants.go`. Encoding only; does not move FIL. Do not rematch builtin-actors / go-crypto leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `decode` accepting a checksum mismatch; ID / f4 namespace overflowing 2^63; secp/actor payload not 20 bytes; delegated subaddress over `MaxSubaddressLen`.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `NewSecp256k1Address` / `NewActorAddress` blake2b-20 the ingest. `NewBLSAddress` requires 48-byte payload. `NewIDAddress` / delegated namespace reject `> 2^63-1`.
+- `decode` requires `f`/`t` prefix, known protocol, exact payload lengths, and blake2b-4 checksum over `{protocol || payload}`. `base32decode` re-encodes and requires a canonical string.
+- `NewFromBytes` rejects length 1; empty is `Undef`. `UnmarshalCBOR` rejects extra > 64 and `Undef`. `IDFromAddress` errors on non-ID.
+
+Do not file an address codec that checksums and length-checks as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner.

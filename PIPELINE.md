@@ -39,6 +39,8 @@ ZKsync OS leftover airbender verifier leftover is logged;
 Filecoin leftover remaining paired leftover is logged;
 Filecoin leftover remaining go-data-transfer leftover is logged;
 Filecoin leftover remaining go-crypto leftover is logged;
+Filecoin leftover remaining go-address leftover is logged;
+Wormhole leftover remaining Algorand Aptos Near leftover is logged;
 Wormhole leftover remaining node leftover is logged;
 Wormhole leftover remaining wormchain leftover is logged;
 Wormhole leftover remaining CosmWasm accountant leftover is logged;
