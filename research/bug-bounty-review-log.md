@@ -3368,6 +3368,54 @@ Restaking `restaking_*` / `vault_*` and `jito-solana` /
 `mev-programs` remain. Do not submit. Payment requires
 user KYC.
 
+## 2026-09-03: Money on Chain V2 governance machines (`d770477`)
+
+Same Immunefi program `moneyonchain` ($10,000, `kyc: true`).
+Local clone `/tmp/reviews/moneyonchain` at `d770477`.
+Core / queue / V4 swapper already logged. No mainnet
+interaction.
+
+Files: `contracts/governance/{InterimGovernor,Governed,
+Stoppable,MocUpgradable}.sol`,
+`contracts/governance/changerTemplates/{Governance,
+AddBucket,EditBucket,AddPeggedToken,EditPeggedToken,
+UpgraderUUPS}ChangerTemplate.sol`.
+
+Checked for: a permissionless `execute()` that changes
+governor, upgrades a UUPS proxy, or grants TP minter
+roles; `changeGovernor` callable by a non-changer;
+pauser that can unpause without being pauser or
+authorized; UUPS `_authorizeUpgrade` open.
+
+Result: no user-exploitable finding.
+
+- Changer `execute()` is intentionally ungated. The
+  productive calls (`changeGovernor`, `addBucket`,
+  `editBucket`, `addPeggedToken`, `editPeggedToken`,
+  `upgradeTo`) sit behind `onlyAuthorizedChanger` on
+  the target. Areopagus (and `InterimGovernor`) only
+  treat the current change contract / owner as
+  authorized. A direct `execute()` from a random
+  caller reverts on that check.
+- `InterimGovernor.executeChange` / 
+  `isAuthorizedChanger` are owner-only. Production
+  governor is Areopagus, not this file.
+- `Governed.changeGovernor` is
+  `onlyAuthorizedChanger`. `Stoppable.pause` is
+  pauser-only; `unpause` is pauser or authorized
+  changer. `makeUnstoppable` / `setPauser` are
+  changer-only.
+- `MocUpgradable._authorizeUpgrade` is
+  `onlyAuthorizedChanger`.
+- Add-bucket / add-TP templates also
+  `grantRole(MINTER/BURNER)` on the TP; that needs
+  admin on the token, which the changer does not
+  have unless governance already arranged it.
+
+V2 governance tree treated as exhausted. Remaining
+MoC: live Rootstock v1 proxy implementations (not
+this repo). Not submitted. Payouts need Immunefi KYC.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3400,13 +3448,14 @@ classifier, position NFT, gauge, 0x verifier, Frax
 adapter, libs, test `AlEth`) is exhausted. Enzyme
 Blue gated-redemption wrapper + share-price throttle
 (`da3b870`) and Charm Alpha Pro Vault (`0174095`)
-are exhausted. Remaining MoC: governance machines
-and live Rootstock v1 proxies if a later pass wants
-addresses rather than the V2 tree. 1inch Aqua opcode
-set and Aqua-listed solidity-utils mixins / libraries
-(`5b597e4`) are exhausted. DeFi Saver V3 executor + FL + auth (`e623f20`) is
-logged; remaining DFS is `exchangeV3` and protocol
-`actions/*`. Next unreviewed Immunefi
+are exhausted. Remaining MoC: live Rootstock v1
+proxies if a later pass wants addresses rather than
+the V2 tree. V2 governance machines (`d770477`) are
+exhausted. 1inch Aqua opcode set and Aqua-listed
+solidity-utils mixins / libraries (`5b597e4`) are
+exhausted. DeFi Saver V3 executor + FL + auth
+(`e623f20`) is logged; remaining DFS is `exchangeV3`
+and protocol `actions/*`. Next unreviewed Immunefi
 GitHub-or-recent trees: DeFi Saver protocol actions
 and exchange, Jito restaking `restaking_*` / `vault_*`
 plus `jito-solana` / `mev-programs` ($250k, KYC;
