@@ -158,17 +158,19 @@ mainnet interaction.
 
 Read: `aqua/src/*` (Aqua.sol, AquaApp.sol, AquaRouter.sol, Balance.sol,
 IAqua.sol) and swap-vm `SwapVM.sol`, `AquaSwapVMRouter`, `AquaOpcodes`,
-`Balances`, `XYCSwap`, `XYCConcentrate`, `PeggedSwap`, `FeeFlat`,
-`FeeProtocol`, `Extruction`, `Decay`, `Controls`, `MakerTraits`, plus
-`TransientLock` / `TransientLockUnsafe`.
+`Balances`, `XYCSwap`, `XYCConcentrate`, `PeggedSwap`, `PeggedSwapMath`,
+`FeeFlat`, `FeeProtocol`, `ProtocolFee` helpers, `Extruction`, `Decay`,
+`Controls`, `MakerTraits`, `TakerTraits`, plus `TransientLock` /
+`TransientLockUnsafe`.
 
 Checked for: virtual-balance accounting (ship/dock/pull/push), docked-strategy
 behaviour, uint248 packing, per-order transient reentrancy, Aqua vs signature
-hashing, msg.value/WETH, curve rounding, fee bps, maker-chosen Extruction.
+hashing, msg.value/WETH, curve rounding, fee bps vs surplus pulls, taker
+threshold/partial-fill, maker-chosen Extruction.
 
-Result so far: no exploitable finding. Still unread: PeggedSwapMath internals,
-ProtocolFee transfer helpers, TakerTraits, and most non-Aqua opcodes (TWAP,
-invalidators, whitelist).
+Result: no exploitable finding on the Aqua opcode set and fee settlement.
+Still unread: most non-Aqua opcodes (TWAP, invalidators, whitelist) which are
+outside this program's Aqua opcode dispatcher.
 
 - `pull` and `push` update packed balances before token movement; checked
   arithmetic bounds pulls to what the maker shipped and blocks pushes to docked
@@ -186,6 +188,15 @@ invalidators, whitelist).
   and is documented as needing min-rate / Aqua guards.
 - `MakerTraits` requires `tokenA < tokenB`. Decay offsets revert on underflow
   if they would exceed `balanceOut`.
+- `PeggedSwapMath.solve` uses the rationalized quadratic and floors √D so `v`
+  is larger (maker-favorable). `a == 0` reduces to `v = rightSide² / ONE`.
+- Token-in fees take a pro-rata of `feeTotal` plus optional surplus from the
+  taker-paid gross; token-out fees pull the same from the maker, then the
+  taker receives the already-net `amountOut`. Surplus is maker-parameterized.
+  Floor splits can leave dust; they do not over-allocate the flat fee.
+- `TakerTraits.validate` requires `amountOut > 0`, enforces exact vs partial
+  fill against the taker-specified amount, and scales min-out / max-in
+  thresholds on partial fills.
 
 Do not submit. Payment requires user KYC. ETHOnline "Build an Aqua App"
 ($5,000) is a later path: inherit `AquaApp`, ship strategies, settle against
@@ -194,7 +205,7 @@ ETHGlobal + public GitHub.
 
 ## Next candidates
 
-Unread 1inch Aqua scoped math (`PeggedSwapMath`, ProtocolFee helpers,
-TakerTraits). GMTrade `programs/store` order execution / liquidation is a
-multi-day Rust pass. sBTC is KYC. Sherlock had no active contests as of
-3 Sep 2026. No KeeperHub implementation before the 6 Sep build window.
+GMTrade `programs/store` order execution / liquidation is a multi-day Rust
+pass. sBTC is KYC. Sherlock `/api/contests` returned no live items as of
+01:28 UTC 3 Sep 2026. No KeeperHub implementation before the 6 Sep build
+window.
