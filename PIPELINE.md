@@ -219,6 +219,15 @@ PriceOracleV1 / rate models) is logged
 (listed leftover that a public tree would
 open is exhausted; remaining listed is
 other Tronscan jToken markets).
+Threshold Bridge leftover (`502cd39`) is
+logged.
+Threshold leftover gov / relay leftover
+(`502cd39`) is logged.
+Pareto Credit leftover (`19e7cde` IdleCDO /
+CreditVault / Tranche / epoch
+request-claim) is logged (remaining listed
+is IdleCreditVault strategy / epoch admin /
+proxy impls / other docs addresses).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /
@@ -492,7 +501,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   PriceOracleV1 / rate
   models; listed leftover
   that a public tree would
-  open is exhausted), and
+  open is exhausted),
+  Pareto Credit leftover
+  (`19e7cde` IdleCDO /
+  CreditVault / Tranche /
+  epoch request-claim), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

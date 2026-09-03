@@ -27253,6 +27253,108 @@ listed:
 typescript (not a
 Solidity money path).
 
+## 2026-09-03: Pareto Credit leftover (`19e7cde`)
+
+Immunefi program
+`Pareto Credit` ($50,000,
+`kyc: false`). Unique
+no-KYC listed slice.
+Listed asset is the
+docs vault-address page.
+Docs HTML lists Ethereum
+vaults. Sourcify
+`exact_match`
+`TransparentUpgradeableProxy`
+for
+`0xf6223C567F21E33e859ED7A045773526E9E3c2D5`
+and siblings;
+`match` `IdleCDOTranche`
+for
+`0x45054c6753b4Bce40C5d54418DabC20b070F85bE`.
+Official clone
+`/tmp/idle-tranches`
+at `19e7cde` (Idle
+Perpetual Yield Tranches
+/ Pareto credit vaults).
+No mainnet interaction
+(publicnode storage 403).
+
+Files:
+`contracts/IdleCDOCreditVault.sol`,
+`contracts/IdleCDO.sol`,
+`contracts/IdleCDOTranche.sol`,
+`contracts/IdleCDOEpochVariant.sol`.
+
+Checked for: a stranger
+`depositAA` that mints
+to the caller without
+pulling that caller;
+`withdrawAA` that pays
+without burning the
+caller; epoch
+`claimWithdrawRequest`
+that pays another
+user's receipt.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- CreditVault
+  `depositAA` /
+  `depositBB` pull
+  `msg.sender` and mint
+  tranche shares to
+  that sender, then
+  `strategy.deposit`.
+- IdleCDO
+  `withdrawAA` /
+  `withdrawBB` burn
+  the caller's tranche
+  via `_withdrawOps`
+  and pay that caller.
+- Tranche `mint` /
+  `burn` are minter
+  (the CDO) only.
+  First mint burns
+  `MIN_LIQUIDITY` to
+  `address(1)`.
+- Epoch
+  `requestWithdraw`
+  burns the caller and
+  records a strategy
+  receipt for
+  `msg.sender`.
+  `claimWithdrawRequest`
+  /
+  `claimInstantWithdrawRequest`
+  claim that sender.
+
+Do not file junior
+loss absorption /
+default pause, owner
+or guardian shutdown,
+first-deposit
+`MIN_LIQUIDITY`, or
+Keyring allowlist as
+theft.
+
+Not submitted.
+Listed leftover is
+the IdleCDO /
+CreditVault /
+Tranche / epoch
+request-claim slice.
+Remaining listed:
+IdleCreditVault
+strategy, other epoch
+admin, proxy
+implementations not
+independently
+Sourcify-fetched, and
+other docs addresses.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -27743,6 +27845,15 @@ tree would open is
 exhausted; remaining
 listed is other Tronscan
 jToken markets).
+Pareto Credit leftover
+(`19e7cde` IdleCDO /
+CreditVault / Tranche /
+epoch request-claim) is
+logged (remaining listed
+is IdleCreditVault
+strategy / epoch admin /
+proxy impls / other docs
+addresses).
 RootstockLabs listed a new SC
 on 2026-09-03: RIF token
 `0x2aCc…C9D5` (program `kyc:
@@ -28264,6 +28375,15 @@ tree would open is
 exhausted; remaining
 listed is other Tronscan
 jToken markets);
+Pareto Credit leftover
+(`19e7cde` IdleCDO /
+CreditVault / Tranche /
+epoch request-claim) is
+logged (remaining listed
+is IdleCreditVault
+strategy / epoch admin /
+proxy impls / other docs
+addresses);
 RootstockLabs listed a new
 SC on 2026-09-03: RIF token
 `0x2aCc…C9D5` (KYC);
