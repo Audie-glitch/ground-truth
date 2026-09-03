@@ -57312,3 +57312,211 @@ at the
 opened-file
 level.
 
+
+## 2026-09-03: Berachain leftover RewardVault + Honey + WBERA staker leftover (`70e392f`)
+
+Immunefi program
+`berachain`
+($100,000, `kyc: true`).
+Unique unused
+standing program
+with public
+GitHub smart-contract
+scope.
+Official clone
+`/tmp/bera-contracts`
+`70e392f`.
+Opened
+`src/pol/rewards/RewardVault.sol`,
+`RewardVaultHelper.sol`,
+`src/base/StakingRewards.sol`,
+`src/honey/HoneyFactory.sol`,
+`src/pol/WBERAStakerVault.sol`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+withdraw that
+spends another
+user's
+self-stake;
+helper
+claim/withdraw
+that pays
+the caller
+instead of
+`msg.sender`'s
+account;
+Honey
+redeem that
+burns another
+user's Honey;
+WBERA
+queue/complete
+that steals
+another
+owner's
+shares.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `RewardVault.stake`
+  pulls
+  `stakeToken`
+  from
+  `msg.sender`
+  into the
+  vault and
+  credits
+  that
+  caller.
+  `withdraw`
+  requires
+  `checkSelfStakedBalance`
+  and pays
+  `msg.sender`.
+  `delegateWithdraw`
+  only
+  reduces
+  that
+  delegate's
+  recorded
+  stake and
+  pays the
+  delegate.
+  `stakeOnBehalf`
+  is a
+  donation
+  of the
+  caller's
+  tokens.
+  `getReward`
+  is
+  `onlyUserOrOperator`
+  (or the
+  helper).
+  `withdrawAllFor`
+  is
+  `onlyRewardVaultHelper`.
+- Helper
+  `claimAllRewards`
+  /
+  `withdrawAllFromVaults`
+  always
+  act as
+  `msg.sender`
+  and send
+  rewards /
+  stake
+  tokens to
+  the
+  supplied
+  `receiver`.
+  Vault
+  `_withdraw`
+  pays
+  `msg.sender`
+  (the
+  helper),
+  which
+  then
+  forwards
+  to
+  `receiver`.
+- Honey
+  `mint`
+  pulls
+  collateral
+  from
+  `msg.sender`
+  and
+  `honey.mint`s
+  to
+  `receiver`.
+  `redeem`
+  `honey.burn`s
+  the
+  caller
+  and
+  redeems
+  vault
+  assets to
+  `receiver`.
+- WBERA
+  staker is
+  ERC4626:
+  deposit /
+  mint
+  credit
+  `receiver`.
+  `queueRedeem`
+  /
+  `queueWithdraw`
+  spend
+  allowance
+  when
+  `caller !=
+  owner`
+  and mint
+  a
+  withdrawal
+  NFT.
+  Complete
+  pays
+  stored
+  `request.receiver`.
+  NFT
+  `burn` is
+  vault-only.
+
+Do not file
+delegate
+withdraw of
+the
+delegate's
+own
+stake,
+owner-set
+operators,
+or a user
+minting
+Honey /
+staking
+their own
+tokens as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub opens
+for
+Berachain
+RewardVault /
+Honey /
+WBERA
+staker is
+exhausted at
+the
+opened-file
+level.
+Remaining
+listed:
+`airdrop-contracts`,
+beacon-kit /
+bera-reth
+DLT, and
+POL
+distributor /
+LST vault /
+BeaconDeposit
+/ BGT
+redeem.
+
