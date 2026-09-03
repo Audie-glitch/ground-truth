@@ -35058,9 +35058,12 @@ is exhausted);
 Babylon leftover vigilante
 + covenant leftover
 (`9a4c506` / `4e7ffcd`;
-KYC) is logged (remaining
-listed is finality-provider
-/ expiry-checker / queue-
+KYC) is logged;
+Babylon leftover
+finality-provider leftover
+(`fd28092`; KYC) is logged
+(remaining listed is
+expiry-checker / queue-
 client / babylon node /
 websites);
 Wormhole leftover ETH core +
@@ -47006,3 +47009,161 @@ entry contracts,
 and DLT
 axelar-core /
 tofnd.
+
+## 2026-09-03: Babylon leftover finality-provider leftover (`fd28092`)
+
+Immunefi program
+`babylon-labs`
+($500,000, `kyc: true`).
+Vigilante +
+covenant leftover
+already logged.
+This slice is
+listed
+`finality-provider`
+`release/v2.x`.
+Official clone
+`/tmp/babylon-fp`
+`fd28092`. No
+chain writes from
+this VM.
+
+Files:
+`eotsmanager/service/hmac.go`,
+`eotsmanager/store/eotsstore.go`,
+`eotsmanager/localmanager.go`,
+`eotsmanager/service/rpcserver.go`,
+`eotsmanager/config/config.go`,
+`finality-provider/service/finality_submitter.go`,
+`finality-provider/service/eots_manager_adapter.go`,
+`finality-provider/service/rand_committer.go`.
+
+Checked for: a
+stranger HMAC-bypass
+that gets another
+FP's EOTS
+signature;
+`SaveEOTSKeyName`
+remapping a live
+PK; double-sign at
+the same height;
+submitting finality
+for a height
+already voted;
+empty-HMAC as
+configured
+operator risk.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- HMAC interceptor
+  bypasses only
+  `/proto.EOTSManager/Ping`
+  and
+  `/proto.EOTSManager/SaveEOTSKeyName`.
+  Sign / unlock /
+  create-key /
+  randomness stay
+  HMAC-gated when
+  a key is set.
+  Empty HMAC key
+  skips auth
+  (operator
+  config; same
+  pattern as the
+  vigilante
+  leftover).
+- `AddEOTSKeyName`
+  rejects a
+  duplicate PK
+  (`ErrDuplicateEOTSKeyName`
+  /
+  `ErrDuplicateEOTSKeyRecord`).
+  HMAC-bypass
+  `SaveEOTSKeyName`
+  cannot remap an
+  existing mapping.
+- `SignEOTS` and
+  `getEOTSPrivKey`
+  check that the
+  keyring private
+  key matches the
+  requested PK.
+  The HMAC-bypass
+  alias
+  (attacker PK →
+  victim key name)
+  fails with
+  `public key mismatch`
+  (`TestKeyAliasingAttackPrevented`
+  /
+  batch twin).
+- `SignEOTS`
+  mutex +
+  `signRecord`
+  bucket: same
+  height + same
+  msg returns the
+  stored sig;
+  same height +
+  different msg
+  returns
+  `ErrDoubleSign`.
+  `UnsafeSignEOTS`
+  defaults
+  disabled
+  (`IsUnsafeEndpointsDisabled`
+  true).
+- `SignBatchEOTS`
+  rejects
+  duplicate
+  heights and
+  omits a height
+  that would
+  double-sign.
+  Submitter
+  `FilterBlocksForVoting`
+  skips height ≤
+  last voted and
+  requires voting
+  power. Pubrand
+  commit signs
+  the commitment
+  hash via HMAC-
+  gated
+  `SignSchnorrSig`.
+
+Do not file
+operator HMAC-off
+eotsd, the
+documented
+`SaveEOTSKeyName`
+HMAC bypass after
+the aliasing
+check, or
+default-off
+`UnsafeSignEOTS`
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+finality-provider
+v2.x opens is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+staking-expiry-
+checker,
+staking-queue-
+client, babylon
+node, and the
+website /
+toolkit rows.

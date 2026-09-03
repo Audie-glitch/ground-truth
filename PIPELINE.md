@@ -4,12 +4,14 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~09:44 UTC. Dates verified against each
+Status as of 3 September 2026, ~09:50 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 items empty this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~09:44 UTC;
-246 programs; no Sep 2026 launches; Gearbox leftover
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~09:50 UTC;
+246 programs; no Sep 2026 launches; Babylon leftover
+finality-provider leftover is logged;
+Gearbox leftover
 permissionless factories + instance leftover is logged;
 Gearbox leftover
 integrations-v3 leftover adapters leftover is logged;
@@ -27,6 +29,8 @@ Gearbox leftover
 oracles-v3 leftover is logged;
 Babylon leftover
 vigilante + covenant leftover is logged;
+Babylon leftover
+finality-provider leftover is logged;
 Burrow leftover
 main contract leftover is logged;
 Gearbox leftover
@@ -88,7 +92,11 @@ Stacks leftover pox-5 leftover is logged;
 Boba Network leftover ETH LightBridge leftover is logged;
 Starknet Staking leftover L1 mint + cairo staking leftover is logged;
 Katana leftover ETH portal + KAT OFT + vbToken leftover is logged;
-Wormhole leftover remaining NTT leftover is logged).
+Wormhole leftover remaining NTT leftover is logged;
+Kiln DeFi leftover Arbitrum + BSC vaults leftover is logged;
+Kiln DeFi leftover Polygon + Optimism + Base vaults leftover is logged;
+Kiln DeFi leftover newer Ethereum impls leftover is logged;
+Axelar leftover other-chain gateways + axlUSDC leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
