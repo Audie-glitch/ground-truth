@@ -22153,6 +22153,141 @@ ops or web, not
 this leftover
 slice.
 
+## 2026-09-03: Lido lido-l2-with-steth leftover (`4fec842`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). `core`
+submit / withdrawal /
+StakingRouter and
+`lido-l2` +
+circuit-breaker +
+vesting + stonks are
+already logged. This
+slice is
+`lido-l2-with-steth`.
+Local clone
+`/tmp/lidofinance-lido-l2-with-steth`
+at `4fec842`. No
+mainnet interaction.
+
+Files:
+`optimism/{L1LidoTokensBridge,L1ERC20ExtendedTokensBridge,L2ERC20ExtendedTokensBridge,RebasableAndNonRebasableTokens,TokenRateOracle}.sol`,
+`token/ERC20RebasableBridged.sol`,
+`lib/DepositDataCodec.sol`.
+
+Checked for: a
+stranger finalize
+that unlocks L1
+stETH/wstETH without
+a matching L2 burn;
+rebasable mint that
+skips wrapping
+shares; `updateRate`
+from a
+non-messenger;
+unwrap that pays
+more shares than
+were burned.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- L1 deposit is
+  EOA-only on
+  `depositERC20`;
+  `depositERC20To`
+  pulls
+  `msg.sender`.
+  Rebasable
+  deposits wrap to
+  wstETH on the
+  bridge before the
+  L2 message.
+  Amount in the
+  message is always
+  non-rebasable
+  shares. Rate + L1
+  timestamp are
+  encoded from the
+  L1 oracle, not
+  the caller.
+- L1 finalize
+  requires the
+  messenger and
+  `xDomainMessageSender
+  == L2 bridge`.
+  Rebasable
+  withdrawals
+  unwrap the
+  locked wstETH
+  then transfer
+  stETH to `to_`.
+  Token pairs are
+  immutable
+  (stETH↔stETH,
+  wstETH↔wstETH).
+- L2
+  `finalizeDeposit`
+  is messenger +
+  L1-bridge only.
+  It updates the
+  rate then mints
+  wstETH (or mints
+  to the bridge and
+  `bridgeWrap`s
+  stETH). Withdraw
+  burns
+  `msg.sender`
+  (unwrap + burn
+  shares for
+  rebasable) and
+  blocks transfers
+  to the L1 token
+  contracts.
+- `TokenRateOracle.
+  updateRate` is
+  `onlyBridgeOrTokenRatePusher`.
+  Stale L1
+  timestamps are
+  ignored. Same
+  timestamp only
+  bumps the L2
+  receipt time.
+  New rates must
+  wait
+  `MIN_TIME_BETWEEN`
+  and stay inside
+  the per-day
+  deviation plus
+  sane min/max.
+  Pause / resume
+  are role-gated.
+- Rebasable wrap /
+  unwrap is 1:1
+  shares of the
+  wrapped token.
+  `bridgeWrap` /
+  `bridgeUnwrap`
+  are `onlyBridge`.
+  User `wrap` /
+  `unwrap` move
+  `msg.sender`’s
+  tokens only.
+
+Not submitted.
+Remaining Lido
+listed GitHub:
+`aave-delivery-infrastructure`,
+`governance-crosschain-bridges`,
+`mev-boost-relay-allowed-list`,
+`community-staking-module`,
+`easy-track`,
+`dual-governance`,
+`aragon-apps`, and
+0.8.25 vaults.
 
 ## Next candidates
 
@@ -22465,9 +22600,10 @@ leftover exhausted).
 Lido `lido-l2` + circuit-breaker +
 vesting-escrow + stonks leftover
 (`badf17c` / `6829a5a` / `580f802` /
-`a7812a4`) is logged (remaining Lido
-is `lido-l2-with-steth` /
-`dual-governance` / CSM /
+`a7812a4`) is logged.
+Lido `lido-l2-with-steth` leftover
+(`4fec842`) is logged (remaining
+Lido is `dual-governance` / CSM /
 easy-track / governance bridges /
 0.8.25 vaults).
 StakeWise Mainnet leftover
@@ -22792,10 +22928,12 @@ Lido StakingRouter leftover
 Lido `lido-l2` +
 circuit-breaker +
 vesting-escrow + stonks
-leftover is logged
-(remaining Lido is
-`lido-l2-with-steth` /
-CSM / dual-governance /
+leftover is logged.
+Lido `lido-l2-with-steth`
+leftover (`4fec842`) is
+logged (remaining Lido
+is CSM /
+dual-governance /
 easy-track /
 governance bridges /
 oracle / 0.8.25 vaults);
