@@ -61,7 +61,9 @@ share the username.
 - `creditpassport/docs/deck.pdf`: 10-slide deck; `creditpassport/SUBMISSION.md`:
   deployment commands, form answers, and the human-only steps.
 - `research/demand-list-triage.md` and `x402-api/DESIGN.md`: the ETHOnline entry.
-- `signlens/`: the 3rd-Web-Hack entry, working with live on-chain checks.
+- `signlens/`: the 3rd-Web-Hack entry, working with live on-chain checks; demo video recorded.
+- `research/bug-bounty-review-log.md`: Immunefi target selection method and a
+  90-minute review of Enzyme Onyx's new ACE scope (no finding).
 
 ## Schedule
 
