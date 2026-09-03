@@ -43552,6 +43552,129 @@ L2Pool /
 CCIP GHO pools /
 protocol-v2.
 
+## 2026-09-03: Aave leftover remaining L2Pool leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after VotingStrategy
+leftover.
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-l2pool.sol`.
+Do not rematch
+Pool leftover.
+Do not rematch
+L2Encoder leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/protocol/pool/L2Pool.sol`.
+
+Checked for:
+a
+compact
+`withdraw`
+or
+`borrow`
+that
+credits
+a
+stranger
+instead
+of
+`msg.sender`;
+a
+liquidation
+that
+decodes
+a
+different
+user
+than
+the
+packed
+args.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Compact
+  `supply`
+  /
+  `withdraw`
+  /
+  `borrow`
+  /
+  `repay`
+  /
+  `repayWithATokens`
+  /
+  `setUserUseReserveAsCollateral`
+  decode
+  via
+  leftover-
+  logged
+  `CalldataLogic`
+  and
+  always
+  pass
+  `_msgSender()`
+  as
+  `onBehalfOf`
+  /
+  `to`.
+- `liquidationCall`
+  decodes
+  collateral,
+  debt,
+  user,
+  and
+  `receiveAToken`
+  from
+  the
+  packed
+  args
+  and
+  forwards
+  to
+  leftover-
+  logged
+  Pool
+  liquidation.
+  This
+  wrapper
+  does
+  not
+  change
+  who
+  is
+  credited.
+
+Do not file
+a
+msg.sender-
+bound
+L2
+wrapper
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+CCIP GHO pools /
+protocol-v2.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43711,9 +43834,11 @@ Filecoin leftover remaining lotus events leftover (`7740217`)
 is logged.
 Aave leftover remaining VotingStrategy leftover (`497226e`)
 is logged.
+Aave leftover remaining L2Pool leftover (`cff15de`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: L2Pool / CCIP GHO pools / protocol-v2.
+Remaining listed Aave: CCIP GHO pools / protocol-v2.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43762,6 +43887,7 @@ Do not rematch Aave StakeToken leftover.
 Do not rematch Aave governance-v3 leftover.
 Do not rematch Aave governance voting leftover.
 Do not rematch Aave VotingStrategy leftover.
+Do not rematch Aave L2Pool leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -46401,6 +46527,9 @@ governance);
 Aave leftover remaining VotingStrategy leftover
 (`497226e`) is logged (remaining listed is
 L2Pool / CCIP GHO pools / protocol-v2);
+Aave leftover remaining L2Pool leftover
+(`cff15de`) is logged (remaining listed is
+CCIP GHO pools / protocol-v2);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
