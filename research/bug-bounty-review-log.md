@@ -35866,11 +35866,14 @@ btcstaking leftover
 (`132d050`; KYC) is logged;
 Babylon leftover node
 incentive leftover
+(`132d050`; KYC) is logged;
+Babylon leftover node
+finality leftover
 (`132d050`; KYC) is logged
 (remaining listed is
-finality / checkpointing /
-other x/ modules and
-websites);
+checkpointing / epoching /
+costaking / mint,
+btclightclient, websites);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -49151,3 +49154,134 @@ entry contracts,
 and DLT
 axelar-core /
 tofnd.
+
+## 2026-09-03: Babylon leftover node finality leftover (`132d050`)
+
+Immunefi program
+`babylon-labs`
+($500,000, `kyc: true`).
+Node btcstaking +
+incentive leftovers
+already logged on
+`v4.4.0`
+`132d050`. This
+slice is
+`x/finality`
+votes, pubrand,
+unjail, tally,
+and EndBlock
+rewards.
+No chain writes
+from this VM.
+
+Files:
+`x/finality/keeper/msg_server.go`,
+`x/finality/types/msg.go`,
+`x/finality/keeper/evidence.go`,
+`x/finality/keeper/tallying.go`,
+`x/finality/keeper/rewarding.go`.
+
+Checked for: a
+stranger vote
+that finalizes a
+fork; fabricated
+evidence that
+slashes an
+honest FP;
+overlapping
+pubrand that
+resets
+randomness;
+unjail of
+another FP;
+rewards on an
+unfinalized
+height.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `AddFinalitySig`
+  requires
+  activation
+  height, an
+  indexed block
+  that is not
+  already
+  BTC-timestamped,
+  a live unjailed
+  FP with voting
+  power,
+  timestamped
+  pubrand
+  inclusion, and
+  `eots.Verify`.
+  Exact duplicate
+  votes are
+  rejected.
+- A fork vote
+  stores
+  evidence. Slash
+  runs only when
+  both canonical
+  and fork EOTS
+  exist at that
+  height
+  (`slashFinalityProvider`
+  →
+  `SlashFinalityProvider`
+  + event).
+- `CommitPubRandList`
+  needs a
+  registered FP,
+  Schnorr over
+  `(start || num
+  || commitment)`,
+  min pubrand,
+  and no overlap
+  with the last
+  commit.
+- `UnjailFinalityProvider`
+  requires
+  `signer ==
+  fp.Addr` and a
+  passed jailing
+  period.
+- Tally is
+  `voted*3 >
+  total*2`.
+  Rewards run
+  only on
+  finalized
+  heights.
+
+Do not file a
+permissionless
+valid EOTS vote
+(the sig is the
+auth) or slash of
+a real
+double-signer as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+babylon `v4.4.0`
+opens for
+finality votes /
+pubrand / unjail
+is exhausted at
+the opened-file
+level. Remaining
+listed:
+checkpointing /
+epoching /
+costaking / mint,
+btclightclient,
+and website /
+toolkit rows.

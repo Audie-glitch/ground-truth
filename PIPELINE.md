@@ -10,6 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 items empty this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~10:10 UTC;
 246 programs; no Sep 2026 launches; Babylon leftover node
+finality leftover is logged;
+Babylon leftover node
 incentive leftover is logged;
 Babylon leftover node
 btcstaking leftover is logged;
@@ -114,7 +116,8 @@ Wormhole leftover remaining
 circle-integration leftover is logged;
 Ante Finance leftover ETH
 pool leftover is logged;
-YO Protocol leftover yoVault leftover is logged).
+YO Protocol leftover yoVault leftover is logged;
+Axelar leftover Aurora/Fantom gateways + remaining axlUSDC leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
