@@ -47573,7 +47573,7 @@ Remaining listed Aave: primacy; unused official v3 logic leftover that listed tr
 Remaining listed Jito: unused official leftover that listed remaining-runtime trees open is exhausted on this pin. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_client leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana prioritization_fee leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana commitment leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana slot_params leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana genesis_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana alpenglow_epoch_type leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana leader_schedule leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana sysvar_account leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana loader_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana vote_sender leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana installed_scheduler leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana read_optimized_dashmap leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana static_ids leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana runtime_config leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted at leftover-heading level. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining SuperchainConfig leftover is logged. Optimism leftover remaining LegacyMessagePasser leftover is logged. Optimism leftover remaining L2ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
-Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Ethena leftover remaining USDtb leftover is logged. Remaining listed is other OFT adapters / TON / other-chain rows if still unused.
+Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Ethena leftover remaining USDtb leftover is logged. Ethena leftover remaining USDeOFTAdapter leftover is logged. Remaining listed is TON / other-chain OFT rows if still unused.
 Remaining listed LayerZero: unused official leftovers if still open. LayerZero leftover remaining ULN301 leftover is logged. LayerZero leftover remaining ExecutorFeeLib leftover is logged. LayerZero leftover remaining OApp OFT leftover is logged. Remaining listed is other-chain twins if still unused.
 Remaining listed Ether.fi: unused official leftovers if still open. Ether.fi leftover remaining Auction leftover is logged. Remaining listed is OFT / bridge adapters / other-chain weETH if still unused.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
@@ -47709,6 +47709,7 @@ Do not rematch Optimism leftover remaining LegacyMessagePasser leftover.
 Do not rematch Optimism leftover remaining L2ProxyAdmin leftover.
 Do not rematch Ethena leftover remaining StakedENA leftover.
 Do not rematch Ethena leftover remaining USDtb leftover.
+Do not rematch Ethena leftover remaining USDeOFTAdapter leftover.
 Do not rematch LayerZero leftover remaining ULN301 leftover.
 Do not rematch LayerZero leftover remaining ExecutorFeeLib leftover.
 Do not rematch LayerZero leftover remaining OApp OFT leftover.
@@ -74002,3 +74003,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a peer-gated OFT burn/mint or an endpoint-only receive as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: other-chain twins / example OmniCounter if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Ethena leftover remaining USDeOFTAdapter leftover (Sourcify)
+
+Immunefi program `ethena` ($3,000,000, `kyc: true`). Official remaining unused leftover after USDtb leftover. Sourcify ETH `match` USDeOFTAdapter `0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34`. Opened listed `USDeOFTAdapter.sol`, `OFTOwnable2StepAdapter.sol`, `RateLimiter.sol`. Official Sourcify **200**. Local extract `/tmp/ethena-oft/` (71 / 76 / 81 lines). Do not rematch minting + staking leftover, StakedENA leftover, or USDtb leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `send` that locks a stranger’s USDe without approval; `_lzReceive` credit without a trusted LZ peer; `setRateLimits` that lets a random caller disable outbound caps; rate-limit bypass that unlocks another user’s locked USDe.
+
+Result: no user-exploitable finding. Not submitted.
+
+- LayerZero OFT adapter over USDe via leftover-logged `OFTAdapter` pull/debit semantics. `OFTOwnable2StepAdapter` uses two-step ownership and blocks `renounceOwnership`.
+- Outbound `_debit` applies `_checkAndUpdateRateLimit` then `super._debit` (caller-funded lock). Unconfigured `dstEid` yields `amountCanBeSent == 0`, reverting `RateLimitExceeded`.
+- `setRateLimiter` is `onlyOwner`. `setRateLimits` requires `msg.sender == rateLimiter || owner()`. Inbound credit remains on peer-gated `lzReceive` in the inherited OFT stack.
+
+Do not file a rate-limited OFT adapter lock or a peer-gated mint as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: TON / other-chain OFT rows if still unused. Next unused leftover is a different Immunefi program, not a rematch.

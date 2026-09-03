@@ -19,6 +19,7 @@ Optimism leftover remaining LegacyMessagePasser leftover is logged;
 Optimism leftover remaining L2ProxyAdmin leftover is logged;
 Ethena leftover remaining StakedENA leftover is logged;
 Ethena leftover remaining USDtb leftover is logged;
+Ethena leftover remaining USDeOFTAdapter leftover is logged;
 LayerZero leftover remaining ULN301 leftover is logged;
 LayerZero leftover remaining ExecutorFeeLib leftover is logged;
 LayerZero leftover remaining OApp OFT leftover is logged;
@@ -926,9 +927,10 @@ Ethena leftover remaining StakedENA leftover
 (Sourcify StakedENA proxy / impl / EnaSilo;
 KYC) is logged.
 Ethena leftover remaining USDtb leftover
-(Sourcify AnchorageTokenUSDtb; KYC) is logged
-(remaining listed is other OFT adapters /
-TON / other-chain).
+(Sourcify AnchorageTokenUSDtb; KYC) is logged.
+Ethena leftover remaining USDeOFTAdapter leftover
+(Sourcify USDeOFTAdapter; KYC) is logged
+(remaining listed is TON / other-chain OFT).
 Ether.fi leftover LiquidityPool leftover
 (Sourcify LiquidityPool / WeETH /
 Liquifier / Redemption / WRNFT; KYC)
@@ -2641,6 +2643,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (Sourcify; KYC),
   Ethena leftover remaining
   USDtb leftover
+  (Sourcify; KYC),
+  Ethena leftover remaining
+  USDeOFTAdapter leftover
   (Sourcify; KYC),
   Ether.fi leftover
   LiquidityPool leftover
