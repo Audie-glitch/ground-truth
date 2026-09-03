@@ -45063,6 +45063,176 @@ CalldataLogic
 /
 primacy.
 
+## 2026-09-03: Aave leftover remaining v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-v3-logic/`.
+Do not rematch
+v3 Pool
+/
+L2Pool
+/
+ACL +
+PoolConfigurator
+leftovers
+or
+v3 money-path
+/
+ValidationLogic
+leftovers.
+No mainnet
+writes.
+
+Files:
+`src/contracts/protocol/libraries/logic/{PoolLogic,ConfiguratorLogic,CalldataLogic}.sol`.
+
+Checked for:
+init that
+overwrites
+an existing
+reserve;
+rescue that
+a stranger
+can call
+from the
+library;
+treasury
+mint that
+credits a
+caller;
+configurator
+upgrade that
+skips the
+proxy admin;
+L2 decoder
+that maps
+`assetId`
+to a
+stranger’s
+reserve.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `executeInitReserve`
+  requires
+  a contract
+  asset and
+  rejects
+  an already
+  added
+  reserve.
+  It fills
+  a legacy
+  gap or
+  appends
+  under
+  `maxNumberReserves`.
+- `executeRescueTokens`
+  is a
+  `safeTransfer`
+  helper.
+  The Pool
+  entrypoint
+  is
+  leftover-logged
+  and
+  admin-gated.
+- `executeMintToTreasury`
+  zeros
+  `accruedToTreasury`
+  and mints
+  that scaled
+  amount to
+  the
+  treasury
+  via
+  `mintToTreasury`.
+  Inactive
+  reserves
+  are
+  skipped.
+- `executeSetLiquidationGracePeriod`
+  writes
+  `until`.
+  The Pool
+  entrypoint
+  is
+  configurator-gated.
+- `executeGetUserAccountData`
+  is a
+  view
+  wrapper
+  around
+  leftover-logged
+  GenericLogic.
+- `ConfiguratorLogic.executeInitReserve`
+  creates
+  aToken /
+  variable
+  debt
+  proxies,
+  calls
+  `pool.initReserve`,
+  and sets
+  decimals
+  plus
+  active.
+  Called
+  from
+  leftover-logged
+  PoolConfigurator
+  (ACL).
+- Token
+  upgrades
+  go
+  through
+  `upgradeToAndCall`
+  on the
+  existing
+  admin
+  proxy.
+- `CalldataLogic`
+  unpacks
+  L2 packed
+  args
+  (`assetId`,
+  amount,
+  referral,
+  permit
+  fields)
+  from
+  `reservesList`.
+  It does
+  not move
+  tokens.
+
+Do not file
+admin-gated
+init /
+rescue /
+treasury
+mint or
+L2 calldata
+decode as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+primacy.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -45300,6 +45470,8 @@ Aave leftover remaining v3 money-path logic leftover (`cff15de`)
 is logged.
 Aave leftover remaining v3 ValidationLogic + GenericLogic leftover (`cff15de`)
 is logged.
+Aave leftover remaining v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover (`cff15de`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45320,7 +45492,7 @@ Rootstock leftover remaining rsk-powhsm leftover (`82a12d44efec`)
 is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
-Remaining listed Aave: v3 PoolLogic / ConfiguratorLogic / CalldataLogic / primacy.
+Remaining listed Aave: primacy.
 Remaining listed Jito: `jito-solana` other crates (if still unused).
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
@@ -45373,6 +45545,7 @@ Do not rematch Aave v2 Collector impl leftover.
 Do not rematch Aave GhoOracle leftover.
 Do not rematch Aave v3 money-path logic leftover.
 Do not rematch Aave v3 ValidationLogic + GenericLogic leftover.
+Do not rematch Aave v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -48088,8 +48261,9 @@ Aave leftover remaining GhoOracle leftover
 Aave leftover remaining v3 money-path logic leftover
 (`cff15de`) is logged;
 Aave leftover remaining v3 ValidationLogic + GenericLogic leftover
-(`cff15de`) is logged (remaining listed is
-v3 PoolLogic / ConfiguratorLogic / CalldataLogic / primacy);
+(`cff15de`) is logged;
+Aave leftover remaining v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover
+(`cff15de`) is logged (remaining listed is primacy);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover

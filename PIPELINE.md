@@ -10,7 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~13:02 UTC;
-246 programs; no Sep 2026 launches; Aave leftover remaining v3 ValidationLogic + GenericLogic leftover is logged;
+246 programs; no Sep 2026 launches; Aave leftover remaining v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover is logged;
+Aave leftover remaining v3 ValidationLogic + GenericLogic leftover is logged;
 Aave leftover remaining v3 money-path logic leftover is logged;
 Rootstock leftover remaining rsk-powhsm leftover is logged;
 Filecoin leftover remaining lotus lib addrutil leftover is logged;
@@ -1601,11 +1602,12 @@ v3 money-path logic leftover
 (`cff15de`; KYC) is logged.
 Aave leftover remaining
 v3 ValidationLogic + GenericLogic leftover
+(`cff15de`; KYC) is logged.
+Aave leftover remaining
+v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover
 (`cff15de`; KYC) is logged
 (remaining listed is
-v3 PoolLogic /
-ConfiguratorLogic /
-CalldataLogic / primacy).
+primacy).
 Rootstock leftover remaining
 powpeg-node pegout leftover
 (`254fb3d`; KYC) is logged.
@@ -2614,6 +2616,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`cff15de`; KYC),
   Aave leftover remaining
   v3 ValidationLogic + GenericLogic leftover
+  (`cff15de`; KYC),
+  Aave leftover remaining
+  v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover
   (`cff15de`; KYC),
   Rootstock leftover remaining
   rsk-powhsm leftover
