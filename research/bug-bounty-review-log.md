@@ -67422,3 +67422,20 @@ Do not file a vote-gated cross-chain payload execute as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: VotingMachine / DataWarehouse / GovernancePowerStrategy / CCIP GHO pools. Official PriceOracleSentinel + OwnableFacilitator 404.
 
+
+## 2026-09-03: Aave leftover remaining governance voting leftover (`497226e`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after governance-v3 leftover. Official `bgd-labs/aave-governance-v3` `497226e`. Opened listed `VotingMachine.sol`, `GovernancePowerStrategy.sol`, and `DataWarehouse.sol`. Do not rematch Governance / Executor / PayloadsController leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `receiveCrossChainMessage` starting a vote from a fake portal; `processStorageRoot` writing an unproven account root; `getFullPropositionPower` returning caller-supplied balances.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `VotingMachine.receiveCrossChainMessage` requires `msg.sender == CROSS_CHAIN_CONTROLLER`, `originSender == L1_VOTING_PORTAL`, and `originChainId == L1_VOTING_PORTAL_CHAIN_ID`. Only `MessageType.Proposal` calls `_createBridgedProposalVote`. Decode failures emit and do not create. `updateGasLimit` is `onlyOwner`. Results go back through the same CCC to the L1 portal.
+- `DataWarehouse.processStorageRoot` / `processStorageSlot` require a block header whose hash matches `blockHash` and an MPT proof of that account/slot. Non-existent roots/slots revert. This contract does not mint voting power.
+- `GovernancePowerStrategy` is view-only: it sums `getPowerCurrent` on the configured voting assets. It does not move tokens.
+
+Do not file an origin-checked vote bridge or proven storage root as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: VotingStrategy / CCIP GHO pools. Official PriceOracleSentinel + OwnableFacilitator 404.
+
