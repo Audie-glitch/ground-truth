@@ -67917,3 +67917,22 @@ Do not file an owner-gated address registry as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: protocol-v2 LendingPool / LendingPoolConfigurator / LendingPoolCollateralManager / v2 AToken / debt tokens / v2 AaveOracle.
 
+
+## 2026-09-03: Aave leftover remaining protocol-v2 LendingPool leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after AddressesProvider leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `contracts/protocol/lendingpool/LendingPool.sol`. Do not rematch v3 Pool / AddressesProvider leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `withdraw` of another user’s aTokens; `borrow` opening debt on `onBehalfOf` without that user’s position checks; `flashLoan` keeping funds when mode is 0; `finalizeTransfer` / `initReserve` from a non-aToken / non-configurator.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `deposit` `safeTransferFrom`s `msg.sender` and mints aTokens to `onBehalfOf`. `withdraw` burns `msg.sender`’s aTokens after `validateWithdraw` (HF) and sends underlying to `to`.
+- `borrow` / flash-loan debt open call `_executeBorrow`: `validateBorrow` against `onBehalfOf`’s config and the price oracle, then stable/variable debt `mint(user=msg.sender, onBehalfOf)`. Underlying is released to `vars.user` (`msg.sender`). Credit delegation for `user != onBehalfOf` is enforced on the leftover-listed debt tokens.
+- `repay` pulls `paybackAmount` from `msg.sender` and burns `onBehalfOf`’s debt (intended donate-repay).
+- `flashLoan` transfers underlying to the receiver, requires `executeOperation`, then either `safeTransferFrom`s `amount + 9 bps` back or `_executeBorrow`s. Mode 0 cannot keep funds.
+- `liquidationCall` `delegatecall`s the AddressesProvider collateral manager. `finalizeTransfer` requires `msg.sender == aToken`. `initReserve` / `setConfiguration` / `setPause` are `onlyLendingPoolConfigurator`. `initialize` is `VersionedInitializable`.
+
+Do not file a validate-gated v2 pool action as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: LendingPoolConfigurator / LendingPoolCollateralManager / v2 AToken / debt tokens / v2 AaveOracle.
+
