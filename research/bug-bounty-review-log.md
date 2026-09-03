@@ -31354,6 +31354,123 @@ Basic
 strategies, and
 other pools.
 
+## 2026-09-03: Aave leftover v3 Pool leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`aave-dao/aave-v3-origin`
+HEAD
+`cff15de`.
+Extract
+`/tmp/aave-v3`
+via jsDelivr +
+raw.githubusercontent.com.
+No mainnet
+interaction.
+
+Files:
+`src/contracts/protocol/pool/Pool.sol`,
+`src/contracts/protocol/libraries/logic/SupplyLogic.sol`,
+`src/contracts/protocol/libraries/logic/BorrowLogic.sol`,
+`src/contracts/protocol/libraries/logic/LiquidationLogic.sol`,
+`src/contracts/protocol/libraries/logic/FlashLoanLogic.sol`,
+`src/contracts/protocol/tokenization/VariableDebtToken.sol`.
+
+Checked for: a
+stranger supply
+that pulls
+another user's
+tokens; withdraw
+of someone
+else's aTokens;
+borrow that
+mints debt to
+`onBehalfOf`
+without credit
+delegation;
+liquidation of a
+healthy
+position.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `supply` /
+  `supplyWithPermit`
+  set `user =
+  _msgSender()`
+  and
+  `transferFrom`
+  that user.
+  aTokens mint
+  to
+  `onBehalfOf`.
+- `withdraw`
+  burns
+  `_msgSender()`
+  aTokens and
+  pays `to`.
+- `borrow` mints
+  variable debt
+  to
+  `onBehalfOf`.
+  If `user !=
+  onBehalfOf`,
+  VariableDebtToken
+  `_decreaseBorrowAllowance`.
+- `repay` pulls
+  the caller and
+  burns
+  `onBehalfOf`
+  debt. `uint256.max`
+  repay-on-behalf
+  is rejected.
+- `liquidationCall`
+  requires a
+  health factor
+  below the
+  liquidation
+  threshold.
+
+Do not file
+supply to a
+named
+`onBehalfOf`
+that pays the
+caller, credit-
+delegated
+borrow, or
+permissionless
+liquidation of
+an unhealthy
+position.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that the
+official Pool /
+logic / vToken
+tree opens is
+exhausted at
+this money-path
+level.
+Remaining listed:
+PoolConfigurator
+/ ACL /
+oracles /
+periphery /
+rewards / GHO
+instances.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -32853,7 +32970,13 @@ listed is governance /
 meta-governance / listed
 Pyth+Wormhole adapters and
 the website);
-
+Aave leftover v3 Pool leftover
+(`cff15de` Pool / Supply /
+Borrow / Liquidation /
+vToken; KYC) is logged
+(remaining listed is
+Configurator / ACL / oracles
+/ periphery / rewards / GHO);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
