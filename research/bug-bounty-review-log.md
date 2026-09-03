@@ -41166,6 +41166,8 @@ ZKsync OS leftover airbender verifier leftover
 (`6ec4ea7`) is logged.
 Filecoin leftover remaining paired leftover
 (`80b765c`) is logged.
+Filecoin leftover remaining go-data-transfer leftover
+(`8a94d94`) is logged.
 Wormhole leftover remaining CosmWasm token-bridge leftover
 (`c58827e`) is logged.
 Wormhole leftover remaining CosmWasm core leftover
@@ -41174,8 +41176,10 @@ Wormhole leftover remaining CosmWasm IBC leftover
 (`c58827e`) is logged.
 Wormhole leftover remaining CosmWasm accountant leftover
 (`c58827e`) is logged.
+Wormhole leftover remaining wormchain leftover
+(`c58827e`) is logged.
 Remaining listed Hedera: hashed transaction-tool website.
-Remaining listed Filecoin: remaining go-* / lotus non-miner / go-data-transfer.
+Remaining listed Filecoin: remaining go-* / lotus non-miner.
 
 Remaining listed ZKsync OS: airbender CS / prover /
 verifier_generator / field.
@@ -41184,7 +41188,8 @@ json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
 lotus miner, FVM, proofs-api, proofs-ffi, or proofs.
 Do not rematch filecoin.io website leftover.
-Do not rematch filecoin-ffi, go-graphsync, or paired leftover.
+Do not rematch filecoin-ffi, go-graphsync, paired, or
+go-data-transfer leftover.
 Do not rematch ZKsync bootloader, interpreter,
 storage_models, proof_running_system, zk_ee,
 zkos-wrapper, or airbender verifier.
@@ -64380,3 +64385,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file admin-gated factory mint or a derived-sender IBC hook as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / algorand / aptos / near, and Relayer Sourcify 404.
+
+## 2026-09-03: Filecoin leftover remaining go-data-transfer leftover (`8a94d94`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after paired leftover. Official clone `/tmp/filecoin-gdt` at `8a94d94` (`chore(deps): bump github.com/quic-go/quic-go from 0.54.0 to 0.54.1 (#391)`). Opened `impl/receiving_requests.go`, `impl/events.go`, `impl/receiver.go`, `impl/impl.go`, `channels/channels_fsm.go`, `manager.go`. Graphsync transport for deal/retrieval bits. Does not move FIL. Do not rematch graphsync / proofs / boost leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: a new request opening a push/pull without a registered validator; an intermediate voucher resuming transfer without `Accepted`; `DataLimit` not pausing queued/sent bytes.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `acceptRequest` looks up the voucher type, then `ValidatePull` / `ValidatePush`. Unknown type, validator error, or `!Accepted` returns before `CreateNew` / `Accept`. `requestError` maps that to `ErrRejected`.
+- `receiveRestartRequest` rejects initiator-as-manager, `validateRestartRequest` param match, then `ValidateRestart`. `!Accepted` errors the channel.
+- Intermediate `IsVoucher` only `NewVoucher`s (FSM `ToNoChange`). Resume / higher `DataLimit` requires the host to call `UpdateValidationStatus` (`!Accepted` closes the transport). `DataQueued` / `DataReceived` return `ErrPause` past `DataLimit`.
+
+Do not file a transport that defers payment semantics to a registered validator as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner.
