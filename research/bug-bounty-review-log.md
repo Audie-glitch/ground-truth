@@ -1023,8 +1023,63 @@ Result: no new user-exploitable finding.
   `modifyLiquidity` on an empty position and reverts; the owner
   still uses `withdraw`.
 
-Not submitted. Remaining OZ hooks slice: ReHypothecationHook /
-fee hooks if still unreviewed.
+Not submitted.
+
+## 2026-09-03: OpenZeppelin ReHypothecationHook (`2ae32be`)
+
+Same Immunefi program (`openzeppelin`). Local clone
+`/tmp/oz-uniswap-hooks`. No mainnet interaction.
+
+Files: `src/general/ReHypothecationHook.sol` (`seedLiquidity`,
+`addReHypothecatedLiquidity`, `removeReHypothecatedLiquidity`,
+`_beforeSwap` / `_afterSwap` JIT).
+
+Checked for: first-depositor share inflation; seeding a skewed
+ratio that steals later deposits; overlapping JIT + liquidity
+ops; third-party `modifyLiquidity` on the hook pool.
+
+Result: no new user-exploitable finding.
+
+- Seed requires `totalSupply() == 0` and mints
+  `sqrt(amount0 * amount1)` with a floor of
+  `100 * 10 ** decimalsOffset()`, so the virtual-share offset
+  cannot inflate the price. Later adds price from yield-source
+  balances (`previewMint`). Burns happen before withdraw.
+- `_beforeSwap` sets a transient JIT lock and snapshots ticks;
+  `_afterSwap` removes the same range. Liquidity ops revert
+  `JITLocked` while that flag is set. Direct pool LP is
+  `LiquidityNotAllowed`.
+- Permissionless `_beforeInitialize` and a front-run skewed
+  seed are documented warnings (grief / idle liquidity, assets
+  stay redeemable). Not submitted.
+
+## 2026-09-03: TruFin Solana staker deposit + whitelist (`ce5d88b`)
+
+Immunefi program `trufin` ($20,000, `kyc: true`). In-scope repo
+`TruFin-io/smart-contracts-solana-public` added 25 Jun 2026.
+Local clone `/tmp/trufin-solana`. No mainnet interaction.
+
+Files: `programs/staker/src/{lib.rs,instructions/staking.rs,instructions/whitelist.rs,state/types.rs}`.
+
+Checked for: depositing without a whitelist; minting pool tokens
+against a fake stake pool; `init_if_needed` creating a
+self-whitelisted user PDA.
+
+Result: no user-exploitable finding.
+
+- `WhitelistUserStatus` defaults to `None`. Deposit’s
+  `init_if_needed` still requires `Whitelisted`, so a fresh PDA
+  cannot self-approve. Only an existing `agent` PDA can
+  whitelist.
+- Deposit CPI targets the hardcoded SPL Stake Pool program id.
+  That program checks the pool, mint, and authorities. This
+  wrapper has no withdraw path; redemptions go through the
+  stake pool. Validator add/remove is `access.owner`.
+- Permissionless `deposit_to_specific_validator` delaying a
+  rebalance is documented in-source as an accepted whitelist
+  trade-off.
+
+Not submitted.
 
 ## Next candidates
 
@@ -1032,4 +1087,5 @@ Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do
 not execute. All other open listings are `HUMAN_ONLY`. the402.ai
 still paused. No KeeperHub implementation before the 6 Sep build
 window. Skip Sky (legacy Maker) and Money on Chain (strict OOS +
-existing AI dump).
+existing AI dump). Remaining OZ hooks: fee hooks. Remaining
+TruFin: validator stake increase/decrease if unreviewed.
