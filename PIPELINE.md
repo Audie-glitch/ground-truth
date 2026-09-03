@@ -4,11 +4,11 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~04:38 UTC. Dates verified against each
+Status as of 3 September 2026, ~04:41 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging), and Immunefi
-unofficial mirror rechecked 3 Sep.
+unofficial mirror rechecked 3 Sep. KeeperHub #2105 is claimed by PR #2275.
 
 ## Opportunities, ranked by expected payout per unit of work
 
@@ -70,7 +70,7 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
 - `creditpassport/agent`: type-checks, unit tests pass, verified live against
   Creditcoin testnet chain info (Sepolia attested ~36 blocks behind head).
 - `keeperhub/2240-state-threshold-trigger-design.md`: ready to post.
-- `keeperhub/2105-openapi-response-examples.md`: failing-test-first patch spec for the other feature-bounty candidate. Rechecked 3 Sep: still 0 PRs.
+- `keeperhub/2105-openapi-response-examples.md`: patch spec only. Rechecked ~04:34 UTC 3 Sep: `tenk-earn` opened [PR #2275](https://github.com/KeeperHub/keeperhub/pull/2275) against `staging` (`Closes #2105`). Do not file a second #2105 PR.
 - `creditpassport/web`: passport dashboard, verified against the local demo chain.
 - `creditpassport/docs/deck.pdf`: 10-slide deck; `creditpassport/SUBMISSION.md`:
   deployment commands, form answers, and the human-only steps.
@@ -161,7 +161,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   controller (`ce5cbd9`) +
   SparkVault V2 (`51c6d7a`) +
   PSM3 (`2b1a72a`; live pools
-  seeded), GammaSwap May
+  seeded) + leftover
+  gov-relay Executor /
+  SPARK_RECEIVER (`6218d57`) +
+  DSR / SSR
+  `xchain-ssr-oracle`
+  (`4a23d1f`), GammaSwap May
   2026 vault + PositionManager
   (`e71dd91` / Sourcify PM;
   live observers unset),

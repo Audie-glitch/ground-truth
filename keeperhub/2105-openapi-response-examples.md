@@ -4,12 +4,17 @@
 The official Agent Economy build window is 6–18 Sep. This file is the patch
 spec so the first commit on the 6th is a failing test, not a design debate.
 
-**Rechecked:** 3 September 2026 02:34 UTC
+**Rechecked:** 3 September 2026 04:34 UTC
+
+**Stop.** `tenk-earn` claimed this issue at 04:27 UTC and opened
+[PR #2275](https://github.com/KeeperHub/keeperhub/pull/2275) against
+`staging` (`Closes #2105`, OpenAPI route + unit tests). Do not open a
+second #2105 PR. Keep this file as historical spec only.
 
 | Fact | Evidence |
 | --- | --- |
-| Issue | https://github.com/KeeperHub/keeperhub/issues/2105 — `open`, labels `accepted` + `confirmed`, last update 2026-08-20 |
-| Competing PR | GitHub search `repo:KeeperHub/keeperhub 2105 type:pr` returned **0** items |
+| Issue | https://github.com/KeeperHub/keeperhub/issues/2105 — still `open`, labels `accepted` + `confirmed`, last update 2026-09-03 |
+| Competing PR | **#2275** by `tenk-earn` (open, mergeable, targets `staging`) |
 | Target branch | `staging` |
 | Focused suite | `tests/unit/openapi-route.test.ts` (27 tests on `d249519`) |
 

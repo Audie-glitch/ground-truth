@@ -8750,6 +8750,239 @@ MINTR copies, BondTeller.
 Spark 15 Jul sUSDC impls
 still open. Not submitted.
 
+## 2026-09-03: Spark leftover gov-relay Executor + SPARK_RECEIVER (`6218d57`)
+
+Immunefi program `sparklend`
+($5,000,000, `kyc: false`).
+Listed GitHub row
+[marsfoundation/spark-gov-relay](https://github.com/marsfoundation/spark-gov-relay)
+`src/Executor.sol` plus
+SPARK_EXECUTOR /
+SPARK_RECEIVER clones
+(including 13 Jul
+Robinhood / X Layer).
+Local clone
+`/tmp/spark-gov-relay`
+at `6218d57` (sparkdotfi
+mirror). Receivers are
+`marsfoundation/xchain-helpers`
+`OptimismReceiver` /
+`ArbitrumReceiver` /
+`LZReceiver` /
+`AMBReceiver` (raw
+`master`, 3 Sep). ALM +
+Vault V2 + PSM3 +
+Collector already logged.
+No state-changing txs.
+
+Files: `src/Executor.sol`,
+`deploy/Deploy.sol`,
+xchain-helpers receivers.
+
+Checked for: a stranger
+`queue` / `execute` that
+runs before the delay;
+receiver fallback that
+forwards without the
+bridge check; admin role
+that is left on the
+deployer after
+`setUpExecutorPermissions`.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `queue` is
+  `SUBMISSION_ROLE` (the
+  receiver). `execute` is
+  permissionless after
+  `executionTime` and only
+  while `Queued`. It marks
+  `executed` before the
+  calls. `cancel` is
+  `GUARDIAN_ROLE`. Delay /
+  grace-period updates and
+  `executeDelegateCall`
+  are `DEFAULT_ADMIN_ROLE`.
+  The constructor also
+  grants admin to
+  `address(this)` so a
+  queued self-call can
+  reconfigure.
+- Optimism receiver
+  requires the L2
+  messenger and
+  `xDomainMessageSender
+  == l1Authority`.
+  Arbitrum subtracts the
+  standard alias.
+  LZ / AMB check src
+  eid / chain id and
+  source authority. All
+  `functionCall` the
+  executor.
+- Deploy grants
+  `SUBMISSION_ROLE` to
+  the receiver and
+  revokes deployer
+  `DEFAULT_ADMIN_ROLE`.
+
+Remaining SparkLend after
+this write-up was the
+DSR / SSR tree; that
+pass is logged below.
+Robinhood / X Layer
+executor / receiver rows
+are the same gov-relay
+contracts. Not submitted.
+
+## 2026-09-03: Spark leftover DSR/SSR xchain-ssr-oracle (`4a23d1f`)
+
+Immunefi program `sparklend`
+($5,000,000, `kyc: false`).
+Listed GitHub
+[marsfoundation/xchain-ssr-oracle](https://github.com/marsfoundation/xchain-ssr-oracle)
+(live default tree is
+`sky-ecosystem/xchain-ssr-oracle`
+`master` `4a23d1f`). DSR_*
+live rows are the README
+“Legacy Deployments (DAI)”
+of the same contracts.
+Receivers are
+`marsfoundation/xchain-helpers`
+`bb76966`
+(`OptimismReceiver` /
+`ArbitrumReceiver` /
+`AMBReceiver` /
+`LZComposeReceiver`).
+ALM + Vault V2 + PSM3 +
+Collector + gov-relay
+already logged. No
+state-changing txs.
+Read-only `eth_call` only.
+
+Files: `SSRAuthOracle`,
+`SSRMainnetOracle`,
+`SSROracleBase`, forwarders
+(Base / Optimism /
+Arbitrum / Gnosis / LZ),
+adapters (Chainlink /
+Balancer), `script/Deploy.s.sol`,
+xchain-helpers receivers.
+
+Checked for: a stranger
+`setSUSDSData`; a receiver
+fallback that skips the
+bridge check; a forwarder
+that lets the caller pick
+a fake payload; first-update
+/ `maxSSR == 0` letting a
+stranger inflate `chi`;
+Arbitrum alias spoof.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `setSUSDSData` is
+  `DATA_PROVIDER_ROLE`.
+  `rho` must be `<= now`
+  and strictly increasing;
+  `ssr >= RAY`; `chi`
+  non-decreasing; optional
+  `chiMax` only when
+  `maxSSR != 0`. First
+  update (`rho == 0`) skips
+  those checks. Deploy
+  grants `DATA_PROVIDER`
+  to the receiver and
+  renounces deployer admin.
+- Live Base AuthOracle
+  `0x65d946…f7a1` (~04:41
+  UTC 3 Sep): `maxSSR = 0`
+  (same on Arb / OP).
+  Receiver `0x212871…8474`
+  has `DATA_PROVIDER`, not
+  admin. Zero is not admin.
+  `maxSSR = 0` is
+  documented; a compromised
+  provider can set a large
+  `chi`, but the provider
+  is the bridge receiver.
+  Stored `rho` is
+  2026-08-20T12:56:47Z;
+  views extrapolate.
+- Forwarders are
+  permissionless `refresh()`
+  that SafeCast-pack live
+  sUSDS and send to the
+  immutable `l2Oracle` (the
+  receiver). The caller
+  cannot choose the payload.
+- Optimism receiver:
+  messenger `0x4200…0007`
+  and `xDomainMessageSender
+  == l1Authority`.
+  Arbitrum subtracts the
+  standard alias. AMB
+  checks amb / source chain
+  / authority. LZ compose
+  checks src eid + source
+  authority, then composes
+  only from self via the
+  endpoint.
+- Mainnet `refresh()` copies
+  sUSDS with raw
+  uint96 / 120 / 40 casts
+  (forwarders use SafeCast).
+  Live `ssr` / `chi` are
+  nowhere near those caps.
+- Adapters are views.
+  Chainlink
+  `latestRoundData` uses
+  `roundId = 0`. Balancer
+  divides the binomial ray
+  by `1e9`. `getAPR`
+  unchecked `(ssr - RAY)`
+  is a view; the Auth path
+  rejects `ssr < RAY`.
+
+Remaining SparkLend:
+`SSR_RATE_SOURCE`,
+`KILL_SWITCH_ORACLE`,
+`SavingsDaiOracle`, and
+`AAVE_ORACLE` if a later
+pass wants those addresses.
+The `xchain-ssr-oracle`
+GitHub tree and DSR / SSR
+live rows are exhausted.
+Not submitted.
+
+## 2026-09-03: KeeperHub #2105 claimed
+
+Rechecked ~04:34 UTC
+3 Sep. Issue #2105 is
+still `open` +
+`accepted` +
+`confirmed`, but
+[comment](https://github.com/KeeperHub/keeperhub/issues/2105#issuecomment-5520347847)
+and
+[PR #2275](https://github.com/KeeperHub/keeperhub/pull/2275)
+from `tenk-earn` (opened
+04:27 UTC, targeting
+`staging`,
+`Closes #2105`,
+`app/api/openapi/route.ts`
++ `tests/unit/openapi-route.test.ts`).
+Do not open a second
+#2105 PR. This run’s
+#2105 spec is
+superseded. No
+KeeperHub
+implementation before
+the 6 Sep window; #2240
+remains the other
+track.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -8859,19 +9092,33 @@ seeded) are logged. Listed Extra Finance
 and Hashflow Solidity are
 exhausted. Magpie leftover is
 Primacy of Impact only.
-Remaining SparkLend is the
+Remaining SparkLend:
 13 Jul Robinhood / X Layer
-executor / receiver rows
-(same ALM + Vault V2 trees
-already logged; do not
-re-review) plus the 15 Jul
-sUSDC / sUSDC_IMPL rows.
-GammaSwap May 2026 vault +
-PositionManager are logged;
-remaining GammaSwap is the
-2024 factory / DeltaSwap /
-staking / GS / timelock /
-airdrop set. Next
+executor / receiver rows are
+the same gov-relay contracts
+already logged (`6218d57`);
+do not re-review. DSR / SSR
+`xchain-ssr-oracle` (`4a23d1f`)
+is logged. Leftover Spark
+addresses if a later pass
+wants them: 15 Jul sUSDC /
+sUSDC_IMPL, `SSR_RATE_SOURCE`,
+`KILL_SWITCH_ORACLE`,
+`SavingsDaiOracle`,
+`AAVE_ORACLE`. GammaSwap May
+2026 vault + PositionManager
+are logged; remaining
+GammaSwap is the 2024 factory
+/ DeltaSwap / staking / GS /
+timelock / airdrop set.
+KeeperHub #2105 is claimed by
+`tenk-earn` PR #2275
+(do not duplicate).
+Immunefi ENS audit
+competition (web-only,
+KYC, ends 14 Sep) is
+out of this track.
+Next
 unreviewed Immunefi
 GitHub-or-recent trees:
 Olympus V1Migrator + Cooler
@@ -8937,7 +9184,7 @@ Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted).
-Superteam API rechecked ~04:25 UTC
+Superteam API rechecked ~04:34 UTC
 3 Sep: still 28 open listings
 (`earn.superteam.fun/api/listings?status=open`).
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
@@ -8975,17 +9222,22 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-~04:25 UTC 3 Sep: KeeperHub #2105 still `open` +
-`accepted` + `confirmed`, 0 comments, 0 PRs;
+~04:41 UTC 3 Sep: KeeperHub #2105 still `open` +
+`accepted` + `confirmed`, 1 comment and
+PR #2275 (`tenk-earn`, `staging`, mergeable) — do not
+duplicate;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 Hedera Harness #8 still `open`, 0 comments;
 CreditPassport deployer still 0 Sepolia ETH
 (publicnode) / 0 tCTC
 (`rpc.cc3-testnet.creditcoin.network`);
+Superteam still 28 open listings,
+`AGENT_ALLOWED` still only Steve Arena and ZNS;
 Sherlock page 1 still only contest `1234` (Tare)
 in `SHERLOCK_JUDGING`; Code4rena still 24
 `Completed` + 1 `Reporting` (Rujira, window
-ended 16 Jan 2026);
+ended 16 Jan 2026); no new Immunefi GitHub SC
+assets since 2026-09-02;
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub
