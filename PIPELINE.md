@@ -110,9 +110,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   1inch Aqua solidity-utils mixins (`5b597e4`),
   DeFi Saver V3 executor + FL + auth,
   exchangeV3 + sell, Morpho Blue, Liquity V2,
-  Fluid T1, Aave V3, Comp V2/V3, Spark,
-  Liquity V1, and CurveUsd core (`e623f20`),
-  Jito stake-deposit-interceptor (`dbd8ce4`),
+  Fluid T1 + Dex T2–T4, Aave V3 + GHO/Umbrella,
+  Comp V2/V3, Spark, Liquity V1, CurveUsd core +
+  advanced/transient, Euler V2, LlamaLend core
+  (`e623f20`),
+  Jito interceptor (`dbd8ce4`) and restaking
+  vault path (`db90840`),
   and Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

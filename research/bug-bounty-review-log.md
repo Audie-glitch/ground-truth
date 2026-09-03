@@ -3881,6 +3881,20 @@ Fluid Dex T2–T4, `eulerV2`, `aaveV4` / leftover
 Aave, `llamalend`, `mcd`, `tx-saver`, triggers.
 Not submitted.
 
+Note on the non-transient leftover (same files):
+`LevCreate` / `Repay` / `SelfLiquidateWithColl`
+do not call `isControllerValid` (transient
+paths do). After `repay_extended` /
+`liquidate_extended` they
+`_sendLeftoverFunds`, which
+`withdrawTokens(..., type(uint256).max)` of
+crvUSD and `collateral_token()`. A fake
+controller whose `collateral_token()` is WETH
+would sweep the wallet’s WETH + crvUSD to
+`to` — owner-or-bot, same fake-target pattern
+already logged. Transient leftovers use a
+starting-balance snapshot.
+
 ## 2026-09-03: DeFi Saver Euler V2 actions (`e623f20`)
 
 Same Immunefi program `defisaver` ($350,000, `kyc: false`).
@@ -4061,6 +4075,13 @@ payback, delegation, GHO, and Umbrella. Remaining
 DFS: LlamaLend leftover, `aaveV4`, `mcd`,
 `tx-saver`, triggers. Not submitted.
 
+Note on Dex wrap-path leftovers (same files):
+a fake vault that does not pay would make
+wrap-path `withdrawTokens` of the requested
+amount drain existing wallet tokens of that
+asset — owner-or-bot, same class already
+logged.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -4114,7 +4135,7 @@ interceptor `dbd8ce4` and restaking
 `vault_*` / `restaking_*` at `db90840` are
 exhausted), Enzyme Blue adapters added as etherscan
 addresses after Apr 2026 (Bebop / ThreeOneThird /
-SharesSplitter). Superteam API rechecked 03:55 UTC
+SharesSplitter). Superteam API rechecked 03:41 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
@@ -4151,7 +4172,7 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-03:39 UTC 3 Sep: KeeperHub #2105 still `open` +
+03:41 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
