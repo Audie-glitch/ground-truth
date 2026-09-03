@@ -6350,6 +6350,120 @@ still unreviewed. Remaining
 Lista: VeLista lock / airdrop.
 Not submitted.
 
+## 2026-09-03: Lista VeLista lock + airdrop (`28a3c02`)
+
+Same Immunefi program `listadao`
+($1,000,000, `kyc: false`). Official
+tree [lista-dao/lista-token](https://github.com/lista-dao/lista-token)
+at `28a3c02`. OFT / dao
+distributors already logged. No
+mainnet interaction.
+
+Files: `contracts/{VeLista,
+ListaAirdrop}.sol`.
+
+Checked for: lock that credits a
+stranger; `claim` / `earlyClaim`
+that pays the caller for another
+account; airdrop leaf collision
+or payout to `msg.sender`.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `lock` / `relockUnclaimed` /
+  `extendWeek` / `claim` /
+  `earlyClaim` are `msg.sender`.
+  `increaseAmountFor` is a
+  permissionless gift (caller
+  pays LISTA).
+- `claim` requires the lock
+  expired and not auto-lock,
+  then pays the caller.
+  `earlyClaim` is self-only,
+  applies `getPenalty`, and
+  zeros the position.
+- ListaAirdrop leaf is
+  `keccak256(abi.encodePacked
+  (account, amount))`. `claim`
+  pays `account`. Owner can
+  change the root only before
+  `startTime`. `reclaim` is
+  owner after both
+  `reclaimPeriod` and
+  `endTime`.
+
+Remaining Lista leftover: none
+of the named VeLista lock /
+airdrop / oracle slices.
+Extra Finance leftover listed
+Solidity is EXTRA token. Not
+submitted.
+
+## 2026-09-03: Hashflow factory / pool / router (`e41cfaa`)
+
+Immunefi program `hashflow`
+($50,000, `kyc: false`). 8 Jun
+2026 listed assets:
+HashflowFactory
+`0xdE82…DAb5`, plus the
+three sibling pool/router
+rows. Official tree
+[hashflownetwork/x-protocol](https://github.com/hashflownetwork/x-protocol)
+at `e41cfaa`. No mainnet
+interaction.
+
+Files: `evm/contracts/
+{HashflowFactory,
+HashflowRouter}.sol`,
+`evm/contracts/pools/
+HashflowPool.sol`.
+
+Checked for: permissionless
+`createPool`; RFQ-T that pays
+a stranger without a MM
+signature; RFQ-M that skips
+the taker signature; x-chain
+`fillXChain` from an
+unauthorized messenger.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- Factory `createPool` is
+  allowlisted. `updatePoolImpl`
+  is owner and one-shot.
+- Router RFQ-T pulls
+  `effectiveBaseTokenAmount`
+  from `_msgSender` and
+  requires an authorized
+  pool. Pool `tradeRFQT` is
+  router-only, recovers the
+  MM signer, and pays
+  `quote.trader`. The RFQ-T
+  hash binds trader /
+  effectiveTrader / amounts /
+  nonce / expiry / chainid.
+  Partial fills scale quote
+  tokens down only.
+- RFQ-M requires the trader
+  EIP-1271 / EOA signature
+  and a unique `txid`, then
+  pulls from `quote.trader`.
+- `fillXChain` requires an
+  authorized messenger and
+  peer pool. Pool `fillXChain`
+  is router-only and
+  one-shots `txid`.
+
+Remaining Hashflow: x-chain
+messengers / Aave portal if a
+later pass wants them. Twyne
+GitHub is private from this
+VM. Extra Finance leftover
+listed Solidity is EXTRA
+token. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -6443,14 +6557,17 @@ SharesSplitter (`da3b870` + Sourcify) are
 logged. Next unreviewed Immunefi
 GitHub-or-recent trees: Extra Finance
 EXTRA token; Twyne June-2026 wrappers
-(`aPT22Oct2026`, EVC) $50k no KYC;
-Hashflow factory/pool/router (8 Jun).
-Yearn stYFI July leftover (YBC /
-funding / bonus / team, `69e262e`)
-is logged; remaining Yearn stYFI is
+(`aPT22Oct2026`, EVC) $50k no KYC
+(GitHub private from this VM).
+Hashflow factory / pool / router
+(`e41cfaa`) is logged; remaining
+Hashflow is x-chain messengers /
+Aave portal if wanted. Yearn stYFI
+July leftover (`69e262e`) is
+logged; remaining Yearn stYFI is
 Feb 2026 core if wanted. Remaining
-Lista is VeLista lock / airdrop
-(price-feed oracles logged).
+Lista leftover slices (oracles /
+VeLista lock / airdrop) are logged.
 Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
