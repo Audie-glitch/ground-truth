@@ -918,10 +918,52 @@ Not submitted. Remaining TermMax adapters (Kyber, OKX, Pancake,
 Kodiak, vault helpers) are lower-priority copies of the same
 approve-and-call pattern.
 
+## 2026-09-03: Strata CDO / Tranche / depositor / accounting (`2be97f9`)
+
+Immunefi program `strata` ($250,000, `kyc: true`). In-scope tranche
+tree added 17 Jun 2026. Local clone `/tmp/strata-contracts` on the
+`tranches` branch. No mainnet interaction.
+
+Files: `contracts/tranches/{StrataCDO,Tranche,TrancheDepositor,Accounting,DiscreteAccounting}.sol`,
+`contracts/tranches/base/cooldown/SharesCooldown.sol`,
+`contracts/tranches/strategies/ethena/sUSDeStrategy.sol` (withdraw
+path only).
+
+Checked for: first-depositor inflation; burning another user’s
+shares as fee; cooldown finalize stealing locked shares; meta-token
+Ceil redeem pulling more than accounting deducts; leftover tokens
+on the depositor; DiscreteAccounting projected-NAV insolvency
+beyond the published known issue.
+
+Result: no new user-exploitable finding.
+
+- `deposit` / `withdraw` / `cooldownShares` are `onlyTranche`.
+  `burnSharesAsFee` spends allowance when `caller != owner`.
+  SharesCooldown `requestRedeem` is `COOLDOWN_WORKER_ROLE`;
+  `finalize` redeems to the request owner; `cancel` /
+  `finalizeWithFee` are `onlyUser`.
+- Tranche uses OZ `decimalsOffset` plus `MIN_SHARES = 0.1 ether`.
+  Meta deposit converts Floor and pulls the quoted token amount.
+  Redeem passes a Ceil `tokenAmount` into the strategy, but Ethena
+  / Saturn / Neutrl `withdrawInner` ignore it and size the
+  transfer from `baseAssets` (`previewWithdraw`).
+- Depositor swaps are router-and-minOut gated; leftover output is
+  deposited in the same tx. `deposit` is not `nonReentrant`; a
+  reenter would need an admin-listed malicious token or 4626.
+- Continuous `Accounting.calculateNAVSplit` caps Senior’s target
+  gain by real Junior (`jrtNavT1 - ONE_ASSET`) and reverts
+  `InvalidNavSplit` if the pieces do not sum to `navT1`.
+- `DiscreteAccounting.calculateNAVSplitProjected` still caps by
+  **projected** Junior and debits **real** Junior (known issue
+  1373). The public `tranches` tip does not contain the cited
+  `6aee201` real-Junior cap. Not re-reported.
+
+Not submitted. Remaining Strata slice: TwoStepConfigManager and
+strategy cooldown adapters if still unreviewed.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. the402.ai still paused. No KeeperHub implementation before the
-6 Sep build window. Next Immunefi slice: a newly added GH-scoped
-program that is not Sky (legacy Maker surface) or Money on Chain
-(strict OOS + existing AI dump).
+6 Sep build window. Skip Sky (legacy Maker) and Money on Chain
+(strict OOS + existing AI dump) unless a tiny new asset appears.
