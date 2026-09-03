@@ -4,13 +4,14 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~12:21 UTC. Dates verified against each
+Status as of 3 September 2026, ~12:50 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:21 UTC;
-246 programs; no Sep 2026 launches; Filecoin leftover remaining lotus events leftover is logged;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:24 UTC;
+246 programs; no Sep 2026 launches; Aave leftover remaining VotingStrategy leftover is logged;
+Filecoin leftover remaining lotus events leftover is logged;
 Filecoin leftover remaining lotus vm leftover is logged;
 Aave leftover remaining governance voting leftover is logged;
 Aave leftover remaining governance-v3 leftover is logged;
@@ -1499,6 +1500,11 @@ StakeToken leftover
 (`5346765`; KYC) is logged
 (remaining listed is
 governance).
+Aave leftover remaining
+VotingStrategy leftover
+(`497226e`; KYC) is logged
+(remaining listed is
+L2Pool / CCIP GHO pools / protocol-v2).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2431,6 +2437,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Aave leftover remaining
   StakeToken leftover
   (`5346765`; KYC),
+  Aave leftover remaining
+  VotingStrategy leftover
+  (`497226e`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai

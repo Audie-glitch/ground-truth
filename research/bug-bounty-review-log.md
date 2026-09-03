@@ -43449,6 +43449,109 @@ stk /
 StakeToken /
 governance.
 
+## 2026-09-03: Aave leftover remaining VotingStrategy leftover (`497226e`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after governance
+voting leftover.
+Official
+`bgd-labs/aave-governance-v3`
+`497226e`.
+Extract
+`/tmp/aave-gov`.
+Do not rematch
+governance-v3 leftover.
+Do not rematch
+governance voting leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/voting/VotingStrategy.sol`.
+
+Checked for:
+a
+`getVotingPower`
+that
+credits
+caller-
+supplied
+balances
+without
+a
+proven
+slot;
+a
+write
+that
+mints
+voting
+power.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `getVotingPower`
+  is
+  `view`.
+  It
+  decodes
+  a
+  packed
+  slot
+  for
+  AAVE /
+  stkAAVE /
+  aAAVE
+  and
+  applies
+  the
+  leftover-
+  logged
+  DataWarehouse
+  slashing
+  rate
+  for
+  stkAAVE.
+- `hasRequiredRoots`
+  is
+  `view`
+  and
+  only
+  requires
+  registered
+  storage
+  roots.
+  This
+  contract
+  does
+  not
+  move
+  tokens.
+
+Do not file
+a
+view
+voting-power
+decoder
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+L2Pool /
+CCIP GHO pools /
+protocol-v2.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43606,9 +43709,11 @@ Filecoin leftover remaining lotus vm leftover (`7740217`)
 is logged.
 Filecoin leftover remaining lotus events leftover (`7740217`)
 is logged.
+Aave leftover remaining VotingStrategy leftover (`497226e`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: VotingStrategy / CCIP GHO pools.
+Remaining listed Aave: L2Pool / CCIP GHO pools / protocol-v2.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43656,6 +43761,7 @@ Do not rematch Aave StakedAaveV3 leftover.
 Do not rematch Aave StakeToken leftover.
 Do not rematch Aave governance-v3 leftover.
 Do not rematch Aave governance voting leftover.
+Do not rematch Aave VotingStrategy leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -46292,6 +46398,9 @@ stk / StakeToken / governance);
 Aave leftover remaining StakeToken leftover
 (`5346765`) is logged (remaining listed is
 governance);
+Aave leftover remaining VotingStrategy leftover
+(`497226e`) is logged (remaining listed is
+L2Pool / CCIP GHO pools / protocol-v2);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
