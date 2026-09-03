@@ -71336,3 +71336,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an FR32 CommP hasher as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches.
+
+## 2026-09-03: Optimism leftover remaining L2 ETH liquidity leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining listed after dispute games leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `packages/contracts-bedrock/src/L2/{ETHLiquidity,SuperchainETHBridge,LiquidityController,NativeAssetLiquidity,L2ToL1MessagePasser,L2ToL2CrossDomainMessenger,FeeVault,WETH,L2CrossDomainMessenger}.sol`. Do not rematch L1 portal / StandardBridge leftover or dispute games leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `ETHLiquidity.mint` that unlocks preloaded ETH; `relayETH` that pays a caller-chosen `_to` without a validated interop `SentMessage`; `initiateWithdrawal` that records another user's sender; `FeeVault.withdraw` that pays `msg.sender`.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ETHLiquidity.mint` / `burn` require `msg.sender == SUPERCHAIN_ETH_BRIDGE`. `NativeAssetLiquidity` deposit/withdraw require `LIQUIDITY_CONTROLLER`. `LiquidityController.mint` / `burn` require the `minters` map (owner-authorized).
+- `SuperchainETHBridge.sendETH` burns `msg.value` and encodes `(msg.sender, _to, msg.value)`. `relayETH` requires the L2-to-L2 messenger and `crossDomainMessageSender == address(this)`, then mints and `SafeSend`s `_to`.
+- `L2ToL2CrossDomainMessenger.relayMessage` requires `_id.origin` is the messenger, `CrossL2Inbox.validateMessage`, destination `== block.chainid`, and a fresh `successfulMessages` hash. Transient sender is the decoded log sender. `sendMessage` is not payable.
+- `L2ToL1MessagePasser.initiateWithdrawal` hashes `msg.sender` and `msg.value`. `receive()` withdraws to `msg.sender`. Permissionless `burn()` only `Burn.eth`s this contract's balance.
+- `FeeVault.withdraw` is permissionless but always pays the configured `recipient` (L2 `SafeCall.send` or L1 withdrawal). Config setters are ProxyAdmin owner.
+
+Do not file a messenger-gated ETH mint or recipient-only fee sweep as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `op-node` / `op-dispute-mon` / PolicyEngineStaking / websites if still unused.
