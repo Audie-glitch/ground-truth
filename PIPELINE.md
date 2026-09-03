@@ -4,8 +4,8 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 2 September 2026, 23:30 UTC. Dates verified against each
-organizer's own page on that day.
+Status as of 3 September 2026, 02:36 UTC. Dates verified against each
+organizer's own page on 2 Sep; Immunefi unofficial mirror rechecked 3 Sep.
 
 ## Opportunities, ranked by expected payout per unit of work
 
@@ -61,18 +61,25 @@ share the username.
 - `creditpassport/web`: passport dashboard, verified against the local demo chain.
 - `creditpassport/docs/deck.pdf`: 10-slide deck; `creditpassport/SUBMISSION.md`:
   deployment commands, form answers, and the human-only steps.
+- CreditPassport demo video recorded 3 Sep (64s): landing, live `/verify`
+  against a real attested Sepolia transfer, Alice (limit 606) and Bob (cap 0).
+  Upload is the remaining human step. Testnet deploy still waits on faucet
+  gas for `0x8F72A0f832068555C0edAf649b1F8A37d33bA14D`.
+- `x402-api/KICKOFF.md`: minute-one scaffold for 4 Sep 16:00 UTC. No project
+  code written. `@x402/*` still 2.24.0.
 - `research/demand-list-triage.md`, `x402-api/DESIGN.md`, and
   `research/ethonline-start-checklist.md`: the ETHOnline entry (still design-only).
 - `/earn` on the Ground Truth app: dated open/closed windows for every live path.
 - `signlens/`: the 3rd-Web-Hack entry, working with live on-chain checks; demo video recorded.
-- `research/bug-bounty-review-log.md`: Immunefi target selection method and a
-  90-minute review of Enzyme Onyx's new ACE scope (no finding).
+- `research/bug-bounty-review-log.md`: Immunefi target selection method and
+  time-boxed reviews of Enzyme Onyx, GMTrade, 1inch Aqua, sBTC, and Horizen
+  ZenStaker/RewardAccumulator (no submittable finding on any of them).
 
 ## Schedule
 
 | Dates | Work |
 | --- | --- |
-| Sep 2-5 | Build CreditPassport for BUIDL CTC (contracts, agent, frontend, docs). Write the #2240 design proposal for KeeperHub maintainers. Read-only prep for ETHOnline targets (no code before Sep 4: ETHGlobal disqualifies pre-built work). |
+| Sep 2-5 | Build CreditPassport for BUIDL CTC (contracts, agent, frontend, docs, demo video). Write the #2240 design proposal for KeeperHub maintainers. Read-only prep for ETHOnline targets (no code before Sep 4: ETHGlobal disqualifies pre-built work). Superteam Mermail skill ($500 USDC, due 23 Sep, HUMAN_ONLY) is a later slot if capacity remains. |
 | Sep 4-16 | ETHOnline: x402 statement API (Hedera, Bazantic, Arc tracks), then Uniswap / Hedera Harness contributions if time allows. ETHGlobal publishes dates only; code starts Sep 4 from 16:00 UTC after confirming the kickoff on their schedule. Small frequent commits inside the window. |
 | Sep 6-18 | KeeperHub #2240 implementation, tests, PR to `staging` (Sep 6-8), then the elizaOS `plugin-keeperhub` main-track entry (Sep 9-16) if the API key exists. |
 | Sep 13 | BUIDL CTC submission deadline. |

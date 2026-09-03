@@ -76,6 +76,8 @@ Three parts:
 
 ![Passport page](docs/screenshots/passport-alice.png)
 
+![Late-heavy passport: on-chain cap is zero](docs/screenshots/passport-bob.png)
+
 ### Where Attestcoin is used
 
 | Piece | Attestcoin surface |

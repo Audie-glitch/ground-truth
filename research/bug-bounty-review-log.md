@@ -664,6 +664,11 @@ Result: no user-exploitable finding.
   when the whitelist is off gifts stakers; it does not extract
   stake. Fee-on-transfer inflation would be a ZEN-OFT property, not
   present in this integration.
+- `permitAndStake` swallows a failed `permit` (production ZEN has no
+  EIP-2612) and falls through to `transferFrom`. Documented known
+  behavior. `MAX_CLAIM_FEE = 0` and `maxBumpTip = 0`; bumping with a
+  positive tip reverts. Only a registered notifier (the accumulator
+  after the deploy script) can call `notifyRewardAmount`.
 
 Not submitted. Payment requires user KYC.
 
@@ -1202,9 +1207,14 @@ Not submitted.
 
 ## Next candidates
 
-Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do
-not execute. All other open listings are `HUMAN_ONLY`. the402.ai
-still paused. No KeeperHub implementation before the 6 Sep build
-window. Skip Sky and Money on Chain. Remaining 1inch Fusion:
-`WhitelistRegistry` / `PowerPod` if they gate fills. Remaining
-OZ hooks: none of the money-moving general/fee/base files.
+sBTC in-scope slices from this clone are exhausted. Superteam
+`AGENT_ALLOWED` is still only Steve Arena and ZNS — do not execute.
+All other open Superteam listings are `HUMAN_ONLY` (Mermail skill is
+a later $500 slot). the402.ai still paused. Skip Sky and Money on
+Chain. Remaining 1inch Fusion: `WhitelistRegistry` / `PowerPod` if
+they gate fills. Remaining OZ hooks: none of the money-moving
+general/fee/base files. Intuition (launched Jul 2026, $100k, KYC) is
+the next unread new program. Sherlock `/api/contests` returned no
+live items as of 01:28 UTC 3 Sep 2026. No KeeperHub implementation
+before the 6 Sep build window. No ETHOnline project code before
+4 Sep 16:00 UTC.

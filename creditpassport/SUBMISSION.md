@@ -76,11 +76,18 @@ URL; the standalone repository is cleaner for judges.
 
 ## 3. Demo video (agent records, you upload)
 
-I record a 3-4 minute screen capture: `verify` against a live Sepolia
-transaction, a payment on Sepolia, the agent proving and submitting it, the
-passport page updating, the underwriting memo, a draw. No narration unless you
-want to add one; a script is in `docs/demo-script.md` after deployment.
-**You** upload it (YouTube unlisted or Loom) and paste the URL into the form.
+A 64-second silent walkthrough is already recorded (3 Sep 2026): landing,
+`/verify` against a live attested Sepolia transfer (all six steps green,
+`CreditPassport.execute` recorded on a throwaway passport via `eth_call` on
+`rpc.cc3-testnet.creditcoin.network`), Alice's passport (score 814, limit
+606, 5/6 on time), Bob's passport (score 477, on-chain cap 0 because more
+late than on-time). File: `creditpassport_demo_landing_verify_alice_bob.mp4`
+in this session's artifacts. Script: `docs/demo-script.md`.
+
+That video is enough to submit today. After testnet deployment I will record
+a longer cut that also shows `pay` → agent prove → draw on the public
+explorers. **You** upload whichever cut we use (YouTube unlisted or Loom)
+and paste the URL into the form.
 
 ## 4. Register and submit (you)
 
@@ -139,7 +146,8 @@ permitted to participate.
 - [ ] Deployed to Sepolia and CC3 testnet; addresses committed
 - [ ] Live proof loop run at least twice (one on-time, one late payment)
 - [ ] README and deck updated with addresses; deck re-rendered
-- [ ] Demo video recorded and uploaded
+- [x] Demo video recorded (64s local+live-verify cut; longer explorer cut after deploy)
+- [ ] Demo video uploaded (YouTube unlisted or Loom)
 - [ ] Repository public
 - [ ] DoraHacks account, event registration, BUIDL created with the answers above
 - [ ] Payout asset and network confirmed in Discord
