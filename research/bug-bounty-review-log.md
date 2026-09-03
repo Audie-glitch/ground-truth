@@ -71403,3 +71403,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a self-keyed stake/unstake periphery as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `op-node` / `op-dispute-mon` / websites if still unused.
+
+## 2026-09-03: Optimism leftover remaining ETHLockbox leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining unused L1 money path after L1 portal / StandardBridge leftover (portal leftover did not open `ETHLockbox.sol`). Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `packages/contracts-bedrock/src/L1/ETHLockbox.sol`. Do not rematch L1 portal leftover, dispute games leftover, L2 ETH liquidity leftover, or PolicyEngineStaking leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `unlockETH` that donates lockbox ETH to the caller; `lockETH` that credits a non-portal; `migrateLiquidity` / `receiveLiquidity` that drains to an unauthorized lockbox.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `lockETH` and `unlockETH` require `authorizedPortals[msg.sender]`. `unlockETH` also reverts when `systemConfig.paused()`, when `_value > balance`, and when `portal.l2Sender() != DEFAULT_L2_SENDER` (blocks unlock during a withdrawal execution). Funds go to `sender.donateETH{value: _value}()`, not `msg.sender` as an EOA.
+- `receiveLiquidity` requires `authorizedLockboxes[msg.sender]`. `authorizePortal` / `authorizeLockbox` / `migrateLiquidity` are ProxyAdmin owner; authorize/migrate also require a shared ProxyAdmin owner. `initialize` is ProxyAdmin-gated `reinitializer`.
+- Shared SuperchainConfig is required before a portal is authorized.
+
+Do not file a portal-gated ETH lockbox as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `op-node` / `op-dispute-mon` / websites if still unused.
