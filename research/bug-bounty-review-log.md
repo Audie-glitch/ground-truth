@@ -54704,3 +54704,257 @@ at the
 opened-file
 level.
 
+
+## 2026-09-03: MUX leftover mux3 orderbook + pool + position leftover (`8674f2b`)
+
+Immunefi program
+`mux`
+($100,000, `kyc: false`).
+Unique unused
+standing program
+with public
+GitHub smart-contract
+scope.
+Official clone
+`/tmp/mux3`
+`8674f2b`
+(`mux-world/mux3-protocol`,
+tag message
+`deploy`).
+Opened
+`contracts/orderbook/OrderBook.sol`,
+`Delegator.sol`,
+`libraries/LibOrderBook.sol`,
+`LibOrderBook2.sol`,
+`core/trade/FacetOpen.sol`,
+`FacetPositionAccount.sol`,
+`PositionAccount.sol`,
+`pool/CollateralPool.sol`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+place/fill that
+spends another
+trader's
+positionId;
+cancel that
+refunds
+collateral to
+the caller;
+liquidity
+add/remove
+that mints
+or pays a
+non-LP;
+core
+deposit/withdraw
+callable
+outside the
+OrderBook;
+Delegator
+acting without
+the stored
+hot-wallet
+grant.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `placePositionOrder`,
+  `placeWithdrawalOrder`,
+  `depositCollateral`,
+  `withdrawAllCollateral`,
+  and
+  `modifyPositionOrder`
+  decode the
+  owner from
+  `positionId`
+  and require
+  `msg.sender
+  == owner`
+  unless
+  `DELEGATOR_ROLE`.
+  `placeLiquidityOrder`
+  records
+  `msg.sender`
+  as the
+  order
+  account.
+  `transferTokenFrom`
+  is
+  Delegator-only.
+  `depositGas`
+  /
+  `withdrawGas`
+  bind
+  `account ==
+  msg.sender`
+  except
+  Delegator.
+- Fills
+  (`fillPositionOrder`,
+  `fillLiquidityOrder`,
+  `fillWithdrawalOrder`,
+  `fillRebalanceOrder`,
+  `liquidate`,
+  `fillAdlOrder`,
+  `reallocate`)
+  are
+  `onlyRole(BROKER_ROLE)`.
+  Open/close
+  on the
+  diamond
+  (`FacetOpen`)
+  and
+  account
+  deposit /
+  withdraw
+  (`FacetPositionAccount`)
+  are
+  `onlyRole(ORDER_BOOK_ROLE)`.
+  Position
+  owner is
+  the
+  address
+  decoded
+  from
+  `positionId`
+  at
+  account
+  create.
+  `_withdrawFromAccount`
+  pays
+  `positionAccount.owner`
+  (optionally
+  via the
+  swapper).
+- Liquidity
+  add mints
+  shares to
+  `orderData.account`;
+  remove
+  burns
+  shares
+  held by
+  the pool
+  and
+  `safeTransfer`s
+  collateral
+  to that
+  same
+  account.
+  Pool
+  `addLiquidity`
+  /
+  `removeLiquidity`
+  /
+  `rebalance`
+  /
+  `receiveFee`
+  are
+  `onlyOrderBook`;
+  open/close
+  position
+  on the
+  pool is
+  `onlyCore`.
+- Cancel:
+  owner
+  (or
+  broker
+  after
+  expiry,
+  or
+  Delegator)
+  can
+  cancel a
+  position /
+  withdrawal
+  order.
+  Open-position
+  collateral
+  and LP
+  add/remove
+  inventory
+  refund to
+  `orderData.account`,
+  not
+  `msg.sender`.
+  Liquidity
+  cancel is
+  owner-only.
+- `Delegator.delegate`
+  is
+  `msg.sender`
+  granting
+  a hot
+  wallet a
+  finite
+  `actionCount`.
+  `_consumeDelegation`
+  requires
+  `delegation.delegator
+  ==
+  msg.sender`
+  and a
+  remaining
+  count.
+  OrderBook
+  `DELEGATOR_ROLE`
+  is
+  admin-granted
+  and not a
+  stranger
+  path.
+
+Do not file
+broker-only
+fills,
+admin
+DELEGATOR_ROLE,
+owner-set
+hot-wallet
+delegation,
+or a
+trader
+paying
+their own
+tokens
+into a
+priced
+order as
+stranger
+theft.
+
+Not submitted.
+Listed leftover
+that official
+GitHub opens
+for mux3
+OrderBook /
+Delegator /
+CollateralPool /
+position
+account is
+exhausted at
+the
+opened-file
+level.
+Remaining
+listed MUX
+trees:
+`mux-protocol`
+core /
+orderbook /
+components,
+`mux-aggregator-protocol`
+proxyFactory /
+gmxV2,
+`mux-degen-protocol`,
+and
+`mux-staking`.
+
