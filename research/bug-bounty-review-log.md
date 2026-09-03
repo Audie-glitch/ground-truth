@@ -45484,6 +45484,8 @@ Jito leftover remaining jito-solana replay_stage leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana poh leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana tvu leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45505,7 +45507,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` tvu / scheduler if still unused.
+Remaining listed Jito: `jito-solana` scheduler if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45564,6 +45566,7 @@ Do not rematch Jito jito-solana proxy leftover.
 Do not rematch Jito jito-solana replay leftover.
 Do not rematch Jito jito-solana replay_stage leftover.
 Do not rematch Jito jito-solana poh leftover.
+Do not rematch Jito jito-solana tvu leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -70187,3 +70190,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator-local PoH recorder as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` tvu / scheduler if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana tvu leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after poh leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `core/src/tvu.rs`. Do not rematch banking_stage leftover, bundle_stage leftover, tip_manager leftover, proxy leftover, replay leftovers, or poh leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger shreds that skip sigverify and credit the attacker; TVU cranking leftover-logged tip programs; votor signing without the authorized voter.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Tvu::new` is validator wiring. Fetch sockets go to `ShredFetchStage`, then `spawn_shred_sigverify` (leader-schedule shred signatures) before `RetransmitStage` / `WindowService` / leftover-logged `ReplayStage`.
+- This file has no tip / bundle / block-engine hooks. `shredstream_receiver_address` / BAM shred addrs are leftover-logged proxy operator config, not a public submit API.
+- Votor / `VotingService` take the local `authorized_voter_keypairs` and leftover-logged `cluster_info.keypair()`. BLS ingress is rate-limited and sigverified. A stranger packet still needs a valid shred or vote signature.
+
+Do not file a validator TVU wiring crate as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` scheduler if still unused.
