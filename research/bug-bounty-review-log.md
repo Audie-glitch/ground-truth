@@ -74056,7 +74056,7 @@ Result: no user-exploitable finding. Not submitted.
 
 Do not file a peer-gated LZ receive, messenger-authenticated finalize, or MINTER_ROLE sync-pool mint as stranger theft.
 
-Not submitted. Payment requires user KYC. Remaining listed: RoleRegistry / TopUpSourceFactory / PixWalletAutoTopup / Scroll Cash modules if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+Not submitted. Payment requires user KYC. Remaining listed: PixWalletAutoTopup destination config / Scroll Cash modules if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 
 ## 2026-09-03: Ether.fi leftover remaining RoleRegistry TopUpSourceFactory leftover (`1f502e1`)
 
