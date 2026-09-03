@@ -10,7 +10,11 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana check_transactions leftover is logged;
+246 programs; no Sep 2026 launches; Optimism leftover remaining dispute games leftover is logged;
+Filecoin leftover remaining go-paramfetch leftover is logged;
+Filecoin leftover remaining go-state-types leftover is logged;
+Filecoin leftover remaining go-fil-markets leftover is logged;
+Jito leftover remaining jito-solana check_transactions leftover is logged;
 Filecoin leftover remaining go-jsonrpc leftover is logged;
 Jito leftover remaining jito-solana partitioned epoch rewards leftover is logged;
 Jito leftover remaining jito-solana remaining runtime leftover is logged;
@@ -1698,6 +1702,22 @@ this pin).
 Filecoin leftover remaining
 go-jsonrpc leftover
 (`059363558429`; KYC) is logged.
+Filecoin leftover remaining
+go-fil-markets leftover
+(`6e1b1dc05c39`; KYC) is logged.
+Filecoin leftover remaining
+go-state-types leftover
+(`a31d84b45e42`; KYC) is logged.
+Filecoin leftover remaining
+go-paramfetch leftover
+(`78a1658e6493`; KYC) is logged.
+Optimism leftover remaining
+dispute games leftover
+(`eea9542`; KYC) is logged
+(remaining listed is op-node /
+op-dispute-mon / L2 contracts /
+PolicyEngineStaking / websites
+if still unused).
 Rootstock leftover remaining
 powpeg-node pegout leftover
 (`254fb3d`; KYC) is logged.
@@ -2773,6 +2793,18 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Filecoin leftover remaining
   go-jsonrpc leftover
   (`059363558429`; KYC),
+  Filecoin leftover remaining
+  go-fil-markets leftover
+  (`6e1b1dc05c39`; KYC),
+  Filecoin leftover remaining
+  go-state-types leftover
+  (`a31d84b45e42`; KYC),
+  Filecoin leftover remaining
+  go-paramfetch leftover
+  (`78a1658e6493`; KYC),
+  Optimism leftover remaining
+  dispute games leftover
+  (`eea9542`; KYC),
   Rootstock leftover remaining
   rsk-powhsm leftover
   (`82a12d44efec`; KYC),

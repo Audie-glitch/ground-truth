@@ -45886,6 +45886,153 @@ open is
 exhausted on
 this pin.
 
+## 2026-09-03: Optimism leftover remaining dispute games leftover (`eea9542`)
+
+Immunefi program
+`optimism`
+($2,000,042,
+`kyc: true`).
+Official remaining
+listed after L1
+portal /
+StandardBridge
+leftover.
+Official
+`ethereum-optimism/optimism`
+`eea9542`.
+Extract
+`/tmp/op-dispute/`.
+Sourcify ETH
+FaultDisputeGame
+`0x4146DF64D83acB0DcB0c1a4884a16f090165e122`,
+PermissionedDisputeGame
+`0xE9daD167EF4DE8812C1abD013Ac9570C616599A0`,
+PreimageOracle
+`0xD326E10B8186e90F4E2adc5c13a2d0C137ee8b34`,
+MIPS
+`0x0f8EdFbDdD3c0256A80AD8C0F2560B1807873C9c`,
+DelayedWETH proxy
+`0xE497B094d6DbB3D5E4CaAc9a14696D7572588d14`.
+Do not rematch
+L1 portal /
+StandardBridge leftover.
+No mainnet
+writes.
+
+Files:
+`packages/contracts-bedrock/src/dispute/{FaultDisputeGame,PermissionedDisputeGame,DelayedWETH,DisputeGameFactory,AnchorStateRegistry}.sol`,
+`packages/contracts-bedrock/src/cannon/{PreimageOracle,MIPS64}.sol`.
+
+Checked for:
+`claimCredit`
+that pays the
+caller;
+`DelayedWETH.withdraw`
+that drains
+another
+account's
+unlock;
+factory
+`create`
+that clones
+without the
+init bond;
+`challengeLPP`
+that pays
+without a
+failed
+keccak.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Factory
+  `create`
+  requires
+  `msg.value
+  ==
+  initBonds`.
+  Clone
+  calldata
+  binds
+  `msg.sender`
+  as creator.
+- `initialize`
+  records
+  `msg.value`
+  as the
+  creator
+  bond and
+  deposits
+  it into
+  DelayedWETH.
+- `claimCredit`
+  closes a
+  finalized
+  game, then
+  unlocks /
+  withdraws
+  for
+  `_recipient`
+  and pays
+  that
+  address,
+  not the
+  caller.
+- DelayedWETH
+  `unlock` /
+  `withdraw`
+  only move
+  `withdrawals
+  [msg.sender]
+  [_guy]`.
+  `recover`
+  /
+  `hold` are
+  owner-only.
+- Permissioned
+  game gates
+  `move` /
+  `step` to
+  proposer
+  or
+  challenger.
+  Init
+  requires
+  `tx.origin
+  ==
+  proposer`.
+- Preimage
+  `challengeLPP`
+  pays the
+  bond only
+  after a
+  proven
+  keccak
+  mismatch.
+
+Do not file
+a finalized
+credit claim
+or a proven
+preimage
+challenge as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+op-node /
+op-dispute-mon /
+L2 contracts /
+PolicyEngineStaking /
+websites
+(if still unused).
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -46167,6 +46314,14 @@ Jito leftover remaining jito-solana check_transactions leftover (`d0e3a47`)
 is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
+Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
+is logged.
+Filecoin leftover remaining go-state-types leftover (`a31d84b45e42`)
+is logged.
+Filecoin leftover remaining go-paramfetch leftover (`78a1658e6493`)
+is logged.
+Optimism leftover remaining dispute games leftover (`eea9542`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -46186,7 +46341,7 @@ is logged.
 Rootstock leftover remaining rsk-powhsm leftover (`82a12d44efec`)
 is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Remaining go-* if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Remaining go-* (`go-commp-utils` if still unused). Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
@@ -46261,6 +46416,10 @@ Do not rematch Jito jito-solana vote_reward leftover.
 Do not rematch Jito jito-solana remaining runtime leftover.
 Do not rematch Jito jito-solana partitioned epoch rewards leftover.
 Do not rematch Jito jito-solana check_transactions leftover.
+Do not rematch Filecoin go-fil-markets leftover.
+Do not rematch Filecoin go-state-types leftover.
+Do not rematch Filecoin go-paramfetch leftover.
+Do not rematch Optimism leftover remaining dispute games leftover.
 Do not rematch Filecoin go-jsonrpc leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
@@ -49022,6 +49181,16 @@ Jito leftover remaining jito-solana check_transactions leftover
 (`d0e3a47`) is logged (remaining listed is exhausted on this pin);
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
+Filecoin leftover remaining go-fil-markets leftover
+(`6e1b1dc05c39`) is logged;
+Filecoin leftover remaining go-state-types leftover
+(`a31d84b45e42`) is logged;
+Filecoin leftover remaining go-paramfetch leftover
+(`78a1658e6493`) is logged;
+Optimism leftover remaining dispute games leftover
+(`eea9542`) is logged (remaining listed is op-node /
+op-dispute-mon / L2 contracts / PolicyEngineStaking /
+websites);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover
