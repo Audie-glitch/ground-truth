@@ -116,7 +116,10 @@ Ordered by urgency. Each is a few minutes.
    the entry at the root and full history are pushed as
    `cursor/creditpassport-standalone-4667` and `cursor/signlens-standalone-4667`.
    Create an empty public repo and push the branch to its `main`
-   (exact commands in each entry's `SUBMISSION.md`).
+   (exact commands in each entry's `SUBMISSION.md`). To refresh a standalone
+   branch after new commits: `git subtree split --prefix=creditpassport -b
+   cp-split` and push it under a new versioned branch name (no force-pushes);
+   `creditpassport/.gitmodules` exists so the split carries its submodule config.
 8. Demo videos: I record the screen; you upload to YouTube or Loom and paste
    the link in the submission form. If a track wants narration, I write the
    script.
