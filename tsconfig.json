@@ -32,20 +32,15 @@
   ],
   "exclude": [
     "node_modules",
-<<<<<<< HEAD
     "t3n-vendor-receipts",
     "mermail-onchain-receipts",
     "creditpassport",
     "signlens",
-    "agent-tools",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-=======
-    "signlens",
-    "creditpassport",
     "keeperhub",
     "x402-api",
-    "scripts"
->>>>>>> dc72268 (Add rolling walk-forward folds and Monte Carlo shuffle testing)
+    "agent-tools",
+    "scripts",
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }
