@@ -45233,6 +45233,107 @@ user KYC.
 Remaining listed:
 primacy.
 
+## 2026-09-03: Jito leftover remaining jito-solana bundle + fee leftover (`d0e3a47`)
+
+Immunefi program
+`jito`
+($250,000,
+`kyc: true`).
+Official
+`jito-foundation/jito-solana`
+`d0e3a47`.
+Extract
+`/tmp/jito-solana/`.
+Do not rematch
+bundle_stage
+/
+banking_stage
+/
+tip_manager
+leftovers.
+No mainnet
+writes.
+
+Files:
+`bundle/src/lib.rs`,
+`fee/src/lib.rs`,
+`core/src/bundle.rs`,
+`core/src/packet_bundle.rs`.
+
+Checked for:
+`derive_bundle_id`
+that lets
+a stranger
+swap a
+bundle
+after
+hashing;
+fee calc
+that
+under-charges
+so a
+stranger
+tx is
+free.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `derive_bundle_id`
+  SHA-256s
+  joined
+  signatures.
+  `SanitizedBundle`
+  stores
+  that
+  id.
+- `PacketBundle`
+  /
+  `VerifiedPacketBundle`
+  wrap a
+  `PacketBatch`.
+  They do
+  not
+  execute
+  txs.
+- `calculate_fee`
+  is
+  signature
+  count
+  `saturating_mul`
+  `lamports_per_signature`
+  plus
+  the
+  caller’s
+  priority
+  fee.
+  View
+  helper.
+  No
+  token
+  movement.
+
+Do not file
+a bundle-id
+hash or
+view fee
+helper as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`jito-solana`
+tokens /
+programs /
+runtime /
+other crates
+(if still unused).
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -45486,6 +45587,8 @@ Jito leftover remaining jito-solana poh leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana tvu leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana bundle + fee leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45507,7 +45610,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` scheduler if still unused.
+Remaining listed Jito: `jito-solana` scheduler / tokens / programs / runtime (if still unused).
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45567,6 +45670,7 @@ Do not rematch Jito jito-solana replay leftover.
 Do not rematch Jito jito-solana replay_stage leftover.
 Do not rematch Jito jito-solana poh leftover.
 Do not rematch Jito jito-solana tvu leftover.
+Do not rematch Jito jito-solana bundle + fee leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -48284,7 +48388,24 @@ Aave leftover remaining v3 money-path logic leftover
 Aave leftover remaining v3 ValidationLogic + GenericLogic leftover
 (`cff15de`) is logged;
 Aave leftover remaining v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover
+(`cff15de`) is logged;
+Aave leftover remaining v3 ReserveLogic leftover
 (`cff15de`) is logged (remaining listed is primacy);
+Jito leftover remaining jito-solana banking_stage leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana proxy leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana replay leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana replay_stage leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana poh leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana tvu leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana bundle + fee leftover
+(`d0e3a47`) is logged (remaining listed is scheduler /
+tokens / programs / runtime);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover
