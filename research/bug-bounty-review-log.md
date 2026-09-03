@@ -41162,15 +41162,19 @@ Filecoin leftover remaining go-graphsync leftover (`12cbffa`)
 is logged.
 ZKsync OS leftover zkos-wrapper leftover
 (`8b679aa`) is logged.
+ZKsync OS leftover airbender verifier leftover
+(`6ec4ea7`) is logged.
 Wormhole leftover remaining CosmWasm token-bridge leftover
 (`c58827e`) is logged.
 Wormhole leftover remaining CosmWasm core leftover
+(`c58827e`) is logged.
+Wormhole leftover remaining CosmWasm IBC leftover
 (`c58827e`) is logged.
 Remaining listed Hedera: hashed transaction-tool website.
 Remaining listed Filecoin: remaining go-* / lotus non-miner / paired / go-data-transfer.
 
 Remaining listed ZKsync OS: airbender CS / prover /
-verifier.
+verifier_generator / field.
 Do not rematch Hedera consensus-node,
 json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
@@ -41178,8 +41182,8 @@ lotus miner, FVM, proofs-api, proofs-ffi, or proofs.
 Do not rematch filecoin.io website leftover.
 Do not rematch filecoin-ffi or go-graphsync leftover.
 Do not rematch ZKsync bootloader, interpreter,
-storage_models, proof_running_system, zk_ee, or
-zkos-wrapper.
+storage_models, proof_running_system, zk_ee,
+zkos-wrapper, or airbender verifier.
 Do not loop `reffinance` 404s or mux-staking auth.
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -64308,3 +64312,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a payload3 complete that IBC-sends to the VAA recipient, or a self-funded factory burn into `InitiateTransfer`, as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / wormchain / remaining CosmWasm (accountant / cw20-wrapped) / algorand / aptos / near, and Relayer Sourcify 404.
+
+## 2026-09-03: ZKsync OS leftover airbender verifier leftover (`6ec4ea7`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Official remaining listed after zkos-wrapper leftover. Official clone `/tmp/zksync-airbender` at `6ec4ea7` (`fix(gpu_prover): update era_cudart to 0.156.0 and fix CUB size-query callsites`). Opened `verifier/src/lib.rs` and `full_statement_verifier/src/lib.rs`. Do not rematch zkos-wrapper, bootloader, evm_interpreter, storage_models, proof_running_system, or zk_ee leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `verify` accepting a STARK whose FRI/quotient checks fail; `verify_full_statement` chaining circuits without matching setup caps or memory challenges; base-layer chain hash skipping `end_params`.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `verify_with_configuration` loads the skeleton and merkle-authenticated queries, drives the Blake2s transcript (lookup / quotient / DEEP / FRI challenges + PoW), then checks quotient-at-z, DEEP consistency, and FRI folding. Query indexes must match the transcript draw; the last fold `assert_eq`s the monomial-form evaluation.
+- `verify_full_statement` requires `x0 == 0`, a bounded circuit count, continuous sequence + PC, equal setup caps and memory/delegation challenges, registered delegation setup caps, memory grand-product × register contribution == 1, and delegation accumulator == 0. `end_params` is Blake2s(`end_pc || setup_caps`).
+- Base layer requires registers 18–25 zero and hashes `[0u32; 8] || end_params`. Recursion requires a Blake2s preimage of the aux registers and either terminates on matching `end_params` or hashes `aux || end_params`. This crate does not move ETH.
+
+Do not file a STARK verifier that asserts FRI/quotient equality and binds setup caps as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: airbender CS / prover / verifier_generator / field.

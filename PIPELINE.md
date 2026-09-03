@@ -35,6 +35,8 @@ Filecoin leftover remaining FVM leftover is logged;
 Filecoin leftover remaining proofs-api leftover is logged;
 Filecoin leftover remaining proofs-ffi leftover is logged;
 ZKsync OS leftover zkos-wrapper leftover is logged;
+ZKsync OS leftover airbender verifier leftover is logged;
+Wormhole leftover remaining CosmWasm IBC leftover is logged;
 Wormhole leftover remaining CosmWasm token-bridge leftover is logged;
 Wormhole leftover remaining CosmWasm core leftover is logged;
 Wormhole leftover remaining Solana token-bridge leftover is logged;
