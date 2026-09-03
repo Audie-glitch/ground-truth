@@ -28583,6 +28583,113 @@ open is exhausted.
 Remaining listed: the
 website.
 
+## 2026-09-03: GMX leftover (Sourcify)
+
+Immunefi program
+`gmx` ($5,000,000,
+`kyc: false`). Unique
+no-KYC listed slice
+(not GMTrade / Mux
+GmxV2 leftovers).
+Sourcify Arbitrum
+`match` `Vault`
+`0x489ee077994B6658eAfA855C308275EAd8097C4A`
++ `Router`
+`0xaBBc5F99639c9B6bCb58544ddf04EFA6802F4064`
++ `GlpManager`
+`0x321F653eED006AD1C29D174e17d96351BDe22649`
++ `GLP` / `GMX`, and
+`exact_match`
+`RewardRouterV2`
+`0x5E4766F932ce00aA4a1A82d3Da85adf15C5694A1`.
+Extract `/tmp/gmx`.
+No mainnet interaction.
+
+Files:
+`vault/Vault.sol`,
+`router/Router.sol`,
+`glpManager/GlpManager.sol`,
+`rewardRouter/contracts/staking/RewardRouterV2.sol`,
+`glp/GLP.sol`,
+`gmx/GMX.sol`.
+
+Checked for: a stranger
+`increasePosition` /
+`decreasePosition` on
+another account;
+Router `pluginTransfer`
+without that user's
+plugin approval;
+`addLiquidityForAccount`
+without handler;
+RewardRouter redeem
+that unstakes another
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Vault
+  `increasePosition` /
+  `decreasePosition`
+  require the caller is
+  the account, the
+  configured router, or
+  an
+  `approvedRouters`
+  entry for that
+  account. `buyUSDG` /
+  `sellUSDG` are
+  manager-only.
+  `_transferIn` credits
+  the balance delta.
+- Router swaps and
+  `directPoolDeposit`
+  pull `_sender()`.
+  Position open/close
+  pass `_sender()` as
+  the account.
+  `pluginTransfer` /
+  plugin position calls
+  require the plugin is
+  gov-listed and the
+  user called
+  `approvePlugin`.
+- GlpManager public
+  add/remove use
+  `msg.sender`.
+  `*ForAccount` is
+  handler-only.
+- RewardRouter stake /
+  mint-and-stake /
+  unstake-and-redeem /
+  claim bind to
+  `msg.sender`. GLP /
+  GMX `mint` is
+  `onlyMinter`.
+
+Do not file manager
+`buyUSDG`, gov mint,
+user-approved plugin
+pulls, permissionless
+liquidation, or
+handler-only GLP
+account mint as theft.
+
+Not submitted.
+Remaining listed:
+Avalanche V1 twins,
+reward trackers /
+vesters /
+distributors, and the
+listed GMX V2
+ExchangeRouter /
+DepositVault /
+DataStore / Oracle
+rows (Arb + Avax).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -29753,6 +29860,15 @@ that a public tree would
 open is exhausted;
 remaining listed is the
 website);
+GMX leftover (Sourcify Arb
+Vault / Router /
+GlpManager /
+RewardRouterV2) is logged
+(remaining listed is Avax
+V1 twins, trackers /
+vesters, and GMX V2
+ExchangeRouter /
+DepositVault rows);
 CapyFi leftover (Sourcify
 Comptroller / CEther /
 CErc20; KYC) is logged

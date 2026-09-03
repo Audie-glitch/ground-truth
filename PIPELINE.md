@@ -220,6 +220,11 @@ alchemix-boost leftover (`f100743` veALCX
 is logged (listed leftover that a public
 tree would open is exhausted; remaining
 listed is the website).
+GMX leftover (Sourcify Arb Vault / Router
+/ GlpManager / RewardRouterV2) is logged
+(remaining listed is Avax V1 twins,
+trackers / vesters, and GMX V2
+ExchangeRouter / DepositVault rows).
 CapyFi leftover (Sourcify Comptroller /
 CEther / CErc20; KYC) is logged
 (remaining listed is Unitroller Sourcify
@@ -676,6 +681,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   RewardsDistributor; listed
   leftover that a public tree
   would open is exhausted),
+  GMX leftover (Sourcify Arb
+  Vault / Router / GlpManager /
+  RewardRouterV2),
   CapyFi leftover (Sourcify
   Comptroller / CEther / CErc20;
   KYC),
