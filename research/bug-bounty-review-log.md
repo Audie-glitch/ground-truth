@@ -64037,3 +64037,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a deprecated FFI that forwards prover_id and commitments as stranger theft. Successor leftover (if unique) is `filecoin-ffi`, not another pass on this tree.
 
 Not submitted. Payment requires user KYC. Remaining listed: rust-fil-proofs / filecoin-ffi / filecoin.io.
+
+## 2026-09-03: Wormhole leftover remaining CosmWasm token-bridge leftover (`c58827e`)
+
+Immunefi program `wormhole` ($1,000,000, `kyc: true`). Official remaining listed after ETH core / TokenBridge / NFTBridge Sourcify, NTT, circle-integration, Solana+Sui NTT, and Solana token-bridge leftovers. Official clone `/tmp/wormhole` `c58827e` (sparse `cosmwasm/contracts/token-bridge`). Opened `src/contract.rs` (`deposit_tokens`, `withdraw_tokens`, `handle_initiate_transfer*`, `handle_complete_transfer*`, `parse_and_archive_vaa`, `reply`) and `src/state.rs` (`send_native` / `receive_native`). No mainnet writes. No exploit PoCs.
+
+Checked for: stranger withdrawal of another wallet's bank deposit; initiate transfer locking someone else's CW20/native; complete_* paying a stranger or minting without a registered emitter; payload redeem by a non-recipient; outstanding-native underflow / replay.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `deposit_tokens` credits `bridge_deposit` as `"{info.sender}:{denom}"` from `info.funds` only. `withdraw_tokens` zeros that same sender+denom key and `BankMsg::Send`s only to `info.sender`.
+- Native `InitiateTransfer` subtracts the sender's deposit ledger (fails if missing), rejects same-chain / zero / `fee > amount`, chops dust to 8 decimals, then `send_native` and `PostMessage`. Wrapped CW20 burns `info.sender`; native CW20 `TransferFrom`s the signer into the contract, then `reply` measures the actual balance delta (fee-token safe), rejects `fee > real_amount`, and posts the corrected amount. `wrapped_transfer_tmp` is asserted empty then cleared in `reply` (reentrancy).
+- `parse_and_archive_vaa` verifies via the wormhole contract and archives the VAA hash before handle (same-tx revert on later `Err`). Completes require a registered emitter, `recipient_chain == cfg.chain_id`, and pay the VAA recipient. `TRANSFER_WITH_PAYLOAD` additionally requires `recipient == info.sender`. Relayer fee goes to `info.sender` on `SubmitVaa` TRANSFER, or the recipient-chosen `relayer` on payload complete.
+- Foreign wrapped completes mint to recipient (+ fee to relayer). Native CW20 / bank completes `receive_native` (outstanding counter must cover amount+fee) then un-truncate and transfer/send.
+
+Do not file signer-keyed deposit/withdraw, signer-approved lock/burn, or claim-gated release to the VAA recipient as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / wormchain / other cosmwasm contracts / algorand / aptos / near, and Relayer Sourcify 404.
