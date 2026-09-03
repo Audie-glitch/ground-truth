@@ -7842,12 +7842,102 @@ finding. Not submitted.
   live.
 
 Remaining Balancer 23 Jun
+factories: ReClamm + LP
+oracle factories this pass
+below; FixedPrice LBP,
+Gyro2CLP, GyroECLP,
+StableSurge, plus Weighted /
+Stable (Sourcify 404). Not
+submitted.
+
+## 2026-09-03: Balancer ReClamm factory + LP oracle factories (Sourcify)
+
+Immunefi program `balancer`
+($1,000,000, `kyc: false`).
+23 Jun leftover:
+ReClammPoolFactory (V3)
+`0x3ccD…ab7FF` (exact match,
+verified 2026-05-14),
+StableLPOracleFactory (V2)
+`0x765c…A93c` (2026-02-27),
+WeightedLPOracleFactory (V2)
+`0x4b4b…85C6` (2026-04-04),
+EclpLPOracleFactory
+`0x301E…54B` (2026-04-04).
+Extract under
+`/tmp/balancer/{reclamm,
+stable_oracle,weighted_oracle,
+eclp_oracle}`. FixedPrice LBP
+/ Gyro2CLP / GyroECLP /
+StableSurge factories are
+still Sourcify 404. No
+mainnet interaction.
+
+Files:
+`contracts/{ReClammPoolFactory,
+lib/ReClammPoolFactoryLib,
+ReClammPool}.sol`,
+`contracts/{LPOracleFactoryBase,
+LPOracleBase,StableLPOracle,
+WeightedLPOracle,EclpLPOracle,
+*Factory}.sol`.
+
+Checked for: factory `create`
+that registers attacker
+bytecode; ReClamm hook used
+by a stranger pool; 1-token
+ReClamm that skips Vault
+min-token checks; factory
+oracle that overwrites a
+canonical feed set; TVL that
+credits a transient balance
+when the vault is locked.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- ReClamm `create` deploys
+  the factory’s `ReClammPool`
+  creationCode (helper vault
+  must match) and registers
+  that pool as its own hook.
+  Donation is off; unbalanced
+  liquidity is disabled.
+  `onRegister` requires
+  `pool == address(this)`,
+  two tokens, and those
+  liquidity flags. Factory
+  `tokens.length <= 2`
+  without an explicit min
+  still fail-closes at
+  `onRegister`.
+- Init / add / remove hooks
+  are `onlyVault` and scale
+  virtual balances with
+  supply. Price-range params
+  are bounded in
+  `ReClammPoolFactoryLib`.
+- Oracle factories deploy a
+  new oracle per
+  `(pool, flags, feeds)` id.
+  A junk feed list cannot
+  replace an existing id.
+  `latestRoundData` is TVL /
+  BPT supply; sequencer
+  uptime is checked when a
+  feed is configured.
+  `shouldRevertIfVaultUnlocked`
+  is an integrator flag.
+  Feeds are caller-chosen;
+  `isOracleFromFactory` is
+  not a price-feed whitelist.
+
+Remaining Balancer 23 Jun
 factories: FixedPrice LBP,
-Gyro2CLP, GyroECLP, ReClamm,
-StableSurge, plus
-Weighted / Stable (Sourcify
-404) and the two LP oracle
-factories. Not submitted.
+Gyro2CLP, GyroECLP,
+StableSurge, Weighted /
+Stable (Sourcify 404). Not
+submitted.
 
 ## Next candidates
 
@@ -7985,13 +8075,14 @@ Factory V3.1.0 (Sourcify)
 are logged. Balancer V3
 Router + CompositeLiquidityRouter
 + ProtocolFeeController +
-LBPoolFactory (23 Jun,
+LBPoolFactory + ReClamm +
+LP oracle factories (23 Jun,
 Sourcify) are logged; remaining
 Balancer is FixedPrice LBP /
-Gyro / ReClamm / StableSurge
-factories, Weighted / Stable
-(Sourcify 404), and the two
-LP oracle factories. Remaining
+Gyro2CLP / GyroECLP /
+StableSurge factories and
+Weighted / Stable (Sourcify
+404). Remaining
 Lista leftover slices (new-contracts
 oracles / VeLista lock / airdrop /
 CDP ResilientOracle + pips at
