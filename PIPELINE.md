@@ -115,7 +115,8 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Liquity V1, CurveUsd, Euler V2, LlamaLend,
   Maker MCD, TxSaver, triggers, EtherFi / Lido
   + leftover utils, Renzo / Sky / Pendle /
-  Yearn / Uni (`e623f20`),
+  Yearn / Uni, Summer.fi / Insta / LSV /
+  Merkl / fee / checkers (`e623f20`),
   Jito interceptor (`dbd8ce4`) and restaking
   vault path (`db90840`),
   and Horizen ZenStaker (no submittable finding).

@@ -4500,6 +4500,81 @@ Remaining DFS folders: `summerfi`, `insta`,
 `lsv`, `merkel`, `fee`, `checkers`, leftover
 utils (`CreateSub` / wrap-ETH). Not submitted.
 
+## 2026-09-03: DeFi Saver Summer.fi / Insta / LSV / Merkl / fee / checkers (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction.
+
+Files: `contracts/actions/summerfi/{SFProxyEntryPoint,
+SFApproveTokens,SummerfiUnsub,SummerfiUnsubV2}.sol`,
+`insta/{InstPullTokens,connectors/ConnectV2DefiSaver*.sol,
+connectors/resolver.sol}`,
+`lsv/{LSVSupply,LSVBorrow,LSVPayback,LSVWithdraw}.sol`,
+`merkel/MerklClaim.sol`,
+`fee/{GasFeeTaker,GasFeeTakerL2,GasFeeCalc}.sol`,
+`checkers/*RatioCheck*.sol`,
+`utils/{CreateSub,UpdateSub,ToggleSub,WrapEth,UnwrapEth}.sol`.
+
+Checked for: Summer.fi approve that sets
+allowance on a stranger’s SF proxy; Insta
+`cast` that drains another DSA; Merkl
+`distinctTokens` that `withdrawTokens` more
+than the claim minted; LSV fee that takes
+more than 10% of a real withdraw; GasFeeTaker
+that spends an unpiped wallet balance past
+the 20% cap.
+
+Result: no user-exploitable finding.
+
+- `SFApproveTokens` executes
+  `AAVEV3PaybackWithdraw` on a
+  caller-chosen `sfProxy` through
+  hardcoded OperationExecutor /
+  SetApproval `0x3CF2…bA5` (version-
+  pinned in ServiceRegistry). AccountGuard
+  must already permit this wallet. Spender
+  defaults to the wallet; allowance is
+  re-read after the call.
+- `SummerfiUnsub` / `UnsubV2` delegatecall
+  hardcoded AutomationBot /
+  AutomationBotV2 (`0x6E87…01b` /
+  `0x5743…25E`) to remove the wallet’s
+  own triggers. `SFProxyEntryPoint`
+  fallback delegatecalls RecipeExecutor;
+  `receive` reverts.
+- `InstPullTokens` `cast`s `BASIC-A`
+  withdraw on a caller-chosen DSA. Only a
+  DSA that already authorized this wallet
+  will succeed. ConnectV2DefiSaver
+  fallbacks delegatecall a hardcoded
+  RecipeExecutor from an Instadapp spell
+  the DSA owner signed.
+- LSV supply/borrow/payback only write
+  the hardcoded profit tracker. Withdraw
+  takes a performance fee (0% if
+  discounted) capped at 10% of the stated
+  LST amount, converted via hardcoded
+  rETH/cbETH/wstETH/weETH/ezETH rates.
+- `MerklClaim` hits the hardcoded
+  distributor. Claiming for another
+  `users[]` entry is the intended merkle
+  path; `distinctTokens` then
+  `withdrawTokens` from the wallet —
+  owner-or-bot if those amounts exceed
+  the claim. Docs say leave that array
+  empty when claiming for someone else.
+- `GasFeeTaker` caps gas at 20% of
+  `availableAmount` (wallet balance if
+  unpiped) plus a DFS fee floored at 5
+  bps. Checkers only revert a strategy
+  when the post-action ratio moved the
+  wrong way. `CreateSub` grants auth and
+  stores a hash the wallet signed.
+
+DeFi Saver leftover folders treated as
+exhausted. Not submitted.
+
 ## 2026-09-03: 0x Settler execute + Permit2 + RFQ/UniV3 (`1df9087`)
 
 Immunefi program `0x` ($1,000,000, `kyc: true`).
@@ -4767,10 +4842,10 @@ swapper, Aave V4 sig/premium, Aave V4 money
 actions, Maker MCD, TxSaver leftover, and
 triggers, leftover Aave V2, EtherFi / Lido,
 leftover utils, and Renzo / Sky / Pendle /
-Yearn / Uni (`e623f20`) are logged.
-Remaining DFS folders: `summerfi` / `insta`
-/ `lsv` / `merkel` / `fee` / `checkers`.
-0x Settler execute / Permit2 /
+Yearn / Uni, and Summer.fi / Insta / LSV /
+Merkl / fee / checkers (`e623f20`) are
+logged. DeFi Saver V3 leftover folders are
+exhausted. 0x Settler execute / Permit2 /
 RFQ / UniV3 / AllowanceHolder / BridgeSettler
 plus UniV2 / Velodrome / Across /
 POSITIVE_SLIPPAGE (`1df9087`) are logged;
@@ -4791,7 +4866,7 @@ Index Coop etherscan set
 `restaking_*` at `db90840` are exhausted),
 Enzyme Blue adapters added as etherscan
 addresses after Apr 2026 (Bebop / ThreeOneThird /
-SharesSplitter). Superteam API rechecked 03:50 UTC
+SharesSplitter). Superteam API rechecked 03:53 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
@@ -4828,7 +4903,7 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-04:05 UTC 3 Sep: KeeperHub #2105 still `open` +
+03:53 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
