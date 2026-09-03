@@ -15638,9 +15638,124 @@ Not submitted. Remaining
 Rocket Pool listed
 GitHub: minipool
 delegate leftover, DAO
-settings / voting,
-smoothing / rewards
-pool.
+settings / voting.
+
+## 2026-09-03: Rocket Pool v1.4 smoothing / rewards leftover (`fb7d9c4`)
+
+Immunefi program
+`Rocket Pool`
+($150,000, `kyc: true`).
+Deposit / megapool /
+vault slices on the
+same pin `fb7d9c4` are
+already logged. This
+slice is the smoothing
+pool, rewards
+consensus, merkle
+distributor, and pDAO
+treasury claim. Local
+clone `/tmp/rocketpool`.
+No mainnet interaction.
+
+Files:
+`contracts/contract/rewards/RocketSmoothingPool.sol`,
+`contracts/contract/rewards/RocketRewardsPool.sol`,
+`contracts/contract/rewards/RocketMerkleDistributorMainnet.sol`,
+`contracts/contract/rewards/RocketClaimDAO.sol`.
+
+Checked for: a stranger
+draining the smoothing
+pool; a lying snapshot
+that pays unearned ETH
+or RPL; double-claim of
+a merkle leaf; claiming
+another node’s parked
+ETH; pDAO `spend` /
+`newContract` without a
+proposal.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- SmoothingPool
+  `receive()` is open
+  (anyone can gift ETH).
+  `withdrawEther` is
+  `onlyLatestNetworkContract`
+  and can send the
+  entire SP balance to
+  an arbitrary `_to`.
+  That is the trusted
+  network-contract path;
+  the intended caller is
+  RewardsPool when a
+  snapshot executes.
+- `depositVoterShare` is
+  permissionless: a gift
+  of ETH into the
+  rewards vault slot.
+  `submitRewardSnapshot`
+  is `onlyTrustedNode`.
+  Totals must be ≤
+  pending RPL and
+  pending ETH (from
+  inflation +
+  SmoothingPool
+  balance). Trusted-node
+  consensus then
+  `_executeRewardSnapshot`.
+  `executeRewardSnapshot`
+  is permissionless
+  after consensus. An
+  oDAO majority can
+  submit a lying merkle
+  root; that is the
+  trusted-oracle model,
+  not a stranger
+  extract.
+- MerkleDistributor
+  `relayRewards` is
+  rewards-pool-only and
+  one root per interval
+  index. `claim` /
+  `claimAndStake`
+  require a merkle
+  proof **and** that
+  `msg.sender` is the
+  node, withdrawal, or
+  RPL-withdrawal
+  address for that
+  node. Double-claim is
+  a bitmap. A failed
+  ETH send parks under
+  `rewards.eth.balance
+  [addr]`;
+  `claimOutstandingEth`
+  pays only
+  `msg.sender`’s parked
+  balance.
+- ClaimDAO `spend` /
+  `newContract` /
+  `updateContract` are
+  DAO-proposals-only.
+  `withdrawBalance` is
+  permissionless but
+  pays the recipient’s
+  own accrued balance.
+  `receive()` ETH is
+  forwarded to the
+  vault with the
+  comment that there is
+  no way to spend that
+  ETH from this
+  contract.
+
+Not submitted. Remaining
+Rocket Pool listed
+GitHub: minipool
+delegate leftover, DAO
+settings / voting.
 
 ## 2026-09-03: Harvest vault / controller leftover (`0364901`)
 
@@ -16638,13 +16753,14 @@ management);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
 dissolve / rewards /
-exit, and vault + RPL
-auction (`fb7d9c4`) are
-logged (remaining Rocket
-Pool is minipool leftover,
-DAO settings / voting,
-smoothing / rewards
-pool);
+exit, vault + RPL
+auction, and smoothing /
+rewards leftover
+(`fb7d9c4`) are logged
+(remaining Rocket Pool
+is minipool leftover
+and DAO settings /
+voting);
 Beanstalk Basin leftover
 (Pipeline / Depot / Well
 / Aquifer / CP2 / MFP,
