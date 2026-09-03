@@ -49,8 +49,11 @@ prices stay static strings; page-bucket paths `/v1/parse/{s,m,l}` as in
   3 Sep 02:41 UTC. File-level plan:
   [`research/ethonline-hedera-harness-8.md`](../research/ethonline-hedera-harness-8.md).
   Open PR is enough for that bounty.
-- Uniswap Foundation: a tooling PR + `FEEDBACK.md` against an official
-  Uniswap repo.
+- Uniswap Foundation: official issue
+  [Uniswap/sdks#720](https://github.com/Uniswap/sdks/issues/720)
+  (uniswapx-sdk DCA EIP-712 vs `DCALib.sol`, 0 PRs). File-level
+  plan: [`research/ethonline-uniswap-sdks-720.md`](../research/ethonline-uniswap-sdks-720.md).
+  After the PR: `FEEDBACK.md` + the Uniswap feedback form.
 
 ## Human blockers still open
 

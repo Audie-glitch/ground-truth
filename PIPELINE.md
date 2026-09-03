@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, 03:26 UTC. Dates verified against each
+Status as of 3 September 2026, 03:40 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging), and Immunefi
@@ -15,7 +15,7 @@ unofficial mirror rechecked 3 Sep.
 | # | Opportunity | Prize | Pays in | Window | Competition signal | Plan |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | [KeeperHub Agent Economy hackathon](https://dorahacks.io/hackathon/agent-economy/detail), Best KeeperHub Feature bounty | $500 x 2 winners | Stablecoins | Build Sep 6-18, submit by Sep 18 12:00 CEST | Niche: needs a mergeable PR into a 2,700-file TypeScript codebase. Maintainers opened `accepted` + `help wanted` feature issues on Sep 2 | Implement issue [#2240](https://github.com/keeperhub/keeperhub/issues/2240) (state-threshold trigger, "ranked first for unlock per unit of cost"). Design proposal first, code from Sep 6. |
-| 2 | [ETHOnline 2026](https://ethglobal.com/events/ethonline2026), Uniswap Foundation "Best Uniswap Stack Contribution" | $1,000 x 3 | USDC (ETHGlobal standard) | Sep 4-16 | Open-source contribution track; typically undersubscribed relative to app tracks | Improvement or tooling PR against an official Uniswap repo, plus `FEEDBACK.md` and the feedback form. |
+| 2 | [ETHOnline 2026](https://ethglobal.com/events/ethonline2026), Uniswap Foundation "Best Uniswap Stack Contribution" | $1,000 x 3 | USDC (ETHGlobal standard) | Sep 4-16 | Open-source contribution track; typically undersubscribed relative to app tracks | Official issue [Uniswap/sdks#720](https://github.com/Uniswap/sdks/issues/720): uniswapx-sdk DCA EIP-712 hash does not match deployed `DCALib.sol` (4 axes). File-level plan in `research/ethonline-uniswap-sdks-720.md`. Code from 4 Sep 16:00 UTC. Plus `FEEDBACK.md` and the feedback form. |
 | 3 | ETHOnline 2026, Hedera "Open Source, Improve the Hedera Harness" | $1,000 x 2 | USDC | Sep 4-16 | PR to [hedera-dev/hedera-harness](https://github.com/hedera-dev/hedera-harness); "open PR, not merged is fine" | Service-coverage or local-dev-mode PR with tests and a before/after demo. |
 | 4 | [BUIDL CTC 2026 Fall](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) (Creditcoin / Attestcoin Protocol) | $10,000 / $3,000 / $2,000 | USD-denominated; payout asset not stated (ask in Discord `#buidl-ctc-qna`) | Open now, deadline Sep 13 23:59 ET | 47 BUIDLs / 203 hackers as of 02:45 UTC 3 Sep; official page still says “11 days left”. Depth of Attestcoin integration is a core scoring criterion | Build now. Project: CreditPassport (see below). |
 | 5 | ETHOnline 2026, Arc (Circle) agentic and DeFi bounties | $1,667 x 3 tracks, plus $3,500 mainnet-readiness | USDC | Sep 4-16 | Requires frontend + backend + architecture diagram + video | Stretch: only if the KeeperHub work can be pointed at Arc (KeeperHub issue #2230 adds Arc testnet). |
@@ -90,14 +90,18 @@ share the username.
 - `research/bug-bounty-review-log.md`: Immunefi target selection method and
   time-boxed reviews through Sky PAS / SBEBeam, Intuition money paths,
   Sky diamond-pau, Origin OUSD / WOETH / Ethena ARM / AMOs /
-  WETH-USDC-Lido ARM adapters / CrossChain master-remote,
-  Lombard SVM mint/GMP + token pool +
+  WETH-USDC-Lido ARM adapters / CrossChain master-remote /
+  CapManager / Morpho-Silo wrappers / xOGN / CoW
+  `HarvestingEIP1271`, Lombard SVM mint/GMP + token pool +
   ratio oracle, Leather extension RPC (`eca229c`), OZ Confidential
-  v0.5.3 including leftover ERC7984 modules (`4a4f6c7`), and Money
-  on Chain V2 core/queue/V4 swapper (`d770477`) (no submittable
-  finding).
+  v0.5.3 including leftover ERC7984 modules (`4a4f6c7`), Money
+  on Chain V2 core/queue/V4 swapper (`d770477`), Alchemix V3,
+  and Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.
+- `research/ethonline-uniswap-sdks-720.md`: file-level fix for
+  [Uniswap/sdks#720](https://github.com/Uniswap/sdks/issues/720)
+  (DCA EIP-712 vs `DCALib.sol`). No SDK code until 4 Sep 16:00 UTC.
 
 ## Schedule
 

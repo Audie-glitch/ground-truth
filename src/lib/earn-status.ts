@@ -59,7 +59,7 @@ const WINDOWS: Omit<OpportunityWindow, "state">[] = [
     opensAt: "2026-09-04T16:00:00Z",
     closesAt: "2026-09-16T23:59:59Z",
     nextAction:
-      "Design only until 4 Sep 16:00 UTC. Register on ETHGlobal and stake 0.01 ETH (refunded on submit).",
+      "Design only until 4 Sep 16:00 UTC. Register on ETHGlobal and stake 0.01 ETH (refunded on submit). Uniswap backup is sdks#720 (DCA EIP-712); plan in research/ethonline-uniswap-sdks-720.md.",
   },
   {
     id: "third-web-hack",

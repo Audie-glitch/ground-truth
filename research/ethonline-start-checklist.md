@@ -24,7 +24,7 @@ A one-shot timer is armed for **4 Sep 2026 16:00 UTC**. First commits that day:
 | Bazantic Agentify a new API | $500 / $300 / $200 | Same service; registration waits on the participant's bazantic.com username. |
 | Arc agentic USDC | $1,667 | Same service later in the week; needs a signable testnet wallet. |
 | Hedera Harness OSS | $1,000 × 2 | Separate small PR **during** the event. Open PR is enough. Repo: https://github.com/hedera-dev/hedera-harness |
-| Uniswap Foundation OSS | $1,000 × 3 | Separate PR against an official Uniswap repo if time remains. |
+| Uniswap Foundation OSS | $1,000 × 3 | Official issue [Uniswap/sdks#720](https://github.com/Uniswap/sdks/issues/720). File-level plan: `research/ethonline-uniswap-sdks-720.md`. |
 
 ## Human steps before Sep 4 if possible
 

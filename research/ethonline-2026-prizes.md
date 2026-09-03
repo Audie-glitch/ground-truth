@@ -38,6 +38,12 @@ Live Graph data required (Subgraph Studio API key or The Graph Market). Mocked/l
 
 Official copy asks for agents that hold wallets, make USDC payments, or settle jobs using Arc + Circle Agent Stack. That path needs a funded/signable wallet this VM does not have.
 
+### Uniswap Foundation — Best Uniswap Stack Contribution ($3,000; up to 3 × $1,000)
+
+Official page (HTTP 200, 3 Sep): build on or improve any Uniswap stack piece (API, AMM v2/v3/v4, CCA, official repos, v4 hooks, ecosystem tooling). Qualification: public GitHub repo, `FEEDBACK.md`, and the [Uniswap Developer Feedback Form](https://developers.uniswap.org/hackathon-feedback) linking that file. README must point at the changed files. A separate $2,000 prize is Continuity-track only.
+
+Picked backup: [Uniswap/sdks#720](https://github.com/Uniswap/sdks/issues/720) — `uniswapx-sdk` DCA intent EIP-712 hashing does not match deployed `DCALib.sol` on four axes (struct shape, type-string order, `string` encoding, array packing). File-level plan: [`ethonline-uniswap-sdks-720.md`](ethonline-uniswap-sdks-720.md). No SDK code before 4 Sep 16:00 UTC.
+
 ## Still blocked here
 
 - No ETHGlobal login in this VM.

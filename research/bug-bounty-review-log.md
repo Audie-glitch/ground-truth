@@ -2932,6 +2932,80 @@ Result: no user-exploitable finding.
 
 Not submitted. Payouts need Immunefi KYC.
 
+## 2026-09-03: Origin CoW harvester + live xOGN rewards + Governor (`4fa0602` / `eff0d3d`)
+
+Immunefi program `originprotocol` ($1,000,000, `kyc: false`).
+The Sep-1 list still had “OUSD CoW Harvester”
+`0xD400341aEfED0BC75176714cFdE82e8BDAA2D3b8`,
+Origin Governance, and Origin Timelock after the ARM /
+xOGN pass. The live xOGN rewards proxy is
+`FixedRateRewardsSource`, not the inflation
+`RewardsSource` file in the earlier xOGN note. Local
+clones `/tmp/origin-dollar` `4fa0602` and
+`/tmp/ousd-governance` `eff0d3d`. No mainnet
+interaction.
+
+Files: `contracts/harvest/HarvestingEIP1271.sol`,
+`contracts/harvest/{AbstractHarvester,SimpleHarvester}.sol`
+(read to confirm the CoW address is not that path),
+`contracts/ExponentialStaking.sol` (already logged;
+rewards target only), `contracts/FixedRateRewardsSource.sol`,
+`contracts/Governance.sol`.
+
+Checked for: an EIP-1271 magic-value on an order the bot
+did not sign; a reconstructed digest that is not the CoW
+EIP-712 hash; a permissionless harvest that pays the
+caller more than `harvestRewardBps`; FixedRate rewards
+mint or a non-target collect; Governor threshold /
+timelock bypass.
+
+Result: no user-exploitable finding.
+
+- `HarvestingEIP1271` is the CoW harvester at
+  `0xD400…`. `isValidSignature` decodes
+  `(Order, r, s, v)`, requires
+  `_hashOrder(order, COW_DOMAIN_SEPARATOR) == hash`,
+  then `ecrecover` of
+  `"\x19COWSWAP order digest:\n32" || hash` equals
+  `bot`. `_isOrderValid` requires an enabled sell
+  token, allow-listed buy token and receiver, fill-or-kill,
+  `feeAmount == 0`, `validTo >= now`, and
+  `sellAmount >= minSellAmount`. There is no min
+  `buyAmount` / price bound — the bot is trusted.
+  `kind` / balance enums are unchecked; CoW settlement
+  still pulls only the approved `sellToken` via
+  `VAULT_RELAYER`. `setTokenConfig` max-approves the
+  relayer; `disableToken` zeros it. `transferTokens`
+  cannot move an enabled sell token. Ownership cannot
+  be renounced. Domain separator is snapshotted at
+  deploy from ComposableCoW.
+- `AbstractHarvester.harvestAndSwap` is permissionless
+  but the implementation now calls
+  `_swap(..., IOracle(address(0x1)))` and comments that
+  this harvester is unused. The in-scope CoW address is
+  `HarvestingEIP1271`, not this path.
+  `SimpleHarvester` is strategist/governor for support
+  flags; harvest itself is open but only forwards
+  collected rewards to dripper (wrapped native) or
+  strategist.
+- Live xOGN rewards (`010_xOGNSetupScript`) initialize
+  `FixedRateRewardsSource` with `rewardsTarget = xOGN`.
+  `collectRewards` is target-only, pays
+  `min(elapsed * rewardsPerSecond, balance)`, and does
+  not mint. Rate / target / strategist are
+  governor-or-strategist. Changing a non-zero rate
+  accrues past time at the new rate (documented). The
+  unused `RewardsSource` inflation minter is not the
+  proxy implementation.
+- `Governance` is an OZ GovernorSettings + Bravo +
+  quorum-fraction + timelock + late-quorum wrapper
+  (1-day voting delay, ~2-day period, 100k xOGN
+  threshold, 20% quorum). No custom execute path.
+
+Origin Sep-1 Solidity named on Immunefi, including the
+CoW harvester and governance/timelock wrappers, is
+exhausted. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -2955,14 +3029,16 @@ token-vault + MYT adapter / allocator / router / fee
 vaults + concrete strategies / Euler adapter /
 `StakingGraph`, and Horizen ZenStaker +
 RewardAccumulator (`ab92502`) are exhausted. Origin
-in-scope Solidity listed as remaining is exhausted.
+in-scope Solidity listed as remaining is exhausted
+(including CoW `HarvestingEIP1271`, live
+`FixedRateRewardsSource`, and the OZ Governor wrapper).
 Remaining Alchemix: none of the previously listed
 leftover `src/` files. Remaining MoC: governance
 machines and live Rootstock v1 proxies if a later
 pass wants addresses rather than the V2 tree. 1inch
 Aqua opcode set already logged; remaining Aqua-listed
 files are solidity-utils mixins. Superteam API
-rechecked 03:25 UTC 3 Sep: still 28 open listings.
+rechecked 03:40 UTC 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the
@@ -2985,8 +3061,15 @@ only non-FINISHED row as contest `1234` (Tare) in
 2026). Hedera Harness #8 still `open`, 0 comments, 0
 HOL-Guard PRs; file-level plan is in
 `research/ethonline-hedera-harness-8.md` (read-only
-clone `/tmp/hedera-harness` at `e045b10`). Rechecked
-03:20 UTC 3 Sep: KeeperHub #2105 still `open` +
+clone `/tmp/hedera-harness` at `e045b10`). Uniswap
+Foundation OSS backup is
+[Uniswap/sdks#720](https://github.com/Uniswap/sdks/issues/720)
+(DCA EIP-712 vs `DCALib.sol`, 0 comments, 0 PRs);
+file-level plan is in
+`research/ethonline-uniswap-sdks-720.md` (read-only
+clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
+`fd60225`). Rechecked
+03:40 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
 official CTC HTML still blocked by DoraHacks “Human
