@@ -44890,10 +44890,15 @@ Aave leftover remaining v2 Collector impl leftover (Sourcify)
 is logged.
 Aave leftover remaining GhoOracle leftover (`23859bb`)
 is logged.
+Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
+is logged.
+Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus non-miner (lib).
+Remaining listed Filecoin: remaining lotus lib (backupds / rpcenc / peermgr) if still unused.
 Remaining listed Aave: v3 logic libraries / primacy.
 Remaining listed Jito: `jito-solana` other crates (if still unused).
+Remaining listed Rootstock: `rskj` / `rsk-powhsm` (if still unused).
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -69297,3 +69302,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a federation pegout signer as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `rskj` / `rsk-powhsm` (if still unused).
+
+## 2026-09-03: Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus types leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `lib/sigs`. Opened `sigs.go`, `doc.go`, `bls/init.go`, `secp/init.go`, and `delegated/init.go`. Local signature shims. Do not rematch lotus wallet leftover or Filecoin go-crypto leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `Verify` accepting a nil signature or an unresolved ID address; `RegisterSignature` being callable over RPC so a stranger installs a no-op verifier; `CheckBlockSignature` skipping verify when `IsValidated` was set by a peer; Delegated verify matching a secp address.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Sign` / `Verify` / `Generate` / `ToPublic` fail on an unregistered `SigType`. `Verify` rejects a nil sig and `address.ID` (must resolve first). `RegisterSignature` writes an in-process map and is used from package `init` only.
+- `CheckBlockSignature` requires `BlockSig`, verifies `SigningBytes` against the worker address, then `SetValidated`. A peer cannot set that flag over the wire; leftover-logged types keep it local.
+- BLS uses leftover-logged filecoin-ffi `HashVerify` with length-checked pubkey / sig. SECPK is blake2b-256 + `EcRecover`; the recovered address must equal `From`. Delegated is keccak-256 + `EcRecover`, then `NewDelegatedAddress(EAM, keccak(pubkey)[12:])`. This package does not move FIL.
+
+Do not file a local verify shim as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus lib (backupds / rpcenc / peermgr) if still unused.
