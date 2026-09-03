@@ -17735,6 +17735,119 @@ Harvest listed tree is
 `harvest-strategy-arbitrum`
 `125270d`.
 
+## 2026-09-03: Harvest polygon Jarvis / Complifi / Compound / Yel leftover (`f24a06a`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Gamma /
+Pearl leftover on the
+same pin `f24a06a` is
+already logged. This
+slice is Jarvis V3 +
+hodl, Complifi +
+derivative, Compound
+Comet, Yel, and Ape
+wrappers. Local clone
+`/tmp/harvest-strategy-polygon`.
+No mainnet interaction.
+
+Files:
+`contracts/strategies/jarvis/JarvisStrategyV3.sol`,
+`jarvis/JarvisHodlStrategyV3.sol`,
+`complifi/ComplifiStrategy.sol`,
+`complifi/ComplifiDerivStrategy.sol`,
+`compound/CompoundStrategy.sol`,
+`yel/YelStrategy.sol`,
+`ape/ApeStrategyMainnet_*.sol`.
+
+Checked for: a stranger
+redeeming chef / Comet
+/ derivative positions;
+withdraw that pays
+more than idle plus
+staked; chef `deposit`
+to a mismatched LP;
+salvage of receipt
+tokens by a third
+party.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Jarvis V3 requires
+  ElysianFields
+  `poolInfo` LP =
+  `underlying` and one
+  DMM token = reward.
+  Partial chef
+  withdraw is capped;
+  transfer of the
+  requested amount
+  reverts if short.
+  Kyber zap uses
+  `minLpQty = 1`
+  (known keeper
+  sandwich). Hodl
+  zaps rewards into a
+  separate LP, deposits
+  a hodl vault, and
+  notifies a PotPool
+  (not vault
+  principal).
+- Complifi requires
+  `poolInfo` LP =
+  `underlying`. Same
+  restricted unwrap +
+  exact transfer.
+  Router mins of 1
+  are keeper-trusted.
+- Complifi derivative
+  stakes underlying +
+  up/down tokens.
+  `investedUnderlyingBalance`
+  counts only the
+  underlying pid +
+  idle (up/down are
+  extra). Partial
+  withdraw unwraps
+  only the underlying
+  pid. `redeemDerivatives`
+  is governance-only.
+- Compound Comet
+  `baseToken` must
+  match `underlying`.
+  Fee is a slice of
+  `current − stored`.
+  Withdraw /
+  hard-work are
+  `restricted`.
+  Salvage refuses
+  underlying / reward
+  / market.
+- Yel requires
+  MasterChef
+  `poolInfo` LP =
+  `underlying`. Same
+  restricted unwrap +
+  exact transfer.
+- Ape Mainnet files
+  only set MiniApe
+  pool + routes
+  (chef leftover
+  already logged).
+  Genomes are Noop
+  wrappers (already
+  logged).
+
+Not submitted. Listed
+Harvest polygon GitHub
+leftover is exhausted.
+Remaining Harvest
+listed tree is
+`harvest-strategy-arbitrum`
+`125270d`.
+
 ## 2026-09-03: Marinade crank / withdraw-stake leftover (`b8fe3f8`)
 
 Immunefi program
@@ -19167,12 +19280,15 @@ Convex / Idle leftover
 (`f24a06a`) and polygon
 Gamma / Pearl / Meshswap
 leftover (`f24a06a`)
-are logged
-(remaining Harvest is
-polygon Jarvis /
-Complifi / compound-v2 /
-Yel / Ape plus
-arbitrum `125270d`);
+and polygon Jarvis /
+Complifi / Compound /
+Yel leftover
+(`f24a06a`) are logged
+(listed Harvest polygon
+GitHub leftover
+exhausted; remaining
+Harvest is arbitrum
+`125270d`);
 ICHI oneToken leftover
 (`4873873`) is logged;
 Yearn yCRV token +
