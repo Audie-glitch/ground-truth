@@ -1579,20 +1579,58 @@ Result: no user-exploitable finding.
 Remaining diamond-pau facets (Aave, LayerZero, Pendle,
 Maple, farms, wraps, etc.) were not read.
 
+## 2026-09-03: Sky emergency spells hub + stUSDS (`45651a4`)
+
+Immunefi program `sky` ($10,000,000, `kyc: false`). In-scope
+`dss-emergency-spells` added 3 Jun 2025; stUSDS spells added
+21 Jul 2026. Local clone `/tmp/dss-emergency-spells`. No
+mainnet interaction.
+
+Files: `src/{DssEmergencySpell,DssGroupedEmergencySpell}.sol`,
+`src/stusds/{StUsdsRateSetterHaltSpell,StUsdsWipeParamSpell,StUsdsRateSetterDissBudSpell}.sol`,
+`src/lite-psm-halt/SingleLitePsmHaltSpell.sol`,
+`src/line-wipe/SingleLineWipeSpell.sol`.
+
+Checked for: permissionless `schedule` halting stUSDS / wiping
+a line without being the governance hat; factory-deployed
+spells that MOM would honor; `done()` lying so an operator
+skips a still-live setter; grouped batch walking off the
+ilk list; `cast`/`execute` no-ops that still mutate.
+
+Result: no user-exploitable finding.
+
+- `schedule()` has no modifier. The MOM / LineMom /
+  LitePsmMom call reverts `not-authorized` unless the
+  spell is the current `MCD_ADM` hat (integration tests
+  write `hat()` to the spell, then `hat() = 0` reverts).
+  A factory `deploy()` creates a new unhatted spell;
+  poking it does nothing to production.
+- Once lifted as hat, anyone may poke `schedule()`. That
+  is the documented emergency-spell model, not an extract.
+- `cast` / `execute` / `actions` are no-ops. GSM delay
+  (`eta = 0`) is unused because actions run in `schedule`.
+- `done()` returns true when wards are missing or a `try`
+  call reverts, so the UI treats an unwired MOM as
+  finished. It does not change parameters.
+- Grouped `emergencyActionsInBatch` caps `end` and
+  requires `start <= end`. Same hat check on each ilk.
+
 Not submitted.
 
 ## Next candidates
 
-Sky PAS / SBEBeam, Intuition MultiVault / AtomWallet /
-curves / utilization / emissions mint-bridge / registry
-solvency, and Sky diamond-pau **core + CCTP/4626/7540/OTC/
-transfer/Ethena** are exhausted. Remaining Intuition slice:
-`TrustSwapAndBridgeRouter` (Base asset, not in the v2 repo)
-plus periphery. Remaining Sky slices: other `diamond-pau`
-facets and `dss-emergency-spells`. Superteam API rechecked
-02:50 UTC 3 Sep: 28 open listings. `AGENT_ALLOWED` is still
-only Steve Arena and ZNS — do not execute. Mermail skill is
-built (`mermail-onchain-receipts/`); remaining work is the
+Sky PAS / SBEBeam, emergency-spell hub + stUSDS / lite-psm /
+line-wipe, diamond-pau core + CCTP/4626/7540/OTC/transfer/
+Ethena, and Intuition MultiVault / AtomWallet / curves /
+emissions / registry are exhausted. Remaining Sky:
+clip-breaker / osm-stop / ddm-disable / splitter-stop /
+spbeam-halt, then other `diamond-pau` facets (Aave,
+LayerZero, Pendle, Maple, farms, wraps). Remaining
+Intuition: `TrustSwapAndBridgeRouter` (Base, not in the v2
+repo). Superteam API rechecked 02:50 UTC 3 Sep: 28 open
+listings. `AGENT_ALLOWED` is still only Steve Arena and
+ZNS — do not execute. Mermail skill is built
+(`mermail-onchain-receipts/`); remaining work is the
 participant's PR, Mermail MCP, and X demo. T3N still needs
 Terminal 3 SSO. NectarFi is a creator campaign. the402.ai
 still paused. 1inch Fusion settlement / whitelist / PowerPod
