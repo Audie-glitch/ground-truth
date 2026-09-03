@@ -4587,10 +4587,137 @@ Result: no user-exploitable finding.
   here — remaining work is the per-bridge
   adapters.
 
-Remaining 0x: per-DEX `_dispatch` adapters
-and `src/bridge/` (Across, Stargate,
-LayerZero, CCIP, Mayan, deBridge). Not
-submitted.
+Remaining 0x: other per-DEX adapters and
+the rest of `src/bridge/`. Not submitted.
+
+## 2026-09-03: 0x Settler UniV2 / Velodrome / Across (`1df9087`)
+
+Same Immunefi program `0x` ($1,000,000, `kyc: true`).
+Same clone `/tmp/0x-settler` at `1df9087`. No
+mainnet interaction. Execute / Permit2 / RFQ /
+UniV3 already logged.
+
+Files: `src/SettlerBase.sol` (`UNISWAPV2`,
+`VELODROME`, `POSITIVE_SLIPPAGE`),
+`src/core/{UniswapV2,Velodrome,Across}.sol`.
+
+Checked for: a user-supplied UniV2/Velo pool
+that is not a pair but still drains a later
+action’s tokens; Across spoke that is a
+restricted target; positive-slippage that
+sends more than leftover.
+
+Result: no user-exploitable finding.
+
+- UniV2 / Velodrome take a caller-chosen
+  pool, read `token0`/`token1` (or
+  `metadata`), transfer `ppm` of Settler’s
+  sell-token balance, then `swap`. A fake
+  pool can only take tokens already in this
+  Settler execution. `minBuyAmount` still
+  applies. Permit2 / AllowanceHolder do not
+  implement `swap`.
+- `POSITIVE_SLIPPAGE` sends
+  `min(balance - expected, balance * maxPpm
+  / BASIS)` of leftover to `recipient`.
+  Action data is in the signed / submitted
+  list.
+- Across overwrites `inputAmount` to the
+  current Settler balance (or ETH balance)
+  and scales `outputAmount` with 512-bit
+  math, then calls `ISpokePool.deposit` on
+  a caller-chosen spoke. Selector does not
+  clash with restricted targets. Funds
+  moved are this execution’s leftovers.
+
+Remaining 0x: other DEX mixins
+(Maverick, Balancer, Bebop, EulerSwap,
+Dodo, Curve, UniswapV4, PancakeInfinity,
+Renegade, …) and Stargate / LayerZero /
+CCIP / Mayan / deBridge. Not submitted.
+
+## 2026-09-03: Extra Finance LYF LendingPool + Velo manager
+
+Immunefi program `extrafinance` ($100,000,
+`kyc: false`, updated 2026-09-02). Scope is
+Optimism etherscan addresses, no official
+GH tree in the program JSON. Sources from
+Sourcify exact-match plus
+[ExtraFi/extra-contracts](https://github.com/ExtraFi/extra-contracts)
+(repo documents mainnet-vs-fix diffs).
+No mainnet interaction.
+
+Files: Sourcify `/tmp/extrafinance/lendingpool`
+`contracts/lendingpool/{LendingPool,
+ExtraInterestBearingToken,StakingRewards}.sol`,
+`libraries/logic/ReserveLogic.sol`,
+`Payments.sol`; Sourcify
+`/tmp/extrafinance/velo`
+`contracts/VeloPositionManager.sol`;
+Sourcify `/tmp/extrafinance/rdist`
+`contracts/RewardsDistributor.sol`.
+Live LendingPool
+`0xBB505c54D71E9e599cB8435b4F0cEEc05fC71cbD`,
+VeloPositionManager
+`0xf9cFB8a62f50e10AdDE5Aa888B44cF01C5957055`.
+
+Checked for: redeem of another user’s
+eTokens; borrow without whitelist /
+credits; repay that inflates vault
+credits past actual debt; first-depositor
+exchange-rate inflation; Velo callback
+from a non-vault; staking withdraw of
+another user.
+
+Result: no new user-exploitable finding.
+
+- Borrow / repay require
+  `borrowingWhiteList[msg.sender]` and
+  `debtPosition.owner == msg.sender`.
+  Credits and whitelist are owner-set
+  per vault from `VaultFactory`.
+- Mainnet `repay` adds `credits` using
+  the *requested* amount before capping
+  to `debtPosition.borrowed`. ExtraFi’s
+  own `BUG_FIXES_AND_MODIFICATIONS.md`
+  already labels this a known mainnet
+  bug and says it is not externally
+  exploitable because only whitelisted
+  vaults call `repay`. The public repo
+  already caps first. Vault position-
+  logic implementations (registry ids
+  101–105) are not on Sourcify, so this
+  slice cannot prove a user-controlled
+  passthrough. Do not file the known
+  credit bug without that vault path.
+- eToken burn is `onlyLendingPool` and
+  burns the pool’s own balance after
+  `transferFrom` of the redeemer.
+  `withdrawByLendingPool` is
+  `onlyLendingPool`.
+- First-depositor inflation is also in
+  ExtraFi’s known-issues list; they say
+  mainnet inits dead-share the first
+  10k eTokens in the same tx.
+- `unwrapWETH9` unwraps the contract’s
+  full WETH balance (donation / leftover
+  sweep, not another user’s position).
+- Velo `payToVaultCallback` /
+  `payFeeToTreasuryCallback` require
+  `msg.sender == factory.vaults(id)`.
+  Liquidation / compound / range-stop
+  are whitelist-or-flag gated.
+- StakingRewards `setReward` / claim
+  quirks are the same documented
+  owner-gated known issues.
+
+Remaining Extra Finance: vault
+implementations (not Sourcify), ExtraX
+account factory
+(`0x345e8250cB11F61F0d8cFaBAC6be59A356309a58`),
+Aave-fork Pool impl
+(`0x0353b6221B23B8320202320Ca450EEB9fB0de9E5`),
+veToken. Not submitted.
 
 ## Next candidates
 
@@ -4645,12 +4772,19 @@ Remaining DFS folders: `summerfi` / `insta`
 / `lsv` / `merkel` / `fee` / `checkers`.
 0x Settler execute / Permit2 /
 RFQ / UniV3 / AllowanceHolder / BridgeSettler
-entry (`1df9087`) is logged; remaining 0x is
-per-DEX adapters and bridge adapters. Next
-unreviewed Immunefi GitHub-or-recent trees:
-0x leftover adapters, Extra Finance Optimism
-verified sources (etherscan, $100k, no KYC,
-updated 2 Sep), Index Coop etherscan set
+plus UniV2 / Velodrome / Across /
+POSITIVE_SLIPPAGE (`1df9087`) are logged;
+remaining 0x is other DEX mixins and
+Stargate / LayerZero / CCIP / Mayan /
+deBridge. Extra Finance LYF LendingPool +
+VeloPositionManager + RewardDistributor
+(Sourcify, 2024-08 verified) are logged;
+remaining Extra Finance is vault logic
+(not Sourcify), ExtraX factory, Aave-fork
+Pool, veToken. Next unreviewed Immunefi
+GitHub-or-recent trees: those 0x leftover
+adapters, Extra Finance leftover,
+Index Coop etherscan set
 ($200k, no KYC), Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
