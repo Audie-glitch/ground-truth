@@ -148,53 +148,53 @@ Result: no exploitable finding.
 - Fee-on-transfer LP mints would record requested amount/value but unstake the
   received vault balance. Controllers are admin-created. Not submitted.
 
-Time spent: roughly 70 minutes. No Immunefi report. Next Immunefi candidate is
-1inch Aqua (KYC required to be paid).
-## 2026-09-03: 1inch Aqua core and swap-vm entry (KYC program, $100k max)
+Time spent: roughly 70 minutes. No Immunefi report.
 
-Read in full: `aqua/src/*` (Aqua.sol, AquaApp.sol, AquaRouter.sol, Balance.sol,
-IAqua.sol; 342 lines) and `swap-vm/src/SwapVM.sol` (order hashing, quote/swap
-entry, transfer-in path with Aqua push/pull and native ETH handling), plus the
-`TransientLock`/`TransientLockUnsafe` libraries from solidity-utils.
+## 2026-09-03: 1inch Aqua core, swap-vm entry, and Aqua opcodes (KYC, $100k)
 
-Checked for: virtual-balance accounting bounds (ship/dock/pull/push), duplicate
-tokens in ship/dock, docked-strategy behaviour, checks-effects-interactions
-around `transferFrom`, uint248 packing overflow/underflow, reentrancy on
-per-order transient locks, signature vs Aqua-mode hashing consistency, msg.value
-handling with WETH.
+Unofficial Immunefi program `1inch-aqua`. Local clones: aqua `9c5c42e`,
+swap-vm `08089a1` under `/tmp/1inch-aqua` and `/tmp/1inch-swap-vm`. No
+mainnet interaction.
 
-Result: no finding at this depth.
+Read: `aqua/src/*` (Aqua.sol, AquaApp.sol, AquaRouter.sol, Balance.sol,
+IAqua.sol) and swap-vm `SwapVM.sol`, `AquaSwapVMRouter`, `AquaOpcodes`,
+`Balances`, `XYCSwap`, `XYCConcentrate`, `PeggedSwap`, `FeeFlat`,
+`FeeProtocol`, `Extruction`, `Decay`, `Controls`, `MakerTraits`, plus
+`TransientLock` / `TransientLockUnsafe`.
 
-- `pull` and `push` update packed balances before any token movement; checked
+Checked for: virtual-balance accounting (ship/dock/pull/push), docked-strategy
+behaviour, uint248 packing, per-order transient reentrancy, Aqua vs signature
+hashing, msg.value/WETH, curve rounding, fee bps, maker-chosen Extruction.
+
+Result so far: no exploitable finding. Still unread: PeggedSwapMath internals,
+ProtocolFee transfer helpers, TakerTraits, and most non-Aqua opcodes (TWAP,
+invalidators, whitelist).
+
+- `pull` and `push` update packed balances before token movement; checked
   arithmetic bounds pulls to what the maker shipped and blocks pushes to docked
-  or non-existent strategies. Docking requires the full token list, so partial
-  docks and duplicates revert. Shipped strategies are immutable per
-  (maker, app, hash) forever, including after docking.
-- "Unsafe" in `TransientLockUnsafeLib` refers only to slot addressing for
-  mapping-derived slots; `lock()` still reverts when already held, so a taker
-  callback cannot re-enter the same order.
-- Aqua-mode orders hash as `keccak256(abi.encode(order))` without a domain
-  separator; that is consistent with `Aqua.ship` hashing the same bytes and
-  needs no signature, so cross-domain replay is not a concern for them.
-- Not reviewed: the opcode instruction set (XYC curves, pegged-swap math, TWAP
-  decay, fee accounting, invalidators, whitelist), roughly 6,000 lines. That is
-  where a real finding would live and it needs a multi-day pass with the test
-  suite, not a time-box.
+  or missing strategies. Docking requires the full token list. Shipped
+  strategies are immutable per (maker, app, hash).
+- `TransientLockUnsafeLib` only changes slot addressing; `lock()` still reverts
+  when already held, so a taker callback cannot re-enter the same order.
+- Aqua-mode orders hash as `keccak256(abi.encode(order))`, matching `Aqua.ship`.
+- Aqua opcode set does not include Static/DynamicBalances. Live Aqua orders
+  load reserves from `AQUA.safeBalances`.
+- XYC / concentrate / pegged curves round amountOut down and amountIn up.
+  Concentrate caps output at `balanceOut` and recomputes exact-in.
+- `FeeFlatIn` / `FeeProtocol` adjust the taker amount around `runLoop`.
+  Total bps must stay below 1e7. Extruction is a maker-chosen external call
+  and is documented as needing min-rate / Aqua guards.
+- `MakerTraits` requires `tokenA < tokenB`. Decay offsets revert on underflow
+  if they would exceed `balanceOut`.
 
-Useful for the ETHOnline "Build an Aqua App" bounty ($5,000): an Aqua app is a
-contract that (1) inherits `AquaApp`, (2) is the `app` makers `ship` a strategy
-to while keeping tokens in their own wallets, (3) prices and settles swaps
-against `AQUA.safeBalances`, pulling maker tokens with `AQUA.pull` and requiring
-the taker's `AQUA.push` inside a `nonReentrantStrategy` lock via
-`_safeCheckAquaPush`. The swap-vm router is the reference app; a smaller
-purpose-built app (a fixed-spread stablecoin pair, or an RFQ-style strategy) is
-a realistic hackathon deliverable.
+Do not submit. Payment requires user KYC. ETHOnline "Build an Aqua App"
+($5,000) is a later path: inherit `AquaApp`, ship strategies, settle against
+`AQUA.safeBalances`. Do not pre-build against Start Fresh before the user has
+ETHGlobal + public GitHub.
 
 ## Next candidates
 
-Reviewed so far without a finding: Enzyme Onyx ACE scope, GMTrade builder-fee,
-treasury and LP paths, 1inch Aqua core and the swap-vm entry. Remaining
-candidates with real depth: the swap-vm opcode set (multi-day budget), GMTrade
-`programs/store` order execution and liquidation paths (Rust, multi-day), sBTC
-(Rust/Clarity, KYC). Sherlock had no active contests as of 3 Sep 2026. No
-implementation on the KeeperHub feature bounty before the 6 Sep build window.
+Unread 1inch Aqua scoped math (`PeggedSwapMath`, ProtocolFee helpers,
+TakerTraits). GMTrade `programs/store` order execution / liquidation is a
+multi-day Rust pass. sBTC is KYC. Sherlock had no active contests as of
+3 Sep 2026. No KeeperHub implementation before the 6 Sep build window.
