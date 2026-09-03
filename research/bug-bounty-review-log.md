@@ -38799,6 +38799,247 @@ user KYC.
 Remaining listed:
 Relayer 404.
 
+## 2026-09-03: Hedera leftover remaining CryptoTransfer leftover (`0d3d9a2`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+after json-rpc-
+relay leftover
+(`2b51a98`).
+Official
+`hiero-ledger/hiero-consensus-node`
+`0d3d9a2`.
+Extract
+`/tmp/hedera-consensus`
+`hedera-token-service-impl`.
+No mainnet
+writes.
+
+Files:
+`handlers/CryptoTransferHandler.java`,
+`handlers/transfer/TransferExecutor.java`,
+`util/CryptoTransferValidationHelper.java`.
+
+Checked for:
+a stranger
+`CryptoTransfer`
+that debits
+another
+account
+without that
+account's
+key.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `preHandle`
+  walks HBAR
+  and token
+  transfer
+  lists.
+  A debit
+  without
+  `isApproval`
+  or an
+  allowance
+  hook
+  `requireKeyOrThrow`
+  the debit
+  account
+  (or a
+  hollow-account
+  signature).
+- Credits
+  with
+  `receiverSigRequired`
+  require
+  the
+  receiver
+  key
+  (optional
+  only for
+  airdrop
+  pending).
+- NFT
+  senders
+  `requireKey`
+  unless
+  `isApproval`
+  or a
+  sender
+  hook.
+- `handle`
+  then
+  `validateSemantics`
+  and
+  `executeCryptoTransfer`
+  for the
+  signed
+  payer.
+
+Do not file
+debit of a
+signed
+sender,
+approval-
+gated
+debit, or
+hook-gated
+skip as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-mirror-node`,
+`hiero-cryptography`,
+other consensus
+modules, SDKs,
+and the
+transaction-tool
+website leftover.
+
+## 2026-09-03: Filecoin leftover builtin-actors market + paych leftover (`d894a1a`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Unique unused
+standing DLT
+program
+(updated
+2026-09-01).
+Official
+`filecoin-project/builtin-actors`
+`d894a1a`.
+Extract
+`/tmp/filecoin-actors`
+`actors/market`,
+`actors/paych`,
+`actors/multisig`.
+No mainnet
+writes.
+
+Files:
+`actors/market/src/lib.rs`,
+`actors/paych/src/lib.rs`,
+`actors/multisig/src/lib.rs`.
+
+Checked for:
+a stranger
+`withdraw_balance`
+that pays
+the caller
+another
+escrow;
+`collect`
+that drains
+a payment
+channel to
+`msg.sender`;
+`propose`
+that spends
+the msig
+without a
+signer.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Market
+  `add_balance`
+  credits
+  `value_received`
+  to the
+  named
+  escrow
+  (caller
+  pays).
+  `withdraw_balance`
+  requires
+  the
+  approved
+  owner /
+  worker /
+  client
+  set and
+  `send`s
+  to the
+  recorded
+  recipient.
+- Paych
+  `update_channel_state`
+  requires
+  caller
+  `from` or
+  `to` plus
+  a voucher
+  signed by
+  the other
+  party.
+  `settle`
+  is
+  from/to.
+  `collect`
+  after the
+  delay
+  pays
+  `to_send`
+  to `to`
+  and the
+  remainder
+  to `from`.
+- Multisig
+  `propose`
+  /
+  `approve`
+  /
+  `cancel`
+  require
+  the caller
+  to be a
+  signer.
+  Execution
+  waits for
+  threshold.
+
+Do not file
+escrow
+deposit of
+the caller's
+FIL,
+approved
+withdraw to
+the recorded
+recipient,
+or threshold
+msig spend
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+lotus / miner /
+proofs / boost /
+go-f3 / other
+builtin-actors
+(miner, power,
+reward, account)
+and filecoin.io.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -41265,6 +41506,12 @@ Velvet leftover remaining BSC handlers leftover (Sourcify)
 is logged (remaining listed is 404 proxies / Primacy of Impact);
 Wormhole leftover remaining Solana + Sui NTT leftover
 (`250d810`) is logged;
+Hedera leftover remaining CryptoTransfer leftover
+(`0d3d9a2`) is logged (remaining listed is
+mirror-node / cryptography / other modules / SDKs);
+Filecoin leftover builtin-actors market + paych leftover
+(`d894a1a`) is logged (remaining listed is lotus /
+proofs / boost / other actors);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged (remaining listed is sei-js / go-ethereum /
 other modules);
