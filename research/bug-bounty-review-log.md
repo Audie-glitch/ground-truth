@@ -68132,3 +68132,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an index/rate helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: v2 ReserveConfiguration / UserConfiguration / math libs (if still unused).
+
+## 2026-09-03: Aave leftover remaining protocol-v2 ReserveConfiguration + UserConfiguration leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after ReserveLogic leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `contracts/protocol/libraries/configuration/ReserveConfiguration.sol` and `UserConfiguration.sol`. Do not rematch Configurator leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: bitmap setter overlapping LTV into liquidation-threshold bits so a stranger listing liquidates healthy positions; `setBorrowing` flipping another reserve’s collateral bit.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ReserveConfiguration` is a packed `uint256`. LTV 0–15, threshold 16–31, bonus 32–47, decimals 48–55, active 56, frozen 57, borrowing 58, stable-borrowing 59, reserve factor 64–79. Each setter masks its field and caps LTV / threshold / bonus / factor at 65535 and decimals at 255. Getters invert the same masks. These libraries do not move tokens; the leftover-logged Configurator is the only writer of reserve bits.
+- `UserConfiguration` uses two bits per reserve (borrow even, collateral odd), `reserveIndex < 128`. `isBorrowingAny` masks `0x55…55`. `isEmpty` is `data == 0`. No ERC20 calls.
+
+Do not file a bitmap packer as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: v2 math libs (WadRayMath / PercentageMath / MathUtils) if still unused.
