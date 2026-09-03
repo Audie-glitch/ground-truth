@@ -45585,6 +45585,99 @@ other
 programs
 (if still unused).
 
+## 2026-09-03: Jito leftover remaining jito-solana zk-elgamal-proof leftover (`d0e3a47`)
+
+Immunefi program
+`jito`
+($250,000,
+`kyc: true`).
+Official
+`jito-foundation/jito-solana`
+`d0e3a47`.
+Extract
+`/tmp/jito-solana/programs/zk-elgamal-proof/`.
+Do not rematch
+compute-budget
+/
+vote leftovers.
+No mainnet
+writes.
+
+Files:
+`programs/zk-elgamal-proof/src/lib.rs`.
+
+Checked for:
+`CloseContextState`
+that drains
+context rent
+without the
+stored
+authority;
+verify that
+overwrites
+an initialized
+context;
+verify that
+moves
+lamports.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Feature
+  flags can
+  disable the
+  program.
+- Verify
+  checks
+  `verify_proof`
+  then
+  optionally
+  writes
+  context
+  into a
+  program-owned
+  uninitialized
+  account.
+  It does
+  not move
+  lamports.
+- Close
+  requires
+  account 2
+  to sign as
+  the stored
+  `context_state_authority`,
+  rejects
+  dest ==
+  context,
+  then
+  `checked_add_lamports`
+  and zeros
+  the
+  context.
+- Close of
+  Uninitialized
+  is rejected.
+
+Do not file
+a signed
+context
+close as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`jito-solana`
+remaining
+runtime
+(if still unused).
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -45854,6 +45947,8 @@ Jito leftover remaining jito-solana bpf leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana compute-budget leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana zk-elgamal-proof leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45875,7 +45970,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` zk-elgamal-proof / remaining runtime if still unused.
+Remaining listed Jito: `jito-solana` remaining runtime if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45943,6 +46038,7 @@ Do not rematch Jito jito-solana programs leftover.
 Do not rematch Jito jito-solana vote leftover.
 Do not rematch Jito jito-solana bpf leftover.
 Do not rematch Jito jito-solana compute-budget leftover.
+Do not rematch Jito jito-solana zk-elgamal-proof leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -48690,8 +48786,9 @@ Jito leftover remaining jito-solana vote leftover
 Jito leftover remaining jito-solana bpf leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana compute-budget leftover
-(`d0e3a47`) is logged (remaining listed is zk-elgamal-proof /
-remaining runtime);
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana zk-elgamal-proof leftover
+(`d0e3a47`) is logged (remaining listed is remaining runtime);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover

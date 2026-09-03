@@ -10,7 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana compute-budget leftover is logged;
+246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana zk-elgamal-proof leftover is logged;
+Jito leftover remaining jito-solana compute-budget leftover is logged;
 Jito leftover remaining jito-solana bpf leftover is logged;
 Jito leftover remaining jito-solana vote leftover is logged;
 Jito leftover remaining jito-solana programs leftover is logged;
@@ -1669,10 +1670,13 @@ jito-solana bpf leftover
 (`d0e3a47`; KYC) is logged.
 Jito leftover remaining
 jito-solana compute-budget leftover
+(`d0e3a47`; KYC) is logged.
+Jito leftover remaining
+jito-solana zk-elgamal-proof leftover
 (`d0e3a47`; KYC) is logged
 (remaining listed is
-`jito-solana` zk-elgamal-proof /
-remaining runtime if still unused).
+`jito-solana` remaining runtime
+if still unused).
 Rootstock leftover remaining
 powpeg-node pegout leftover
 (`254fb3d`; KYC) is logged.
@@ -2729,6 +2733,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`d0e3a47`; KYC),
   Jito leftover remaining
   jito-solana compute-budget leftover
+  (`d0e3a47`; KYC),
+  Jito leftover remaining
+  jito-solana zk-elgamal-proof leftover
   (`d0e3a47`; KYC),
   Rootstock leftover remaining
   rsk-powhsm leftover
