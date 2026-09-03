@@ -5336,6 +5336,137 @@ IRM / broker / credit-loan in the
 same repo if a later pass wants
 depth. Not submitted.
 
+## 2026-09-03: 0x leftover EulerSwap / Curve / Pancake / Bebop / Renegade / Ekubo / Hanji / Nucleus / MakerPSM (`1df9087`)
+
+Same Immunefi program `0x` ($1,000,000, `kyc: true`).
+Same clone `/tmp/0x-settler` at `1df9087`
+(log text also points at `/tmp/reviews/0x-settler`).
+No mainnet interaction. Earlier 0x slices
+already covered execute / Permit2 / RFQ /
+UniV3 / AllowanceHolder / BridgeSettler,
+UniV2 / Velodrome / Across /
+POSITIVE_SLIPPAGE, leftover bridges,
+UniV4 / Relay / SETTLER_SWAP, and
+Maverick / Dodo / BalancerV3.
+
+Files: `src/core/{EulerSwap,EulerSwapBUSL,
+CurveTricrypto,PancakeInfinity,Bebop,
+Renegade,EkuboV2,EkuboV3,Hanji,
+NucleusTeller,MakerPSM}.sol`,
+`src/core/pancakeInfinityForks/{PancakeInfinity,OrvexCL}.sol`,
+`src/chains/{Mainnet,Arbitrum,Base,Bnb,Optimism}/Common.sol`
+(dispatch + hardcoded factory / vault /
+sponsor / teller).
+
+Checked for: a fake Euler/Hanji pool that
+drains a later action; Curve VIP callback
+that spends a Permit2 the taker did not
+sign; Pancake / Ekubo lock callback that
+pays a vault the operator did not set;
+Bebop / Renegade settlement that
+rewrites receiver past `recipient`;
+Nucleus Teller that bridges a user’s
+WPAXG they did not send this execution;
+MakerPSM that spends constructor
+approvals for a caller-chosen fake PSM.
+
+Result: no user-exploitable finding.
+
+- EulerSwap transfers `ppm` of Settler
+  balance (capped to the pool’s
+  `inLimit`), then `swap` after local
+  curve math. Slippage is checked
+  before the swap. A fake pool can only
+  keep tokens already in this
+  execution. `EulerSwapBUSL` is the
+  licensed curve library, not an
+  entrypoint.
+- Curve Tricrypto VIP is compiled out
+  of the Mainnet mixin (`//CurveTricrypto`)
+  and still live on Arbitrum. Pool is
+  CREATE-derived from a hardcoded
+  factory (`0xbC07…EE8`) plus the
+  action’s factory nonce. The old
+  bytecode-prefix check is commented
+  out; CREATE from the real factory is
+  the deputy check. Callback asserts
+  `payer == 0` and Permit2-transfers
+  the signed token to `msg.sender`
+  (the derived pool).
+- Pancake Infinity vault is hardcoded
+  (`0x238a…e6c4` on BNB/Base; Orvex
+  fork `0xFe7E…b0D`). Lock uses the
+  same `_setOperatorAndCall` + notes
+  pattern as UniV4. Payer
+  `address(this)` transfers from
+  Settler; payer `0` uses Permit2.
+  Hostile hooks are in the signed
+  fills and can only move this
+  execution’s notes. Global buy token
+  is taken to `recipient` against
+  `minBuyAmount`.
+- Bebop settlement is hardcoded
+  (`0xbbbb…AD5F`) and is a restricted
+  target. Taker is overwritten to
+  Settler; receiver is overwritten to
+  `recipient`. Approval is this
+  execution’s balance capped by
+  `order.taker_amount`. Proportional
+  maker fill is slippage-checked
+  before `swapSingle`.
+- Renegade calls a per-chain hardcoded
+  `GasSponsorV2` (Arbitrum
+  `0xcE7a…EBcf`, Base `0xD9E0…e80`).
+  Sell amount is this Settler’s
+  balance capped by `maxSellAmount`.
+  Calldata prefix overwrites
+  `recipient` / buy / sell tokens.
+  Returned buy amount subtracts
+  `maxRefundAmount` before the
+  slippage check when the refund is
+  not already the buy token.
+- Ekubo V2 core `0xe0e0…d444` and V3
+  core `0x0000…d701` are hardcoded.
+  Same lock/notes pattern. V2 requires
+  `payer == address(this)` (no VIP).
+  V3 VIP pays via Permit2 to the
+  operator-set core.
+- Hanji is a caller-chosen pool.
+  Settler approves `ppm` of balance
+  (or sends native) and places a
+  market order. A fake pool can only
+  take tokens already in this
+  execution.
+- Nucleus Teller
+  (`0xeE98…59dF`) and WPAXG
+  (`0x5cB5…F484`) are hardcoded.
+  `bridge` / `depositAndBridge`
+  overwrite share/deposit amount to
+  this Settler’s current balance.
+  `BridgeData.destinationChainReceiver`
+  is in the action. Excess native is
+  documented as an endpoint refund to
+  this contract.
+- MakerPSM constructor max-approves
+  only LitePSM / SkyPSM / UsddPSM /
+  UsddGemJoin. Gem is USDT iff
+  `psm == UsddPSM`, else USDC. A fake
+  `dai` only changes the local
+  balance read used to size the trade;
+  the real PSM still pulls the
+  approved stable. Oversized fake
+  `balanceOf` makes the PSM revert
+  when it cannot pull that much.
+
+`src/core/univ3forks/*` are
+factory+initHash tables for the
+already-logged UniV3 path. OrvexCL is
+address constants only. 0x leftover
+DEX / teller mixins are exhausted.
+
+Remaining 0x: none of the mixin trees.
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -5394,9 +5525,9 @@ POSITIVE_SLIPPAGE, Stargate / LayerZero /
 CCIP / Mayan / DeBridge, UniV4 / Relay /
 SETTLER_SWAP, Maverick / Dodo /
 BalancerV3, Bebop / EulerSwap / Curve,
-and Pancake / Renegade / Ekubo / Hanji /
-Nucleus (`1df9087`) are logged.
-0x Settler leftover DEX / bridge mixins
+Pancake / Renegade / Ekubo / Hanji /
+Nucleus, and MakerPSM (`1df9087`) are
+logged. 0x leftover DEX / teller mixins
 are exhausted. Extra Finance LYF LendingPool +
 VeloPositionManager + RewardDistributor
 (Sourcify, 2024-08 verified) plus ExtraX
@@ -5418,7 +5549,7 @@ lisUSD/clipper/strategy, Jito `jito-solana` /
 `restaking_*` at `db90840` are exhausted),
 Enzyme Blue adapters added as etherscan
 addresses after Apr 2026 (Bebop / ThreeOneThird /
-SharesSplitter). Superteam API rechecked 03:53 UTC
+SharesSplitter). Superteam API rechecked ~04:10 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
@@ -5435,7 +5566,7 @@ working PoC against the published store build; do not
 file theoretical reports. USDT0’s 1 Sep add is Stellar
 explorer, not a Solidity GitHub tree. Sherlock
 `https://audits.sherlock.xyz/api/contests` is paginated
-(301 items); page 1 as of 03:26 UTC 3 Sep still shows
+(301 items); page 1 as of ~04:10 UTC 3 Sep still shows
 the only non-FINISHED row as contest `1234` (Tare) in
 `SHERLOCK_JUDGING` (later pages 403 from this VM).
 Code4rena API: 25 audits, 24
@@ -5455,7 +5586,7 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-04:20 UTC 3 Sep: KeeperHub #2105 still `open` +
+~04:10 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
