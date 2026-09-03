@@ -41164,14 +41164,18 @@ ZKsync OS leftover zkos-wrapper leftover
 (`8b679aa`) is logged.
 ZKsync OS leftover airbender verifier leftover
 (`6ec4ea7`) is logged.
+Filecoin leftover remaining paired leftover
+(`80b765c`) is logged.
 Wormhole leftover remaining CosmWasm token-bridge leftover
 (`c58827e`) is logged.
 Wormhole leftover remaining CosmWasm core leftover
 (`c58827e`) is logged.
 Wormhole leftover remaining CosmWasm IBC leftover
 (`c58827e`) is logged.
+Wormhole leftover remaining CosmWasm accountant leftover
+(`c58827e`) is logged.
 Remaining listed Hedera: hashed transaction-tool website.
-Remaining listed Filecoin: remaining go-* / lotus non-miner / paired / go-data-transfer.
+Remaining listed Filecoin: remaining go-* / lotus non-miner / go-data-transfer.
 
 Remaining listed ZKsync OS: airbender CS / prover /
 verifier_generator / field.
@@ -41180,7 +41184,7 @@ json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
 lotus miner, FVM, proofs-api, proofs-ffi, or proofs.
 Do not rematch filecoin.io website leftover.
-Do not rematch filecoin-ffi or go-graphsync leftover.
+Do not rematch filecoin-ffi, go-graphsync, or paired leftover.
 Do not rematch ZKsync bootloader, interpreter,
 storage_models, proof_running_system, zk_ee,
 zkos-wrapper, or airbender verifier.
@@ -64345,3 +64349,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a quorum-gated accountant ledger update or a bridge-gated wrapped mint as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / wormchain / algorand / aptos / near, and Relayer Sourcify 404.
+
+## 2026-09-03: Filecoin leftover remaining paired leftover (`80b765c`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after filecoin-ffi / go-graphsync leftovers. Official clone `/tmp/filecoin-paired` at `80b765c` (`chore(paired): release 0.22.0`). Fork of zkcrypto `pairing`; BLS12-381 only. Opened `src/lib.rs`, `src/bls12_381/mod.rs`, `src/bls12_381/ec/g1.rs`, `src/bls12_381/ec/g2.rs`. Do not rematch proofs / proofs-api / proofs-ffi / filecoin-ffi leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: compressed G1/G2 decode skipping the subgroup check; `pairing` returning identity without a miller loop / final exponentiation.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Checked `into_affine` (compressed and uncompressed) requires on-curve then `is_in_correct_subgroup_assuming_on_curve`. `into_affine_unchecked` is the explicit skip path.
+- `Engine::pairing` prepares both points, runs `miller_loop`, then `final_exponentiation`. Miller skips only zero points. This crate does not move FIL.
+
+Do not file a pairing library that subgroup-checks affine decode as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner / go-data-transfer.
