@@ -192,6 +192,9 @@ a realistic hackathon deliverable.
 
 ## Next candidates
 
-1inch Aqua (Solidity, KYC, overlaps with ETHOnline Aqua work). Sherlock page 1
-was FINISHED/JUDGING only as of this session. KeeperHub feature bounty build
-window is 6–18 Sep 2026 — do not implement before that date.
+Reviewed so far without a finding: Enzyme Onyx ACE scope, GMTrade builder-fee,
+treasury and LP paths, 1inch Aqua core and the swap-vm entry. Remaining
+candidates with real depth: the swap-vm opcode set (multi-day budget), GMTrade
+`programs/store` order execution and liquidation paths (Rust, multi-day), sBTC
+(Rust/Clarity, KYC). Sherlock had no active contests as of 3 Sep 2026. No
+implementation on the KeeperHub feature bounty before the 6 Sep build window.
