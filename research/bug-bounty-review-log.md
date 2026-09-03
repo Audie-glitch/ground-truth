@@ -69371,3 +69371,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a libp2p peer expander as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus lib (httpreader / addrutil) if still unused.
+
+## 2026-09-03: Rootstock leftover remaining rskj Bridge leftover (`161c3f105d18`)
+
+Immunefi program `rootstocklabs` ($200,000, `kyc: true`). Official remaining listed after powpeg-node pegout leftover. Official `rsksmart/rskj` master pin `161c3f105d18`. Opened listed `rskj-core/src/main/java/co/rsk/peg/Bridge.java` plus authorizer wiring in `BridgeMethods.java`. Do not rematch Flyover Blockscout leftover or powpeg-node pegout leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: empty calldata minting unbacked RBTC; stranger `addSignature` completing a pegout; public `registerBtcTransaction` minting without a confirmed BTC lock; unauthenticated Union `requestUnionBridgeRbtc` drain.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Bridge` is a precompile wrapper. `parseData` maps empty calldata to `RELEASE_BTC` (intended: send RBTC to the Bridge). Invalid 1–3 byte or unknown selectors return null and `execute` throws after RSKIP88. `validateCall` rejects non-local-only methods on non-local calls (RSKIP88) and disallowed `MsgType` (RSKIP417).
+- `addSignature` is `activeRetiringAndProposedFederationOnly`. The provided BTC key must belong to a federation member; `processSigning` verifies each DER signature against that key and the waiting pegout sighash. A stranger cannot complete a release.
+- `registerBtcTransaction` is public after RSKIP199. `BridgeSupport` still requires an unprocessed tx, merkle/confirmation validation, and a typed peg-in / peg-out / SVP lock. `UNKNOWN` is ignored. Empty-value `releaseBtc` only queues the sender's call value; contract callers are rejected.
+- Union `setUnionBridgeContractAddressForTestnet` is testnet-and-authorized. Cap and transfer-permission setters use `executeIfAuthorized`. `requestUnionBridgeRbtc` / `releaseUnionBridgeRbtc` require the configured Union contract as sender; unauthorized callers get `UNAUTHORIZED_CALLER` and no transfer.
+
+Do not file the public peg-in registrar or empty-calldata peg-out as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `rsk-powhsm` (if still unused).
