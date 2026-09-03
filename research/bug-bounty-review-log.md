@@ -68228,3 +68228,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a header/message fetch RPC as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner (actors wrappers / types / index / lib).
+
+## 2026-09-03: Jito leftover remaining mev-programs tip leftover (`ce1dfb6`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after restaking leftover. Official `jito-foundation/jito-programs` `ce1dfb6`. Opened listed `mev-programs/programs/tip-payment/src/lib.rs` and `tip-distribution/src/{lib,state,merkle_proof}.rs`. Do not rematch stake-deposit-interceptor or restaking leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `change_tip_receiver` draining tips to themselves; `claim` paying a proof that does not bind `claimant` + amount; `close_tip_distribution_account` sending unclaimed tips to the cranker.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Tip-payment config / tip PDAs are singleton seeds. `change_tip_receiver` / `change_block_builder` first `drain_accounts` (leave rent) and pay the **current** `config.tip_receiver` / `config.block_builder` at the stored commission (≤ 100). The new builder cannot change the cut until after that drain. Failed transfers credit the tip PDA. Program / sysvar / config owners are rejected as receivers.
+- Tip-distribution `initialize_tip_distribution_account` requires the signer to be the vote account’s node pubkey. `upload_merkle_root` is `merkle_root_upload_authority` only, one epoch after create, not after first claim, not after expiry.
+- `claim` verifies `hashv([0, hashv(claimant || amount)])` against the uploaded root (sorted intermediate `hashv([1, …])`), inits a once-only `CLAIM_STATUS` PDA, and caps `max_total_claim` / `max_num_nodes`. The upload authority must also sign. `close_tip_distribution_account` after `expires_at` sends leftovers to `config.expired_funds_account` and rent to the validator vote account.
+
+Do not file a configured-receiver tip drain as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` / `priority-fee-distribution` (if still unused).
