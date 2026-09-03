@@ -69281,3 +69281,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a serialize/validate helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner (lib).
+
+## 2026-09-03: Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
+
+Immunefi program `rootstocklabs` ($200,000, `kyc: true`). Official remaining listed after PegIn / PegOut / Collateral leftover. Official `rsksmart/powpeg-node` `254fb3d`. Opened listed `BtcReleaseClient.java`, `BridgeTransactionSender.java`, `ReleaseRequirementsEnforcer.java`, `ReleaseCreationInformationGetter.java`, and `PegoutSignedCacheImpl.java`. Do not rematch Flyover Blockscout leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger RPC that makes this node sign an arbitrary BTC pegout; `onBtcRelease` broadcasting a caller-chosen tx; `sendRskTx` paying a stranger from the federator.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `start` only observes a federation this node is a member of. Pegouts come from `FederatorSupport.getStateForFederator` / `RELEASE_BTC` Bridge logs, not a public submit API. Signing skips cached / already-signed / wrong-redeem-script txs and signs one HSM-gated input set, then `addSignature` on the Bridge.
+- `onBtcRelease` broadcasts the decoded Bridge event tx to configured BTC peers. `BridgeTransactionSender` is a federator-signed, value-0 call to `BRIDGE_ADDR` after a local gas estimate. `ReleaseRequirementsEnforcer` only places the ancestor block for PowHSM v2+.
+- This process is a federation operator. It does not expose stranger-callable JSON-RPC that moves BTC.
+
+Do not file a federation pegout signer as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `rskj` / `rsk-powhsm` (if still unused).
