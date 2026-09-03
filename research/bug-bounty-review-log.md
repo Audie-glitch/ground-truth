@@ -13968,6 +13968,228 @@ trade / Sol withdraw
 paths, and
 `evm-cross-chain`.
 
+## 2026-09-03: Yearn yCRV token + Boosted Staker leftover (Sourcify)
+
+Immunefi program
+`yearnfinance`
+($200,000, `kyc: false`).
+Listed leftover that was
+never logged: yCRV token
+`0xFCc5c47bE19d06BF83eB04298b026F81069ff65b`
+(22 Feb 2022), yCRV
+Boosted Staker
+`0xE9A115b77A1057C918F997c32663FdcE24FB873f`
+(22 Oct 2024), and yCRV
+Reward Distributor
+`0xB226c52EB411326CdB54824a88aBaFDAAfF16D3d`
+(22 Oct 2024). Sourcify
+`match` on all three
+(staker / distributor
+verified 2024-08-08;
+token verified
+2025-01-13). Extract
+`/tmp/yearn-ycrv/{token,
+staker,distributor}`.
+Jan 2026 yYB leftover
+already logged the same
+`YearnBoostedStaker` /
+`SingleTokenRewardDistributor`
+sources on different
+addresses. No mainnet
+interaction.
+
+Files: Sourcify
+`Vyper_contract.vy`
+(yCRV 0.3.7),
+`YearnBoostedStaker.sol`,
+`SingleTokenRewardDistributor.sol`.
+
+Checked for: permissionless
+yCRV mint without a CRV /
+yveCRV pull; `sweep` /
+`sweep_yvecrv` of locked
+backing; stranger
+`unstakeFor` / `claimFor`;
+distributor `pushRewards`
+that steals a live week's
+rewards; `stakeAsMaxWeighted`
+without the owner role.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `mint` pulls CRV to the
+  hardcoded Yearn `VOTER`
+  and mints yCRV 1:1.
+  Donations are
+  non-redeemable. Default
+  `_amount` is
+  `max_value` and uses
+  the caller's CRV
+  balance.
+- `burn_to_mint` pulls
+  yveCRV to this contract,
+  increments `burned`,
+  and mints 1:1.
+  `sweep_yvecrv` can only
+  take
+  `balance - burned`.
+  `sweep` is
+  `sweep_recipient` and
+  cannot take YVECRV.
+- Staker `stake` /
+  `unstake` use even
+  amounts and checkpoint.
+  `stakeAsMaxWeighted` is
+  `approvedWeightedStaker`.
+  `stakeFor` /
+  `unstakeFor` need
+  `approvedCaller`.
+  Owner `sweep` subtracts
+  `totalSupply` of the
+  stake token.
+- Distributor `claim` /
+  `claimWithRange` pay the
+  account or its
+  configured recipient.
+  `claimFor` needs
+  `approvedClaimer`.
+  Skipping weeks in a
+  ranged claim is a
+  documented self-lockout.
+  `pushRewards` only moves
+  a past week with zero
+  adjusted global weight.
+  First-week deposits are
+  excluded from shares via
+  `weightPersistent`.
+
+Not submitted. Remaining
+Yearn listed leftover:
+yvUSD
+`0x696d02Db93291651ED510704c9b286841d506987`
+(Sourcify 404; yearn.fi
+vault URL, not an impl
+this pass can open) and
+the 2023 YFI / Woofy
+token rows. Do not treat
+the already-logged yYB
+staker / distributor as
+a second finding.
+
+## 2026-09-03: Hermetica hBTC vault leftover (Hiro)
+
+Immunefi program
+`hermetica`
+($100,000, `kyc: false`).
+Listed Clarity (11 Feb
+and 31 Mar 2026): HQ,
+blacklist, token, state,
+reserve, reserve-fund,
+controller, fee-collector,
+hermetica / zest
+interfaces, trading, and
+vault `vault-hbtc-v1-1`.
+Hiro
+`extended/v1/tx/{txid}`
+source extract under
+`/tmp/hermetica`. Principal
+`SP1S1HSFH0SQQGWKB69EYFNY0B1MHRMGXR3J1FH4D`.
+No GitHub tree. Primacy of
+Impact row is the marketing
+site, not extra code. No
+mainnet interaction.
+
+Files: `vault.clar`,
+`state.clar`,
+`token.clar`,
+`controller.clar`,
+`hq.clar`,
+`reserve.clar`,
+`trading.clar`,
+`hermetica-interface.clar`,
+`zest-interface.clar`,
+`blacklist.clar`.
+
+Checked for: first-depositor
+inflation via reserve
+donation; share mint
+without an sBTC pull;
+permissionless
+`fund-claim` that
+finalizes a stranger's
+claim at a crashed PPS;
+`redeem` that pays the
+caller instead of the
+claim user; trader
+`sweep` off-reserve;
+`update-state` from a
+non-protocol contract.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `deposit` pulls sBTC to
+  the reserve, then
+  `update-state` adds
+  `total-assets` and mints
+  shares. PPS is
+  `net-assets * 1e8 /
+  supply` (accounting, not
+  the reserve ERC-20
+  balance). A donation
+  into the reserve does
+  not mint shares and does
+  not change PPS.
+- Empty vault mints 1:1.
+  `convert-to-shares`
+  divides by `net-assets`
+  when supply > 0; a
+  zero-net book would DoS
+  deposits, not inflate.
+- `request-redeem` moves
+  shares to the vault.
+  `fund-claim` after
+  cooldown is
+  permissionless and
+  snapshots the current
+  accounting PPS, pulls
+  sBTC reserve → vault,
+  and burns the vault's
+  shares. `redeem` pays
+  the claim `user` (minus
+  the recorded fee).
+  Express claims cannot
+  `cancel-redeem`.
+- Trading / mint / unstake
+  / Zest borrow-repay are
+  `check-is-trader` plus
+  allowlisted externals.
+  `reserve.transfer`
+  requires both caller and
+  recipient to be PROTOCOL.
+  Token mint/burn is
+  protocol-only.
+- `log-reward` is
+  rewarder-only and is
+  capped by `max-reward`
+  and `max-deviation`.
+  `settle-pending` is
+  manager-only.
+
+Not submitted. Listed
+Hermetica Clarity is
+exhausted. Next leftover:
+Yearn yvUSD (Sourcify 404)
+/ YFI / Woofy, Twyne
+Sourcify-404 vaults, or
+another unreviewed no-KYC
+slug (beanstalk /
+cowprotocol / staderforeth
+have older trees).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -14437,6 +14659,15 @@ logged (remaining Orderly
 is Operator / Fee /
 Market, LedgerImpl B/C/D,
 and `evm-cross-chain`);
+Yearn yCRV token +
+Boosted Staker /
+distributor leftover
+is logged (yvUSD still
+Sourcify 404);
+Hermetica hBTC vault
+leftover is logged
+(listed Clarity
+exhausted);
 Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase

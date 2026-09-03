@@ -12,10 +12,12 @@ recheck), and Immunefi unofficial mirror rechecked 3 Sep. KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
-is exhausted. MtPelerin bridge-v2 leftover is logged. Orderly Vault and Ledger withdraw leftovers are logged
-(remaining Orderly is Operator / Fee / Market, LedgerImpl
-B/C/D, and evm-cross-chain). Twyne vaults still Sourcify
-404.
+is exhausted. MtPelerin leftover is exhausted. Orderly Vault and
+Ledger withdraw leftovers are logged (remaining Orderly is Operator
+/ Fee / Market, LedgerImpl B/C/D, and evm-cross-chain). Yearn yCRV
+token + Boosted Staker / distributor leftover is logged (yvUSD
+still Sourcify 404). Hermetica hBTC vault leftover is logged
+(listed Clarity exhausted). Twyne vaults still Sourcify 404.
 
 ## Opportunities, ranked by expected payout per unit of work
 
@@ -214,9 +216,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Accountant `0x5A74…DE69`
   + 3.0.4 Tokenized
   Strategy / Vault V3
-  leftover (listed Yearn
-  leftover impls
-  exhausted),
+  leftover plus yCRV
+  token / Boosted Staker /
+  distributor (yvUSD still
+  Sourcify 404),
   StackingDAO cores +
   strategy / native-pool
   / signers / swap /
