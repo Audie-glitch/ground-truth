@@ -32190,6 +32190,151 @@ reverse
 gateways,
 websites.
 
+## 2026-09-03: zkSync Era leftover L1 Mailbox + AssetRouter leftover (Sourcify / `ad5a478`)
+
+Immunefi program
+`zksyncera`
+($300,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+Diamond
+`0x32400084c286cf3e17e7b677ea9583e60a000324`
+Mailbox facet
+`0x1e34aB39a9682149165ddeCc0583d238A5448B45`,
+Bridgehub
+`0x303a465B659cBB0ab36eE643eA362c509EEb5213`
+impl
+`0xc89423b4909080fB8F8A43dF5E1C27001e55C24B`,
+L1ERC20Bridge
+`0x57891966931Eb4Bb6FB81430E6cE0A03AAbDe063`
+impl
+`0x6ed98623e0B51be68748aB5091Aa891Adb883e13`
+Sourcify 404.
+Official
+`matter-labs/era-contracts`
+HEAD
+`ad5a478`.
+Extract
+`/tmp/zks-mailbox`,
+`/tmp/zks-bridgehub-impl`,
+`/tmp/zks-era`.
+No mainnet
+interaction.
+
+Files:
+`contracts/state-transition/chain-deps/facets/Mailbox.sol`,
+`contracts/bridgehub/Bridgehub.sol`,
+`l1-contracts/contracts/bridge/L1ERC20Bridge.sol`,
+`l1-contracts/contracts/bridge/asset-router/L1AssetRouter.sol`,
+`l1-contracts/contracts/bridge/ntv/L1NativeTokenVault.sol`,
+`l1-contracts/contracts/bridge/L1Nullifier.sol`.
+
+Checked for: a
+stranger
+`deposit` that
+pulls another
+account; AssetRouter
+`bridgehubDeposit`
+from a non-
+Bridgehub;
+`finalizeDeposit`
+that pays the
+caller; Mailbox
+`requestL2Transaction`
+that credits
+another user's
+ETH.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Legacy
+  L1ERC20Bridge
+  `deposit`
+  `safeTransferFrom`s
+  `msg.sender`
+  and forwards
+  `_originalCaller
+  = msg.sender`.
+- Bridgehub
+  `requestL2TransactionDirect`
+  deposits
+  `msg.sender`
+  via AssetRouter
+  `onlyBridgehub`.
+- Mailbox
+  `requestL2Transaction`
+  binds
+  `sender:
+  msg.sender`
+  and
+  `msg.value`.
+- NTV burn
+  pulls
+  `_originalCaller`
+  (or the
+  legacy
+  bridge
+  allowance).
+- Nullifier
+  `finalizeDeposit`
+  is
+  permissionless
+  after
+  `proveL2MessageInclusion`
+  and unused
+  index. Tokens
+  go to the
+  encoded
+  receiver.
+- AssetRouter
+  `finalizeDeposit`
+  is
+  `onlyNullifier`.
+
+Do not file
+permissionless
+finalize of a
+merkle-proven
+L2→L1
+withdrawal to
+the recorded
+receiver, or
+deposit to a
+named L2
+receiver that
+pays the
+caller.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify /
+official L1
+Mailbox /
+Bridgehub /
+AssetRouter /
+legacy ERC20
+open is
+exhausted at
+this money-path
+level.
+Remaining listed:
+L2 contracts,
+circuits /
+SNARK wrapper,
+governance
+(ProtocolUpgradeHandler
+/ SecurityCouncil
+/ Guardians /
+governors),
+websites.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -33787,6 +33932,13 @@ logged (remaining listed is
 nitro challenge / rollup /
 governance / fund-distribution
 / remaining token-bridge);
+zkSync Era leftover L1 Mailbox +
+AssetRouter leftover (Sourcify
+Mailbox / Bridgehub /
+AssetRouter / legacy ERC20;
+KYC) is logged (remaining
+listed is L2 / circuits /
+governance / websites);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

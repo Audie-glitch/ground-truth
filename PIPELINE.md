@@ -64,7 +64,9 @@ Chainlink leftover CCIP EVM leftover is logged;
 Optimism leftover L1 portal +
 StandardBridge leftover is logged;
 Arbitrum leftover token-bridge +
-Inbox leftover is logged).
+Inbox leftover is logged;
+zkSync Era leftover L1 Mailbox +
+AssetRouter leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -530,6 +532,12 @@ Outbox; KYC) is logged (remaining
 listed is nitro challenge / rollup
 / governance / fund-distribution /
 remaining token-bridge).
+zkSync Era leftover L1 Mailbox +
+AssetRouter leftover (Sourcify
+Mailbox / Bridgehub / AssetRouter /
+legacy ERC20; KYC) is logged
+(remaining listed is L2 / circuits
+/ governance / websites).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1143,6 +1151,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Arbitrum leftover token-bridge +
   Inbox leftover (`1bdf3cd` /
   `7fc6624`; KYC),
+  zkSync Era leftover L1 Mailbox +
+  AssetRouter leftover
+  (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover
