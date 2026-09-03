@@ -175,6 +175,10 @@ AllocationExchange + Tally leftover is logged;
 Autonolas leftover remaining
 Tokenomics + ServiceRegistry leftover is logged;
 Mars leftover BSC swap + farm leftover is logged;
+Velvet leftover Base deposit + withdraw leftover is logged;
+Autonolas leftover remaining L1 deposit processors + L2 ServiceRegistry leftover is logged;
+The Graph leftover remaining L2GNS + TokenLock leftover is logged;
+Tetu leftover empty-assets leftover is logged;
 Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
 KeeperHub
@@ -859,8 +863,9 @@ AllocationExchange + Tally leftover
 GraphTallyCollector; KYC) is
 logged (remaining listed is
 L2GraphTokenGateway 404 /
-L2GNS impl / Governor /
-TokenLockWallet).
+Governor after L2GNS +
+TokenLock leftover is
+leftover-logged).
 Autonolas leftover remaining
 Tokenomics + ServiceRegistry leftover
 (Sourcify Tokenomics /
@@ -878,6 +883,33 @@ VestingMaster / AirDrop;
 no KYC) is logged
 (remaining listed is XMS
 Sourcify 404 / website).
+Velvet leftover Base deposit + withdraw leftover
+(Sourcify DepositBatch /
+DepositManager /
+WithdrawBatch /
+WithdrawManager; KYC) is
+logged (remaining listed is
+config / rebalancing / fee /
+oracle / factory 404).
+Autonolas leftover remaining
+L1 deposit processors + L2
+ServiceRegistry leftover
+(Sourcify ETH processors /
+Polygon ServiceRegistryL2;
+KYC) is logged (remaining
+listed is Gnosis processor
+twin / oracles / proxy 404s).
+The Graph leftover remaining
+L2GNS + TokenLock leftover
+(Sourcify L2GNS /
+GraphTokenLockWallet; KYC)
+is logged (remaining listed
+is L2GraphTokenGateway 404 /
+Governor).
+Tetu leftover empty-assets leftover
+(no KYC; empty `assets`) is
+logged (listed leftover
+exhausted).
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
@@ -1591,6 +1623,17 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (Sourcify; KYC),
   Mars leftover BSC swap + farm leftover
   (Sourcify; no KYC),
+  Velvet leftover Base deposit + withdraw leftover
+  (Sourcify; KYC),
+  Autonolas leftover remaining
+  L1 deposit processors + L2
+  ServiceRegistry leftover
+  (Sourcify; KYC),
+  The Graph leftover remaining
+  L2GNS + TokenLock leftover
+  (Sourcify; KYC),
+  Tetu leftover empty-assets leftover
+  (no KYC),
   Serai leftover bitcoin-serai
   leftover (`4b89cf02`; KYC),
   Pragma leftover cairo oracle

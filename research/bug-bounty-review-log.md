@@ -36236,10 +36236,10 @@ ServiceManagerProxy
 LiquidityManagerProxy
 404 /
 L2 ServiceRegistry /
-deposit processors /
+deposit processors
+(now leftover-
+logged);
 oracles /
-Governor
-timelock /
 VoteWeighting.
 
 ## 2026-09-03: The Graph leftover remaining AllocationExchange + Tally leftover (Sourcify)
@@ -36354,8 +36354,382 @@ Remaining listed:
 L2GraphTokenGateway
 404 /
 L2GNS impl /
-Governor /
-TokenLockWallet.
+TokenLockWallet
+(now leftover-
+logged);
+Governor.
+
+## 2026-09-03: Velvet leftover Base deposit + withdraw leftover (Sourcify)
+
+Immunefi program
+`velvet-capital-v2`
+($10,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify Base
+DepositBatch
+`0x6E3e0fe13DAE2C42CCa7ae2E849b0976E2E63e05`,
+DepositManager
+`0xe4e23120a38c4348D7e22Ab23976Fa0c4Bf6e2ED`,
+WithdrawBatch
+`0xAeaD7d9202f3EFB73657cA031f645c6B46cfe177`,
+WithdrawManager
+`0xa9452eAf5AA440790E6CA90e38c10b40fb611e59`,
+EnsoHandler
+`0x6eC2A3a88A72943d2E87ed05cDF25914983Ab7F6`,
+Portfolio
+`0x3475dD4b852Baf51279A463f0e5F38e5AED2E784`.
+PortfolioFactory
+Sourcify 404.
+Extract
+`/tmp/velvet-dep-batch`,
+`/tmp/velvet-dep-mgr`,
+`/tmp/velvet-wd-batch`,
+`/tmp/velvet-wd-mgr`,
+`/tmp/velvet-enso`,
+`/tmp/velvet-port`.
+No mainnet
+writes.
+
+Files:
+`contracts/bundle/DepositBatch.sol`,
+`contracts/bundle/DepositManager.sol`,
+`contracts/bundle/WithdrawBatch.sol`,
+`contracts/bundle/WithdrawManager.sol`.
+
+Checked for:
+deposit that
+spends another
+account's
+tokens;
+withdraw that
+burns another
+account's
+portfolio
+shares.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `DepositManager.deposit`
+  `safeTransferFrom(msg.sender)`
+  into
+  DepositBatch
+  then
+  `multiTokenSwapAndDeposit(..., user=msg.sender)`.
+- `DepositBatch.multiTokenSwapETHAndTransfer`
+  spends
+  `msg.value`
+  and refunds
+  leftover ETH
+  to
+  `msg.sender`.
+  Named-user
+  `multiTokenSwapAndDeposit`
+  deposits
+  tokens
+  already on
+  the batch
+  contract.
+- `WithdrawManager.withdraw`
+  calls
+  `multiTokenWithdrawalFor(msg.sender, WITHDRAW_BATCH, amount)`
+  then swaps
+  the batch
+  output to
+  `msg.sender`.
+- Enso swaps
+  are
+  `delegatecall`
+  to a
+  hardcoded
+  SWAP_TARGET.
+
+Do not file
+deposit that
+pulls the
+caller or
+withdraw that
+burns the
+caller's
+portfolio
+shares.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining Base
+config /
+rebalancing /
+fee /
+oracle rows
+if a later
+pass wants
+them;
+PortfolioFactory
+404;
+website
+primacy.
+
+## 2026-09-03: Autonolas leftover remaining L1 deposit processors + L2 ServiceRegistry leftover (Sourcify)
+
+Immunefi program
+`autonolas`
+($5,000,
+`kyc: true`).
+Already leftover-
+logged through
+Tokenomics +
+ServiceRegistry.
+Sourcify ETH
+EthereumDepositProcessor
+`0x15CD7fAeE048c7673aB818C9e582630F1a924593`,
+PolygonDepositProcessorL1
+`0x7EB5824Bb78e971284e2140059f8755B3d2BB525`,
+OptimismDepositProcessorL1
+`0x990aBa4b05adc3761EfAf38FB871b93C7b162D03`,
+ArbitrumDepositProcessorL1
+`0xFceFB015372e84FC465Cf2778889ee231a6E2e67`,
+Polygon
+ServiceRegistryL2
+`0xE3607b00E75f6405248323A9417ff6b39B244b50`.
+Extract
+`/tmp/olas-eth-dep`,
+`/tmp/olas-poly-dep`,
+`/tmp/olas-op-dep`,
+`/tmp/olas-arb-dep`,
+`/tmp/olas-svc-l2`.
+No mainnet
+writes.
+
+Files:
+`contracts/staking/EthereumDepositProcessor.sol`,
+`contracts/staking/DefaultDepositProcessorL1.sol`,
+`contracts/ServiceRegistryL2.sol`.
+
+Checked for:
+permissionless
+deposit of
+another
+account's
+OLAS to a
+staking
+target;
+L2 service
+bond that
+pulls another
+owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `EthereumDepositProcessor.sendMessage`
+  /
+  `sendMessageBatch`
+  are
+  dispenser-only
+  and deposit
+  this
+  contract's
+  OLAS into
+  factory-verified
+  staking
+  targets
+  (refund
+  excess to
+  timelock).
+- L1
+  `DefaultDepositProcessorL1.sendMessage`
+  /
+  `sendMessageBatch`
+  are
+  dispenser-only
+  bridge
+  posts;
+  leftover
+  native is
+  refunded to
+  `tx.origin`.
+- `ServiceRegistryL2`
+  create /
+  activate /
+  terminate /
+  unbond are
+  manager-only
+  and refund
+  the recorded
+  owner /
+  operator
+  (same
+  pattern as
+  ETH
+  ServiceRegistry).
+
+Do not file
+dispenser-gated
+staking
+deposit of
+contract-owned
+OLAS or
+manager-gated
+L2 service
+bond refund
+to the
+recorded
+owner.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+GnosisDepositProcessorL1
+if a later
+pass wants
+the same-type
+twin;
+oracles /
+VoteWeighting /
+proxy 404s.
+
+## 2026-09-03: The Graph leftover remaining L2GNS + TokenLock leftover (Sourcify)
+
+Immunefi program
+`thegraph`
+($50,000,
+`kyc: true`).
+Already leftover-
+logged through
+AllocationExchange
++ Tally.
+Sourcify Arb
+L2GNS impl
+`0x9B81c7C5A21E65b849FD487540B0A82d3b97b2c7`
+(proxy
+`0xec9A7fb6CbC2E41926127929c2dcE6e9c5D33Bec`),
+ETH
+GraphTokenLockWallet
+`0xbE5e630383b5BAEcF0Db7b15C50d410edD5A2255`.
+Extract
+`/tmp/graph-l2gns-impl`,
+`/tmp/graph-lock`.
+No mainnet
+writes.
+
+Files:
+`contracts/discovery/GNS.sol`,
+`contracts/l2/discovery/L2GNS.sol`,
+`contracts/GraphTokenLock.sol`.
+
+Checked for:
+mint that
+spends another
+account's
+GRT;
+withdraw of
+another
+curator's
+deprecated
+share;
+release of
+another
+beneficiary's
+vest.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `GNS.mintSignal`
+  `pullTokens(msg.sender)`
+  and credits
+  `curatorNSignal[msg.sender]`.
+  `burnSignal`
+  /
+  `withdraw`
+  require the
+  caller's
+  nSignal and
+  pay
+  `msg.sender`.
+  `transferSignal`
+  moves the
+  caller's
+  nSignal.
+- `GraphTokenLock.release`
+  /
+  `withdrawSurplus`
+  are
+  `onlyBeneficiary`.
+  `revoke` is
+  `onlyOwner`
+  and returns
+  unvested
+  tokens to
+  the owner.
+
+Do not file
+name-signal
+mint that
+pulls the
+caller,
+withdraw of
+the caller's
+deprecated
+share, or
+beneficiary-only
+vest
+release.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+L2GraphTokenGateway
+404 /
+Governor.
+
+## 2026-09-03: Tetu leftover empty-assets leftover
+
+Immunefi program
+`tetu`
+($2,000,
+`kyc: false`).
+Unique unused
+standing program.
+Unofficial
+mirror
+`assets`
+array is
+empty
+(rechecked
+3 Sep 2026).
+No in-scope
+smart-contract
+or website
+URL to open.
+
+Checked for:
+a listed
+money path
+that this
+pass can
+review.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Listed leftover
+exhausted
+until Immunefi
+adds assets.
 
 ## Next candidates
 
@@ -38302,8 +38676,9 @@ AllocationExchange + Tally leftover
 GraphTallyCollector; KYC) is
 logged (remaining listed is
 L2GraphTokenGateway 404 /
-L2GNS impl / Governor /
-TokenLockWallet);
+Governor after L2GNS +
+TokenLock leftover is
+leftover-logged);
 Autonolas leftover remaining
 Tokenomics + ServiceRegistry leftover
 (Sourcify Tokenomics /
@@ -38311,8 +38686,11 @@ LiquidityManagerETH /
 ServiceRegistry /
 ServiceRegistryTokenUtility;
 KYC) is logged (remaining
-listed is L2 ServiceRegistry /
-deposit processors / oracles /
+listed is oracles /
+VoteWeighting / proxy 404s
+after L1 deposit processors +
+L2 ServiceRegistry leftover is
+leftover-logged);
 proxy 404s);
 Mars leftover BSC swap + farm leftover
 (Sourcify Core / Router /
@@ -38321,6 +38699,33 @@ VestingMaster / AirDrop;
 no KYC) is logged
 (remaining listed is XMS
 Sourcify 404 / website);
+Velvet leftover Base deposit + withdraw leftover
+(Sourcify DepositBatch /
+DepositManager /
+WithdrawBatch /
+WithdrawManager; KYC) is
+logged (remaining listed is
+config / rebalancing / fee /
+oracle / factory 404);
+Autonolas leftover remaining
+L1 deposit processors + L2
+ServiceRegistry leftover
+(Sourcify ETH processors /
+Polygon ServiceRegistryL2;
+KYC) is logged (remaining
+listed is Gnosis processor
+twin / oracles / proxy 404s);
+The Graph leftover remaining
+L2GNS + TokenLock leftover
+(Sourcify L2GNS /
+GraphTokenLockWallet; KYC)
+is logged (remaining listed
+is L2GraphTokenGateway 404 /
+Governor);
+Tetu leftover empty-assets leftover
+(no KYC; empty `assets`) is
+logged (listed leftover
+exhausted);
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
