@@ -8347,9 +8347,130 @@ finding. Not submitted.
 
 Remaining Yearn: splitter
 factory flatten and 3.0.4
-vault factory if a later
-pass wants the Vyper
-bodies. Not submitted.
+vault factory (this pass
+below). Not submitted.
+
+## 2026-09-03: Yearn splitter factory + 3.0.4 Vault Factory leftover (Sourcify)
+
+Immunefi program
+`yearnfinance` ($200,000,
+`kyc: false`). 29 Oct 2025
+rows: Splitter Factory
+`0xe28f…614D` and Vault
+Factory 3.0.4
+`0x770D…812F`. Factory
+Sourcify exact match
+(verified 2025-01-14,
+Vyper 0.3.7 flatten).
+ORIGINAL splitter
+`0x8e8e…6f69` Sourcify
+exact match (verified
+2026-02-01). 3.0.4 factory
+is `YearnVaultFactory.vy`
+API `3.0.4`, same pattern
+as the already-logged
+3.1.0 factory. Extract
+under
+`/tmp/yearn-leftover/{splitter_fact,splitter_impl,vault304_fact}`.
+No mainnet interaction.
+
+Files:
+`Vyper_contract.vy`
+(factory + impl),
+`YearnVaultFactory.vy`.
+
+Checked for: factory
+`newSplitter` that leaves
+the clone uninitialized
+or points `ORIGINAL` at
+an attacker impl;
+`initialize` that can be
+replayed; `unwrapVault`
+that redeems to a
+stranger; `distribute*`
+that pays an attacker
+cut; `fundAuction` that
+anyone can drain; `set*`
+that a non-manager /
+non-splitee can flip;
+3.0.4 `deploy_new_vault`
+that skips initialize or
+lets a stranger take
+protocol fees.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- Factory
+  `create_minimal_proxy_to`
+  the immutable
+  `ORIGINAL`
+  (`0x8e8e…6f69`) and
+  `initialize`s in the
+  same tx. Permissionless
+  deploy is intended.
+- Impl `initialize` is
+  one-shot
+  (`manager == 0`).
+  Manager, recipient, and
+  splitee must be
+  non-zero; split must be
+  non-zero. Default
+  `maxLoss` is 1.
+- `unwrapVault(s)` are
+  manager or splitee.
+  Redeem sends assets to
+  `self` with stored
+  `maxLoss`.
+- `distribute*` are
+  manager or splitee.
+  Manager cut is
+  `balance * split /
+  10_000`; remainder to
+  splitee. `split ==
+  10_000` pays the
+  manager recipient only.
+- `fundAuction(s)`
+  are manager or splitee
+  and transfer to the
+  stored `auction`.
+  `auction` starts unset;
+  sending to `0` is a
+  trusted-role burn.
+- `setMangerRecipient` /
+  `setSplit` /
+  `setMaxLoss` /
+  `setAuction` are
+  manager-only.
+  `setSplitee` is
+  current-splitee-only.
+  `setSplit` has no
+  `MAX_BPS` cap (manager
+  can brick
+  `distribute` with
+  `unsafe_mul` /
+  `unsafe_sub`); trusted
+  role, not a user
+  finding.
+- 3.0.4 factory
+  `deploy_new_vault` is
+  create2
+  (`msg.sender`, asset,
+  name, symbol) +
+  `initialize`. Protocol
+  fee bps ≤ 5000.
+  Custom vault fees still
+  pay the default
+  recipient. Governance
+  is two-step.
+  `shutdown_factory` is
+  one-way.
+
+Yearn 29 Oct 2025 leftover
+rows (AuctionFactory +
+splitter factory + 3.0.4
+factory) are exhausted.
+Not submitted.
 
 ## 2026-09-03: GammaSwap vault May 2026 leftover + PositionManager
 
@@ -8657,10 +8778,14 @@ locker / staker /
 distributor (Sourcify)
 plus AuctionFactory
 `0xbC58…7526` (Sourcify)
+plus splitter factory
+`0xe28f…614D` + ORIGINAL
+impl `0x8e8e…6f69` and
+3.0.4 Vault Factory
+`0x770D…812F` (Sourcify)
 are logged. Remaining
-Yearn is splitter factory
-flatten and 3.0.4 vault
-factory if wanted.
+Yearn listed leftover
+rows are exhausted.
 Balancer V3
 Router + CompositeLiquidityRouter
 + ProtocolFeeController +
