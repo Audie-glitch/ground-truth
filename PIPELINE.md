@@ -4,13 +4,19 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~10:35 UTC. Dates verified against each
+Status as of 3 September 2026, ~10:45 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~10:35 UTC;
-246 programs; no Sep 2026 launches; Exactly leftover remaining ExaPlugin leftover is logged;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~10:45 UTC;
+246 programs; no Sep 2026 launches; Metronome leftover remaining CrossChainDispatcher + ProxyOFT leftover is logged;
+OpenZeppelin leftover remaining RWA + governance leftover is logged;
+Folks leftover sc-library leftover is logged;
+1inch leftover business leftover is logged;
+1inch leftover web leftover is logged;
+Hibachi leftover website leftover is logged;
+Exactly leftover remaining ExaPlugin leftover is logged;
 Exactly leftover Market + DebtManager leftover is logged;
 Linea leftover TokenBridge + rollup + yield leftover is logged;
 MUX leftover mux3 orderbook + pool + position leftover is logged;
@@ -194,6 +200,12 @@ Velvet leftover remaining rebalance + fee leftover is logged;
 Pragma leftover remaining TWAP + randomness leftover is logged;
 Kiln leftover website leftover is logged;
 1inch leftover wallet leftover is logged;
+Metronome leftover remaining CrossChainDispatcher + ProxyOFT leftover is logged;
+OpenZeppelin leftover remaining RWA + governance leftover is logged;
+Folks leftover sc-library leftover is logged;
+1inch leftover business leftover is logged;
+1inch leftover web leftover is logged;
+Hibachi leftover website leftover is logged;
 Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
 KeeperHub
@@ -735,10 +747,8 @@ deposit + debt leftover
 DebtToken / Gateway / Pool /
 Treasury / SFM / Synth / AMO;
 KYC) is logged (remaining
-listed is CrossChainDispatcher /
-ProxyOFT / Quoter after OP /
-Base twins leftover is
-leftover-logged).
+listed is leftover-logged
+except same-type OFT twins).
 Glo Dollar leftover USDGLO
 leftover (Sourcify
 GloDollarV3; KYC) is logged
@@ -813,7 +823,8 @@ OpenZeppelin leftover Stellar
 packages leftover (`v0.7.2`
 fungible / vault; KYC) is
 logged (remaining listed is
-RWA / governance / accounts).
+RWA / governance / accounts,
+now leftover-logged).
 Autonolas leftover remaining
 L2 dispenser + veOLAS leftover
 (Sourcify Polygon / OP
@@ -947,8 +958,8 @@ OP + Base twins leftover
 (Sourcify DepositToken /
 DebtToken / Pool / Treasury;
 KYC) is logged (remaining
-listed is CrossChainDispatcher /
-ProxyOFT / Quoter).
+listed is leftover-logged
+except same-type OFT twins).
 Velvet leftover remaining
 rebalance + fee leftover
 (Sourcify Rebalancing /
@@ -966,6 +977,29 @@ Kiln leftover website leftover
 (`kiln-webapp`; KYC) is logged.
 1inch leftover wallet leftover
 (`1inch-wallet`; KYC) is logged.
+Metronome leftover remaining
+CrossChainDispatcher +
+ProxyOFT leftover (Sourcify;
+KYC) is logged (listed leftover
+that Sourcify opens is
+exhausted except same-type
+OFT twins).
+OpenZeppelin leftover remaining
+RWA + governance leftover
+(`v0.7.2`; KYC) is logged
+(listed leftover that official
+v0.7.2 opens is exhausted).
+Folks leftover sc-library
+leftover (`c5f2531`; no KYC)
+is logged (listed leftover
+exhausted).
+1inch leftover business leftover
+(`1inch-business`; KYC) is
+logged.
+1inch leftover web leftover
+(`1inch-web`; KYC) is logged.
+Hibachi leftover website leftover
+(`hibachi`; KYC) is logged.
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
@@ -1711,6 +1745,21 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`kiln-webapp`; KYC),
   1inch leftover wallet leftover
   (`1inch-wallet`; KYC),
+  Metronome leftover remaining
+  CrossChainDispatcher +
+  ProxyOFT leftover (Sourcify;
+  KYC),
+  OpenZeppelin leftover remaining
+  RWA + governance leftover
+  (`v0.7.2`; KYC),
+  Folks leftover sc-library
+  leftover (`c5f2531`; no KYC),
+  1inch leftover business leftover
+  (`1inch-business`; KYC),
+  1inch leftover web leftover
+  (`1inch-web`; KYC),
+  Hibachi leftover website leftover
+  (`hibachi`; KYC),
   Serai leftover bitcoin-serai
   leftover (`4b89cf02`; KYC),
   Pragma leftover cairo oracle

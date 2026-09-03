@@ -33608,9 +33608,12 @@ OP / Base
 twins
 (now leftover-
 logged);
-CrossChainDispatcher;
-ProxyOFT;
-Quoter.
+CrossChainDispatcher
+/
+ProxyOFT /
+Quoter
+(now leftover-
+logged).
 
 ## 2026-09-03: Glo Dollar leftover USDGLO leftover (Sourcify)
 
@@ -34923,9 +34926,8 @@ Remaining listed:
 RWA /
 governance /
 accounts
-packages
-(same library
-tree).
+(now leftover-
+logged).
 
 ## 2026-09-03: Autonolas leftover remaining L2 dispenser + veOLAS leftover (Sourcify)
 
@@ -37028,12 +37030,14 @@ Not submitted.
 Payment requires
 user KYC.
 Remaining listed:
-CrossChainDispatcher /
-ProxyOFT /
-Quoter
-(same-type
-across
-chains).
+listed leftover
+that Sourcify
+opens is
+exhausted
+except same-type
+OFT twins
+(now leftover-
+logged).
 
 ## 2026-09-03: Velvet leftover remaining rebalance + fee leftover (Sourcify)
 
@@ -37321,6 +37325,478 @@ already logged
 under
 `1inch-aqua`
 / token-plugins.
+
+## 2026-09-03: Metronome leftover remaining CrossChainDispatcher + ProxyOFT leftover (Sourcify)
+
+Immunefi program
+`metronome`
+($50,000,
+`kyc: true`).
+Already leftover-
+logged as ETH
+deposit + debt
+and OP / Base
+twins.
+Sourcify ETH
+CrossChainDispatcher
+proxy
+`0x8BD81c99a2D349F6fB8E8a0B32C81704e3FE7302`
+impl
+`0x50361AFAAfd269c1e9B74866a14579BBc512a41c`,
+ProxyOFT
+`0xD6d14C4A2AEc7B3FA179B77E202bFAd0B93A51b5`,
+Quoter proxy
+`0xEC37f547B27d8cB216B145744875A5861E3DF6AF`
+impl
+`0x5F6C71F41232A1AeAe2623c4ac7b111c38406834`,
+MsETH / MsUSD
+ProxyOFT impl
+`0x965498a6888a60c2E799679cedc64e0890890E40`;
+OP
+CrossChainDispatcher
+proxy
+`0xCEA698Cf2420433E21BeC006F1718216c6198B52`
+impl
+`0xb6Ecf1a552B0f4E520fF2934E60B756055F0C362`,
+ProxyOFT
+`0x0EcC84DA119Bd5539Dc489d4009106534cfAa542`.
+Extract
+`/tmp/metro-ccd-impl`,
+`/tmp/metro-oft`,
+`/tmp/metro-oft-impl`,
+`/tmp/metro-quoter-impl`,
+`/tmp/metro-op-ccd-impl`,
+`/tmp/metro-op-oft`.
+No mainnet
+writes.
+
+Files:
+`contracts/CrossChainDispatcher.sol`,
+`contracts/ProxyOFT.sol`,
+`contracts/Quoter.sol`.
+
+Checked for:
+a stranger
+`sendFrom` that
+burns another
+account's synth;
+a permissionless
+CCD trigger that
+moves tokens
+without an SFM
+request; a retry
+that swaps a
+cached payload
+to a different
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `ProxyOFT._debitFrom`
+  requires
+  `msg.sender ==
+  from_` then
+  burns
+  `from_`.
+  `sendAndCall`
+  is CCD-gated.
+- `triggerFlashRepaySwap`
+  /
+  `triggerLeverageSwap`
+  are
+  `onlyIfSmartFarmingManager`
+  +
+  `onlyIfBridgingIsNotPaused`.
+- `onOFTReceived`
+  is
+  `onlyIfProxyOFT`
+  and requires
+  `from` ==
+  registered
+  remote CCD.
+  `sgReceive`
+  is
+  `onlyIfStargateComposer`
+  with the same
+  remote-CCD
+  check.
+  Callbacks
+  approve the
+  recorded
+  SmartFarmingManager
+  request.
+- Retry
+  functions are
+  permissionless
+  of a cached
+  failed
+  Stargate / OFT
+  payload.
+  Only the
+  recorded
+  `_account`
+  can lower
+  `swapAmountOutMin`.
+- Quoter is
+  view-only.
+
+Do not file
+OFT send of the
+caller's tokens,
+permissionless
+retry of a
+cached LZ /
+Stargate
+payload, or
+SFM-gated
+cross-chain
+swap.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+listed leftover
+that Sourcify
+opens is
+exhausted
+except same-type
+OFT twins.
+
+## 2026-09-03: OpenZeppelin leftover remaining RWA + governance leftover (`v0.7.2`)
+
+Immunefi program
+`openzeppelin-stellar`
+($25,000,
+`kyc: true`).
+Already leftover-
+logged as
+fungible + vault.
+Official
+`OpenZeppelin/stellar-contracts`
+tag
+`v0.7.2`
+(`a9c42169`).
+Extract
+`/tmp/oz-stellar`.
+No mainnet
+writes.
+
+Files:
+`packages/tokens/src/rwa/storage.rs`,
+`packages/tokens/src/rwa/mod.rs`,
+`packages/governance/src/governor/storage.rs`,
+`packages/governance/src/governor/mod.rs`,
+`packages/governance/src/timelock/storage.rs`,
+`packages/accounts/src/smart_account/mod.rs`,
+`packages/accounts/src/policies/spending_limit.rs`.
+
+Checked for: a
+stranger
+`transfer` that
+moves another
+account's RWA
+tokens; a
+permissionless
+`mint` /
+`burn`; a
+Governor
+`execute` that
+runs a
+non-succeeded
+proposal.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- RWA
+  `transfer`
+  requires
+  `from.require_auth()`.
+  `transfer_from`
+  requires
+  `spender.require_auth()`
+  and spends
+  allowance.
+- Trait
+  `mint` /
+  `burn` /
+  `forced_transfer`
+  have no
+  default impl
+  and document
+  that callers
+  must enforce
+  operator
+  RBAC before
+  calling the
+  storage
+  helpers.
+- Governor
+  `propose`
+  checks
+  previous-
+  ledger
+  voting
+  power.
+  `execute` /
+  `queue` /
+  Timelock
+  `execute_operation`
+  are
+  documented
+  no-auth
+  helpers for
+  a succeeded
+  /
+  queued
+  proposal
+  after delay.
+- Accounts
+  spending-
+  limit is a
+  policy that
+  blocks
+  over-limit
+  transfers;
+  it does not
+  move tokens.
+  Smart-account
+  `__check_auth`
+  requires
+  caller-
+  selected
+  rule +
+  signatures.
+
+Do not file
+from-authed
+RWA transfer,
+operator-gated
+RWA mint /
+burn, or
+permissionless
+execute of a
+queued
+succeeded
+proposal
+after delay.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+listed leftover
+that official
+`v0.7.2`
+opens is
+exhausted.
+
+## 2026-09-03: Folks leftover sc-library leftover (`c5f2531`)
+
+Immunefi program
+`folks-sc-library`
+($30,000,
+`kyc: false`).
+Unique unused
+standing program
+(separate from
+Folks Finance
+spoke / hub
+leftovers).
+Official
+`Folks-Finance/algorand-smart-contract-library`
+`c5f25311`.
+Extract
+`/tmp/folks-sc-lib`.
+No mainnet
+writes.
+
+Files:
+`folks_contracts/library/AccessControl.py`,
+`RateLimiter.py`,
+`Upgradeable.py`,
+`Initialisable.py`,
+`extensions/InitialisableWithCreator.py`,
+`UInt64SetLib.py`.
+
+Checked for:
+permissionless
+`grant_role`;
+a rate-limit
+consume that
+moves tokens;
+an upgrade
+complete
+without the
+admin role
+or delay.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `grant_role`
+  /
+  `revoke_role`
+  require the
+  role's admin.
+  `renounce_role`
+  revokes only
+  `Txn.sender`.
+- RateLimiter
+  `_consume_amount`
+  /
+  `_fill_amount`
+  /
+  `_add_bucket`
+  are internal
+  subroutines.
+  No token
+  transfer.
+- `complete_contract_upgrade`
+  requires
+  upgradable
+  admin, the
+  scheduled
+  timestamp,
+  and SHA256
+  of the new
+  programs.
+- `InitialisableWithCreator`
+  requires
+  `Txn.sender
+  ==
+  creator`.
+
+Do not file
+admin-gated
+role grant or
+admin-gated
+scheduled
+upgrade after
+delay.
+
+Not submitted.
+Listed leftover
+exhausted.
+
+## 2026-09-03: 1inch leftover business leftover
+
+Immunefi program
+`1inch-business`
+($100,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are
+`api.1inch.com`
+and
+business.1inch.com
+portal / docs
+only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+API / portal
+pages only.
+1inch on-chain
+leftovers are
+already logged
+under
+`1inch-aqua`
+/ token-plugins.
+
+## 2026-09-03: 1inch leftover web leftover
+
+Immunefi program
+`1inch-web`
+($50,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are 1inch.com /
+blog / network
+marketing pages
+only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+marketing
+pages only.
+
+## 2026-09-03: Hibachi leftover website leftover
+
+Immunefi program
+`hibachi`
+($20,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are
+`api.hibachi.xyz`
+and
+`data-api.hibachi.xyz`
+only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+API pages
+only.
 
 ## Next candidates
 
@@ -39156,9 +39632,11 @@ deposit + debt leftover
 DebtToken / Gateway / Pool /
 Treasury / SFM / Synth / AMO;
 KYC) is logged (remaining
-listed is OP / Base twins /
+listed is OP / Base twins
+(now leftover-logged) /
 CrossChainDispatcher /
-ProxyOFT / Quoter);
+ProxyOFT / Quoter
+(now leftover-logged));
 Glo Dollar leftover USDGLO
 leftover (Sourcify
 GloDollarV3; KYC) is logged
@@ -39232,7 +39710,8 @@ OpenZeppelin leftover Stellar
 packages leftover (`v0.7.2`
 fungible / vault; KYC) is
 logged (remaining listed is
-RWA / governance / accounts);
+RWA / governance / accounts,
+now leftover-logged);
 Autonolas leftover remaining
 L2 dispenser + veOLAS leftover
 (Sourcify Polygon / OP
@@ -39369,8 +39848,8 @@ OP + Base twins leftover
 (Sourcify DepositToken /
 DebtToken / Pool / Treasury;
 KYC) is logged (remaining
-listed is CrossChainDispatcher /
-ProxyOFT / Quoter);
+listed is leftover-logged
+except same-type OFT twins);
 Velvet leftover remaining
 rebalance + fee leftover
 (Sourcify Rebalancing /
@@ -39388,6 +39867,29 @@ Kiln leftover website leftover
 (`kiln-webapp`; KYC) is logged;
 1inch leftover wallet leftover
 (`1inch-wallet`; KYC) is logged;
+Metronome leftover remaining
+CrossChainDispatcher +
+ProxyOFT leftover (Sourcify;
+KYC) is logged (listed leftover
+that Sourcify opens is
+exhausted except same-type
+OFT twins);
+OpenZeppelin leftover remaining
+RWA + governance leftover
+(`v0.7.2`; KYC) is logged
+(listed leftover that official
+v0.7.2 opens is exhausted);
+Folks leftover sc-library
+leftover (`c5f2531`; no KYC)
+is logged (listed leftover
+exhausted);
+1inch leftover business leftover
+(`1inch-business`; KYC) is
+logged;
+1inch leftover web leftover
+(`1inch-web`; KYC) is logged;
+Hibachi leftover website leftover
+(`hibachi`; KYC) is logged;
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
