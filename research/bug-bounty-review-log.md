@@ -73004,3 +73004,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a circulating-supply reporter as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`validated_reward_certificate` / `validated_block_finalization` / `bank.rs` money-path subset / `bank/fee_distribution`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Chainlink leftover remaining chainlink-evm payments leftover (`b274ca1`)
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after CCIP Aptos leftover / VRF leftover. Official `smartcontractkit/chainlink-evm` `b274ca1` (`b274ca1ca00559ad434ca8f43026b16a6a196242`). Opened listed `contracts/src/v0.8/payments/{PaymentTokenOnRamp,EmergencyWithdrawer,PausableWithAccessControl}.sol` plus `libraries/{Common,Errors,Roles}.sol` and `interfaces/{IFeeWithdrawer,IPausable}.sol`. Extract `/tmp/cl-pay/`. Do not rematch VRF leftover or CCIP EVM leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `submitPaymentRequests` that pulls a stranger's tokens without a validator signature; `withdrawFeeTokens` that pays the caller; `emergencyWithdraw` that drains while unpaused.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `submitPaymentRequests` is permissionless but only after `ecrecover` of a digest bound to `typeAndVersion`, `i_chainSelector`, `address(this)`, `requestId`, `deadline`, `fundingAddress`, and `tokenAmounts`. The signer must hold `PAYMENT_VALIDATOR_ROLE`. Transfers are `safeTransferFrom(fundingAddress, address(this), amount)`, not to `msg.sender`. `requestId` is unique via `EnumerableSet.add`. Expired / empty / zero-amount / zero-funder requests revert. `ECDSA_RECOVERY_V` is fixed at 27 so a flipped `(r,s*)` with `v=28` does not recover the validator.
+- Constructor grants validators only for non-zero addresses. `ecrecover` failure yields `address(0)`, which is not a validator. Pause / unpause are `PAUSER_ROLE` / `UNPAUSER_ROLE`.
+- `withdrawFeeTokens` is permissionless and only `safeTransfer`s the contract's balance to `s_feeAggregator`. `setFeeAggregator` is `DEFAULT_ADMIN_ROLE` and rejects zero / unchanged.
+- `emergencyWithdraw` / `emergencyWithdrawNative` require `whenPaused` and `DEFAULT_ADMIN_ROLE`. Native / ERC20 helpers reject zero recipient or zero amount.
+
+Do not file a validator-signed pull or aggregator fee sweep as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink automation-cre / llo-feeds / operatorforwarder / OCR / core node / websites if still unused.
