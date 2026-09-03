@@ -135,7 +135,11 @@ Depository + Treasury leftover is logged;
 Zerion leftover ETH Premium
 Purchaser leftover is logged;
 NUVA leftover ETH depositor +
-withdrawal leftover is logged).
+withdrawal leftover is logged;
+KAST leftover Solana
+USDK/USDKY extension leftover is logged;
+XOXNO leftover MultiversX
+lending leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -736,6 +740,15 @@ CustomToken; KYC) is logged
 (remaining listed is vault /
 router impls 404 / Provenance
 vaults / website).
+KAST leftover Solana
+USDK/USDKY extension leftover
+(`c22b6b8` wrap / unwrap /
+ext_swap; KYC) is logged
+(listed leftover exhausted).
+XOXNO leftover MultiversX
+lending leftover (`bffbbd9` /
+`2e8c81d`; KYC) is logged
+(listed leftover exhausted).
 Axelar leftover Aurora/Fantom
 gateways + remaining axlUSDC
 leftover (Sourcify / official
@@ -1406,6 +1419,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   NUVA leftover ETH depositor +
   withdrawal leftover (Sourcify;
   KYC),
+  KAST leftover Solana
+  USDK/USDKY extension leftover
+  (`c22b6b8`; KYC),
+  XOXNO leftover MultiversX
+  lending leftover (`bffbbd9` /
+  `2e8c81d`; KYC),
   Axelar leftover Aurora/Fantom
   gateways + remaining axlUSDC
   leftover (Sourcify; KYC),

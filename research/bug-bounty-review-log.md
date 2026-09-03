@@ -34589,6 +34589,230 @@ Provenance
 vaults /
 website.
 
+## 2026-09-03: KAST leftover Solana USDK/USDKY extension leftover (`c22b6b8`)
+
+Immunefi program
+`KAST`
+($50,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`m0-foundation/solana-m-extensions`
+HEAD
+`c22b6b89`.
+Extract
+`/tmp/kast`.
+No mainnet
+writes.
+
+Files:
+`programs/m_ext/src/instructions/wrap.rs`,
+`programs/m_ext/src/instructions/unwrap.rs`,
+`programs/m_ext/src/instructions/claim_fees.rs`,
+`programs/ext_swap/src/instructions/swap.rs`.
+
+Checked for: a
+stranger
+`wrap` that
+mints extension
+tokens without
+pulling M; a
+`unwrap` that
+pays M without
+burning the
+caller's
+extension
+tokens; a
+stranger
+`claim_fees`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `wrap`
+  requires a
+  `wrap_authorities`
+  signer. The
+  token program
+  pulls M from
+  `from_m_token_account`
+  using
+  `token_authority`
+  then mints
+  ext to
+  `to_ext_token_account`.
+- `unwrap`
+  requires a
+  wrap-authority
+  signer. The
+  token program
+  burns ext
+  from
+  `from_ext_token_account`
+  using
+  `token_authority`
+  then sends M
+  from the
+  vault PDA to
+  `to_m_token_account`.
+- `claim_fees`
+  is
+  `admin`-only.
+- `ext_swap.swap`
+  unwraps the
+  signer's from
+  ext into the
+  swap M
+  account then
+  wraps that M
+  into
+  `to_token_account`
+  via CPI to
+  whitelisted
+  extension
+  programs.
+
+Do not file
+authority-
+gated wrap /
+unwrap of the
+signer's
+tokens or
+admin fee
+claim.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+none at the
+opened-program
+level.
+
+## 2026-09-03: XOXNO leftover MultiversX lending leftover (`bffbbd9` / `2e8c81d`)
+
+Immunefi program
+`xoxno`
+($50,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`XOXNO/rs-lending`
+HEAD
+`bffbbd92`
+and
+`XOXNO/rs-liquid-staking-sc`
+HEAD
+`2e8c81d9`.
+Extract
+`/tmp/xoxno`,
+`/tmp/xoxno-ls`.
+No mainnet
+writes.
+
+Files:
+`controller/src/lib.rs`,
+`controller/src/positions/account.rs`,
+`controller/src/positions/liquidation.rs`,
+`liquidity_layer/src/liquidity.rs`,
+`liquid-staking/src/lib.rs`.
+
+Checked for: a
+stranger
+`withdraw` /
+`borrow` of
+another
+account; a
+`liquidate` of
+a healthy
+position; a
+stranger
+`withdraw` of
+someone else's
+unbonded EGLD.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Controller
+  `supply`
+  credits the
+  caller after
+  `validate_supply_payment`.
+  `withdraw` /
+  `borrow`
+  require the
+  account NFT
+  via
+  `validate_account`.
+- `repay` pays
+  down a named
+  account with
+  the caller's
+  transfers.
+- `liquidate`
+  requires
+  health factor
+  < 1.0 then
+  seizes
+  collateral
+  for the
+  liquidator.
+- Liquidity
+  layer
+  `borrow` /
+  `withdraw` /
+  `repay` are
+  `only_owner`
+  (the
+  controller).
+- Liquid
+  staking
+  `delegate`
+  uses
+  `call_value`
+  EGLD for
+  `get_caller`.
+  `unDelegate`
+  burns the
+  paid LS
+  tokens.
+  `withdraw`
+  burns the
+  caller's
+  matured
+  unstake
+  tokens and
+  pays
+  `get_caller`.
+
+Do not file
+NFT-gated
+withdraw /
+borrow, anyone
+repay of a
+named account,
+or liquidation
+of an
+unhealthy
+position.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+common utils
+(shared types)
+already opened
+with the
+controller.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -36401,6 +36625,15 @@ CustomToken; KYC) is logged
 (remaining listed is vault /
 router impls 404 / Provenance
 vaults / website);
+KAST leftover Solana
+USDK/USDKY extension leftover
+(`c22b6b8` wrap / unwrap /
+ext_swap; KYC) is logged
+(listed leftover exhausted);
+XOXNO leftover MultiversX
+lending leftover (`bffbbd9` /
+`2e8c81d`; KYC) is logged
+(listed leftover exhausted);
 Axelar leftover Aurora/Fantom
 gateways + remaining axlUSDC
 leftover (Sourcify / official
