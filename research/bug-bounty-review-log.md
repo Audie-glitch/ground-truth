@@ -3239,6 +3239,63 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: DeFi Saver V3 executor + FL + auth (`e623f20`)
+
+Immunefi program `defisaver` ($350,000, `kyc: false`).
+GitHub asset `defisaver-v3-contracts/tree/main/contracts`
+(excluding `mocks` and `views`), added 24 Sep 2025.
+Local clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction. First slice: the wallet
+execution spine, not protocol-specific actions.
+
+Files: `contracts/core/RecipeExecutor.sol`,
+`contracts/core/strategy/{StrategyExecutor,StrategyExecutorCommon,ProxyAuth,SafeModuleAuth,BotAuth,WalletAuth,SubStorage,SubProxy}.sol`,
+`contracts/auth/{Permission,DSProxyPermission,AdminAuth}.sol`,
+`contracts/actions/flashloan/{FLAction.sol,helpers/FLHelper.sol}`.
+
+Checked for: a bot executing a sub it does not own;
+a strategy hash mismatch that still runs; FL callback
+from a non-lender or a swapped recipe; leftover
+execute-permission on the wallet after FL; Aave
+`modes` / `onBehalfOf` that opens debt on a third
+party; `executeActionsFromFL` callable without a
+live FL.
+
+Result: no user-exploitable finding on this slice.
+
+- `executeRecipe` is meant to be delegatecalled from
+  the user’s wallet. Direct calls run actions in the
+  RecipeExecutor’s own context (no user inventory).
+- Strategy path: `BotAuth` owner-approved callers,
+  stored `strategySubHash` must match, sub must be
+  enabled. `ProxyAuth` / `SafeModuleAuth` are
+  `onlyExecutor`. Triggers run before actions;
+  one-shot strategies `deactivateSub` as the wallet
+  (owner). Changeable triggers update via the same
+  owner check.
+- FL: RecipeExecutor grants the FL action execute /
+  module rights, calls `executeAction` on FLAction
+  (not a delegatecall), then revokes. Callbacks
+  require the matching lender and, where the
+  interface has an initiator, `address(this)`.
+  Funds go to the encoded wallet; payback is an
+  exact balance check (stETH 2-wei faucet exception).
+  `_executeRecipe` re-enters the wallet →
+  `executeActionsFromFL` (skips index 0). UniV3
+  verifies `getPool(token0, token1, fee)`.
+- Aave/Spark `modes` / `onBehalfOf` are user-chosen.
+  Debt mode still has to satisfy the payback
+  balance check, so a third-party credit-delegate
+  cannot be left with unpaid FL debt through a
+  successful callback.
+- `SubProxy.subscribeToStrategy` (wallet context)
+  enables ProxyAuth / SafeModuleAuth. Sub ids are
+  wallet-owned.
+
+Remaining DFS: `exchangeV3`, protocol `actions/*`
+(Aave/Morpho/Compound/Liquity/…), `tx-saver`,
+triggers. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3275,13 +3332,14 @@ are exhausted. Remaining MoC: governance machines
 and live Rootstock v1 proxies if a later pass wants
 addresses rather than the V2 tree. 1inch Aqua opcode
 set and Aqua-listed solidity-utils mixins / libraries
-(`5b597e4`) are exhausted. Next unreviewed Immunefi
-GitHub-or-recent trees: DeFi Saver V3
-(`defisaver-v3-contracts/contracts`, $350k, no KYC),
-Jito restaking / stake-deposit-interceptor ($250k,
-KYC), Enzyme Blue adapters added as etherscan
-addresses after Apr 2026 (Bebop / ThreeOneThird /
-SharesSplitter). Superteam API rechecked 03:40 UTC
+(`5b597e4`) are exhausted. DeFi Saver V3 executor + FL + auth (`e623f20`) is
+logged; remaining DFS is `exchangeV3` and protocol
+`actions/*`. Next unreviewed Immunefi
+GitHub-or-recent trees: DeFi Saver protocol actions
+and exchange, Jito restaking /
+stake-deposit-interceptor ($250k, KYC), Enzyme Blue
+adapters added as etherscan addresses after Apr 2026
+(Bebop / ThreeOneThird / SharesSplitter). Superteam API rechecked 03:40 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
