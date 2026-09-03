@@ -64292,3 +64292,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a recursion wrapper that binds the binary commitment and fails closed on invalid proofs as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: airbender CS / prover / verifier.
+
+## 2026-09-03: Wormhole leftover remaining CosmWasm IBC leftover (`c58827e`)
+
+Immunefi program `wormhole` ($1,000,000, `kyc: true`). Official remaining listed after CosmWasm token-bridge and core leftovers. Official clone `/tmp/wormhole` `c58827e` (sparse `cosmwasm/contracts/{wormhole-ibc,ibc-translator,wormchain-ibc-receiver}`). Opened `wormhole-ibc` execute/IBC, `ibc-translator` execute/reply, `wormchain-ibc-receiver` execute/IBC. No mainnet writes. No exploit PoCs.
+
+Checked for: IBC packet stealing bank tokens; `CompleteTransferAndConvert` paying a stranger; `GatewayConvertAndTransfer` burning another wallet's factory denom; channel-map updates without a governance VAA.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `wormhole-ibc` `SubmitVAA` / `PostMessage` wrap core (already leftover-logged). `PostMessage` only sends attributes on the gov-whitelisted `WORMCHAIN_CHANNEL_ID`. `SubmitUpdateChannelChain` requires a verified Solana governance emitter VAA for this chain, archives the hash, and only stores a Wormchain channel. `ibc_packet_receive` is rejected; channel-open requires `ibc-wormhole-v1`.
+- `ibc-translator` `CompleteTransferAndConvert` calls token-bridge `CompleteTransferWithPayload` (relayer = caller) and additionally requires the VAA recipient to be this contract. Reply deletes `CURRENT_TRANSFER`, mints the tokenfactory denom to the contract, and `MsgTransfer`s to the payload recipient on a gov-mapped channel. `GatewayConvertAndTransfer*` burns only `info.funds[0]` when the denom is `factory/<this-contract>/<cw20>` and matches `CW_DENOMS`. Channel-map updates require `VerifyVaa` + governance emitter + Wormchain/Any dest + archive.
+- `wormchain-ibc-receiver` only applies governance `UpdateChannelChain` after `VerifyVaa` + archive. Packet receive re-emits the six Wormhole publish attributes and does not move tokens.
+
+Do not file a payload3 complete that IBC-sends to the VAA recipient, or a self-funded factory burn into `InitiateTransfer`, as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / wormchain / remaining CosmWasm (accountant / cw20-wrapped) / algorand / aptos / near, and Relayer Sourcify 404.
