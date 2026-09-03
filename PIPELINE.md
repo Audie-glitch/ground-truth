@@ -4,13 +4,18 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~12:40 UTC. Dates verified against each
+Status as of 3 September 2026, ~12:46 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:40 UTC;
-246 programs; no Sep 2026 launches; Filecoin leftover remaining lotus index leftover is logged;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:46 UTC;
+246 programs; no Sep 2026 launches; Aave leftover remaining WrappedTokenGatewayV2 leftover is logged;
+Aave leftover remaining Lending Rate Oracle leftover is logged;
+Aave leftover remaining GhoReserve leftover is logged;
+Aave leftover remaining EmissionManager leftover is logged;
+Aave leftover remaining v3 AToken leftover is logged;
+Filecoin leftover remaining lotus index leftover is logged;
 Jito leftover remaining mev-programs tip leftover is logged;
 Filecoin leftover remaining lotus exchange leftover is logged;
 Filecoin leftover remaining lotus messagesigner leftover is logged;
@@ -1542,6 +1547,23 @@ protocol-v2 LendingPool leftover
 (`ce53c4a`; KYC) is logged
 (remaining listed is
 v2 configurator / oracle / tokens).
+Aave leftover remaining
+v3 AToken leftover
+(`cff15de`; KYC) is logged.
+Aave leftover remaining
+EmissionManager leftover
+(`cff15de`; KYC) is logged.
+Aave leftover remaining
+GhoReserve leftover
+(`23859bb`; KYC) is logged.
+Aave leftover remaining
+Lending Rate Oracle leftover
+(Sourcify; KYC) is logged.
+Aave leftover remaining
+WrappedTokenGatewayV2 leftover
+(Sourcify; KYC) is logged
+(remaining listed is
+v2 Collector impl / FixedPrice / v3 VariableDebt).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2486,6 +2508,21 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Aave leftover remaining
   protocol-v2 LendingPool leftover
   (`ce53c4a`; KYC),
+  Aave leftover remaining
+  v3 AToken leftover
+  (`cff15de`; KYC),
+  Aave leftover remaining
+  EmissionManager leftover
+  (`cff15de`; KYC),
+  Aave leftover remaining
+  GhoReserve leftover
+  (`23859bb`; KYC),
+  Aave leftover remaining
+  Lending Rate Oracle leftover
+  (Sourcify; KYC),
+  Aave leftover remaining
+  WrappedTokenGatewayV2 leftover
+  (Sourcify; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai

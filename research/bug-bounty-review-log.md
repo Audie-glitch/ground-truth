@@ -43789,6 +43789,480 @@ v2 configurator /
 oracle /
 tokens.
 
+## 2026-09-03: Aave leftover remaining v3 AToken leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after protocol-v2
+pin
+exhaustion.
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-v3/AToken.sol`.
+Do not rematch
+v2 AToken leftover
+(`ce53c4a`).
+No mainnet
+writes.
+
+Files:
+`src/contracts/protocol/tokenization/AToken.sol`.
+
+Checked for:
+stranger
+`mint`
+/
+`burn`
+/
+`transferUnderlyingTo`
+without
+the
+Pool;
+user
+transfer
+skipping
+`finalizeTransfer`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `mint`,
+  `burn`,
+  `mintToTreasury`,
+  `transferOnLiquidation`,
+  and
+  `transferUnderlyingTo`
+  are
+  `onlyPool`.
+  `TREASURY`
+  is
+  immutable.
+- User
+  `_transfer`
+  scales
+  by
+  the
+  reserve
+  income
+  index
+  then
+  `POOL.finalizeTransfer`s
+  (HF
+  check
+  on
+  leftover-logged
+  Pool).
+- `permit`
+  is
+  EIP-2612
+  `ecrecover`.
+  This
+  token
+  does
+  not
+  let
+  a
+  stranger
+  pull
+  another
+  user's
+  underlying.
+
+Do not file
+a
+pool-gated
+v3
+aToken
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+EmissionManager /
+GhoReserve /
+v2 etherscan
+oracles
+/
+wrappers.
+
+## 2026-09-03: Aave leftover remaining EmissionManager leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after v3 AToken
+leftover.
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-v3/EmissionManager.sol`.
+Do not rematch
+RewardsController
+leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/rewards/EmissionManager.sol`.
+
+Checked for:
+stranger
+`setEmissionPerSecond`
+or
+`configureAssets`
+without
+being
+the
+reward's
+emission
+admin;
+`setClaimer`
+without
+owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `onlyEmissionAdmin(reward)`
+  gates
+  transfer
+  strategy,
+  reward
+  oracle,
+  and
+  distribution
+  end.
+  `configureAssets`
+  /
+  `setEmissionPerSecond`
+  require
+  every
+  listed
+  reward's
+  admin
+  is
+  `msg.sender`.
+- `setClaimer`,
+  `setEmissionAdmin`,
+  and
+  `setRewardsController`
+  are
+  `onlyOwner`.
+  This
+  contract
+  does
+  not
+  hold
+  reward
+  tokens.
+
+Do not file
+an
+emission-admin
+config
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+GhoReserve /
+FixedPrice /
+v2 etherscan
+leftovers.
+
+## 2026-09-03: Aave leftover remaining GhoReserve leftover (`23859bb`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after
+EmissionManager
+leftover.
+Official
+`aave-dao/gho-origin`
+`23859bb`.
+Extract
+`/tmp/aave-v3/GhoReserve.sol`.
+Do not rematch
+GSM
+/
+Gsm4626
+leftovers.
+No mainnet
+writes.
+
+Files:
+`src/contracts/facilitators/gsm/GhoReserve.sol`.
+
+Checked for:
+stranger
+`use`
+draining
+GHO
+without
+a
+limit;
+`restore`
+crediting
+another
+entity;
+`transfer`
+without
+`TRANSFER_ROLE`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `use`
+  requires
+  `limit >= used + amount`
+  for
+  `msg.sender`
+  then
+  transfers
+  GHO
+  to
+  the
+  caller.
+  Unlisted
+  entities
+  have
+  limit
+  0.
+- `restore`
+  decreases
+  `msg.sender`'s
+  used
+  (checked
+  underflow)
+  and
+  `transferFrom`s
+  GHO
+  in.
+- `addEntity`
+  /
+  `removeEntity`
+  are
+  `ENTITY_MANAGER_ROLE`.
+  `setLimit`
+  is
+  `LIMIT_MANAGER_ROLE`.
+  `transfer`
+  is
+  `TRANSFER_ROLE`.
+  `initialize`
+  is
+  `VersionedInitializable`.
+
+Do not file
+a
+limit-capped
+entity
+draw
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+FixedPriceStrategy /
+v2 Lending Rate Oracle /
+WrappedTokenGatewayV2 /
+v2 Collector.
+
+## 2026-09-03: Aave leftover remaining Lending Rate Oracle leftover (Sourcify)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+etherscan
+`0x8A32f49FFbA88aba6EFF96F45D8BD1D4b3f35c7D`
+(v2
+Lending
+Rate
+Oracle).
+Sourcify
+`fields=all`
+exact
+`LendingRateOracle.sol`.
+Do not rematch
+v2 AaveOracle
+leftover.
+No mainnet
+writes.
+
+Files:
+Sourcify
+`LendingRateOracle.sol`.
+
+Checked for:
+stranger
+`setMarketBorrowRate`
+rewriting
+stable
+borrow
+quotes.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `getMarketBorrowRate`
+  is
+  view.
+  `setMarketBorrowRate`
+  is
+  `onlyOwner`.
+  This
+  contract
+  does
+  not
+  move
+  tokens.
+
+Do not file
+an
+owner-gated
+rate
+oracle
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+WrappedTokenGatewayV2 /
+v2 Collector /
+FixedPriceStrategy /
+v3 VariableDebtToken.
+
+## 2026-09-03: Aave leftover remaining WrappedTokenGatewayV2 leftover (Sourcify)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+etherscan
+`0xEFFC18fC3b7eb8E676dac549E0c693ad50D1Ce31`.
+Sourcify
+exact
+`WrappedTokenGatewayV2.sol`.
+Do not rematch
+v3 WrappedTokenGateway
+leftover
+(`cff15de`).
+No mainnet
+writes.
+
+Files:
+Sourcify
+`contracts/WrappedTokenGatewayV2.sol`.
+
+Checked for:
+`withdrawETH`
+pulling
+another
+user's
+aWETH
+without
+allowance;
+`borrowETH`
+opening
+debt
+on
+a
+stranger;
+emergency
+sweeps
+without
+owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `withdrawETH`
+  /
+  `withdrawETHWithPermit`
+  `transferFrom`
+  `msg.sender`'s
+  aWETH
+  then
+  unwrap
+  to
+  `to`.
+- `borrowETH`
+  borrows
+  `onBehalfOf = msg.sender`
+  and
+  sends
+  ETH
+  to
+  `msg.sender`.
+  `depositETH`
+  /
+  `repayETH`
+  spend
+  `msg.value`.
+- Emergency
+  ERC20
+  /
+  ETH
+  sweeps
+  are
+  `onlyOwner`.
+
+Do not file
+an
+allowance-gated
+ETH
+wrapper
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+v2 Collector
+impl /
+FixedPriceStrategy /
+v3 VariableDebtToken /
+GhoOracle
+404.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43994,9 +44468,19 @@ Jito leftover remaining mev-programs tip leftover (`ce1dfb6`)
 is logged.
 Filecoin leftover remaining lotus index leftover (`7740217`)
 is logged.
+Aave leftover remaining v3 AToken leftover (`cff15de`)
+is logged.
+Aave leftover remaining EmissionManager leftover (`cff15de`)
+is logged.
+Aave leftover remaining GhoReserve leftover (`23859bb`)
+is logged.
+Aave leftover remaining Lending Rate Oracle leftover (Sourcify)
+is logged.
+Aave leftover remaining WrappedTokenGatewayV2 leftover (Sourcify)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner (actors wrappers / types / lib).
-Remaining listed Aave: official protocol-v2 leftover that trees open is exhausted (PriceOracleSentinel + OwnableFacilitator 404).
+Remaining listed Aave: v2 Collector impl / FixedPriceStrategy / v3 VariableDebtToken / GhoOracle 404.
 Remaining listed Jito: `jito-solana` / `priority-fee-distribution` (if still unused).
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -44029,6 +44513,17 @@ Do not rematch Filecoin lotus events leftover.
 Do not rematch Filecoin lotus genesis leftover.
 Do not rematch Filecoin lotus beacon leftover.
 Do not rematch Filecoin lotus net leftover.
+Do not rematch Filecoin lotus messagesigner leftover.
+Do not rematch Filecoin lotus exchange leftover.
+Do not rematch Filecoin lotus index leftover.
+Do not rematch Jito mev-programs tip leftover.
+Do not rematch Aave protocol-v2 math libs leftover.
+Do not rematch Aave protocol-v2 upgradeability leftover (`ce53c4a`).
+Do not rematch Aave v3 AToken leftover.
+Do not rematch Aave EmissionManager leftover.
+Do not rematch Aave GhoReserve leftover.
+Do not rematch Aave Lending Rate Oracle leftover.
+Do not rematch Aave WrappedTokenGatewayV2 leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Aave protocol-v2 Configurator leftover.
 Do not rematch Aave protocol-v2 AToken leftover.
@@ -46708,6 +47203,16 @@ protocol-v2);
 Aave leftover remaining protocol-v2 LendingPool leftover
 (`ce53c4a`) is logged (remaining listed is
 v2 configurator / oracle / tokens);
+Aave leftover remaining v3 AToken leftover
+(`cff15de`) is logged;
+Aave leftover remaining EmissionManager leftover
+(`cff15de`) is logged;
+Aave leftover remaining GhoReserve leftover
+(`23859bb`) is logged;
+Aave leftover remaining Lending Rate Oracle leftover
+(Sourcify) is logged;
+Aave leftover remaining WrappedTokenGatewayV2 leftover
+(Sourcify) is logged;
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
