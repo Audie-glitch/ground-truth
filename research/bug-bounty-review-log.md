@@ -12751,7 +12751,8 @@ Mux: mux-protocol
 `governance` /
 `libraries` / `orderbook`
 (28 Aug 2025 leftover),
-mux-degen, mux-staking.
+mux-degen (logged
+below), mux-staking.
 Aggregator
 `aggregators/gmx` is the
 unsupported GMX1
@@ -12869,9 +12870,105 @@ exhausted (`evm-v1.0` is
 the old pin). Next
 leftover: Mux leftover
 (mux-protocol /
-degen / staking), or
-Twyne Sourcify-404
-vaults. Not submitted.
+staking; degen logged
+below), or Twyne
+Sourcify-404 vaults.
+Not submitted.
+
+## 2026-09-03: Mux degen pool leftover (`c5bfe81`)
+
+Immunefi program `mux`
+($100,000, `kyc: false`,
+smart-contract rewards
+are critical-only).
+`mux-degen-protocol`
+listed 28 Aug 2024 (same
+day as the aggregator
+repo). Local clone
+`/tmp/mux-degen` at
+`c5bfe81` (“add
+comment”). Program OOS:
+`test` / `oracle` /
+`reader`. No mainnet
+interaction.
+
+Files:
+`facets/{Trade,Liquidity,
+Account}.sol`,
+`orderbook/OrderBook.sol`,
+`libraries/{LibOrderBook,
+LibPoolStorage,LibAsset,
+LibSubAccount,
+LibReferenceOracle}.sol`.
+
+Checked for: deposit into
+a stranger’s
+`subAccountId`; first-LP
+MLP inflation; remove
+that spends reserved
+spot; liquidate of a
+solvent account;
+broker-less fill.
+
+Result: no
+user-exploitable
+critical. Not submitted.
+
+- `subAccountId` is
+  `account ||
+  collateralId ||
+  assetId || isLong`.
+  Place / deposit /
+  withdraw-all require
+  `owner() == msg.sender`
+  or an owner-set
+  `DELEGATOR`. Fills,
+  liquidate, ADL, and
+  broker rebate are
+  `BROKER_ROLE`. Pool
+  facets are
+  `onlyOrderBook`.
+- Deposit: OrderBook
+  `_transferIn` to the
+  pool, then
+  `depositCollateral`
+  credits wad. Pool does
+  not pull ERC20.
+- First MLP mint uses
+  nav `1e18`. AUM is
+  tracked
+  `spotLiquidity` ±
+  capped trader PnL, not
+  raw ERC20. `donate`
+  increases spot without
+  minting. Remove burns
+  MLP held by the
+  OrderBook and refuses
+  if reservation USD >
+  pool USD without PnL.
+- Open/close size must
+  be a lot multiple.
+  Fees come from
+  collateral. Close
+  requires MM safe after
+  the fill. Liquidate
+  requires MM unsafe
+  including pending
+  funding (mark prices
+  are broker-supplied,
+  then Chainlink-
+  truncated when a
+  reference oracle is
+  set).
+- Funding is
+  permissionless on the
+  interval; traders pay
+  LP, never each other.
+
+Not submitted. Remaining
+Mux: mux-protocol
+folders (28 Aug 2025)
+and mux-staking.
 
 ## Next candidates
 
@@ -13284,9 +13381,11 @@ orderbook (`8674f2b`) is
 logged; Mux aggregator
 proxyFactory + GmxV2 +
 LendingPool (`0f36131`)
-is logged (remaining Mux
-is mux-protocol folders,
-mux-degen, mux-staking);
+and Mux degen pool
+(`c5bfe81`) are logged
+(remaining Mux is
+mux-protocol folders and
+mux-staking);
 Obyte Coop AA
 (`d7d5e57`), Friends AA
 (`45019f9`),
