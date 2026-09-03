@@ -30355,3 +30355,145 @@ independently
 Sourcify-fetched,
 and other docs
 addresses.
+
+## 2026-09-03: Aspida leftover (Sourcify)
+
+Immunefi program
+`Aspida`
+($50,000, `kyc: false`).
+Unique no-KYC listed
+Ethereum slice.
+Sourcify
+`exact_match` on the
+five listed
+TransparentUpgradeableProxy
+rows. Blockscout
+implementations:
+`aETH`
+`0x5f898DC62d699ecBeD578E4A9bEf46009EA8424b`
+behind
+`0xFC87753Df5Ef5C368b5FBA8D4C5043b77e8C5b39`,
+`saETH`
+`0xc69809947E6EDaf21fF7F2e3784727a15a09DE3d`
+behind
+`0xF1617882A71467534D14EEe865922de1395c9E89`,
+`CorePrimary`
+`0x55b6aF0e89eAd974a80b70C5B30589B088113e24`
+behind
+`0x5341864D99B50155F782C562Bd15Ac4a0A3C117e`,
+`RewardOracle`
+`0xD3aFE58031998EAf2b0cCeE76dBd8ca50B19DCCa`
+behind
+`0xD691b1c47a578f51aDa825A8565cAfceB401EdaC`,
+`StETHMinter`
+`0x76a444fa85d8DA2209D45c6f89D7f51b54FcdDF9`
+behind
+`0x25a01dBde45cc5Bb7071EB3c3b2F983ea923bec5`.
+Extract
+`/tmp/aspida-impl`.
+No mainnet
+interaction.
+
+Files:
+`contracts/aETH.sol`,
+`contracts/saETH.sol`,
+`contracts/CorePrimary.sol`,
+`contracts/RewardOracle.sol`,
+`contracts/StETHMinter.sol`,
+`contracts/core/Submit.sol`,
+`contracts/core/WithdrawalQueue.sol`,
+`contracts/strategy/model/aETHMinter.sol`.
+
+Checked for: a
+stranger
+`minterMint` of aETH
+with cap 0;
+`submit` that mints
+without ETH;
+`withdraw` /
+`claim` of another
+user's queue;
+StETH deposit that
+pulls another owner
+without allowance;
+`submitEpochReward`
+by a random caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `aETH.mint` is
+  `onlyManager`.
+  `minterMint`
+  requires
+  `mintAmounts +
+  amount <=
+  mintCaps`
+  (default cap 0).
+  `minterBurn` burns
+  the caller.
+  `burnFrom` is
+  manager-only and
+  spends allowance
+  when the account
+  is not the caller.
+- `submit` /
+  `submit(address)`
+  mint aETH for
+  `msg.value`.
+  `submitAndStake`
+  mints to the core
+  then deposits into
+  saETH for
+  `_receiver`.
+- Core
+  `withdraw` /
+  `withdrawWithPermit`
+  burn the caller's
+  aETH (permit owner
+  is `msg.sender`)
+  and queue that
+  sender. `claim`
+  uses
+  `userQueueIds_[msg.sender]`.
+- saETH is ERC-4626
+  `sync`.
+  `depositWithPermit`
+  permits the
+  caller. `withdraw`
+  / `redeem` use
+  OZ allowance when
+  `owner != caller`.
+- StETHMinter
+  `deposit` /
+  `depositWithPermit`
+  `safeTransferFrom`
+  the caller and
+  `minterMint` to
+  the chosen
+  receiver.
+- `deposit` /
+  `depositCheck`
+  are
+  `onlyManager`.
+  `supplyReward` is
+  `onlyRewardOracle`.
+  `submitEpochReward`
+  is `onlyManager`.
+
+Do not file
+owner
+`_transferOut`,
+manager beacon
+deposits, or
+reward-oracle mint
+as stranger theft.
+
+Not submitted.
+Listed Aspida
+leftover is
+exhausted at the
+five Immunefi
+Ethereum addresses.
