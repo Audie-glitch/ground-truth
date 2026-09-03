@@ -66261,3 +66261,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an ACL-gated configurator as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: periphery / rewards.
+
+## 2026-09-03: Aave leftover remaining RewardsController leftover (`cff15de`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after ACL + PoolConfigurator leftover. Official `aave-dao/aave-v3-origin` `cff15de`. Opened listed `RewardsController.sol` and `EmissionManager.sol`. Do not rematch Pool / ACL leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `claimRewardsOnBehalf` without an authorized claimer; `configureAssets` without an emission admin; `handleAction` rewriting another asset's accrued rewards.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `claimRewards` / `claimAllRewards` credit `msg.sender`. On-behalf variants are `onlyAuthorizedClaimers`. Accrual uses `getScaledUserBalanceAndSupply` on each asset, not caller-supplied balances.
+- `configureAssets` / transfer-strategy / oracle updates on the controller are `onlyEmissionManager`. `EmissionManager.configureAssets` / `setEmissionPerSecond` require `_emissionAdmins[reward] == msg.sender`. `setClaimer` / `setEmissionAdmin` are `onlyOwner`.
+- `handleAction` keys updates by `msg.sender` (the aToken). A stranger call cannot rewrite a real aToken's reward index.
+
+Do not file an emission-admin-gated rewards claim as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: periphery.
