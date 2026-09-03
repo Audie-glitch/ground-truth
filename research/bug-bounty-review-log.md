@@ -47578,7 +47578,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`account_saver` / `bank_client` / `prioritization_fee`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank_client` / `prioritization_fee`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed Arbitrum: websites if still unused. Official Arbitrum leftover that listed trees open is exhausted except unused official leftovers if still open. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged.
@@ -47669,6 +47669,7 @@ Do not rematch Jito jito-solana validated_reward_certificate leftover.
 Do not rematch Jito jito-solana validated_block_finalization leftover.
 Do not rematch Jito jito-solana fee_distribution leftover.
 Do not rematch Jito jito-solana bank money-path leftover.
+Do not rematch Jito jito-solana account_saver leftover.
 Do not rematch Chainlink leftover remaining CCIP Sui leftover.
 Do not rematch Chainlink leftover remaining CCIP Solana leftover.
 Do not rematch Jito jito-solana snapshot_package leftover.
@@ -50494,8 +50495,10 @@ Jito leftover remaining jito-solana validated_block_finalization leftover
 Jito leftover remaining jito-solana fee_distribution leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana bank money-path leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana account_saver leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-account_saver / bank_client / prioritization_fee if still unused);
+bank_client / prioritization_fee if still unused);
 Optimism leftover remaining op-node deposits + withdrawals leftover
 (`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
@@ -73324,3 +73327,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a bank test helper or capitalization counter as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`account_saver` / `bank_client` / `prioritization_fee`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after bank money-path leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/account_saver.rs`. Do not rematch bank money-path leftover, transaction_execution leftover, or remaining runtime leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `collect_accounts_to_store` that persists a failed tx's post-execution accounts so a stranger credit sticks; `collect_accounts_for_successful_tx` that stores an invoked account the tx did not pass; `collect_accounts_for_failed_tx` that drops the fee-payer rollback.
+
+Result: no user-exploitable finding. Not submitted.
+
+- This is a post-SVM collect helper, not a stranger IX. It does not move lamports. It returns `Vec<(&Pubkey, &AccountSharedData)>` from already-loaded execution results for leftover-logged `store_accounts`.
+- `NoOp` and unexecuted results store nothing. Successful txs store writable + touched accounts, skipping invoked keys that were not instruction accounts (comment: a committable tx cannot modify those).
+- Failed executed txs and `FeesOnly` store leftover-logged `rollback_accounts` only (fee payer / nonce rollback). Tests cover fee-payer-only, separate nonce+fee-payer, same nonce+fee-payer, and fees-only.
+- Geyser `txs_refs` is optional reference collection. Capacity helper is an allocation hint. No credit path.
+
+Do not file an account-collect helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank_client` / `prioritization_fee`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
