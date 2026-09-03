@@ -3961,8 +3961,105 @@ Result: no user-exploitable finding.
 
 Remaining LlamaLend: supply / self-liquidate /
 advanced swapper paths. Remaining DFS: those,
-Fluid Dex T2–T4, `aaveV4` / leftover Aave,
-`mcd`, `tx-saver`, triggers. Not submitted.
+`aaveV4` / leftover Aave, `mcd`, `tx-saver`,
+triggers. Not submitted.
+
+## 2026-09-03: DeFi Saver Fluid Dex T2/T3/T4 (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction.
+
+Files: `contracts/actions/fluid/dex/{FluidDexOpen,
+FluidDexBorrow,FluidDexSupply,FluidDexWithdraw,
+FluidDexPayback}.sol`,
+`logic/dex/{FluidSupply,FluidBorrow,FluidWithdraw,
+FluidPayback}DexLogic.sol`,
+`helpers/{FluidDexTokensUtils,FluidDexModel,
+FluidVaultTypes}.sol`.
+
+Checked for: operate on an NFT the wallet does not
+own; Open that leaves a minted NFT if borrow fails;
+wrap that deposits the wrong ETH amount; max payback
+that keeps leftover debt tokens; T2/T3/T4 helpers
+that accept the wrong vault type.
+
+Result: no user-exploitable finding.
+
+- `operate` / `operatePerfect` run as the wallet.
+  Fluid requires the NFT owner. Open is two-step in
+  one tx: supply with `nftId == 0` (vault mints to
+  the wallet) then borrow. A failed borrow reverts
+  the mint.
+- T3 supply/withdraw use liquidity libraries
+  (`requireLiquidityCollateral`). T2/T4 supply and
+  T3/T4 borrow use DEX libraries
+  (`requireSmartCollateral` / `requireSmartDebt`).
+  Actions call `requireDexVault` first.
+- `shouldSendTokensAsWrapped` only wraps when
+  `wrapEth` is set and that side is native. If wrap
+  is false, `sendTokens` is a no-op (vault already
+  sent to `to`). Max withdraw wraps the
+  vault-returned amount. Max payback pulls
+  `maxAmountToPull`, uses `type(int256).min`,
+  refunds dust as WETH if native, and clears leftover
+  approval. `signed256` reverts above `int256.max`.
+
+Remaining DFS: LlamaLend leftover, `aaveV4` /
+leftover Aave, `mcd`, `tx-saver`, triggers.
+Not submitted.
+
+## 2026-09-03: DeFi Saver Aave V3 + GHO/Umbrella (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction.
+
+Files: `contracts/actions/aaveV3/{AaveV3Supply,
+AaveV3Borrow,AaveV3Withdraw,AaveV3Payback,
+AaveV3ATokenPayback,AaveV3ClaimRewards,
+AaveV3CollateralSwitch,AaveV3SetEMode,
+AaveV3DelegateCredit,AaveV3DelegateWithSig,
+GhoStake,GhoUnstake}.sol`,
+`umbrella/{UmbrellaStake,UmbrellaUnstake,
+UmbrellaClaimRewards}.sol`,
+`helpers/AaveV3Helper.sol`.
+
+Checked for: borrow/withdraw `onBehalf` of a third
+party without Aave credit delegation; payback that
+over-pulls past debt; aToken repay of someone else’s
+debt from pulled tokens; claim that drains another
+account’s rewards; Umbrella stake without slippage
+or unwrap to the wrong asset.
+
+Result: no user-exploitable finding.
+
+- Actions run via wallet delegatecall, so Aave sees
+  `msg.sender` as the wallet. `onBehalf == 0`
+  defaults to the wallet. Borrow against another
+  `onBehalf` needs Aave `approveDelegation`. Supply
+  / payback on behalf are Aave’s intended donate /
+  repay paths. Withdraw always burns the wallet’s
+  aTokens.
+- Payback and aToken payback cap at
+  `getWholeDebt`. aToken repay uses
+  `repayWithATokens` for `address(this)` after
+  pulling aTokens from `from`.
+- `DelegateCredit` calls `approveDelegation` as the
+  wallet. `DelegateWithSig` only relays a valid
+  Aave debt-token signature.
+- Claim rewards / Umbrella claim are
+  `msg.sender` = wallet. GHO stake/unstake and
+  Umbrella stake/unstake pull from `from` or burn
+  the wallet’s shares, then send to `to`. Umbrella
+  stake/unstake enforce `minSharesOut` /
+  `minAmountOut`. Amount `0` only starts cooldown.
+
+Aave V3 supply/borrow/withdraw/payback were already
+logged in a narrower slice; this pass adds aToken
+payback, delegation, GHO, and Umbrella. Remaining
+DFS: LlamaLend leftover, `aaveV4`, `mcd`,
+`tx-saver`, triggers. Not submitted.
 
 ## Next candidates
 
@@ -4004,16 +4101,16 @@ solidity-utils mixins / libraries (`5b597e4`) are
 exhausted. DeFi Saver V3 executor + FL + auth
 (`e623f20`) and exchangeV3 + sell actions (`e623f20`)
 are logged; Morpho Blue, Liquity V2, Fluid T1
-+ liquidity logic, Aave V3, Comp V2/V3, Spark,
-Liquity V1, CurveUsd core, CurveUsd
-advanced/transient, Euler V2, and LlamaLend
-core (`e623f20`) are logged. Remaining DFS is
-LlamaLend leftover / Fluid Dex T2–T4 /
-`aaveV4` / leftover Aave / `mcd`,
-`tx-saver`, and triggers. Next unreviewed
-Immunefi GitHub-or-recent trees: those DFS
-trees, Jito `jito-solana` / `mev-programs` ($250k,
-KYC; interceptor `dbd8ce4` and restaking
++ liquidity logic, Fluid Dex T2/T3/T4, Aave V3
++ GHO/Umbrella, Comp V2/V3, Spark, Liquity V1,
+CurveUsd core, CurveUsd advanced/transient,
+Euler V2, and LlamaLend core (`e623f20`) are
+logged. Remaining DFS is LlamaLend leftover /
+`aaveV4` / leftover Aave / `mcd`, `tx-saver`,
+and triggers. Next unreviewed Immunefi
+GitHub-or-recent trees: those DFS trees, Jito
+`jito-solana` / `mev-programs` ($250k, KYC;
+interceptor `dbd8ce4` and restaking
 `vault_*` / `restaking_*` at `db90840` are
 exhausted), Enzyme Blue adapters added as etherscan
 addresses after Apr 2026 (Bebop / ThreeOneThird /
