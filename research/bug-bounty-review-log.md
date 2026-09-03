@@ -30814,19 +30814,39 @@ logged.
 GMX leftover V2 Shift leftover
 (Sourcify Arb ShiftHandler /
 ShiftVault / ExternalHandler /
-FeeHandler) is logged
-(remaining listed is V1
-Order Book / Timelock /
-StakedGlp / USDG, Avax
-twins, and V2 Oracle /
-Reader rows);
+FeeHandler) is logged.
+GMX leftover V2 Oracle + V1
+Order Book leftover
+(Sourcify Arb Oracle / Reader
+/ OrderBook / USDG / Timelock
+V1+V2 / StakedGlp) is logged
+(remaining listed is Avax
+twins and Sourcify-404
+Staked Glp Distributor);
 Celer leftover ETH staking /
 SGN / cBridge leftover
-(Sourcify; KYC) is logged
-(listed ETH leftover
-exhausted; remaining listed
-is other-chain cBridge +
-the web app);
+(Sourcify; KYC) is logged.
+Celer leftover remaining
+cBridge deployments leftover
+(Sourcify Arb / Polygon /
+Avalanche / Fantom /
+Optimism / Boba / BSC; KYC)
+is logged (listed cBridge
+leftover exhausted;
+remaining listed is the
+web app);
+Pyth Network leftover EVM
+(official GitHub Pyth /
+Entropy / Lazer; KYC) is
+logged (remaining listed is
+Solana / Sui / staking);
+Axelar leftover ETH gateway
+/ ITS / ITF leftover
+(Sourcify + official GitHub;
+KYC) is logged (remaining
+listed is other-chain
+gateways / axlUSDC and
+axelar-core / tofnd);
 DeXe Protocol leftover
 (Sourcify + official
 GitHub UserRegistry /
@@ -35841,3 +35861,162 @@ entry contracts,
 and DLT
 axelar-core /
 tofnd.
+
+## 2026-09-03: GMX leftover V2 Oracle + V1 Order Book leftover (Sourcify)
+
+Immunefi program
+`gmx` ($5,000,000,
+`kyc: false`).
+Shift leftover
+already logged.
+This slice is the
+listed remaining
+V2 Oracle / Reader
+plus V1 Order Book /
+USDG / Timelock /
+StakedGlp.
+Arbitrum Sourcify
+`exact_match`
+Oracle
+`0xb8fc96d7a413C462F611A7aC0C912c2FE26EAbC4`
++ Reader
+`0x0537C767cDAC0726c76Bb89e92904fe28fd02fE1`
++ OrderBook
+`0x09f77E8A13De9A35a7231028187E9fD5DB8a2Acb`
++ Timelock V1
+`0x3f3e77421e30271568eF7A0ab5C5F2667675341e`
++ Timelock V2
+`0x7A967D114B8676874FA2cFC1C14F3095C88418Eb`
++ StakedGlp
+`0x01AF26b74409d10e15b102621EDd29c326ba1c55`
+and `match`
+USDG
+`0x45096e7aA921f27590f8F19e457794EB09678141`.
+Staked Glp Tracker
+is Sourcify `match`
+RewardTracker (same
+type already
+logged). Staked Glp
+Distributor still
+Sourcify 404.
+Extract `/tmp/gmx-oracle`.
+No mainnet interaction.
+
+Files:
+`contracts/oracle/Oracle.sol`,
+`contracts/reader/Reader.sol`,
+`contracts/tokens/USDG.sol`,
+`core/OrderBook.sol`,
+`core/Timelock.sol` (V1),
+`governance/Timelock.sol` (V2),
+`staking/StakedGlp.sol`.
+
+Checked for: a
+stranger
+`setPrices` that
+writes a token
+without a
+controller; Reader
+that mutates
+DataStore; USDG
+`mint` by a
+non-vault;
+OrderBook cancel
+that refunds
+another account's
+order; Timelock
+`processMint`
+without admin;
+StakedGlp transfer
+that skips the
+sender cooldown.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Oracle
+  `setPrices` /
+  `setPrimaryPrice`
+  / `clearAllPrices`
+  are
+  `onlyController`.
+  Providers must be
+  enabled. Non-atomic
+  prices must match
+  the token's
+  configured
+  provider and a
+  Chainlink ref
+  band.
+- Reader is
+  view-only.
+- USDG `mint` /
+  `burn` are
+  `onlyVault`.
+  Vault add /
+  remove is
+  `onlyGov`.
+- OrderBook create
+  pulls
+  `msg.sender` /
+  `msg.value` and
+  stores the order
+  on that account.
+  Cancel / update
+  read
+  `orders[msg.sender]`.
+  Execute pays the
+  stored account
+  and the named
+  fee receiver.
+- V1 Timelock
+  mint / approve /
+  setGov / plugin
+  paths are
+  `onlyAdmin` (plus
+  buffer). Token /
+  reward manager
+  roles are
+  separate.
+- V2 Timelock
+  oracle-signer /
+  role / fee-
+  receiver signals
+  are
+  `onlyTimelockAdmin`
+  or
+  `onlyTimelockMultisig`.
+- StakedGlp
+  transfer unstakes
+  the sender after
+  GLP cooldown and
+  restakes for the
+  recipient.
+
+Do not file
+controller oracle
+writes, admin
+timelock mint,
+keeper OrderBook
+execution-fee,
+or vault-only
+USDG mint as
+stranger theft.
+
+Not submitted.
+Listed leftover is
+Arb Oracle /
+Reader / OrderBook
+/ USDG / Timelock
+V1+V2 / StakedGlp.
+Remaining listed:
+Avax twins,
+Sourcify-404
+Staked Glp
+Distributor, and
+same-type Reader
+utils already in
+the Reader
+compilation.
