@@ -35061,10 +35061,12 @@ Babylon leftover vigilante
 KYC) is logged;
 Babylon leftover
 finality-provider leftover
-(`fd28092`; KYC) is logged
+(`fd28092`; KYC) is logged;
+Babylon leftover
+staking-expiry-checker leftover
+(`73f4c7b`; KYC) is logged
 (remaining listed is
-expiry-checker / queue-
-client / babylon node /
+queue-client / babylon node /
 websites);
 Wormhole leftover ETH core +
 TokenBridge leftover
@@ -47337,3 +47339,141 @@ staking program
 (`pyth-network/governance`),
 Lazer Solana /
 Sui / Cardano.
+
+## 2026-09-03: Babylon leftover staking-expiry-checker leftover (`73f4c7b`)
+
+Immunefi program
+`babylon-labs`
+($500,000, `kyc: true`).
+Vigilante +
+covenant leftover
+and
+finality-provider
+leftover already
+logged. This
+slice is listed
+`staking-expiry-checker`
+`release/v1.x`.
+Official clone
+`/tmp/babylon-expiry`
+`73f4c7b`. No
+chain writes from
+this VM.
+
+Files:
+`internal/services/watch_btc_events.go`,
+`internal/services/delegation_handlers.go`,
+`internal/services/pollers.go`,
+`internal/utils/state_transition.go`,
+`internal/db/delegation.go`,
+`internal/db/expiry.go`.
+
+Checked for: a
+stranger Mongo
+write that marks
+someone else's
+delegation
+unbonded before
+the timelock;
+withdrawn without
+a real BTC spend;
+slashing spend
+labeled as a
+clean withdraw.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- This service
+  only writes
+  Phase-1 API
+  Mongo labels
+  (`unbonding` /
+  `unbonded` /
+  `withdrawn`).
+  It cannot
+  spend a
+  staking UTXO.
+- `IsValidUnbondingTx`
+  rebuilds the
+  unbonding path
+  from stored
+  staker / FP /
+  covenant
+  params, checks
+  transfer +
+  spent staking
+  outpoint, no
+  RBF / locktime,
+  and expected
+  unbonding
+  output + fee.
+  Invalid path
+  spends are
+  ignored.
+- Withdrawal
+  validators
+  require the
+  witness script
+  to match the
+  rebuilt
+  timelock path
+  (staking or
+  unbonding).
+  Qualified
+  withdraw is
+  only from
+  `unbonded`.
+- Expiry poller
+  uses
+  `expire_height
+  <= BTC tip`
+  then
+  `QualifiedStatesToUnbonded`
+  (Active or
+  Unbonding by
+  tx type).
+  Historical
+  `IsUTXOSpent`
+  can label
+  withdrawn
+  without
+  re-validating
+  the spend tx
+  (documented
+  TODO). That is
+  an indexer
+  label after a
+  real spend,
+  not stranger
+  theft of BTC.
+
+Do not file
+operator Mongo
+writes, indexer
+mislabel of a
+real spend, or
+stale Active
+after a slashing
+path spend as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+staking-expiry-
+checker v1.x
+opens is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+staking-queue-
+client, babylon
+node, and the
+website /
+toolkit rows.
