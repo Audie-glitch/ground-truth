@@ -73344,3 +73344,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an account-collect helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank_client` / `prioritization_fee`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Chainlink leftover remaining core node leftover (`58d2ba6`)
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after OCR leftover. Official `smartcontractkit/chainlink` `58d2ba6` (`58d2ba658feb47a8d2b8580816d212c84a4e566f`). Opened listed `core/web/{evm,solana,cosmos}_transfer_controller.go`, `router.go`, `sessions_controller.go`, and `core/web/auth/{auth,gql}.go`. Extract `/tmp/cl-core/`. Do not rematch OCR leftover or websites leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: unauthenticated `POST /v2/transfers` that sends node ETH to the caller; a session create that issues a cookie without credentials; a GraphQL mutation that withdraws without admin.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Transfer routes are on `authv2` (`AuthenticateByToken` or `AuthenticateBySession`) and wrapped with `RequiresAdminRole`. Missing session/token aborts 401. Non-admin roles abort 403. `CreateSession` binds email/password (plus WebAuthn if enrolled) and returns 401 on failure.
+- EVM / Solana / Cosmos `Create` send from a node key the admin named (`FromAddress` / `From`) via `TxManager().SendNativeToken` or `relayer.Transact`. They do not default the destination to `msg.sender`. EVM optional balance+fee check unless `AllowHigherAmounts`.
+- GraphQL `/query` uses session-optional `AuthenticateGQL`; the schema has no transfer / sendEth mutation. `eth_transaction` resolvers are read-only presenters.
+
+Do not file an admin-gated node withdrawal as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink core slices (`keystore` / evm txmgr package / ocr2 services) if still unused. Official Chainlink leftover that listed trees open at this money-path level is otherwise exhausted.
