@@ -16,7 +16,8 @@ GitHub of listed types opens is
 exhausted; DeXe Protocol leftover is
 logged; GMX leftover V2 OrderHandler
 leftover is logged; GMX leftover V2
-GlvRouter leftover is logged; Kiln
+GlvRouter leftover is logged; GMX leftover
+V2 Shift leftover is logged; Celer leftover is logged; Kiln
 On-Chain v1 leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -319,12 +320,16 @@ StakedGlp / USDG, Avax twins, and V2
 Oracle / Reader rows).
 GMX leftover V2 GlvRouter leftover
 (Sourcify Arb GlvRouter / GlvHandler /
-GlvVault / SubaccountRouter) is logged
-(remaining listed is ShiftHandler /
-Vault, ExternalHandler, FeeHandler, V1
-Order Book / Timelock / StakedGlp /
-USDG, Avax twins, and V2 Oracle /
-Reader rows).
+GlvVault / SubaccountRouter) is logged.
+GMX leftover V2 Shift leftover
+(Sourcify Arb ShiftHandler / ShiftVault /
+ExternalHandler / FeeHandler) is logged
+(remaining listed is V1 Order Book /
+Timelock / StakedGlp / USDG, Avax twins,
+and V2 Oracle / Reader rows).
+Celer leftover ETH staking / SGN / cBridge
+(Sourcify; KYC) is logged (listed ETH
+leftover exhausted).
 DeXe Protocol leftover (Sourcify
 UserRegistry / SphereXEngine; KYC) is
 logged (remaining listed is
@@ -858,6 +863,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   leftover (GlvHandler /
   GlvVault /
   SubaccountRouter),
+  GMX leftover V2 Shift leftover
+  (ShiftHandler / ShiftVault /
+  ExternalHandler / FeeHandler),
+  Celer leftover ETH staking /
+  SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover
   (Sourcify UserRegistry /
   SphereXEngine; KYC),

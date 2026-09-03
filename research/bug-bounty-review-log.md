@@ -30810,14 +30810,23 @@ GlvRouter leftover
 (Sourcify Arb GlvRouter /
 GlvHandler / GlvVault /
 SubaccountRouter) is
-logged (remaining listed
-is ShiftHandler / Vault,
-ExternalHandler,
-FeeHandler, V1 Order
-Book / Timelock /
+logged.
+GMX leftover V2 Shift leftover
+(Sourcify Arb ShiftHandler /
+ShiftVault / ExternalHandler /
+FeeHandler) is logged
+(remaining listed is V1
+Order Book / Timelock /
 StakedGlp / USDG, Avax
 twins, and V2 Oracle /
 Reader rows);
+Celer leftover ETH staking /
+SGN / cBridge leftover
+(Sourcify; KYC) is logged
+(listed ETH leftover
+exhausted; remaining listed
+is other-chain cBridge +
+the web app);
 DeXe Protocol leftover
 (Sourcify + official
 GitHub UserRegistry /
@@ -35314,3 +35323,153 @@ Fantom /
 Optimism / Boba,
 and the cBridge
 web app.
+
+## 2026-09-03: GMX leftover V2 Shift leftover (Sourcify)
+
+Immunefi program
+`gmx` ($5,000,000,
+`kyc: false`).
+GlvRouter leftover
+already logged.
+This slice is the
+listed remaining
+`ShiftHandler` /
+`ShiftVault` /
+`ExternalHandler` /
+`FeeHandler`.
+Arbitrum Sourcify
+`exact_match`
+ShiftHandler
+`0x48787F7847068f9Cc1398e5f589BEf9744730C8D`
++ ShiftVault
+`0xfe99609C4AA83ff6816b64563Bdffd7fa68753Ab`
++ ExternalHandler
+`0x389CEf541397e872dC04421f166B5Bc2E0b374a5`
++ FeeHandler
+`0x7EB417637a3E6d1C19E6d69158c47610b7a5d9B3`.
+Extract `/tmp/gmx-shift`.
+No mainnet interaction.
+
+Files:
+`contracts/exchange/ShiftHandler.sol`,
+`contracts/shift/ShiftUtils.sol`,
+`contracts/shift/ShiftVault.sol`,
+`contracts/bank/Bank.sol`,
+`contracts/bank/StrictBank.sol`,
+`contracts/external/ExternalHandler.sol`,
+`contracts/fee/FeeHandler.sol`,
+`contracts/fee/FeeUtils.sol`.
+
+Checked for: a
+stranger
+`createShift` that
+binds another
+account; `cancelShift`
+that refunds the
+caller; `executeShift`
+that mints GM to
+the keeper;
+`transferOut` from
+ShiftVault by a
+non-controller;
+`withdrawFees` to
+`msg.sender`;
+`buyback` that pays
+without depositing
+the batch.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `createShift` /
+  `cancelShift` are
+  `onlyController`.
+  `executeShift` is
+  `onlyOrderKeeper`.
+  `_executeShift` is
+  `onlySelf`.
+- `createShift`
+  records WNT +
+  from-market tokens
+  already in the
+  vault and stores
+  them on the named
+  account.
+- `cancelShift`
+  returns from-market
+  tokens to
+  `shift.account()`,
+  not the keeper.
+- `executeShift`
+  withdraws into the
+  vault then deposits
+  to `shift.receiver()`.
+  Direct vault
+  donations are
+  `recordTransferIn`
+  first so they are
+  not folded into
+  the shift.
+- ShiftVault
+  `transferOut` /
+  `recordTransferIn`
+  are
+  `onlyController`.
+- FeeHandler
+  `withdrawFees` is
+  `onlyFeeKeeper`
+  and pays
+  `FEE_RECEIVER`.
+  Permissionless
+  `claimFees` pulls
+  market fees to
+  this contract.
+  `buyback` pulls
+  `batchSize` of the
+  buyback token from
+  `msg.sender` and
+  pays an
+  oracle-capped fee
+  amount back.
+- ExternalHandler
+  `makeExternalCalls`
+  is permissionless
+  and can call any
+  contract as this
+  handler, then
+  refunds leftover
+  tokens on this
+  contract. It does
+  not pull user
+  allowances.
+
+Do not file
+permissionless
+ExternalHandler
+leftover sweep,
+permissionless
+`claimFees` into
+FeeHandler, keeper
+execution-fee
+payment, or
+controller-only
+shift create /
+cancel as stranger
+theft.
+
+Not submitted.
+Listed leftover is
+Arb ShiftHandler /
+ShiftVault /
+ExternalHandler /
+FeeHandler.
+Remaining listed:
+V1 Order Book /
+Timelock /
+StakedGlp / USDG,
+Avax twins, and V2
+Oracle / Reader
+rows.
+
