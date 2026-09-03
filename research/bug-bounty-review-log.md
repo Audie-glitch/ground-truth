@@ -26712,6 +26712,99 @@ CToken / CErc20 /
 CEther / Delegator
 bytecode).
 
+## 2026-09-03: Threshold RebateStaking leftover (`502cd39`)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+Watchtower / Wormhole L1
+leftover is already
+logged. This slice is
+listed Ethereum
+Sourcify
+`RebateStaking` impl
+(`0x25aAF04229f77A9AE80430b3C89E3455Ab2ec22F`
+behind
+`0x0184739C32edc3471D3e4860c8E39a5f3Ff85A45`).
+Local clone
+`/tmp/threshold-tbtc`
+at `502cd39`.
+No mainnet interaction.
+
+Files:
+`solidity/contracts/bridge/RebateStaking.sol`.
+
+Checked for: a
+stranger
+`applyForRebate` that
+zeros someone else's
+treasury fee;
+`finalizeUnstaking`
+of another stake;
+callback rebate
+without
+`setRebateAuthorization`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `applyForRebate`
+  and `cancelRebate`
+  are `onlyBridge`.
+  `getStaker` only
+  redirects a
+  zero-stake
+  delegatee to the
+  staker who set
+  them.
+- `stake` pulls T
+  from the caller.
+  `startUnstaking`
+  and
+  `finalizeUnstaking`
+  move the caller's
+  stake after
+  `unstakingPeriod`.
+- `setRebateAuthorization`
+  is the caller's
+  stake only.
+  `isRebateAuthorized`
+  is false when
+  `getStake` is 0.
+- `forceStakeTransfer`
+  is owner.
+  Same-block
+  `cancelRebate`
+  matching at most
+  one rebate is a
+  documented
+  temporary cap
+  denial, not a
+  drain.
+
+Do not refile 1308
+(rebate timestamp /
+impersonation).
+Vault
+`unmintAndRedeem`
+already binds the
+decoded redeemer.
+
+Not submitted.
+Remaining Threshold
+listed leftover:
+Bridge /
+BridgeGovernance /
+WalletProposalValidator /
+LightRelay /
+TokenholderGovernor /
+ReimbursementPool,
+and
+`keep-network/tbtc-v2`
+typescript.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -27163,6 +27256,8 @@ MaintainerProxy leftover
 Threshold watchtower +
 Wormhole L1 leftover
 (`502cd39`) is logged.
+Threshold RebateStaking leftover
+(`502cd39`) is logged.
 Arkadiko leftover (Hiro vaults /
 tokens / liq-pool) is logged
 (remaining listed is the website).
@@ -27309,11 +27404,12 @@ MaintainerProxy leftover
 (`502cd39`) is logged;
 Threshold watchtower +
 Wormhole L1 leftover
+(`502cd39`) is logged;
+Threshold RebateStaking leftover
 (`502cd39`) is logged
 (remaining Threshold is
 Bridge /
 BridgeGovernance /
-RebateStaking /
 WalletProposalValidator /
 LightRelay /
 TokenholderGovernor /
