@@ -43988,8 +43988,10 @@ Aave leftover remaining protocol-v2 upgradeability leftover (`ce53c4a`)
 is logged.
 Filecoin leftover remaining lotus messagesigner leftover (`7740217`)
 is logged.
+Filecoin leftover remaining lotus exchange leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus non-miner (exchange / actors wrappers / types / index / lib).
+Remaining listed Filecoin: remaining lotus non-miner (actors wrappers / types / index / lib).
 Remaining listed Aave: official protocol-v2 leftover that trees open is exhausted (PriceOracleSentinel + OwnableFacilitator 404).
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -68209,3 +68211,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a local-wallet nonce helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner (exchange / actors wrappers / types / index / lib).
+
+## 2026-09-03: Filecoin leftover remaining lotus exchange leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus messagesigner leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/exchange`. Opened `doc.go`, `interfaces.go`, `protocol.go`, `server.go`, `client.go`, `peer_tracker.go`, and `protocol_encoding.go`. Libp2p ChainExchange (`/fil/chain/xchg/0.0.1`). Do not rematch lotus sync leftover or lotus store leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `HandleStream` signing or moving FIL; `collectChainSegment` writing a peer-chosen tipset into the store; `processResponse` accepting a disconnected or over-long chain; `CompactedMessages` indexes overflowing into another tipset’s messages.
+
+Result: no user-exploitable finding. Not submitted.
+
+- The server reads one CBOR `Request`, `validateRequest`s it (options set; `1 <= Length <= MaxRequestLength` / `policy.ChainFinality`; at least one head CID), then `collectChainSegment` walks `LoadTipSet` / parent CIDs from the local leftover-logged `ChainStore`. It does not sign, does not `SetHead`, and does not change actor balances.
+- `gatherMessages` compact-dedupes BLS / SECPK CIDs already stored under each block’s `Messages` meta. A stranger can request public chain data; that is the protocol.
+- The client `doRequest`s peers from a local latency tracker. `processResponse` requires a success/partial status, `1 <= len(chain) <= req.Length`, `NewTipSet` on each header set, head CIDs equal to the request, parent linkage via `IsChildOf`, and `validateCompressedIndices` (include-array length equals block count; each index `<` compacted list length).
+- Reads are capped at `maxExchangeMessageSize` (120 MiB). `CompactedMessages` CBOR `maxlen=150000`; per-block include arrays cap at `BlockMessageLimit`. Signature / message-root checks live in leftover-logged sync / stmgr, not here.
+
+Do not file a header/message fetch RPC as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner (actors wrappers / types / index / lib).
