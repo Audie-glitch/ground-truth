@@ -31,7 +31,14 @@ leftover (Pipeline / Depot / Well / Aquifer / CP2 /
 MultiFlowPump) is logged. Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
 leftover is logged (yvUSD / Woofy still Sourcify 404).
-Benqi Dual Oracle leftover is logged. Harvest vault /
+Benqi Dual Oracle leftover is logged. Benqi core
+markets leftover (unitroller / qiAVAX / qiUSDC /
+Maximillion, Sourcify `match` + `e0cfd24`) is
+logged (remaining Benqi is isolated unitroller
+Sourcify 404 / QI / gauges / sAVAX / Ignite /
+veQI / distributors / token sale / staking
+proxies / JumpRateModel / Pause Guardian).
+Harvest vault /
 controller leftover (`0364901`) and 4626 / Dolomite
 lend leftover and Convex / Aura / Aave fold leftover
 are logged; Penpie / Notional / StakeDAO / Yel,

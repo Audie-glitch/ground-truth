@@ -17962,6 +17962,148 @@ Not submitted. Listed
 Symbiosis leftover is
 exhausted.
 
+## 2026-09-03: Benqi core markets leftover (Sourcify + `e0cfd24`)
+
+Immunefi program
+`benqi`
+($500,000, `kyc: false`).
+Dual Oracle leftover
+is already logged.
+This slice is the
+core money path:
+Unitroller
+`0x486Af39519B4Dc9a7fCcd318217352830E8AD9b4`,
+qiAVAX
+`0x5C0401e81Bc07Ca70fAD469b451682c0d747Ef1c`,
+qiUSDC
+`0xBEb5d47A3f720Ec0a390d04b4d41ED7d9688bC7F`,
+and Maximillion
+`0xd78DEd803b28A5A9C860c2cc7A4d84F611aA4Ef8`.
+Avalanche Sourcify
+`match` (solc 0.5.17,
+verified 2024-08-08).
+Official tree
+`Benqi-fi/BENQI-Smart-Contracts`
+`e0cfd24`. Extract
+`/tmp/benqi`. No
+mainnet interaction.
+
+Files:
+`lending/QiToken.sol`,
+`Comptroller.sol`,
+`QiAvax.sol`,
+`QiErc20Delegator.sol`,
+`Maximillion.sol`,
+`Unitroller.sol`.
+
+Checked for: a
+stranger minting to
+themselves from a
+victim’s tokens;
+redeem that pays more
+underlying than the
+burned qiTokens;
+liquidation / seize
+that pulls collateral
+without a listed
+shortfall; Maximillion
+that keeps excess
+AVAX; Unitroller
+implementation swap
+without admin.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Empty-market
+  `exchangeRateStoredInternal`
+  returns
+  `initialExchangeRateMantissa`.
+  Live listed markets
+  have supply. Do not
+  file vanilla
+  Compound first-
+  depositor inflation
+  without proving a
+  listed market is
+  empty.
+- `mintFresh` pulls
+  from the minter and
+  mints to the minter.
+  `redeemFresh` burns
+  the redeemer’s
+  qiTokens and pays
+  the redeemer.
+  `mintAllowed`
+  requires the market
+  listed and not
+  mint-paused.
+- QiAvax fallback
+  mints. `getCashPrior`
+  subtracts `msg.value`
+  so the incoming mint
+  is not in the rate.
+  `doTransferIn`
+  requires
+  `msg.sender == from`
+  and
+  `msg.value == amount`.
+- Liquidate requires
+  both markets listed,
+  borrower shortfall,
+  and repay ≤ close
+  factor.
+  `seize` uses
+  `msg.sender` as
+  seizerToken.
+  `seizeAllowed`
+  requires both
+  markets listed and
+  the same comptroller.
+  Protocol seize share
+  goes to reserves.
+- Maximillion
+  `repayBehalf` refunds
+  excess AVAX to
+  `msg.sender`.
+  Delegator
+  `_setImplementation`
+  is admin.
+  Unitroller
+  `_setPendingImplementation`
+  is admin;
+  `_acceptImplementation`
+  is the pending
+  implementation.
+
+Do not file Compound
+first-depositor
+inflation, Maximillion
+excess refund, or
+seize-via-msg.sender
+as a finding.
+
+Not submitted. Other
+listed qiToken markets
+(qiLINK / qiETH
+Sourcify `match`,
+same 0.5.17 type) are
+the same QiAvax /
+QiErc20Delegator
+path. Remaining Benqi
+listed: isolated
+unitroller
+`0xD7c4006d…763F`
+(Sourcify 404), QI
+token, gauges, sAVAX,
+Ignite, veQI,
+distributors, token
+sale, staking proxies,
+JumpRateModel
+(Sourcify 404), Pause
+Guardian.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -18487,9 +18629,20 @@ Yearn YFI token leftover
 is logged (yvUSD / Woofy
 still Sourcify 404);
 Benqi Dual Oracle leftover
-is logged (remaining
-Benqi is qiToken /
-unitroller / gauges);
+is logged. Benqi core
+markets leftover
+(unitroller / qiAVAX /
+qiUSDC / Maximillion,
+Sourcify `match` +
+`e0cfd24`) is logged
+(remaining Benqi is
+isolated unitroller
+Sourcify 404 / QI /
+gauges / sAVAX / Ignite
+/ veQI / distributors /
+token sale / staking
+proxies / JumpRateModel
+/ Pause Guardian);
 Harvest vault / controller
 leftover (`0364901`) and
 4626 / Dolomite lend
