@@ -29,8 +29,9 @@ Instadapp Fluid liquidity + fToken leftover
 leftover (`a9949b4`) is logged. Instadapp Fluid
 vault T2–T4 leftover (`a9949b4`) is logged.
 Instadapp Fluid DEX T1 leftover (`a9949b4`) is
-logged (remaining Instadapp is Fluid dexLite /
-steth and `inst-governance`).
+logged. Instadapp Fluid dexLite leftover
+(`a9949b4`) is logged (remaining Instadapp is
+Fluid steth and `inst-governance`).
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool
 v1.4 listed GitHub leftover is exhausted (deposit /

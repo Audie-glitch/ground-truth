@@ -19846,6 +19846,87 @@ is Fluid dexLite /
 steth and
 `inst-governance`.
 
+## 2026-09-03: Instadapp Fluid dexLite leftover (`a9949b4`)
+
+Immunefi program
+`instadapp` ($500,000,
+`kyc: false`). Fluid
+DEX T1 leftover on
+pin `a9949b4` is
+already logged. This
+slice is DexLite
+swap + admin
+fallback. Same clone
+`/tmp/instadapp-fluid`.
+No mainnet
+interaction.
+
+Files:
+`protocols/dexLite/core/main.sol`,
+`core/coreInternals.sol`,
+`core/helpers.sol`,
+`adminModule/main.sol`.
+
+Checked for: a
+callback that pulls
+a victim’s tokens;
+`extraData` that
+skips paying the
+in-leg; fallback
+delegatecall by a
+stranger.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `swapSingle` /
+  path swaps take
+  `amountLimit_`.
+  `_transferTokens`
+  sends the out-leg
+  first, then pulls
+  the in-leg from
+  `msg.sender`
+  (`transferFrom`
+  or
+  `dexCallback` on
+  `msg.sender` with
+  a balance check).
+  Native path
+  requires
+  `msg.value` or a
+  callback that
+  increases ETH
+  balance. Unset
+  `to_` is
+  `msg.sender`.
+- Non-empty
+  `extraData_`
+  skips the default
+  transfer and
+  delegatecalls
+  `EXTRA_DATA_SLOT`.
+  Unset slot
+  reverts
+  `ZeroAddress`.
+  That hook is
+  admin-configured.
+- Fallback
+  delegatecall
+  requires `_isAuth`
+  or Liquidity
+  governance.
+  `updateAuth` /
+  `initialize` are
+  `_onlyDelegateCall`.
+
+Not submitted.
+Remaining Instadapp
+is Fluid steth and
+`inst-governance`.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -20356,9 +20437,11 @@ Instadapp Fluid vault T1 leftover
 Instadapp Fluid vault T2–T4 leftover
 (`a9949b4`) is logged;
 Instadapp Fluid DEX T1 leftover
+(`a9949b4`) is logged;
+Instadapp Fluid dexLite leftover
 (`a9949b4`) is logged
 (remaining Instadapp is
-Fluid dexLite / steth and
+Fluid steth and
 `inst-governance`);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
