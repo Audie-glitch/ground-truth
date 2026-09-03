@@ -168,9 +168,9 @@ behaviour, uint248 packing, per-order transient reentrancy, Aqua vs signature
 hashing, msg.value/WETH, curve rounding, fee bps vs surplus pulls, taker
 threshold/partial-fill, maker-chosen Extruction.
 
-Result: no exploitable finding on the Aqua opcode set and fee settlement.
-Still unread: most non-Aqua opcodes (TWAP, invalidators, whitelist) which are
-outside this program's Aqua opcode dispatcher.
+Result: no exploitable finding on the Aqua opcode set, fee settlement, invalidators
+and controls. Still unread: TWAP and whitelist, which are outside this program's
+Aqua opcode dispatcher.
 
 - `pull` and `push` update packed balances before token movement; checked
   arithmetic bounds pulls to what the maker shipped and blocks pushes to docked
@@ -197,6 +197,14 @@ outside this program's Aqua opcode dispatcher.
 - `TakerTraits.validate` requires `amountOut > 0`, enforces exact vs partial
   fill against the taker-specified amount, and scales min-out / max-in
   thresholds on partial fills.
+- `Invalidators`: `InvalidateBit` checks the bit before and writes it after the
+  inner program, gated on non-static context and covered by the per-order lock,
+  so a bit shared across orders behaves as one-shot. `InvalidateTokenIn/Out`
+  keep cumulative fills per (maker, order, token) and scale the paired balance
+  with floor / ceilDiv in the maker's favour; the external cancel functions set
+  the fill to max, after which the order reverts on underflow. `Controls`:
+  `Deadline` bounds `block.timestamp`; `Stop`, `Revert`, `Salt` behave as named.
+  No finding.
 
 Do not submit. Payment requires user KYC. ETHOnline "Build an Aqua App"
 ($5,000) is a later path: inherit `AquaApp`, ship strategies, settle against
