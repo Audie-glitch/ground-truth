@@ -35685,3 +35685,159 @@ Lazer Solana /
 Sui / Cardano,
 and the staking
 website.
+
+## 2026-09-03: Axelar leftover ETH gateway / ITS / ITF (Sourcify + official GitHub)
+
+Immunefi program
+`axelarnetwork`
+($500,000, `kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Ethereum
+Sourcify
+`match`
+AxelarGatewayProxyMultisig
+`0x4F4495243837681061C4743b74B3eEdf548D56A5`
+(not
+`exact_match`;
+live runtime may
+be a later
+upgrade).
+AXL token
+`0x467719aD09025FcC6cF6F8311755809d45a5E5f3`
+is Sourcify
+`match`
+`BurnableMintableCappedERC20`.
+Interchain Token
+Service proxy
+`0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C`
+and Factory proxy
+`0x83a93500d23Fbc3e82B410aD07A6a9F7A0670D66`
+are Sourcify
+`exact_match`
+`InterchainProxy`
+impls
+`0x1B13a9BaF8…` /
+`0xe833E9662c…`
+(Sourcify 404).
+Official clones
+`/tmp/axelar-cgp`
+`43ec407` and
+`/tmp/axelar-its`
+`ff21991`.
+Extract
+`/tmp/axelar-src`.
+No mainnet writes.
+
+Files:
+`AxelarGatewayMultisig.sol`,
+`AxelarGateway.sol`,
+`AxelarGatewayProxy.sol`,
+`BurnableMintableCappedERC20.sol`,
+`contracts/InterchainTokenService.sol`,
+`contracts/InterchainTokenFactory.sol`.
+
+Checked for: a
+stranger
+`execute` that
+mints without
+operator proof;
+unprotected
+`setup` takeover
+on the live
+proxy; ITS
+`interchainTransfer`
+that pulls a
+victim; `execute`
+that skips the
+hub / gateway
+approval;
+factory deploy
+that mints to
+the caller a
+pre-existing
+token.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Sourcify gateway
+  `execute`
+  recovers owner /
+  operator
+  multisig and
+  only then
+  self-calls
+  mint / burn /
+  deploy. Commands
+  are marked
+  executed before
+  the inner call.
+- Current official
+  `AxelarGateway.setup`
+  is `onlyProxy`
+  and the proxy
+  shadows `setup`
+  as a no-op so
+  upgrades cannot
+  be called
+  through fallback.
+  Do not treat the
+  older flattened
+  `setup` as live
+  without an
+  exact-match
+  runtime.
+- AXL
+  `mint` / `burn`
+  / `burnFrom`
+  are `onlyOwner`.
+- ITS
+  `_interchainTransfer`
+  `_takeToken`s
+  `msg.sender`.
+  `execute` is
+  `onlyItsHub` and
+  `gateway.validateContractCall`.
+  `deployInterchainToken`
+  is
+  `onlyTokenFactory`.
+- Factory deploy
+  salts with
+  `msg.sender` and
+  mints
+  `initialSupply`
+  of the *new*
+  token to the
+  deployer.
+
+Do not file
+quorum-signed
+gateway mint,
+owner AXL mint,
+or permissionless
+new-token factory
+deploy as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Axelar ETH
+gateway / ITS /
+ITF / AXL leftover
+is exhausted at
+the opened-contract
+level. Remaining
+listed: other-chain
+gateways and
+axlUSDC tokens,
+ITS GitHub tree
+beyond the two
+entry contracts,
+and DLT
+axelar-core /
+tofnd.
