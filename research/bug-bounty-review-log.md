@@ -36443,6 +36443,20 @@ btclightclient + btccheckpoint leftover
 (`132d050`; KYC) is logged
 (remaining listed is
 websites);
+Livepeer leftover Arb bonding
++ tickets + LPT bridge leftover
+(Sourcify BondingManager /
+TicketBroker / Minter /
+L2LPTGateway / L1LPTGateway /
+BridgeMinter / L1Escrow; KYC)
+is logged (remaining listed is
+RoundsManager / BondingVotes /
+Governor / Treasury /
+ServiceRegistry /
+MerkleSnapshot / L2Migrator /
+DelegatorPool / PollCreator /
+L1Migrator / data caches /
+go-livepeer website);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -51188,3 +51202,225 @@ and Hyperliquid
 ITS if a live
 deploy is in
 scope.
+
+## 2026-09-03: Livepeer leftover Arb bonding + tickets + LPT bridge leftover (Sourcify)
+
+Immunefi program
+`livepeer`
+($40,000, `kyc: true`).
+No leftover heading
+existed. Sourcify
+opens every listed
+address. Controller
+`getContract` +
+proxy slot 1
+resolve the
+ManagerProxy
+targets. No
+mainnet writes
+from this VM
+except read-only
+`eth_call` /
+`eth_getStorageAt`.
+
+Files (Sourcify):
+BondingManager impl
+`0xbe197fcb…0bd2`
+(proxy
+`0x35Bcf3c3…3e40`),
+TicketBroker impl
+`0x3b68fbf8…52b7`
+(proxy
+`0xa8bB618B…e41B`),
+Minter
+`0xc20DE371…c52`,
+L2LPTGateway
+`0x6D2457a4…318`,
+L1LPTGateway
+`0x6142f1C8…676`,
+BridgeMinter
+`0x8dDDB96C…405`,
+L1Escrow
+`0x6A23F494…10A`.
+
+Checked for: a
+stranger bond
+that steals
+another
+delegator's
+stake; a ticket
+redeem without
+the sender sig;
+Minter mint to
+the caller;
+L2 inbound mint
+without the L1
+counterpart
+alias.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `bond` /
+  `unbond` /
+  `withdrawStake`
+  /
+  `withdrawFees`
+  use
+  `msg.sender`.
+  `bondForWithHint`
+  lets a third
+  party pay LPT
+  (`transferFrom`
+  the caller)
+  but cannot
+  change an
+  already-bonded
+  owner's
+  delegate or
+  force
+  self-delegation
+  on an Unbonded
+  owner.
+  `transferBond`
+  unbonds the
+  caller and
+  writes a lock
+  for the
+  receiver.
+- `reward` is
+  the caller
+  transcoder.
+  `rewardForTranscoder`
+  requires
+  `transcoderToRewardCaller[_transcoder]
+  == msg.sender`.
+- `slashTranscoder`
+  is
+  `onlyVerifier`.
+  The opened
+  comments say
+  Verifier is
+  the null
+  address today
+  and the path
+  is out of
+  audit scope
+  until
+  governance
+  enables it.
+- `updateTranscoderWithFees`
+  is
+  `onlyTicketBroker`.
+- Ticket redeem
+  needs the
+  sender ECDSA,
+  unused hash,
+  recipientRand
+  preimage,
+  winning
+  `keccak(sig,
+  rand) <
+  winProb`, a
+  locked sender,
+  and auxData
+  that matches
+  the
+  RoundsManager
+  block hash
+  inside the
+  validity
+  window.
+  Payout credits
+  the
+  recipient's
+  fee pool, not
+  the redeemer.
+- Minter
+  `createReward`
+  /
+  `trustedTransferTokens`
+  /
+  `trustedBurnTokens`
+  are
+  `onlyBondingManager`.
+  ETH withdraw
+  is BondingManager
+  or JobsManager.
+  `setCurrentRewardTokens`
+  is
+  `onlyRoundsManager`.
+  `migrateToNewMinter`
+  is Controller
+  owner.
+- L2
+  `outboundTransfer`
+  burns
+  `msg.sender`
+  (or the router
+  `from`).
+  `finalizeInboundTransfer`
+  is
+  `onlyL1Counterpart`
+  (L1 alias).
+- L1
+  `outboundTransfer`
+  `transferFrom`s
+  the sender
+  into escrow.
+  `finalizeInboundTransfer`
+  is
+  `onlyL2Counterpart`
+  (inbox bridge
+  + outbox
+  sender).
+  Extra mint
+  uses
+  `BridgeMinter.bridgeMint`
+  (`onlyL1LPTGateway`).
+- L1Escrow
+  `approve` is
+  `DEFAULT_ADMIN_ROLE`.
+
+Do not file
+third-party
+bond-for that
+pays the
+caller's LPT,
+a valid signed
+winning ticket,
+or counterpart-
+gated LPT mint
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for
+Livepeer bonding
+/ tickets /
+Minter / LPT
+bridge is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+RoundsManager,
+BondingVotes,
+Governor,
+Treasury,
+ServiceRegistry,
+MerkleSnapshot,
+L2Migrator,
+DelegatorPool,
+PollCreator,
+L1Migrator,
+L1/L2 data
+caches, and the
+go-livepeer
+website.
