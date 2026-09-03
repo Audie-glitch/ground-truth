@@ -43501,6 +43501,8 @@ Aave leftover remaining GHO FlashMinter leftover (`23859bb`)
 is logged.
 Aave leftover remaining Gsm4626 leftover (`23859bb`)
 is logged.
+Filecoin leftover remaining lotus store leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
 Remaining listed Aave: stk / StakeToken / OwnableFacilitator / governance.
@@ -43528,6 +43530,7 @@ Do not rematch Filecoin lotus mpool leftover.
 Do not rematch Filecoin lotus wallet leftover.
 Do not rematch Filecoin lotus sync leftover.
 Do not rematch Filecoin lotus stmgr leftover.
+Do not rematch Filecoin lotus store leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Filecoin lotus market leftover.
 Do not rematch Aave ACL + PoolConfigurator leftover.
@@ -67177,7 +67180,6 @@ Do not file an admin-gated treasury stream as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: L2Encoder / PriceOracleSentinel / stk / StakeToken / GHO remaining (FixedFee / flash minter / Gsm4626) / governance.
 
-
 ## 2026-09-03: Aave leftover remaining L2Encoder leftover (`cff15de`)
 
 Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after Collector leftover. Official `aave-dao/aave-v3-origin` `cff15de`. Opened listed `src/contracts/helpers/L2Encoder.sol`. Do not rematch Pool / Oracle / ACL / rewards / Collector leftovers. Other-agent view helpers / WrappedTokenGateway leftovers are separate files. No mainnet writes. No exploit PoCs.
@@ -67229,3 +67231,19 @@ Do not file an EIP-3156 GHO flash mint that pulls `amount + fee` as stranger the
 
 Not submitted. Payment requires user KYC. Remaining listed: PriceOracleSentinel / stk / StakeToken / Gsm4626 / OwnableFacilitator / governance.
 
+## 2026-09-03: Filecoin leftover remaining lotus store leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus stmgr leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/store`. Opened `store.go` and `messages.go`. Local heaviest-tipset / checkpoint / message blockstore. Does not persist a stranger `PutMessage` onto consensus. Do not rematch FVM / lotus miner / sync / stmgr leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `RefreshHeaviestTipSet` adopting a fork past `policy.ChainFinality`; `SetCheckpoint` reverting more than finality; `SetHead` being stranger-callable; `PutMessage` rewriting a CID to a different message.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `RefreshHeaviestTipSet` only calls `takeHeaviestTipSet` when the candidate is heavier (or a weight-tie broken by `breakWeightTie`) and `exceedsForkLength` is false. `exceedsForkLength` walks at most `policy.ChainFinality` tipsets on the synced side, rejects a walk past checkpoint or genesis without a common ancestor, and treats a missing common ancestor as exceeding.
+- `SetCheckpoint` refuses a target that does not share an ancestor with the current head within `heaviest.Height() - policy.ChainFinality`. The new checkpoint must already be synced. If the target is not an ancestor of the current head, it switches head to that already-synced tipset.
+- `SetHead` is a local admin repair: it `removeCheckpoint`s then `takeHeaviestTipSet`. It is not a stranger RPC. `ForceHeadSilent` is documented test-only.
+- `PutMessage` is CID content-addressed `blockstore.Put` of `ToStorageBlock()`. `GetMessage` / `GetSignedMessage` decode the bytes at that CID. A different payload is a different CID.
+
+Do not file a local heaviest-tipset / checkpoint helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
