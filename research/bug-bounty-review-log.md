@@ -38327,6 +38327,175 @@ mobile wallet
 store pages
 only.
 
+## 2026-09-03: Velvet leftover BSC v1 IndexSwap leftover (Sourcify)
+
+Immunefi program
+`velvetcapital`
+($51,000,
+`kyc: false`).
+Unique unused
+standing program
+(separate from
+leftover-logged
+`velvet-capital-v2`
+Base V2).
+31 BSC listed
+contracts.
+Sourcify
+extracts
+`/tmp/velvet-v1-indexswap`,
+`/tmp/velvet-v1-rebalancing`,
+`/tmp/velvet-v1-exchange`,
+`/tmp/velvet-v1-offchain-rebal`,
+`/tmp/velvet-v1-feemodule`,
+`/tmp/velvet-v1-assetmgr`,
+`/tmp/velvet-v1-offchain-swap`,
+`/tmp/velvet-v1-new-indexswap`,
+`/tmp/velvet-v1-new-offchain-rebal`.
+No mainnet
+writes.
+
+Files:
+`contracts/core/IndexSwap.sol`,
+`contracts/rebalance/Rebalancing.sol`,
+`contracts/core/Exchange.sol`,
+`contracts/rebalance/OffChainRebalance.sol`,
+`contracts/fee/FeeModule.sol`,
+`contracts/registry/AssetManagerConfig.sol`,
+`contracts/core/OffChainIndexSwap.sol`.
+
+Checked for:
+a stranger
+`investInFund`
+that spends
+another
+wallet;
+`withdrawFund`
+that pays
+`msg.sender`
+another
+account's
+shares;
+permissionless
+`rebalance` /
+`updateWeights`
+that drains
+the vault;
+`swapETHToToken`
+that spends
+vault ETH.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `investInFund`
+  (old + new
+  IndexSwap)
+  `safeTransferFrom`
+  the caller
+  or takes
+  `msg.value`
+  if WETH,
+  then mints
+  to
+  `msg.sender`.
+- `withdrawFund`
+  checks
+  cooldown
+  for
+  `msg.sender`,
+  burns that
+  caller,
+  and pays
+  `msg.sender`.
+- `mintShares`
+  /
+  `burnShares`
+  are
+  `onlyMinter`.
+- `updateWeights`
+  /
+  `updateTokens`
+  are
+  `onlyAssetManager`.
+  `rebalance`
+  is
+  internal.
+- Off-chain
+  rebalance
+  `enableRebalance`
+  /
+  `externalSell`
+  /
+  `externalRebalance`
+  are
+  `onlyAssetManager`.
+  User revert
+  after 15
+  minutes
+  restores
+  vault
+  tokens.
+- Exchange
+  `swapETHToToken`
+  /
+  `_swapTokenToETH`
+  are
+  `onlyIndexManager`.
+- `FeeModule.chargeFees`
+  is
+  permissionless
+  fee-share
+  mint to
+  treasuries.
+  `chargeFeesFromIndex`
+  is
+  `onlyIndexManager`.
+- Asset
+  manager
+  fee /
+  treasury /
+  whitelist
+  writes are
+  `onlyAssetManager`.
+
+Do not file
+invest or
+withdraw of
+the caller's
+tokens,
+asset-manager
+rebalance,
+permissionless
+fee mint to
+the listed
+treasuries,
+or user
+revert after
+the 15-minute
+pause as
+stranger
+theft.
+
+Not submitted.
+Remaining listed:
+handlers
+(Pancake /
+Venus /
+Beefy /
+1inch /
+Paraswap /
+ZeroEx),
+VelvetSafeModule,
+PriceOracle,
+RebalanceAggregator,
+ERC1967Proxy
+twins, and
+Primacy of
+Impact.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -40449,6 +40618,15 @@ logged;
 Unstoppable leftover wallet leftover
 (`unstoppablewallet`; no KYC) is
 logged;
+Velvet leftover BSC v1
+IndexSwap leftover
+(Sourcify; no KYC) is
+logged (remaining listed is
+handlers / VelvetSafeModule /
+PriceOracle /
+RebalanceAggregator /
+ERC1967Proxy twins /
+Primacy of Impact);
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
