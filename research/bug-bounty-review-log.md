@@ -16567,6 +16567,123 @@ collateral,
 permissioned /
 permissionless pools.
 
+## 2026-09-03: ICHI oneToken leftover (`4873873`)
+
+Immunefi program
+`ichi` ($50,000,
+`kyc: false`). Listed
+leftover is
+`ichifarm/ichi-oneToken`
+plus four Etherscan
+factory / V1 addresses.
+Local clone
+`/tmp/ichi-onetoken` at
+`4873873` (“updated
+readme”). No mainnet
+interaction.
+
+Files:
+`contracts/OneTokenFactory.sol`,
+`version/v1/OneTokenV1.sol`,
+`version/v1/OneTokenV1Base.sol`,
+`oracle/pegged/ICHIPeggedOracle.sol`,
+`mintMaster/legacy/Incremental.sol`,
+`strategy/StrategyCommon.sol`.
+
+Checked for: mint that
+credits oneTokens
+without pulling member
++ collateral; redeem
+that pays more than the
+oracle’s
+`amountRequired` after
+the fee; factory deploy
+that skips module
+checks; strategy
+`toVault` / `fromVault`
+callable by a stranger.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Factory
+  `deployOneTokenProxy`
+  is `onlyOwner`.
+  Version / controller /
+  mintMaster / oracle
+  must be admitted
+  modules of the right
+  type. Member token is
+  a registered foreign
+  token; collateral
+  must be marked
+  collateral and have
+  ≤18 decimals. The
+  new proxy is admitted
+  as collateral, then
+  `init` + ownership
+  transfer to
+  governance.
+- Mint updates the
+  collateral and member
+  oracles, reads
+  `updateMintingRatio`,
+  and requires
+  `oneTokens <=
+  maxOrderVolume`. It
+  pulls
+  `amountRequired`
+  member + collateral
+  (more collateral if
+  the member allowance
+  is short) then
+  `_mint`s the
+  requested amount.
+- Redeem burns the
+  caller’s oneTokens
+  and pays
+  `amountRequired
+  (collateral, amount *
+  (1 - fee))`. Pegged
+  oracle is 1:1 after
+  decimal normalize.
+  Uniswap / composite
+  oracles are
+  governance-chosen;
+  a bad oracle is
+  trusted, not a
+  third-party theft
+  path.
+- Strategy assignment,
+  `toStrategy` /
+  `fromStrategy` /
+  `executeStrategy`,
+  and allowance
+  changes are owner or
+  controller. The
+  strategy must
+  recognize this vault
+  and share its owner.
+  `StrategyCommon`
+  `toVault` /
+  `fromVault` are
+  `strategyOwnerTokenOrController`.
+- `liabilities` is
+  unused on mint /
+  redeem. Dead
+  accounting, not a
+  drain.
+
+Not submitted. Remaining
+ICHI listed: live
+Etherscan factory / V1
+addresses if a later
+pass wants bytecode
+vs this tree; Incremental
+ratio step logic is
+owner-parameterized.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -17101,6 +17218,8 @@ ZeroLend / CompoundV3 /
 Idle / inactive +
 MorphoVault V2 + polygon
 / arbitrum);
+ICHI oneToken leftover
+(`4873873`) is logged;
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover

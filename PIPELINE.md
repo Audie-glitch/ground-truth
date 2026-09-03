@@ -38,7 +38,9 @@ GitHub leftover exhausted). Stader ETHx user deposit
 / withdraw leftover (`9d4a921`) plus oracle / factory
 / insurance / auction / socializing leftover is
 logged (remaining Stader is registries / vaults / SD
-collateral / pools). Twyne vaults still Sourcify 404.
+collateral / pools).
+ICHI oneToken leftover (`4873873`) is logged.
+Twyne vaults still Sourcify 404.
 
 ## Opportunities, ranked by expected payout per unit of work
 
