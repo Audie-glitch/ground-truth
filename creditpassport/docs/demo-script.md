@@ -8,7 +8,7 @@ terminal comments so the video reads without audio.
 | --- | --- | --- |
 | 0:00 | Title | Browser on the landing page. Caption: `# CreditPassport: credit history you can prove. Creditcoin + Attestcoin.` |
 | 0:15 | Attestation is real | `npm run cli -- chains` shows Sepolia attested height vs head. Caption: `# Creditcoin attests Sepolia a few minutes behind the head.` |
-| 0:35 | Proof of any transaction | `npm run cli -- verify` picks a live Sepolia tx, fetches the proof, precompile says VALID. Caption: `# No key, no gas: the verifier precompile checks a real proof.` |
+| 0:35 | Proof of any transaction | Browser: `/verify`, click "Use a recent transfer": every step goes green and a real USDC transfer is recorded on a passport that lived only for the call. Caption: `# No key, no gas: the real verifier, the real decoder, one eth_call.` |
 | 1:00 | A payment happens | `npm run cli -- pay --payee 0x… --amount 250` then `--amount 90 --late`. Show the Sepolia explorer links. Caption: `# Two invoices settled on Sepolia; the second misses its due block.` |
 | 1:30 | The agent works | `npm run agent` already running in a second pane: `new InvoicePaid`, `block attested`, `execute sent`, `verified on Creditcoin`, then `executeBatch` if both landed in range, then `underwrote … score … limit`. Caption: `# Scan, wait for attestation, prove, verify on-chain, underwrite.` |
 | 2:20 | The passport | Browser: open the payer's passport. Score, limit, available credit. Scroll to the memo and factor table, then the verified payments table; click a Creditcoin verification link and the Sepolia source link. Caption: `# Every row is a proven receipt. The cap is computed on-chain.` |

@@ -67,7 +67,12 @@ Three parts:
    the agent's memo with its factor table, every verified payment with links to
    the source transaction and its Creditcoin verification, the on-chain cap
    breakdown, underwriting history, and a live status strip with attestation
-   lag and agent queue.
+   lag and agent queue. Plus `/verify`: paste any Sepolia transaction hash and
+   the server fetches its proof, asks the live verifier precompile, and runs a
+   throwaway passport's `execute` against it inside one `eth_call`, showing
+   each step and the recorded payment. Works before any deployment.
+
+![Live verification page](docs/screenshots/verify-live.png)
 
 ![Passport page](docs/screenshots/passport-alice.png)
 
@@ -204,7 +209,7 @@ abi/                                   exported ABIs shared by agent and web
 - [x] Contracts, 32 tests (including real prover output), deploy scripts
 - [x] Agent with single and batch proof submission, scoring, memos, status API
 - [x] Real proof fetched and verified by the Creditcoin precompile from this repo (`verify`)
-- [x] Full `execute` and `executeBatch` paths (verify, decode, record) run against the live precompile via `eth_call` (`livecheck`, `livecheck --batch`)
+- [x] Full `execute` and `executeBatch` paths (verify, decode, record) run against the live precompile via `eth_call` (`livecheck`, `livecheck --batch`, and the web `/verify` page)
 - [x] Web app
 - [x] Local demo environment
 - [ ] Testnet deployment (needs a funded deployer key)

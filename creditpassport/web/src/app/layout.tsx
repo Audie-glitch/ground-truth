@@ -25,6 +25,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <span>CreditPassport</span>
             </Link>
             <nav className="flex items-center gap-4 text-sm text-muted-foreground">
+              <Link href="/verify" className="hover:text-foreground">
+                Verify live
+              </Link>
               <Link href="/#how-it-works" className="hover:text-foreground">
                 How it works
               </Link>

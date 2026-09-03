@@ -40,6 +40,12 @@ cd ../web && npm run dev                        # http://127.0.0.1:43331/passpor
 After deployment I update README.md and the deck's status slide with the
 contract addresses and explorer links, re-render `docs/deck.pdf`, and commit.
 
+Independent of deployment, judges can exercise the contract against the live
+verifier themselves at `/verify` in the web app (or `npm run cli -- livecheck`):
+paste any Sepolia transaction, and a throwaway passport verifies, decodes and
+records it inside one `eth_call`. Mention this in the description if the hosted
+web app is reachable at submission time; otherwise the video shows it.
+
 ## 2. Repository (you)
 
 - Make this repository public, or create a public repository named
