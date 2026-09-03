@@ -19926,6 +19926,76 @@ Not submitted.
 Remaining Instadapp
 is Fluid steth and
 `inst-governance`.
+## 2026-09-03: Instadapp Fluid stETH leftover (`a9949b4`)
+
+Immunefi program
+`instadapp` ($500,000,
+`kyc: false`). Fluid
+DEX T1 and dexLite
+leftovers on pin
+`a9949b4` are already
+logged. This slice is
+the stETH queue.
+Same clone
+`/tmp/instadapp-fluid`.
+No mainnet
+interaction.
+
+Files:
+`protocols/steth/main.sol`,
+`variables.sol`,
+`proxy.sol`.
+
+Checked for: a
+stranger claim that
+pays leftover ETH to
+the caller instead of
+`claimTo_`; queue that
+borrows against another
+user’s stETH; ERC721
+callback that hijacks
+the Lido NFT.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `queue` pulls
+  stETH from
+  `msg.sender` (allow
+  list if active),
+  queues Lido NFTs
+  to this contract,
+  borrows ETH to
+  `borrowTo_`, and
+  stores the claim
+  under `claimTo_`.
+  LTV is checked
+  against `maxLTV`.
+- `claim` is
+  permissionless but
+  leftover ETH after
+  Liquidity repay
+  goes to `claimTo_`,
+  then the mapping
+  is deleted. A
+  stranger can only
+  pay gas to settle
+  someone else’s
+  claim.
+- `liquidityCallback`
+  always reverts
+  (native repay
+  only).
+  `onERC721Received`
+  accepts only the
+  Lido queue.
+
+Not submitted.
+Remaining Instadapp
+is `inst-governance`.
+
 
 ## Next candidates
 
@@ -20439,9 +20509,10 @@ Instadapp Fluid vault T2–T4 leftover
 Instadapp Fluid DEX T1 leftover
 (`a9949b4`) is logged;
 Instadapp Fluid dexLite leftover
+(`a9949b4`) is logged;
+Instadapp Fluid stETH leftover
 (`a9949b4`) is logged
 (remaining Instadapp is
-Fluid steth and
 `inst-governance`);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
