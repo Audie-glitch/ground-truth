@@ -19,7 +19,8 @@ leftover is logged; GMX leftover V2
 GlvRouter leftover is logged; GMX leftover
 V2 Shift leftover is logged; GMX leftover V2
 Oracle + V1 Order Book leftover is logged;
-Celer leftover is logged; Pyth EVM leftover is
+GMX leftover V2 AdlHandler leftover is
+logged; Celer leftover is logged; Pyth EVM leftover is
 logged; Axelar leftover is logged; Kiln
 On-Chain v1 leftover is logged; Kiln DeFi
 leftover is logged; Acala leftover is logged). KeeperHub
@@ -340,6 +341,12 @@ Acala leftover honzon / DEX / homa leftover
 (`cde2abf`) is logged (remaining listed is
 ORML / EVM / XCM / honzon-bridge /
 liquid-crowdloan / NFT).
+GMX leftover V2 AdlHandler leftover
+(Sourcify Arb AdlHandler / AdlUtils /
+GlpBalance / Chainlink providers /
+ChainReader) is logged (remaining listed
+is Avax twins, Sourcify-404 Staked Glp
+Distributor, and same-type utils).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -886,6 +893,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   core (Sourcify; KYC),
   Acala leftover honzon / DEX /
   homa leftover (`cde2abf`),
+  GMX leftover V2 AdlHandler leftover
+  (AdlUtils / GlpBalance /
+  Chainlink providers /
+  ChainReader),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover

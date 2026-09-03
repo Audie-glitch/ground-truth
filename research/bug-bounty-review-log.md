@@ -29497,6 +29497,159 @@ Avax twins, and V2
 Oracle / Reader
 rows.
 
+## 2026-09-03: GMX leftover V2 AdlHandler leftover (Sourcify)
+
+Immunefi program
+`gmx` ($5,000,000,
+`kyc: false`).
+Oracle + V1 Order
+Book leftover
+already logged.
+This slice is the
+listed remaining
+`AdlHandler` /
+`AdlUtils` /
+`GlpBalance` /
+Chainlink
+providers /
+`ChainReader`.
+Arbitrum Sourcify
+`exact_match`
+AdlHandler
+`0x9242FbED25700e82aE26ae319BCf68E9C508451c`
++ GlpBalance
+`0x13E0BbE893B33b64D4f3F96725dd70531fA4EbCe`
++ ChainlinkDataStreamProvider
+`0x83cBb05AA78014305194450c4AADAc887fe5DF7F`
++ ChainlinkPriceFeedProvider
+`0x527FB0bCfF63C47761039bB386cFE181A92a4701`
++ ChainReader
+`0x9E6ac9e474Ce93040141391bf52fa74135490f50`
+and `match`
+AdlUtils
+`0x113Fc422d9D49b7371b7A164f62b839877DCbb93`.
+Extract `/tmp/gmx-adl`.
+No mainnet
+interaction.
+
+Files:
+`contracts/exchange/AdlHandler.sol`,
+`contracts/adl/AdlUtils.sol`,
+`contracts/staking/GlpBalance.sol`,
+`contracts/oracle/ChainlinkDataStreamProvider.sol`,
+`contracts/oracle/ChainlinkPriceFeedProvider.sol`,
+`contracts/chain/ChainReader.sol`.
+
+Checked for: a
+stranger
+`executeAdl` that
+closes another
+account when ADL
+is off; an ADL
+order that pays
+the keeper the
+position; GlpBalance
+`transferFrom`
+without allowance;
+a non-oracle
+`getOraclePrice`
+that writes
+DataStore.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `updateAdlState`
+  / `executeAdl`
+  are
+  `onlyAdlKeeper`
+  and run under
+  `withOraclePrices`.
+- `validateAdl`
+  requires
+  `isAdlEnabled`
+  and oracle
+  timestamps at
+  least
+  `latestAdlAt`.
+- `createAdlOrder`
+  sets account /
+  receiver /
+  cancellationReceiver
+  to the position
+  account. The
+  decrease has no
+  slippage by
+  design.
+- After execute,
+  pending pnl /
+  pool must fall
+  and must not
+  undershoot
+  `minPnlFactorAfterAdl`.
+- GlpBalance
+  `transfer` moves
+  `msg.sender`.
+  `transferFrom`
+  spends allowance
+  then
+  `transferFrom`s
+  the staked GLP
+  tracker after
+  cooldown.
+- Data-stream
+  `getOraclePrice`
+  is `onlyOracle`
+  and verifies a
+  Chainlink report
+  for the stored
+  feed id.
+  Price-feed
+  provider is
+  view-only.
+- ChainReader only
+  stores an
+  Arbitrum block
+  hash.
+
+Do not file
+ADL-keeper
+reduction of a
+profitable
+position when ADL
+is enabled, the
+documented lack
+of profit-order
+sorting, GlpBalance
+wrapper transfer
+of own staked GLP,
+or oracle-only
+price verification
+as stranger theft.
+
+Not submitted.
+Listed leftover
+that Sourcify
+opens for these
+types is
+exhausted.
+Remaining listed:
+Avax twins (same
+types — do not
+re-review unless
+a function
+differs),
+Sourcify-404
+Staked Glp
+Distributor,
+same-type Reader /
+order utils
+already in opened
+compilations, and
+the websites.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -30834,6 +30987,15 @@ logged (remaining listed is
 ORML / EVM / XCM /
 honzon-bridge /
 liquid-crowdloan / NFT);
+GMX leftover V2 AdlHandler leftover
+(Sourcify Arb AdlHandler /
+AdlUtils / GlpBalance /
+Chainlink providers /
+ChainReader) is logged
+(remaining listed is Avax
+twins, Sourcify-404 Staked
+Glp Distributor, and
+same-type utils);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
