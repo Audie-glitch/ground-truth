@@ -280,6 +280,13 @@ TokenDeployer) is logged (listed
 leftover that Sourcify opens on
 Ethereum is exhausted; remaining
 listed is other-chain twins).
+ENS leftover (Sourcify ETH
+ETHRegistrarController / NameWrapper /
+PublicResolver / BaseRegistrar /
+ENSRegistry) is logged (listed leftover
+that Sourcify opens is exhausted at the
+opened registrar / wrapper / registry /
+resolver level).
 Royco factory + Makina strategy leftover
 (Sourcify Factory /
 RoycoVaultMakinaStrategy; KYC) is
@@ -782,6 +789,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   ETH Gate / Token / Verifier /
   CallProxy / FeeProxy /
   WethGate),
+  ENS leftover (Sourcify ETH
+  controller / NameWrapper /
+  PublicResolver / registrar /
+  registry),
   Royco factory + Makina
   strategy leftover (Sourcify;
   KYC),

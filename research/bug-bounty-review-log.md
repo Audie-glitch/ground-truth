@@ -29159,6 +29159,132 @@ CallProxy /
 FeeProxy twins
 (same types).
 
+## 2026-09-03: ENS leftover (Sourcify)
+
+Immunefi program
+`ens` ($250,000,
+`kyc: false`). Unique
+unused standing
+program. Not previously
+logged. Listed
+smart-contract asset is
+the deployments wiki;
+Ethereum Sourcify
+`exact_match`
+`ETHRegistrarController`
+`0x253553366Da8546fC250F225fe3d25d0C782303b`
++ `NameWrapper`
+`0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401`
++ `PublicResolver`
+`0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63`
+and `match`
+`BaseRegistrarImplementation`
+`0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85`
++ `ENSRegistryWithFallback`
+`0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e`.
+BulkRenewal Sourcify
+404. Extract `/tmp/ens`.
+No mainnet interaction.
+
+Files:
+`controller/contracts/ethregistrar/ETHRegistrarController.sol`,
+`controller/contracts/ethregistrar/BaseRegistrarImplementation.sol`,
+`namewrapper/contracts/wrapper/NameWrapper.sol`,
+`registrar/BaseRegistrarImplementation.sol`,
+`registry/ENSRegistryWithFallback.sol`,
+`resolver/contracts/resolvers/PublicResolver.sol`.
+
+Checked for: a stranger
+`register` that
+assigns a name
+without paying;
+`withdraw` that
+sends registrar ETH
+to the caller;
+`wrapETH2LD` /
+`unwrap` that steals
+another name;
+registry
+`setOwner` without
+authorisation.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Controller
+  `register` requires
+  `msg.value` cover
+  rent + premium,
+  consumes a
+  commit-reveal, and
+  wraps to the named
+  `owner`. Excess
+  refunds
+  `msg.sender`.
+  `renew` is
+  permissionless
+  (pays for that
+  name). `withdraw`
+  sends the balance
+  to `owner()`.
+- BaseRegistrar
+  `register` /
+  `renew` are
+  `onlyController`.
+  `reclaim` requires
+  approved or owner.
+- NameWrapper
+  `wrapETH2LD` /
+  `wrap` require
+  registrar /
+  registry owner or
+  approved.
+  `unwrap*` is
+  `onlyTokenOwner`.
+  `registerAndWrapETH2LD`
+  is
+  `onlyController`.
+- Registry
+  `setOwner` /
+  `setSubnodeOwner`
+  are `authorised`.
+- PublicResolver
+  writes require
+  node owner,
+  operator, or
+  delegate.
+
+Do not file
+permissionless
+renew of someone
+else's name, public
+`withdraw` that
+pays the owner,
+commit-reveal
+front-running of
+an uncommitted
+name, or owner
+`ERC20Recoverable`.
+
+Not submitted.
+Listed leftover
+that Sourcify
+opens is exhausted
+at the opened
+registrar /
+wrapper /
+registry /
+resolver level.
+Remaining listed:
+the deployments
+wiki (BulkRenewal
+Sourcify 404,
+DNSSEC / reverse
+rows) and website
+assets.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -30424,6 +30550,18 @@ that Sourcify opens on
 Ethereum is exhausted;
 remaining listed is
 other-chain twins);
+ENS leftover (Sourcify
+ETH ETHRegistrarController
+/ NameWrapper /
+PublicResolver /
+BaseRegistrar /
+ENSRegistry) is logged
+(listed leftover that
+Sourcify opens is
+exhausted at the opened
+registrar / wrapper /
+registry / resolver
+level);
 Royco factory + Makina
 strategy leftover
 (Sourcify Factory /
