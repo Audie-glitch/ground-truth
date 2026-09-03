@@ -4,13 +4,18 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~10:50 UTC. Dates verified against each
+Status as of 3 September 2026, ~10:55 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~10:50 UTC;
-246 programs; no Sep 2026 launches; Integral leftover TwapDelay + Pair + Relayer leftover is logged;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~10:55 UTC;
+246 programs; no Sep 2026 launches; Cosmos leftover solidity-ibc-eureka leftover is logged;
+1inch leftover infrastructure leftover is logged;
+Exodus leftover website leftover is logged;
+Ofza leftover website leftover is logged;
+EdgeX leftover website leftover is logged;
+Integral leftover TwapDelay + Pair + Relayer leftover is logged;
 Metronome leftover remaining CrossChainDispatcher + ProxyOFT leftover is logged;
 OpenZeppelin leftover remaining RWA + governance leftover is logged;
 Folks leftover sc-library leftover is logged;
@@ -207,6 +212,11 @@ Folks leftover sc-library leftover is logged;
 1inch leftover business leftover is logged;
 1inch leftover web leftover is logged;
 Hibachi leftover website leftover is logged;
+Cosmos leftover solidity-ibc-eureka leftover is logged;
+1inch leftover infrastructure leftover is logged;
+Exodus leftover website leftover is logged;
+Ofza leftover website leftover is logged;
+EdgeX leftover website leftover is logged;
 Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
 KeeperHub
@@ -1001,6 +1011,20 @@ logged.
 (`1inch-web`; KYC) is logged.
 Hibachi leftover website leftover
 (`hibachi`; KYC) is logged.
+Cosmos leftover solidity-ibc-eureka
+leftover (`8f33f35`; KYC) is
+logged (remaining listed is
+cosmos-sdk / ibc-go / cometbft /
+CosmWasm / gaia DLT).
+1inch leftover infrastructure leftover
+(`1inch-infrastructure`; KYC) is
+logged.
+Exodus leftover website leftover
+(`exodus`; KYC) is logged.
+Ofza leftover website leftover
+(`ofza-1`; KYC) is logged.
+EdgeX leftover website leftover
+(`edgex`; KYC) is logged.
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
@@ -1761,6 +1785,16 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`1inch-web`; KYC),
   Hibachi leftover website leftover
   (`hibachi`; KYC),
+  Cosmos leftover solidity-ibc-eureka
+  leftover (`8f33f35`; KYC),
+  1inch leftover infrastructure leftover
+  (`1inch-infrastructure`; KYC),
+  Exodus leftover website leftover
+  (`exodus`; KYC),
+  Ofza leftover website leftover
+  (`ofza-1`; KYC),
+  EdgeX leftover website leftover
+  (`edgex`; KYC),
   Serai leftover bitcoin-serai
   leftover (`4b89cf02`; KYC),
   Pragma leftover cairo oracle

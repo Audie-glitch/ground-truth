@@ -37798,6 +37798,269 @@ Remaining listed:
 API pages
 only.
 
+## 2026-09-03: Cosmos leftover solidity-ibc-eureka leftover (`8f33f35`)
+
+Immunefi program
+`cosmos`
+($50,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`cosmos/solidity-ibc-eureka`
+`8f33f351`.
+Extract
+`/tmp/ibc-eureka-repo`.
+No mainnet
+writes.
+
+Files:
+`ibc-solidity/contracts/ICS20Transfer.sol`,
+`ICS26Router.sol`,
+`utils/Escrow.sol`,
+`utils/IBCERC20.sol`.
+
+Checked for:
+a stranger
+`sendTransfer`
+that pulls
+another
+account's
+tokens; a
+`recvPacket`
+that pays
+`msg.sender`;
+an escrow
+`send` that
+is not
+ICS20-gated.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `sendTransfer`
+  /
+  `sendTransferWithPermit2`
+  `safeTransferFrom`
+  /
+  Permit2 the
+  caller into
+  the client
+  escrow.
+  `sendTransferWithSender`
+  is
+  `restricted`
+  and still
+  pulls
+  `_msgSender()`.
+- `onRecvPacket`
+  is
+  `onlyRouter`
+  and pays the
+  recorded
+  packet
+  `receiver`.
+  Ack error /
+  timeout
+  refunds the
+  recorded
+  packet
+  sender.
+- `Escrow.send`
+  is
+  `onlyICS20`
+  and rate-
+  limited.
+  `IBCERC20.mint`
+  /
+  `burn` are
+  `onlyICS20`
+  and only
+  to / from
+  the escrow.
+- `ICS26Router.recvPacket`
+  is
+  `restricted`
+  and verifies
+  light-client
+  membership
+  before the
+  app
+  callback.
+  `sendPacket`
+  requires
+  the caller
+  to be the
+  registered
+  source-port
+  app.
+
+Do not file
+transfer of
+the caller's
+tokens or
+relayer-
+gated
+receive of a
+membership-
+proven IBC
+packet to
+the recorded
+receiver.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+cosmos-sdk /
+ibc-go /
+cometbft /
+CosmWasm /
+gaia DLT
+(skip unless a
+small money
+path is
+isolated).
+
+## 2026-09-03: 1inch leftover infrastructure leftover
+
+Immunefi program
+`1inch-infrastructure`
+($20,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are 1inch.com /
+blog / API /
+business portal
+pages only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+website / API
+pages only.
+
+## 2026-09-03: Exodus leftover website leftover
+
+Immunefi program
+`exodus`
+($18,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are exodus.com
+/ desktop /
+store pages
+and
+passkeys.foundation
+only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+wallet store
+/ site pages
+only.
+
+## 2026-09-03: Ofza leftover website leftover
+
+Immunefi program
+`ofza-1`
+($10,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are ofza.com
+only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+website only.
+
+## 2026-09-03: EdgeX leftover website leftover
+
+Immunefi program
+`edgex`
+($10,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are
+pro / quote /
+spot
+edgex.exchange
+pages only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+exchange
+pages only.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -39890,6 +40153,20 @@ logged;
 (`1inch-web`; KYC) is logged;
 Hibachi leftover website leftover
 (`hibachi`; KYC) is logged;
+Cosmos leftover solidity-ibc-eureka
+leftover (`8f33f35`; KYC) is
+logged (remaining listed is
+cosmos-sdk / ibc-go / cometbft /
+CosmWasm / gaia DLT);
+1inch leftover infrastructure leftover
+(`1inch-infrastructure`; KYC) is
+logged;
+Exodus leftover website leftover
+(`exodus`; KYC) is logged;
+Ofza leftover website leftover
+(`ofza-1`; KYC) is logged;
+EdgeX leftover website leftover
+(`edgex`; KYC) is logged;
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
