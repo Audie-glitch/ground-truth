@@ -33003,6 +33003,14 @@ liquidate; KYC) is logged
 (listed leftover that
 official burrowland opens
 is exhausted);
+Babylon leftover vigilante
++ covenant leftover
+(`9a4c506` / `4e7ffcd`;
+KYC) is logged (remaining
+listed is finality-provider
+/ expiry-checker / queue-
+client / babylon node /
+websites);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
@@ -41502,3 +41510,149 @@ vesting
 factories, and
 Polygon MANA /
 collections.
+
+## 2026-09-03: Babylon leftover vigilante + covenant leftover (`9a4c506` / `4e7ffcd`)
+
+Immunefi program
+`babylon-labs`
+($500,000, `kyc: true`).
+Unique unused
+standing program.
+Listed DLT assets
+include
+`vigilante`
+`release/v0.24.x` and
+`covenant-emulator`
+`release/v0.16.x`.
+Official clones
+`/tmp/babylon-vigilante`
+`9a4c506` and
+`/tmp/babylon-covenant`
+`4e7ffcd`. No chain
+writes from this VM.
+
+Files:
+`btcstaking-tracker/btcslasher/slasher.go`,
+`btcstaking-tracker/stakingeventwatcher/stakingeventwatcher.go`,
+`covenant/covenant.go`,
+`covenant-signer/signerapp/signer.go`,
+`covenant-signer/signerservice/middlewares/hmac_auth.go`.
+
+Checked for: a
+covenant signature
+on a slashing tx
+that does not
+match
+`params.SlashingPkScript`;
+unbonding fee /
+time mismatches
+that still get
+signed; slasher
+that spends a
+delegation without
+extracted FP key
+evidence;
+unbonding watcher
+that reports a
+spend without an
+inclusion proof.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Covenant
+  `AddCovenantSignatures`
+  skips delegations
+  that already have
+  quorum, have
+  unbonding time
+  !=
+  `UnbondingTimeBlocks`,
+  or sit outside
+  min/max staking
+  time / value.
+  `decodeDelegationTransactions`
+  /
+  `decodeUndelegationTransactions`
+  call
+  `CheckSlashingTxMatchFundingTx`
+  with
+  `params.SlashingPkScript`
+  and
+  `MinSlashingTxFeeSat`.
+  Unbonding fee
+  must equal
+  `params.UnbondingFee`.
+  Stake expansion
+  re-queries the
+  previous
+  delegation
+  before signing.
+- Covenant-signer
+  HMAC middleware
+  rejects missing /
+  invalid HMAC when
+  a key is
+  configured
+  (constant-time
+  compare). Empty
+  key is operator
+  config, not
+  stranger theft
+  of staked BTC.
+- Slasher
+  `SlashFinalityProvider`
+  only walks
+  active /
+  unbonded
+  delegations under
+  an extracted FP
+  BTC SK from
+  evidence. It
+  does not invent
+  keys.
+- Staking-event
+  watcher reports
+  a spend only
+  after
+  `waitForStakeSpendInclusionProof`.
+  Stake expansion
+  waits k-deep.
+  Babylon
+  `MsgBTCUndelegate`
+  still validates
+  the proof
+  on-chain.
+
+Do not file
+operator HMAC-off
+signer, permissionless
+evidence reporting
+of a real slash,
+or on-chain
+undelegate of a
+proven spend as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+vigilante v0.24.x
++ covenant-emulator
+v0.16.x opens is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+finality-provider
+v2.x, staking-
+expiry-checker,
+staking-queue-
+client, babylon
+node, and the
+website /
+toolkit rows.
