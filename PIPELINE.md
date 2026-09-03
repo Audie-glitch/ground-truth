@@ -39,7 +39,9 @@ is logged; Immutable leftover is logged;
 Stargate leftover is logged;
 LayerZero leftover is logged;
 Ethena leftover is logged;
-Ether.fi leftover is logged).
+Ether.fi leftover is logged;
+Compound leftover is logged;
+Maple leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -454,6 +456,16 @@ Ether.fi leftover LiquidityPool leftover
 Liquifier / Redemption / WRNFT; KYC)
 is logged (remaining listed is eETH
 impl 404 / Auction / Oracle / adapters).
+Compound leftover Comet leftover
+(Sourcify cUSDCv3 / cWETHv3 / Rewards /
+Bulker; KYC) is logged (remaining listed
+is other markets / Governor /
+other-chain).
+Maple leftover Pool leftover
+(Sourcify MaplePool / PoolManager /
+Loan / SyrupRouter; KYC) is logged
+(remaining listed is factories /
+cyclical WM / strategies).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1046,6 +1058,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (Sourcify; KYC),
   Ether.fi leftover
   LiquidityPool leftover
+  (Sourcify; KYC),
+  Compound leftover Comet leftover
+  (Sourcify; KYC),
+  Maple leftover Pool leftover
   (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),

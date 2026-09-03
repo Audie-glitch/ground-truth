@@ -31058,6 +31058,302 @@ bridge adapters,
 and other-chain
 weETH.
 
+## 2026-09-03: Compound leftover Comet leftover (Sourcify)
+
+Immunefi program
+`compoundfinance`
+($1,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+`exact_match`
+cUSDCv3 proxy
+`0xc3d688B66703497DAA19211EEdff47f25384cdc3`
+to
+CometWithExtendedAssetList
+`0x83D491269720CE925f92C6bF9F66B7a0779A293a`,
+cWETHv3 proxy
+`0xA17581A9E3356d9A858b789D68B4d866e593aE94`
+to
+`0x87F77f3A127Bcf2Df912871aE4DE4eDd1cB8cAB4`,
+CometRewards
+`0x1B0e765F6224C21223AeA2af16c1C46E38885a40`,
+Bulker
+`0x74a81F84268744a40FEBc48f8b812a1f188D80C3`,
+MainnetBulker
+`0xa397a8C2086C554B531c02E29f3291c9704B00c7`,
+and Configurator
+proxy
+`0x316f9708bB98af7dA9c68C1C3b5e79039cD336E3`
+to
+`0xcFC1fA6b7ca982176529899D99af6473aD80DF4F`.
+Extract
+`/tmp/comp-usdc-impl`
+/ `/tmp/comp-weth-impl`
+/ `/tmp/comp-rewards`
+/ `/tmp/comp-bulker-usdc`
+/ `/tmp/comp-bulker-weth`
+/ `/tmp/comp-config-impl`.
+No mainnet
+interaction.
+
+Files:
+`contracts/CometWithExtendedAssetList.sol`,
+`contracts/CometCore.sol`,
+`contracts/CometRewards.sol`,
+`contracts/Bulker.sol`.
+
+Checked for: a
+stranger
+`supplyFrom` /
+`withdrawFrom`
+without
+allowance;
+`claim` that
+pays the
+caller;
+`absorb` of a
+healthy
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `supply` /
+  `withdraw`
+  bind
+  operator,
+  from, and dst
+  to
+  `msg.sender`.
+  `supplyTo` /
+  `withdrawTo`
+  pull / debit
+  `msg.sender`
+  and pay the
+  named
+  address.
+  `supplyFrom` /
+  `withdrawFrom`
+  require
+  `hasPermission(from/src, operator)`
+  (`owner ==
+  manager` or
+  `isAllowed`).
+- Transfers
+  use the same
+  permission
+  check.
+- `absorb` is
+  permissionless
+  and requires
+  `isLiquidatable`.
+  Incentive
+  points go to
+  the named
+  absorber.
+- `withdrawReserves`
+  is governor
+  only.
+- Rewards
+  `claim` pays
+  `src`.
+  `claimTo`
+  requires
+  Comet
+  permission.
+- Bulker
+  `invoke`
+  `supplyFrom` /
+  `withdrawFrom`
+  `msg.sender`.
+
+Do not file
+permissionless
+`absorb` of an
+underwater
+account,
+`claim` that
+pays `src`, or
+`supplyTo` that
+credits a named
+dst with the
+caller's tokens.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH USDC / WETH
+Comet types is
+exhausted.
+Remaining listed:
+other mainnet
+markets, Comet
+ext wrappers,
+Governor /
+Timelock, and
+other-chain
+Comets.
+
+## 2026-09-03: Maple leftover Pool leftover (Sourcify)
+
+Immunefi program
+`maple`
+($500,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+`match`
+MaplePool
+`0x80ac24aA929eaF5013f6436cdA2a7ba190f5Cc0b`,
+MaplePoolManager
+`0xfE02Be1aD28EdFd8e3dD6F29C402B244C2A258B8`
+behind proxy
+`0x7aD5fFa5fdF509E30186F4609c2f6269f4B6158F`,
+MapleLoan
+`0xEeaDb66693d63cFCF3E4D942D2812D4aE9443Fc1`,
+LoanManager
+`0xbAD003DA1e107f537Ae2f687f5FE7a7aFFe9B241`
+and `exact_match`
+SyrupRouter
+`0x134cCaaA4F1e4552eC8aEcb9E4A2360dDcF8df76`.
+Queue WM proxy
+`0x1bc47a0Dd0FdaB96E9eF982fdf1F34DC6207cfE3`
+resolves to live
+impl
+`0xF95E5722226a1018d058CD757B75F1D10289e967`
+(`match`); listed
+v100 impl
+`0x899B57Bbd8597aa2d1898476504f479c982c5c2c`
+also opens.
+Extract
+`/tmp/maple-pool`
+/ `/tmp/maple-pm-impl`
+/ `/tmp/maple-loan`
+/ `/tmp/maple-lm-impl`
+/ `/tmp/maple-syrup`
+/ `/tmp/maple-wmq-impl`
+/ `/tmp/maple-wmq-live`.
+No mainnet
+interaction.
+
+Files:
+`MaplePool.sol`,
+`contracts/MaplePoolManager.sol`,
+`contracts/MapleLoan.sol`,
+`modules/syrup-router/contracts/SyrupRouter.sol`,
+`modules/withdrawal-manager-queue/contracts/MapleWithdrawalManager.sol`.
+
+Checked for: a
+stranger
+deposit that
+mints shares
+while pulling
+another user's
+assets; redeem
+without
+allowance;
+queue
+`processExit`
+that pays the
+caller; loan
+`fund` by a
+non-lender.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Pool
+  `deposit` /
+  `mint` pull
+  `msg.sender`
+  and mint to
+  the named
+  receiver.
+  `requestRedeem`
+  / `redeem`
+  escrow or
+  burn `owner`
+  only when
+  `msg.sender`
+  is owner or
+  has
+  allowance.
+- PoolManager
+  `processRedeem`
+  is `onlyPool`
+  and requires
+  owner ==
+  sender or
+  allowance.
+  `processWithdraw`
+  is disabled.
+  `depositCover`
+  pulls
+  `msg.sender`.
+  Cover
+  withdraw is
+  pool-delegate
+  only.
+- Queue WM
+  `addShares` /
+  `processExit`
+  are
+  `onlyPoolManager`.
+  `processRedemptions`
+  is
+  `onlyRedeemer`.
+- SyrupRouter
+  `deposit`
+  pulls
+  `msg.sender`.
+- MapleLoan
+  `fund` is
+  `onlyLender`.
+  `makePayment`
+  `transferFrom`s
+  `msg.sender`
+  to the
+  lender.
+
+Do not file
+4626 deposit to
+a named
+receiver that
+pays the
+caller, queue
+processing by
+the redeemer
+role, or
+lender-only
+`fund`.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH pool / loan
+/ Syrup types
+is exhausted.
+Remaining listed:
+factories,
+cyclical WM,
+Aave / Sky /
+Basic
+strategies, and
+other pools.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -32534,6 +32830,19 @@ Redemption / WRNFT; KYC)
 is logged (remaining listed
 is eETH impl 404 / Auction
 / Oracle / adapters);
+Compound leftover Comet leftover
+(Sourcify cUSDCv3 / cWETHv3 /
+Rewards / Bulker; KYC) is
+logged (remaining listed is
+other markets / Governor /
+other-chain);
+Maple leftover Pool leftover
+(Sourcify MaplePool /
+PoolManager / Loan /
+SyrupRouter; KYC) is logged
+(remaining listed is
+factories / cyclical WM /
+strategies);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
