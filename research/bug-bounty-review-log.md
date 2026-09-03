@@ -46193,3 +46193,192 @@ connectors
 Metamorpho), and
 additional live
 vault instances.
+
+## 2026-09-03: Kiln DeFi leftover Polygon + Optimism + Base vaults (Sourcify)
+
+Immunefi program
+`kiln-defi`
+($500,000, `kyc: true`).
+Listed remaining after
+Arbitrum + BSC
+(`f0b2ec2`). Not
+previously logged.
+Official docs
+https://docs.kiln.fi/v1/kiln-products/defi/security/source-code
+Polygon Sourcify
+`match` Vault
+`0x39fc3bd5a3f909498224bAD8118eE3F4d11fA426`,
+beacon, factory,
+BlockList, and
+Cool Wallet
+AaveV3 USDT
+proxy
+`0x03441c89e7b751bb570f9dc8c92702b127c52c51`
+(`VaultBeaconProxy`).
+`exact_match`
+AaveV3Connector
+`0xB37b7048873D90c68B997F6D078648e866F17287`.
+Polygon
+ConnectorRegistry
+is Sourcify 404.
+Optimism Sourcify
+`match` Vault
+`0x14C01e411Dbf8e648214458dab5558D46c84619A`,
+beacon, factory,
+BlockList.
+`exact_match`
+ConnectorRegistry
+`0x307320C7323EB80C721c41469BEE3776Fa8A96D2`
+and
+AaveV3Connector
+`0x3511d6378322BDBA40a59891Ec61f9A7C387667f`.
+Dakota proxy is
+Sourcify 404.
+Base Sourcify
+`match` Vault
+`0xDEDDCc8D5C0b9D920Dc7a3BEC1Fc112C40379ca8`,
+factory,
+BlockList.
+`exact_match`
+beacon,
+ConnectorRegistry
+`0x3D72BfC5a2368BCD7f019c061843B06De3EbBFFd`,
+AaveV3Connector
+`0x611E4996BE1dd6b7777A593949E3b60446c21113`,
+CompoundV3Connector
+`0x2eF8cb41DD108d429bf8D664d6fb907C8d71753b`,
+and
+MetamorphoConnector
+`0xe4B3e16AA6c028c676852dEfe2Fd742050ee1E03`.
+Extract
+`/tmp/kiln-defi-pob-src`.
+Polygon /
+Optimism / Base
+`Vault.sol` /
+`VaultFactory.sol` /
+`AaveV3Connector.sol` /
+`BlockList.sol`
+hashes match the
+Arb extract
+(`20c00306685e6065`
+vault). OP/Base
+`ConnectorRegistry.sol`
+matches Arb
+Blockscout.
+Base Compound v3
+connector matches
+Arb. No mainnet
+writes.
+
+Files:
+`src/Vault.sol`
+(hash-identical to
+Arb/BSC),
+`src/connectors/MetamorphoConnector.sol`,
+`src/proxy/VaultBeaconProxy.sol`,
+`src/ConnectorRegistry.sol`,
+`src/proxy/VaultUpgradeableBeacon.sol`.
+
+Checked for: a
+stranger
+Metamorpho
+`deposit` /
+`withdraw` that
+moves a vault's
+4626 shares when
+called directly;
+`claim` /
+`reinvest` that
+accept a swap
+payload; beacon
+proxy
+constructor that
+lets a stranger
+re-init a live
+vault.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Metamorpho
+  `deposit` /
+  `withdraw` use
+  `address(this)`
+  as owner. Vault
+  calls via
+  `functionDelegateCall`
+  so Morpho
+  shares sit on
+  the vault.
+  Direct calls
+  cannot move a
+  vault's
+  position.
+  `claim` and
+  `reinvest`
+  always revert
+  (`NothingToClaim`
+  /
+  `NothingToReinvest`).
+  `totalAssets` /
+  `maxDeposit` /
+  `maxWithdraw`
+  are views
+  against
+  `msg.sender`.
+- `VaultBeaconProxy`
+  is an OZ
+  `BeaconProxy`
+  constructor
+  wrapper. Cool
+  Wallet Polygon
+  proxy source
+  is that
+  wrapper only.
+- Core vault /
+  factory /
+  fee /
+  registry /
+  Aave paths
+  are the same
+  as the
+  Arbitrum + BSC
+  leftover.
+  `createVault`
+  remains
+  `DEPLOYER_ROLE`.
+  Beacon
+  `upgradeTo` is
+  `IMPLEMENTATION_MANAGER`.
+
+Do not file
+role-gated
+beacon upgrades
+or ERC4626
+self-deposit as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Kiln DeFi
+Polygon /
+Optimism / Base
+leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed: newer
+Ethereum impl /
+factory /
+connector
+addresses in
+current docs
+(distinct from
+the older ETH
+core leftover),
+and additional
+live vault
+instances.
