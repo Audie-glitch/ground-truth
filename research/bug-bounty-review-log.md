@@ -62644,3 +62644,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file wipe-key treasury-excluded wipes, admin-gated token delete, or key-gated account delete-and-transfer as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `hiero-consensus-node` other handlers (freeze/pause/unfreeze), `hiero-mirror-node`, `hiero-cryptography`, SDKs, and the hashed transaction-tool website leftover.
+
+## 2026-09-03: Hedera leftover TokenFreeze + TokenPause leftover (`0d3d9a2`)
+
+Immunefi program `hedera` ($30,000, `kyc: true`). Follow-on leftover after TokenWipe / TokenDelete (`32d0f0e`). Official clone `/tmp/hiero-consensus` `0d3d9a2`. Opened `TokenFreezeAccountHandler.java`, `TokenUnfreezeAccountHandler.java`, `TokenPauseHandler.java`, `TokenUnpauseHandler.java`. No mainnet writes. No exploit PoCs.
+
+Checked for: a freeze/unfreeze that toggles another account without the freeze key; a pause/unpause that flips a token without the pause key.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Freeze / unfreeze `preHandle` requires the token **freeze key** (`TOKEN_HAS_NO_FREEZE_KEY` if missing). `handle` only sets `tokenRel.frozen` on the named account's associated relation after `getIfUsable`. Empty HIP-540 freeze key is rejected in handle.
+- Pause / unpause `preHandle` requires the **pause key** when present. `handle` rejects empty pause key (`TOKEN_HAS_NO_PAUSE_KEY`) and deleted tokens, then sets `token.paused`. No balances move.
+
+Do not file freeze-key account freezes or pause-key token pauses as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `hiero-consensus-node` other handlers, `hiero-mirror-node`, `hiero-cryptography`, SDKs, and the hashed transaction-tool website leftover.
