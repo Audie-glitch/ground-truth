@@ -40753,12 +40753,14 @@ remaining boost leftover (`240aa6e`) is logged. Filecoin
 leftover remaining go-f3 leftover (`5f2c984`) is logged.
 Filecoin leftover remaining lotus miner leftover
 (`7740217`) is logged.
+Filecoin leftover remaining FVM leftover (`d4efdd4`)
+is logged.
 Remaining listed Hedera: hashed transaction-tool website.
-Remaining listed Filecoin: proofs / FVM / filecoin.io.
+Remaining listed Filecoin: proofs / filecoin.io.
 Do not rematch Hedera consensus-node,
 json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
-or lotus miner.
+lotus miner, or FVM.
 Do not loop `reffinance` 404s or mux-staking auth.
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -63715,3 +63717,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file the proving harness wrapper or CSR proxy as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `zk_ee` implementations, airbender CS / prover / verifier, and `zkos-wrapper` circuits.
+
+## 2026-09-03: Filecoin leftover remaining FVM leftover (`d4efdd4`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Listed remaining after go-f3 and lotus miner leftovers. Official sparse clone `/tmp/filecoin-fvm` at `d4efdd4`. Opened `fvm/src/syscalls/send.rs`, `fvm/src/kernel/default.rs`, `fvm/src/call_manager/default.rs`, `fvm/src/executor/default.rs`. Do not rematch builtin-actors, boost, go-f3, or lotus miner leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: a `send` syscall that transfers another actor's FIL; `transfer` that skips a balance check or accepts a negative value; gas refunds credited to a stranger.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Kernel `send` sets `from = self.actor_id` (the calling actor) and rejects a non-zero value in read-only mode. `call_actor` / `call_actor_resolved` then `transfer(from, to, value)` only when value is non-zero.
+- `transfer` rejects a negative amount, requires the sender to exist with `balance >= value`, no-ops a self-transfer, and `deduct_funds` / `deposit_funds` only those two actors.
+- Executor gas prevalidation looks up `msg.from`, requires an account / ethaccount / EAM-namespace placeholder, matching nonce, then `deduct_funds(gas_cost)` from that sender. After apply, refunds go to the same `sender_id`.
+
+Do not file caller-scoped FVM send or `msg.from` gas debit as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: proofs / filecoin.io.
