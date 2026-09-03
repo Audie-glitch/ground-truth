@@ -40416,12 +40416,13 @@ website leftover.
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
 logged. Hedera leftover remaining cryptography leftover
-(`39f28f3`) is logged. Remaining listed Hedera:
-`hiero-mirror-node` (sparse only), `hiero-sdk-js` /
-`hiero-sdk-java` / `hiero-sdk-go`, transaction-tool
-website. Do not rematch consensus-node handlers,
-json-rpc-relay, cryptography, or Node handlers.
-Do not loop `reffinance` 404s or mux-staking auth.
+(`39f28f3`) is logged. Hedera leftover remaining SDK-js
+leftover (`5b785ed`) is logged. Remaining listed Hedera:
+`hiero-mirror-node` (sparse only), `hiero-sdk-java` /
+`hiero-sdk-go`, transaction-tool website. Do not rematch
+consensus-node handlers, json-rpc-relay, cryptography,
+Node handlers, or sdk-js. Do not loop `reffinance` 404s
+or mux-staking auth.
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
 the full `diamond-pau` facet tree at `1b6743a`,
@@ -42934,6 +42935,9 @@ mirror-node / cryptography / other modules / SDKs);
 Hedera leftover remaining cryptography leftover
 (`39f28f3`) is logged (remaining listed is
 mirror-node / SDKs / transaction-tool);
+Hedera leftover remaining SDK-js leftover
+(`5b785ed`) is logged (remaining listed is
+mirror-node / sdk-java / sdk-go / transaction-tool);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
 Sei leftover go-ethereum leftover (`bb451e2`) is logged;
@@ -63247,3 +63251,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file target-signed associate/dissociate or KYC-key grant/revoke as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `hiero-consensus-node` other handlers, `hiero-mirror-node`, `hiero-cryptography`, SDKs, and the hashed transaction-tool website leftover.
+
+## 2026-09-03: Hedera leftover remaining SDK-js leftover (`5b785ed`)
+Immunefi program `hedera` ($30,000, `kyc: true`). Listed remaining after cryptography leftover. Official sparse clone `/tmp/hiero-sdk-js` at `5b785ed`. Opened `transaction/Transaction.js`, `PrivateKey.js`, `PublicKey.js`, `account/TransferTransaction.js`, `EthereumTransaction.js`. Consensus-node and cryptography leftovers already logged. No mainnet writes. No exploit PoCs.
+
+Checked for: `sign` / `signWithOperator` attaching another account's spend authority; `addSignature` that would make a transfer valid without the sender key; `EthereumTransaction` wrapping a stranger's payload as the HAPI payer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Transaction.sign` is `signWith(privateKey.publicKey, privateKey.sign)`. `signWithOperator` requires `client._operator` and signs only with that operator. `execute` auto-signs only the same operator. `addSignature` attaches caller-supplied bytes; the node still verifies keys.
+- `PrivateKey.signTransaction` signs each `bodyBytes` with `_key.sign` and records that public key. `PublicKey.verifyTransaction` matches `pubKeyPrefix` then `verify(bodyBytes, signature)`.
+- `TransferTransaction` / `EthereumTransaction` only build HAPI bodies. A wrap still spends the recovered Ethereum sender plus the HAPI relayer gas allowance, as already leftover-logged on consensus-node.
+
+Do not file client-side builders or operator-only signing as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `hiero-mirror-node` (sparse only), `hiero-sdk-java` / `hiero-sdk-go`, and the transaction-tool website leftover.
