@@ -2729,10 +2729,70 @@ Result: no user-exploitable finding.
   delta. `receive` only accepts ETH while `_ethExpected`
   is set around WETH unwrap.
 
-Remaining Alchemix: concrete strategies (Aave, Moonwell,
-Ether.fi, StakeDAO, Tokemak, wstETH, sFRAX, siUSD,
-oracle-priced swap), `EulerUSDCAdapter`, `StakingGraph`.
+Remaining Alchemix after the adapter pass: none of the
+previously listed leftover files (see the strategies
+pass below).
 Not submitted.
+
+## 2026-09-03: Alchemix V3 concrete strategies + Euler + StakingGraph (`ea6f58b`)
+
+Same Immunefi program (`alchemix-1`, $150,000, no KYC).
+Same clone `/tmp/reviews/alchemix-v3` at `ea6f58b`. No
+mainnet interaction.
+
+Files: `strategies/{Aave,Moonwell,EtherfiEETH,SFraxETH,SiUSD,StakeDAOWETH,TokeAuto,WstETHEthereum,WstETHL2,OraclePricedSwap}Strategy.sol`,
+`adapters/EulerUSDCAdapter.sol`,
+`libraries/StakingGraph.sol`.
+
+Checked for: a non-vault pull of aTokens / mTokens /
+weETH / vault shares; an oracle-priced swap that
+accepts a stale or zero answer; deallocate that
+approves more than the vault requested; Enso / 0x
+calldata that a user can inject; Fenwick overflow that
+inflates transmuter earmarks; Euler adapter minting
+or moving USDC.
+
+Result: no user-exploitable finding.
+
+- All `_allocate` / `_deallocate` overrides still run
+  only through `MYTStrategy` `onlyVault`. Idle-balance
+  checks and a final approve-to-`msg.sender` (the MYT)
+  are the common exit. Force-deallocate stays
+  opt-in (`canForceDeallocate`) and direct-only.
+- `OraclePricedSwapStrategy` requires `raw > 0`,
+  `updatedAt != 0`, and `block.timestamp - updatedAt
+  <= MAX_ORACLE_STALENESS`. Swap min-out is oracle *
+  (1 - slippageBPS). Owner can retarget the feed.
+  Child wstETH / sfrxETH / weETH / siUSD paths convert
+  wrapped balances into oracle units before the swap
+  cap. L2 has no sequencer-uptime check (owner
+  staleness).
+- Aave supplies/withdraws via the provider pool;
+  aToken is protected. `adminDexSwap` is owner-only.
+  Moonwell mints/redeems with error-code checks,
+  `ceilDiv` on redeem, and optional ETH→WETH wrap.
+- Ether.fi instant redeem sizes weETH from the
+  liquidity-pool share math plus exit fee and a
+  bounded `grossRedeemAmountBuffer`; it reverts when
+  `canRedeem` is false. sFRAX deposit is
+  unwrap-WETH→minter; swap-deallocate unwraps sfrxETH
+  to frxETH first. siUSD uses InfiniFi
+  `mintAndStake` / `unstake`+`redeem(..., shortfall)`.
+- StakeDAO: Curve add/remove with virtual-price and
+  absolute LP floors; Enso routes are operator
+  calldata with a min-out and a post-hoc LP-spent
+  ceiling. Tokemak: deposit NAV floor, direct redeem
+  through Autopilot with `execToleranceBps` (cap 650)
+  and a NAV-anchored min-out; route calldata requires
+  `minAmountOut >= shortfall`.
+- `EulerUSDCAdapter` is a `convertToAssets` price
+  view only. `StakingGraph` packs a 112/144 Fenwick
+  tree, reverts on delta/product overflow, and
+  `queryStake` clamps to `g.size`. Transmuter never
+  queries start block 0 (would underflow `start--`).
+
+Alchemix V3 `src/` money-moving trees treated as
+exhausted. Not submitted.
 
 ## 2026-09-03: Origin ARM CapManager + Morpho/Silo 4626 wrappers (`2322537`)
 
@@ -2892,16 +2952,17 @@ observer/cap modules (`4a4f6c7`), Money on Chain V2
 core/queue/V4 swapper (`d770477`), Sky FarmOwner,
 Alchemix V3 alchemist + transmuter + alUSD +
 token-vault + MYT adapter / allocator / router / fee
-vaults, and Horizen ZenStaker + RewardAccumulator
-(`ab92502`) are exhausted. Origin in-scope Solidity
-listed as remaining is exhausted. Remaining Alchemix:
-concrete protocol strategies, Euler adapter,
-`StakingGraph`. Remaining MoC: governance machines and
-live Rootstock v1 proxies if a later pass wants
-addresses rather than the V2 tree. 1inch Aqua opcode
-set already logged; remaining Aqua-listed files are
-solidity-utils mixins. Superteam API rechecked
-03:25 UTC 3 Sep: still 28 open listings.
+vaults + concrete strategies / Euler adapter /
+`StakingGraph`, and Horizen ZenStaker +
+RewardAccumulator (`ab92502`) are exhausted. Origin
+in-scope Solidity listed as remaining is exhausted.
+Remaining Alchemix: none of the previously listed
+leftover `src/` files. Remaining MoC: governance
+machines and live Rootstock v1 proxies if a later
+pass wants addresses rather than the V2 tree. 1inch
+Aqua opcode set already logged; remaining Aqua-listed
+files are solidity-utils mixins. Superteam API
+rechecked 03:25 UTC 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the

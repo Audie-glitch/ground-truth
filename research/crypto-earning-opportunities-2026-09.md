@@ -1,6 +1,6 @@
 # Verified crypto earning opportunities
 
-**Checked:** 3 September 2026 03:13 UTC (DoraHacks CTC + KeeperHub #2105 + Lombard leftover SVM + Alchemix V3)  
+**Checked:** 3 September 2026 03:22 UTC (KeeperHub #2105 + deployer + Alchemix V3 strategies)  
 **Scope:** Legitimate, no-capital developer work that can pay crypto or stablecoins. Competitive prizes are not guaranteed income.
 
 ## Ranked opportunities
