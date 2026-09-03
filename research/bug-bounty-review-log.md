@@ -45700,6 +45700,92 @@ partitioned
 epoch rewards
 (if still unused).
 
+## 2026-09-03: Jito leftover remaining jito-solana partitioned epoch rewards leftover (`d0e3a47`)
+
+Immunefi program
+`jito`
+($250,000,
+`kyc: true`).
+Official
+`jito-foundation/jito-solana`
+`d0e3a47`.
+Extract
+`/tmp/jito-solana/runtime/src/bank/partitioned_epoch_rewards/`.
+Do not rematch
+remaining runtime
+/
+vote_reward leftovers.
+No mainnet
+writes.
+
+Files:
+`runtime/src/bank/partitioned_epoch_rewards/{mod,calculation,distribution,epoch_rewards_hasher,sysvar}.rs`.
+
+Checked for:
+distribution
+that credits
+a stranger
+stake;
+capitalization
+that mints
+beyond the
+partition;
+sysvar
+drain that
+a stranger
+can call.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Validator
+  bank
+  path,
+  not a
+  stranger
+  IX.
+- Credits
+  only the
+  `stake_pubkey`
+  already
+  in the
+  partition,
+  via
+  `checked_add_lamports`.
+- Height
+  gates the
+  partition
+  index.
+  Hasher
+  splits
+  by parent
+  blockhash.
+- Sysvar
+  tracks
+  distributed
+  vs total
+  and does
+  not move
+  user
+  lamports.
+
+Do not file
+partitioned
+epoch
+credits as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`jito-solana`
+check_transactions
+(if still unused).
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -45975,6 +46061,8 @@ Jito leftover remaining jito-solana vote_reward leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana remaining runtime leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana partitioned epoch rewards leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45996,7 +46084,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` check_transactions / partitioned epoch rewards if still unused.
+Remaining listed Jito: `jito-solana` check_transactions if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -46067,6 +46155,7 @@ Do not rematch Jito jito-solana compute-budget leftover.
 Do not rematch Jito jito-solana zk-elgamal-proof leftover.
 Do not rematch Jito jito-solana vote_reward leftover.
 Do not rematch Jito jito-solana remaining runtime leftover.
+Do not rematch Jito jito-solana partitioned epoch rewards leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -48820,8 +48909,9 @@ Jito leftover remaining jito-solana zk-elgamal-proof leftover
 Jito leftover remaining jito-solana vote_reward leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana remaining runtime leftover
-(`d0e3a47`) is logged (remaining listed is check_transactions /
-partitioned epoch rewards);
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana partitioned epoch rewards leftover
+(`d0e3a47`) is logged (remaining listed is check_transactions);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover
