@@ -11611,8 +11611,89 @@ finding. Not submitted.
 
 Next leftover: Enzyme
 `CreWorkflowConsumer`
-or Twyne Sourcify-404
-vaults. Not submitted.
+(logged below) or Twyne
+Sourcify-404 vaults.
+Not submitted.
+
+## 2026-09-03: Enzyme Onyx CreWorkflowConsumer leftover (`7b48d24`)
+
+Immunefi program
+`enzyme-onyx` ($200,000,
+`kyc: false`). 2 Jul /
+24 Feb leftover
+`CreWorkflowConsumer.sol`
+after the ACE issuance
+pass. Official clone
+`/tmp/enzyme-onyx` at
+`7b48d24` (same ACE
+commit). In-repo
+ChainSecurity QA notes
+nonce / expiry and
+deployment sequencing.
+No mainnet interaction.
+
+Files:
+`src/components/automations/chainlink-cre/CreWorkflowConsumer.sol`,
+`IReceiver.sol`. Adjacent:
+`LimitedAccessLimitedCallForwarder.executeCalls`.
+
+Checked for: `onReport`
+from a non-Keystone
+caller; metadata that
+swaps workflow owner;
+replay / skipped nonce;
+permissionless `init`
+that steals a live
+forwarder role;
+`setAllowedWorkflowId`
+by a stranger.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `onReport` requires
+  `msg.sender ==
+  CHAINLINK_KEYSTONE_FORWARDER`
+  (immutable).
+  Metadata must match
+  stored workflow id /
+  name and immutable
+  `ALLOWED_WORKFLOW_OWNER`.
+  `expiresAt` is
+  `block.timestamp <=`.
+  Nonce must be
+  `lastNonce + 1`;
+  storage updates
+  before
+  `executeCalls`.
+- `executeCalls` on
+  the configured
+  forwarder requires
+  `isUser(consumer)`.
+  A front-run `init`
+  can point a
+  not-yet-inited clone
+  at a stranger
+  forwarder (DoS of
+  that instance until
+  redeploy). It cannot
+  become a user on the
+  live protocol
+  forwarder
+  (`addUser` is
+  `onlyAdminOrOwner`).
+  In-repo QA already
+  flags the
+  sequencing.
+- `init` is one-shot
+  (`forwarder != 0`).
+  `setAllowedWorkflowId`
+  is
+  `onlyAdminOrOwner`.
+
+Next leftover: Twyne
+Sourcify-404 vaults.
+Not submitted.
 
 ## Next candidates
 
@@ -11998,6 +12079,9 @@ merkle validator /
 converters (`7fe83e5`,
 15 Jul leftover) are
 logged;
+Enzyme Onyx
+`CreWorkflowConsumer`
+(`7b48d24`) is logged;
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
