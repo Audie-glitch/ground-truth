@@ -10,7 +10,9 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Optimism leftover remaining SystemConfig leftover is logged;
+246 programs; no Sep 2026 launches; Optimism leftover remaining op-node sequencing leftover is logged;
+Optimism leftover remaining op-node p2p leftover is logged;
+Optimism leftover remaining SystemConfig leftover is logged;
 Optimism leftover remaining L2OutputOracle leftover is logged;
 Jito leftover remaining jito-solana epoch_stakes leftover is logged;
 Optimism leftover remaining mintable factory leftover is logged;
@@ -1750,11 +1752,19 @@ L2OutputOracle leftover
 (Sourcify; KYC) is logged.
 Optimism leftover remaining
 SystemConfig leftover
-(Sourcify; KYC) is logged
-(remaining listed is remaining
-op-node leftover (p2p /
-sequencing) / websites /
-rust/op-reth if still unused).
+(Sourcify; KYC) is logged.
+Optimism leftover remaining
+op-node p2p leftover
+(`eea9542`; KYC) is logged.
+Optimism leftover remaining
+op-node sequencing leftover
+(`eea9542`; KYC) is logged
+(remaining listed is unused
+official op-node leftover
+that listed trees still open
+after this sequencing slice /
+websites / rust/op-reth if
+still unused).
 Filecoin leftover remaining
 go-jsonrpc leftover
 (`059363558429`; KYC) is logged.
@@ -2887,6 +2897,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Optimism leftover remaining
   SystemConfig leftover
   (Sourcify; KYC),
+  Optimism leftover remaining
+  op-node p2p leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  op-node sequencing leftover
+  (`eea9542`; KYC),
   Filecoin leftover remaining
   go-jsonrpc leftover
   (`059363558429`; KYC),
