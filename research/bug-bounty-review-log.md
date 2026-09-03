@@ -11351,9 +11351,148 @@ adapters are exhausted.
 Next leftover: Sky
 Optimism / Arbitrum /
 Starknet DAI-bridge
-relays, or Twyne
-Sourcify-404 vaults.
-Not submitted.
+relays (logged below),
+or Twyne Sourcify-404
+vaults. Not submitted.
+
+## 2026-09-03: Sky Optimism / Arbitrum / Starknet DAI-bridge leftover
+
+Immunefi program `sky`
+($10,000,000, `kyc:
+false`). Remaining
+listed 2022 DAI-bridge
+trees after LZ / OP
+governance relays:
+sky-ecosystem/optimism-dai-bridge
+`master` `bc3d63f`,
+arbitrum-dai-bridge
+`master` `ba5e986`,
+starknet-dai-bridge
+`main` `380a6ed`.
+Local clones
+`/tmp/op-dai-bridge`,
+`/tmp/arb-dai-bridge`,
+`/tmp/sn-dai-bridge`.
+No mainnet interaction.
+
+Files: OP
+`L1/L2GovernanceRelay`,
+`L1Escrow`,
+`L1/L2DAITokenBridge`;
+Arb
+`L1/L2GovernanceRelay`,
+`L1Escrow`,
+`L1/L2DaiGateway`;
+Starknet
+`L1DAIBridge`,
+`L1Escrow`,
+`L1EscrowMom`,
+`L1GovernanceRelay`,
+`l2_dai_bridge.cairo`,
+`l2_governance_relay.cairo`.
+
+Checked for:
+permissionless L2
+`relay` / mint;
+withdrawal that unlocks
+escrow without a burn;
+escrow `approve` that
+is not ward-gated;
+Starknet
+`consumeMessageFromL2`
+that pays a stranger
+who did not appear in
+the L2 payload;
+Arb router-decoded
+`from` that burns a
+non-caller without the
+official router.
+
+Result: no user-exploitable
+finding. Not submitted.
+Listed Sky leftover
+that a public GitHub
+tree would open is
+exhausted (Twyne vaults
+are still Sourcify 404).
+
+- OP / Arb L1 relays
+  are `wards`. L2
+  `relay` is
+  messenger + L1
+  counterpart gated
+  and `delegatecall`s
+  a trusted spell.
+  OP L2 also checks
+  the messenger slot
+  did not change.
+- Escrows only
+  `approve` under
+  `wards`. Starknet
+  `L1EscrowMom.refuse`
+  can only set
+  allowance to 0.
+- OP deposit locks
+  DAI in escrow and
+  mints on L2 only
+  via
+  `onlyFromCrossDomainAccount`.
+  L2 withdraw burns
+  `msg.sender` then
+  unlocks the same
+  amount on L1.
+  Closed bridges still
+  finalize in-flight
+  messages and reject
+  new ones.
+- Arb
+  `outboundTransfer`
+  sets `from =
+  msg.sender` unless
+  `msg.sender` is the
+  immutable official
+  router. Extra hook
+  data is rejected.
+  L2 burns `from` and
+  L1
+  `finalizeInboundTransfer`
+  is
+  `onlyL2Counterpart`.
+- Starknet deposit
+  pulls `msg.sender`
+  into escrow under
+  `maxDeposit` +
+  ceiling. L2
+  `handle_deposit`
+  requires
+  `from_address ==
+  l1 bridge`.
+  `initiate_withdraw`
+  burns the L2 caller
+  and posts
+  `[0, l1_recipient,
+  amount]`. L1
+  `withdraw` consumes
+  that payload with
+  `msg.sender ==
+  l1_recipient`, then
+  may forward DAI to
+  a caller-chosen
+  address (same
+  designated
+  recipient).
+  `cancelDeposit`
+  rebuilds the
+  original payload
+  with `msg.sender`
+  as the depositor.
+
+Next leftover: Twyne
+Sourcify-404 vaults /
+wrappers / EVC /
+factories (still
+closed). Not
+submitted.
 
 ## Next candidates
 
@@ -11567,13 +11706,14 @@ DefaultPAUAssembler
 AdministeredAgent
 (`5e6b52f`) are logged.
 Remaining Sky leftover
-`sky-oapp-oft` is
-logged; LZ / OP
-governance relays are
-logged below. Older
-Optimism / Arbitrum /
-Starknet DAI-bridge
-relays remain.
+`sky-oapp-oft` + LZ/OP
+relays + Optimism /
+Arbitrum / Starknet
+DAI-bridges are logged
+below. Listed Sky
+leftover that a public
+tree would open is
+exhausted.
 Yearn Accountant
 `0x5A74…DE69` (Sourcify)
 plus 3.0.4 Tokenized
@@ -11685,7 +11825,8 @@ program and is not a second vuln book. Rechecked
 PR #2275 (`tenk-earn`, `staging`, mergeable) — do not
 duplicate; #2240 still `open` + `accepted`, 1
 design comment (`edycutjong`), 0 PRs — do not
-implement or claim;
+implement or claim; Twyne vaults / wrappers /
+EVC / factories still Sourcify 404;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 Hedera Harness #8 still `open`, 0 comments;
 CreditPassport deployer still 0 Sepolia ETH
@@ -11721,9 +11862,14 @@ native-pool / signers /
 swap / rewards-pox5 are
 logged; TermMax leftover
 adapters (`e314f3f`) are
-logged; remaining Sky is
-older DAI-bridge relays;
-listed StackingDAO and
+logged; Sky Optimism /
+Arbitrum / Starknet
+DAI-bridge leftover is
+logged (listed Sky
+leftover that a public
+tree would open is
+exhausted); listed
+StackingDAO and
 TermMax leftover
 adapters are exhausted;
 GammaSwap listed leftover (factory /
