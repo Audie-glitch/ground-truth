@@ -65578,3 +65578,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an honest STARK prover, codegen that copies the compiled circuit, or M31 reduction as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: airbender `verifier_common` (`fri_folding` / `proof_flattener`).
+
+## 2026-09-03: ZKsync OS leftover remaining airbender verifier_common leftover (`6ec4ea7`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Official remaining listed after airbender prover leftover. Official clone `/tmp/zksync-airbender` `6ec4ea7` (sparse `verifier_common`). Opened `fri_folding.rs`, `proof_flattener.rs`, `structs.rs`, and `lib.rs`. Do not rematch verifier, prover, CS, or field leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: FRI fold accepting a leaf that does not contain the expected evaluation; flatten/parse dropping a cap or query so a fake STARK still verifies; query-index assembly ignoring transcript bits.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `fri_fold_by_log_n` `assert_eq`s the running expected value against the leaf at `tree_index & ((1<<k)-1)`, then folds pairs as `(a-b)*root*challenge + (a+b)` (FMA variant pre-multiplies the challenge into the roots). Domain log, tree index, and evaluation point shrink by `FOLDING_DEGREE_LOG2`. The verifier leftover still checks the final monomial.
+- `flatten_proof_for_skeleton` / `flatten_query` encode reduced u32 limbs in a fixed order (caps, challenges, accumulators, DEEP/FRI, PoW, then leaves + Merkle paths). Feature-gated `proof_utils` only. A flatten/parse mismatch fails verification; it does not accept a stranger proof.
+- `BitSource` / `assemble_query_index` read transcript bits little-endian. `parse_field_els_as_u32_from_u16_limbs_checked` requires both limbs `< 2^16`. This crate does not move ETH.
+
+Do not file a FRI fold that binds the expected leaf or a proof u32 encoder as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `zksync-os` `supporting_crates` (`delegated_u256` / `modexp` / `u256`).
