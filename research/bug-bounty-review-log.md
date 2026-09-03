@@ -5641,6 +5641,75 @@ RWA / slisXAUE / LisAster) if those
 addresses are later added to
 Immunefi. Not submitted.
 
+## 2026-09-03: Lista Moolah vault + Credit/Lending brokers (`ce72699`)
+
+Same Immunefi program `listadao` ($1,000,000,
+`kyc: false`). Moolah core +
+PublicLiquidator already logged. Same
+clone `/tmp/reviews/lista-moolah` at
+`ce72699`. No mainnet interaction.
+
+Files: `src/moolah-vault/MoolahVault.sol`
+(deposit / mint / withdraw / redeem /
+withdrawFor / redeemFor),
+`src/credit-loan/{CreditBroker,CreditToken,
+libraries/MoolahOperateLib}.sol`,
+`src/broker/LendingBroker.sol`.
+
+Checked for: `withdrawFor` that burns
+a stranger’s shares without a
+provider; CreditBroker repay that
+clears another user’s Moolah debt
+with the caller as `onBehalf`;
+`_tryWithdrawAndBurnDebt` that
+withdraws credit tokens without
+burning; LendingBroker borrow that
+skips health.
+
+Result: no user-exploitable finding.
+
+- Vault `withdraw`/`redeem` go
+  through ERC-4626 `_withdraw`
+  (`sender` spends allowance of
+  `owner`). `withdrawFor` /
+  `redeemFor` require
+  `msg.sender == provider` and pass
+  the provider-supplied `sender` as
+  that caller. Receiver is the
+  provider. Deposit/mint whitelist
+  the `receiver`.
+- CreditBroker supply/borrow/
+  withdraw are `msg.sender` +
+  merkle `syncCreditScore`.
+  `_tryWithdrawAndBurnDebt` pulls
+  `debtOf` credit tokens back to
+  the user so the following sync
+  can `_safeBurn` the excess.
+  `_repay` pulls loan tokens from
+  `msg.sender` and Moolah-repays
+  `onBehalf`. Penalized positions
+  must be paid in full. Liquidate
+  is `BOT` and only marks
+  penalized positions bad debt
+  after `liquidateBrokerPosition`.
+- LendingBroker dynamic/fixed
+  borrow is `msg.sender`, then
+  `_validateDynamicPosition` /
+  `_borrowFixed`. Repay paths go
+  through `LendingBrokerOperatorLib`
+  and pull from the caller for
+  `onBehalf`.
+- `MoolahOperateLib.supplyToMoolahVault`
+  documents MEV on interest
+  supply; they say it is capped
+  on credit markets. Not filed.
+
+Remaining Lista: strategy / OFT /
+distributors / `lista-new-contracts`
+(`fa5dfa5`). Extra Finance vault
+logic still Sourcify 404. Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -5720,9 +5789,11 @@ Enzyme Blue BebopBlend / ThreeOneThird /
 SharesSplitter (`da3b870` + Sourcify) are
 logged. Next unreviewed Immunefi
 GitHub-or-recent trees: Extra Finance
-vault logic, Lista leftover
-strategy / OFT / distributors /
-`lista-new-contracts` (`fa5dfa5`), Jito `jito-solana` /
+vault logic (Sourcify 404). Lista Moolah
+vault + Credit/Lending brokers (`ce72699`)
+are logged; remaining Lista is strategy /
+OFT / distributors / `lista-new-contracts`
+(`fa5dfa5`). Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted).
