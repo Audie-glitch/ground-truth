@@ -32335,6 +32335,130 @@ governance
 governors),
 websites.
 
+## 2026-09-03: Polygon leftover LXLY AggLayer leftover (Sourcify)
+
+Immunefi program
+`polygon`
+($250,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+PolygonBridgeV2
+`0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe`
+impl AgglayerBridge
+`0x66E0120e3c965552a89AcC37b03f762624baC5Ad`,
+RollupManager
+`0x5132A183E9F3CB7C848b0AAC5Ae0c4f0491B7aB2`
+impl AgglayerManager
+`0x15cAF18dEd768e3620E0f656221Bf6B400ad2618`,
+GlobalExitRoot
+`0x580bda1e7A0CFAe92Fa7F6c20A3794F169CE3CFb`
+impl AgglayerGER
+`0x7F1655d9d570167B2a3FfD1Ef809D3Fdd74427C5`,
+AggLayer Gateway
+`0x046Bb8bb98Db4ceCbB2929542686B74b516274b3`
+impl
+`0xD062B7f9fbB89bdA59262E77015C34a27Dc9aB49`.
+Extract
+`/tmp/pol-bridge-impl`,
+`/tmp/pol-manager-impl`,
+`/tmp/pol-ger-impl`,
+`/tmp/pol-gateway-impl`.
+No mainnet
+interaction.
+
+Files:
+`contracts/AgglayerBridge.sol`,
+`contracts/AgglayerManager.sol`,
+`contracts/AgglayerGER.sol`,
+`contracts/AgglayerGateway.sol`.
+
+Checked for: a
+stranger
+`bridgeAsset`
+that pulls
+another
+account;
+`claimAsset`
+that pays the
+caller; GER
+`updateExitRoot`
+from a non-
+bridge /
+manager.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `bridgeAsset`
+  charges
+  `msg.value`
+  for native or
+  `safeTransferFrom`s
+  `msg.sender`.
+  Wrapped assets
+  `burn(msg.sender)`.
+- `claimAsset`
+  /
+  `claimMessage`
+  are
+  permissionless
+  after SMT
+  proofs and
+  unused
+  `globalIndex`.
+  Funds go to
+  `destinationAddress`.
+- GER
+  `updateExitRoot`
+  is bridge or
+  rollup-manager
+  only.
+- Manager
+  `onSequenceBatches`
+  is an added
+  rollup only.
+  Verify paths
+  are trusted-
+  aggregator
+  gated.
+- Gateway
+  `verifyPessimisticProof`
+  is a
+  verification
+  key route,
+  not a user
+  escrow.
+
+Do not file
+permissionless
+claim of a
+merkle-proven
+leaf to the
+recorded
+`destinationAddress`.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH LXLY /
+AggLayer types
+is exhausted at
+this money-path
+level.
+Remaining listed:
+POS Bridge &
+Staking, sPOL,
+POL token,
+CometBFT / Bor
+/ Heimdall.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -33945,6 +34069,13 @@ AssetRouter / legacy ERC20;
 KYC) is logged (remaining
 listed is L2 / circuits /
 governance / websites);
+Polygon leftover LXLY AggLayer leftover
+(Sourcify AgglayerBridge /
+Manager / GER / Gateway; KYC)
+is logged (remaining listed
+is POS Bridge & Staking /
+sPOL / POL token / Bor /
+Heimdall);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

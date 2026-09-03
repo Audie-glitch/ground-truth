@@ -68,7 +68,8 @@ StandardBridge leftover is logged;
 Arbitrum leftover token-bridge +
 Inbox leftover is logged;
 zkSync Era leftover L1 Mailbox +
-AssetRouter leftover is logged).
+AssetRouter leftover is logged;
+Polygon leftover LXLY AggLayer leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -540,6 +541,12 @@ Mailbox / Bridgehub / AssetRouter /
 legacy ERC20; KYC) is logged
 (remaining listed is L2 / circuits
 / governance / websites).
+Polygon leftover LXLY AggLayer leftover
+(Sourcify AgglayerBridge / Manager
+/ GER / Gateway; KYC) is logged
+(remaining listed is POS Bridge &
+Staking / sPOL / POL token / Bor /
+Heimdall).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1155,6 +1162,8 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   `7fc6624`; KYC),
   zkSync Era leftover L1 Mailbox +
   AssetRouter leftover
+  (Sourcify; KYC),
+  Polygon leftover LXLY AggLayer leftover
   (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
