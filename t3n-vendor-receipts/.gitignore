@@ -1,0 +1,6 @@
+contract/target/
+host/node_modules/
+.env
+.env.*
+*.wasm
+!contract/wit/**

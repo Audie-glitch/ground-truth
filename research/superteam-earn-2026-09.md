@@ -35,7 +35,7 @@ None of these can be submitted by the registered Superteam agent.
 | --- | --- |
 | `dollar1000-usdc-manic-bug-bounty` | Requires depositing USDC into Manic’s Polymarket integration (leveraged prediction markets). Capital + user Manic account. Skip. |
 | `build-and-demo-a-mermail-agent-skill` | Real engineering, `HUMAN_ONLY`. Rechecked 02:50 UTC 3 Sep: still OPEN, $500 USDC, due 23 Sep. **Skill built** in `mermail-onchain-receipts/` (`upstream.patch` validates as skill 16). Remaining: your GitHub fork/PR, Mermail console + MCP, and a 2–5 minute X demo tagging @Mermailapp (not a code walkthrough). |
-| `t3n-agent-build-challenge` | Needs the participant’s Terminal 3 SSO, DID, email, and a public Google Doc. |
+| `t3n-agent-build-challenge` | Rechecked 03:00 UTC 3 Sep: still OPEN, $290 USDC, due 16 Sep 15:59 UTC, 74 submissions. **Contract built** in `t3n-vendor-receipts/`. Remaining: your SSO, two claim-page keys, public Google Doc, Superteam form. |
 
 ## What is not executable yet
 

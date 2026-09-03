@@ -3,7 +3,8 @@ export type OpportunityId =
   | "keeperhub-feature"
   | "ethonline"
   | "third-web-hack"
-  | "mermail-skill";
+  | "mermail-skill"
+  | "t3n-vendor-receipts";
 
 export type WindowState = "not-yet" | "open" | "closed";
 
@@ -83,6 +84,19 @@ const WINDOWS: Omit<OpportunityWindow, "state">[] = [
     closesAt: "2026-09-23T13:59:59Z",
     nextAction:
       "Skill and patch are ready. Fork mermail-skills, open the PR, connect Mermail MCP, and post a 2–5 minute X demo tagging @Mermailapp.",
+  },
+  {
+    id: "t3n-vendor-receipts",
+    title: "Vendor Receipts TEE",
+    event: "Superteam Earn — T3N agent build challenge",
+    pays: "$290 USDC (100 / 50 / 50 / 30 / 30 / 30)",
+    href: "https://superteam.fun/earn/listing/t3n-agent-build-challenge",
+    repoPath: "t3n-vendor-receipts/",
+    opensAt: "2026-08-01T00:00:00Z",
+    // Listing deadline 16 Sep 2026 15:59:59.999Z
+    closesAt: "2026-09-16T15:59:59.999Z",
+    nextAction:
+      "Contract and host are ready. Sign in at go.terminal3.io/adk-community, claim two keys, run quickstart/register/invoke, paste GOOGLE_DOC.md into a public Google Doc, and submit the Superteam form.",
   },
 ];
 

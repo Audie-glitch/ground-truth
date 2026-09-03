@@ -59,4 +59,17 @@ describe("earning windows", () => {
       windowFor("mermail-skill", new Date("2026-09-23T14:00:00Z")).state,
     ).toBe("closed");
   });
+
+  it("treats the T3N vendor-receipts bounty as open through 16 Sep 15:59:59.999 UTC", () => {
+    expect(
+      windowFor("t3n-vendor-receipts", new Date("2026-09-03T02:34:00Z")).state,
+    ).toBe("open");
+    expect(
+      windowFor("t3n-vendor-receipts", new Date("2026-09-16T15:59:59.999Z"))
+        .state,
+    ).toBe("open");
+    expect(
+      windowFor("t3n-vendor-receipts", new Date("2026-09-16T16:00:00Z")).state,
+    ).toBe("closed");
+  });
 });

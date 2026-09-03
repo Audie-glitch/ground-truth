@@ -1,0 +1,41 @@
+/// z-vendor-receipts — hashed vendor invoices in a tenant KV map.
+///
+/// Imports only the host capabilities this contract uses:
+///   - tenant-context: tenant DID (hex-encoded into z:<tid>:receipts)
+///   - logging:        info / error lines, no field payloads
+///   - kv-store:       the `receipts` map (created by the tenant SDK)
+///
+/// No http, no http-with-placeholders, no secrets map.
+package z:vendor-receipts@0.1.0;
+
+world tenant-receipts {
+    import host:tenant/tenant-context@1.0.0;
+    import host:interfaces/logging@2.1.0;
+    import host:interfaces/kv-store@2.1.0;
+
+    export contracts;
+}
+
+interface contracts {
+    /// Standard 3-field envelope used by all contracts callable from the node.
+    record generic-input {
+        input:        option<list<u8>>,
+        user-profile: option<list<u8>>,
+        context:      option<list<u8>>,
+    }
+
+    /// File a vendor invoice. Input JSON:
+    /// { vendor, invoice_id, amount, currency, issued_at }
+    /// Output JSON: FiledReceipt { id, ..., status: "filed" | "exists" }
+    file-receipt: func(req: generic-input) -> result<list<u8>, string>;
+
+    /// Fetch one receipt. Input JSON: { id }
+    get-receipt: func(req: generic-input) -> result<list<u8>, string>;
+
+    /// List receipt ids in this tenant (cap 256). Input may be empty.
+    list-receipts: func(req: generic-input) -> result<list<u8>, string>;
+
+    /// Re-hash claimed fields and compare to the stored digest.
+    /// Input JSON: { id, vendor, invoice_id, amount, currency, issued_at }
+    verify-receipt: func(req: generic-input) -> result<list<u8>, string>;
+}

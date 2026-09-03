@@ -1,6 +1,6 @@
 # Goal evidence matrix
 
-**Audited:** 3 September 2026 03:01 UTC  
+**Audited:** 3 September 2026 03:05 UTC  
 **Goal:** Gain crypto assets through legitimate, legal, non-custodial earning opportunities.
 
 | Requirement | Authoritative evidence | Status | Remaining proof |
@@ -10,7 +10,7 @@
 | Identify skills, accounts, wallet setup, and other resources | Resources and blockers section in the earning-opportunities report | Proven | Participant must confirm eligibility and provide their own account access; no secrets are required. |
 | Avoid scams, guaranteed returns, and capital-at-risk speculation | [`gaining-crypto-assets.md`](gaining-crypto-assets.md) and [`crypto-returns-2026-09.md`](crypto-returns-2026-09.md) | Proven as research and policy | Continue refusing custody, leverage, wallet secrets, and guaranteed-return claims. |
 | Select a feasible repository contribution | KeeperHub #2105 still open / unclaimed at 03:00 UTC 3 Sep (0 PRs, 0 comments). Patch spec written. Parallel CTC entry CreditPassport is built and proven against the live verifier; testnet deploy still needs faucet gas. | Provisionally proven | Recheck #2105 on 6 Sep. CreditPassport still needs a funded deployer and the participant's DoraHacks identity. |
-| Execute repository contribution | No KeeperHub source change. CreditPassport is original Attestcoin work in-tree; it is not submitted and not deployed to testnet. | **Not achieved** | KeeperHub window opens Sep 6. CTC deploy + DoraHacks submit need the participant. |
+| Execute repository contribution | No KeeperHub source change. CreditPassport is original Attestcoin work in-tree; it is not submitted and not deployed to testnet. T3N Vendor Receipts and Mermail skill are in-tree; both still need the participant to submit. | **Not achieved** | KeeperHub window opens Sep 6. CTC deploy + DoraHacks / Superteam / Devpost submit need the participant. |
 | Submit contribution to the earning program | No KeeperHub PR or DoraHacks BUIDL exists | **Not achieved** | Requires the participant's authenticated GitHub fork, DoraHacks account, contact details, and truthful eligibility. |
 | Verify acceptance or judging result | No PR acceptance or official judging result exists | **Not achieved** | Inspect authoritative PR and DoraHacks state after submission. |
 | Inspect wallet access and balances | Rechecked 01:23 UTC 3 Sep 2026. Still no `session.json` / `addresses.json` / `user-provided.json`. First-client tokens valid until ~01:58 UTC. DCR2 Connect code reminted to `xc7DQseV` (10 min TTL). Client `b90d07cd-…` still a stub whitelist row. | **Not achieved** | Need a real Portal App ID with the device-code grant, Connect approval that actually returns a `walletId`, or a MetaMask address shared on `/connect`. |

@@ -155,7 +155,8 @@ export default async function EarnPage() {
           <li>
             DoraHacks, ETHGlobal, Devpost, Superteam, and GitHub accounts you
             control. Mermail also needs a console workspace and an X post
-            tagging @Mermailapp.
+            tagging @Mermailapp. T3N needs SSO at go.terminal3.io/adk-community,
+            two claim-page keys (tenant ≠ agent), and a public Google Doc.
           </li>
           <li>
             A payout address you already control. Never a seed phrase or private

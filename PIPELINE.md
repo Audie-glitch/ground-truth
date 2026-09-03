@@ -4,9 +4,10 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, 03:01 UTC. Dates verified against each
-organizer's own page on 2–3 Sep; Superteam listings, Sherlock contests API,
-and Immunefi unofficial mirror rechecked 3 Sep.
+Status as of 3 September 2026, 03:05 UTC. Dates verified against each
+organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
+OPEN, due 16 Sep 15:59 UTC), Sherlock contests API, and Immunefi unofficial
+mirror rechecked 3 Sep.
 
 ## Opportunities, ranked by expected payout per unit of work
 
@@ -20,6 +21,7 @@ and Immunefi unofficial mirror rechecked 3 Sep.
 | 6 | KeeperHub main track, Best Integration into a Live Project | $2,000 / $1,200 / $800 | Stablecoins | Sep 6-18 | Needs a KeeperHub account, a funded testnet wallet, and a real third-party project on the other side | Plan: `plugin-keeperhub` for elizaOS (KeeperHub as the execution layer for Eliza agents: dry run, idempotent execute, status, balances). See `keeperhub/main-track-plan.md`. Needs your KeeperHub API key by Sep 9. |
 | 7 | [3rd-Web-Hack](https://3rd-web-hack.devpost.com/) (Devpost) | $500 / $200 / $50 | USDT | Deadline Sep 27 | 86 participants, tiny pool, low bar | Rules require a project "original and developed for the hackathon," so no re-entry of CreditPassport. **Built 3 Sep: SignLens** (`signlens/`), a pre-signature inspector for wallet requests; MVP, 23 tests, README, presentation. Needs your Devpost registration and a demo video upload; see `signlens/SUBMISSION.md`. |
 | 7b | [Build and Demo a Mermail Agent Skill](https://superteam.fun/earn/listing/build-and-demo-a-mermail-agent-skill) | $500 USDC (250 / 100 / 50 + 50 innovative + 50 best video) | USDC | Due 23 Sep 13:59 UTC | `HUMAN_ONLY`; PR into [mermail-skills](https://github.com/Nudgen-Marketing/mermail-skills) plus a live X demo | **Built 3 Sep:** `mermail-onchain-receipts/`. Official-format skill, `upstream.patch` (`npm test`: 16 skills), live Sepolia lookup. You fork, open the PR, connect Mermail, record the X video tagging @Mermailapp. |
+| 7c | [T3N agent build challenge](https://superteam.fun/earn/listing/t3n-agent-build-challenge) | $290 USDC (100 / 50 / 50 / 30 / 30 / 30) | USDC | Due 16 Sep 15:59 UTC | `HUMAN_ONLY`; 74 submissions at 03:00 UTC 3 Sep; judges score time-to-submit, usefulness, maintainability, docs, bugs; bonus X @terminal3io | **Built 3 Sep:** `t3n-vendor-receipts/`. KV-only TEE (no HTTP/secrets). Native tests + WASM. You SSO, claim two keys, run host scripts, paste `GOOGLE_DOC.md`, submit. |
 | 8 | [Arbitrum Open House Singapore buildathon](https://web3voyager.com/event/arbitrum-open-house-singapore-online-buildathon) | $115,000 pool | Not stated | Sep 13 - Oct 4; existing projects allowed | Large field | Re-target the ETHOnline or CTC project after Sep 16. |
 | 9 | [Monad Metropolis](https://www.monad.xyz/developers/hackathons/metropolis) | Four tracks at $30,000 each split evenly between 3 teams ($10,000 per winning team), $25,000 grand champion, sponsor bounties (Kuru $5k x2, Dynamic $5k, Perpl $5k, Chainlink CRE $3k, CVI $2k, Envio $1k) | Not stated | Sep 1 - Oct 13; judging Oct 14-27; winners Nov 3 | Very large field; judged by Monad founders; "what you show on Oct 13 should have been built during the six weeks"; existing projects allowed if the work is new | Track 1's own example list includes "undercollateralised lending priced on onchain credit history": CreditPassport's thesis. Plan after Sep 18: a Monad-native passport (payment history from Monad events via Envio, Chainlink CRE underwriting workflow) for Track 1, stacking Envio and CRE bounties; SignLens for Track 4 (Trust, Identity & AI) if capacity. Decide Sep 19. |
 
@@ -79,6 +81,11 @@ share the username.
   Official-format `SKILL.md`, `upstream.patch` against mermail-skills (`npm test`
   green: 16 skills), live Sepolia receipt lookup. Needs your fork/PR, Mermail
   MCP, and an X demo tagging @Mermailapp; see `mermail-onchain-receipts/SUBMISSION.md`.
+- `t3n-vendor-receipts/`: Superteam T3N challenge ($290 USDC, due 16 Sep).
+  Enterprise TEE that files hashed vendor invoices in a `receipts` KV map.
+  No outbound HTTP. Native `cargo test` (6) + host `npm test` (3). Needs your
+  Terminal 3 SSO, two claim-page keys, a public Google Doc, and the Superteam
+  form; see `t3n-vendor-receipts/SUBMISSION.md`.
 - `research/bug-bounty-review-log.md`: Immunefi target selection method and
   time-boxed reviews through Sky PAS / SBEBeam, Intuition money paths,
   and Sky diamond-pau through the full facet tree at `1b6743a`,
@@ -164,6 +171,14 @@ Ordered by urgency. Each is a few minutes.
     Optional: store a fine-grained PAT on that fork as `GITHUB_FORK_TOKEN` so I
     can push the branch and open the PR. Exact answers are in
     `mermail-onchain-receipts/SUBMISSION.md`.
+12. For the T3N Superteam bounty: sign in at
+    [go.terminal3.io/adk-community](https://go.terminal3.io/adk-community),
+    claim a tenant key and a second agent key (do not reuse), run
+    `t3n-vendor-receipts/host` `quickstart` / `register` / `invoke`, paste
+    `t3n-vendor-receipts/GOOGLE_DOC.md` into a public Google Doc with
+    screenshots, and submit the Superteam form (email, DID from quickstart,
+    continue-vs-handover). Optional X post tagging @terminal3io. Exact
+    answers are in `t3n-vendor-receipts/SUBMISSION.md`.
 
 ## Rules I am respecting
 

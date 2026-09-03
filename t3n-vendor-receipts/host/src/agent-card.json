@@ -1,0 +1,16 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "Vendor Receipts",
+  "description": "Files hashed vendor invoices inside a Terminal 3 tenant TEE. No outbound HTTP. Invoice bodies, names, and bank details never enter the contract.",
+  "services": [
+    {
+      "name": "DID",
+      "endpoint": "did:t3n:REPLACE_AFTER_t3n_whoami",
+      "version": "v1"
+    }
+  ],
+  "x402Support": false,
+  "active": true,
+  "registrations": [],
+  "supportedTrust": ["tee-attestation"]
+}

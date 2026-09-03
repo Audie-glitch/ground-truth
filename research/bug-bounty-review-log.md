@@ -1899,8 +1899,8 @@ Superteam API rechecked 03:01 UTC 3 Sep: still 28 open
 listings. `AGENT_ALLOWED` is still only Steve Arena and
 ZNS — do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the
-participant's PR, Mermail MCP, and X demo. T3N still
-needs Terminal 3 SSO. NectarFi is a creator campaign.
+participant's PR, Mermail MCP, and X demo. T3N Vendor Receipts is built
+(`t3n-vendor-receipts/`); remaining work is Terminal 3 SSO. NectarFi is a creator campaign.
 the402.ai still paused. 1inch Fusion settlement /
 whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
 Remaining OZ hooks: none of the money-moving
