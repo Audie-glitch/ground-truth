@@ -43044,3 +43044,204 @@ permissionless,
 and periphery-v3
 emergency / kyc /
 migration.
+
+## 2026-09-03: Decentraland leftover Polygon MANA, collections, and marketplace
+
+Immunefi program
+`decentraland`
+($500,000, `kyc: true`).
+ETH MANA / LAND /
+ESTATE, names +
+vesting, and ETH
+collections +
+marketplace leftovers
+already logged.
+This slice is
+listed Polygon
+MANA, Collection
+V2 factory /
+manager, and the
+Polygon marketplace
++ credits path.
+Sourcify chain
+137:
+`UChildERC20`
+(MANA)
+`0x7FFB3d637014488b63fb9858E279385685AFc1e2`
+(`match`),
+`ERC721CollectionFactoryV2`
+`0xB549B2442b2BD0a53795BC5cDcBFE0cAF7ACA9f8`
+(`exact_match`),
+`ERC721CollectionV2`
+impl
+`0x006080C6061C4aF79b39Da0842a3a22A7b3f185e`
+(`exact_match`),
+`CollectionManager`
+`0x9D32AaC179153A991e832550d9F96441Ea27763A`
+(`exact_match`),
+`Rarities`
+`0x17113b44fdd661A156cc01b5031E3aCF72c32EB3`,
+`RaritiesWithOracle`
+`0xA9158E22F89Bb3F69c5600338895Cb5FB81e5090`,
+`Committee`
+`0xAeec95a8AA671A6D3Fec56594827D7804964fA70`
+(`match`),
+`Forwarder`
+`0xBF6755A83C0dCDBB2933A96EA778E00b717d7004`,
+`DecentralandMarketplacePolygon`
+`0xA40b1d129B8906888720686F3a01921dDF37716F`,
+`CreditsManagerPolygon`
+`0x8B3A40CA1b6F5CaFC99d112a4d02E897d1FD8Cc5`,
+`CouponManager`
+`0x3Fd3056EE72a2a85e9392FAB3A450E7736536081`.
+No mainnet writes.
+
+Files:
+`UChildERC20.sol`,
+`CollectionManager.sol`,
+`ERC721CollectionFactoryV2.sol`,
+`ERC721BaseCollectionV2.sol`,
+`Forwarder.sol`,
+`DecentralandMarketplacePolygon.sol`,
+`CreditsManagerPolygon.sol`.
+
+Checked for: a
+stranger Polygon
+MANA `deposit`;
+`createCollection`
+that skips the
+rarity fee;
+`issueTokens` by
+a non-minter
+past
+`maxSupply`;
+`forwardCall` by
+an arbitrary
+caller; marketplace
+`accept` that
+moves assets
+without a valid
+signer;
+`useCredits` that
+spends another
+user's credit.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Polygon MANA
+  `deposit` is
+  `only(DEPOSITOR_ROLE)`.
+  `withdraw` burns
+  `_msgSender()`'s
+  own tokens.
+- Collection
+  manager
+  `createCollection`
+  sums
+  `rarities.getRarityByName`
+  prices and
+  `transferFrom`s
+  that MANA from
+  the caller to
+  `feesCollector`,
+  then forwards
+  `factory.createCollection`
+  (factory is
+  `onlyOwner`;
+  Forwarder
+  `forwardCall`
+  is caller or
+  owner only).
+  `manageCollection`
+  is committee
+  + allowlisted
+  selectors +
+  COLLECTION_HASH
+  check.
+- Collection V2
+  `issueTokens`
+  requires
+  `isCompleted &&
+  isApproved`.
+  `_issueToken`
+  allows creator
+  / global
+  minter or
+  decrements
+  per-item
+  allowance, and
+  reverts when
+  `totalSupply + 1
+  > maxSupply`.
+- Marketplace
+  Polygon
+  converts
+  USD-pegged
+  MANA via
+  aggregator,
+  then the same
+  signed-trade
+  accept path as
+  ETH
+  (sent from
+  signer,
+  received from
+  caller, fees /
+  royalties from
+  the ERC20
+  payer).
+- Credits
+  `useCredits` is
+  `nonReentrant`
+  +
+  `whenNotPaused`.
+  Credit hash
+  binds
+  `_sender` +
+  chain + this
+  contract +
+  credit; signer
+  must hold
+  `CREDITS_SIGNER_ROLE`.
+  Spent value is
+  tracked per
+  hash. Admin
+  withdraws are
+  role-gated.
+
+Do not file
+depositor-role
+MANA mint,
+committee
+collection
+manage, creator
+/ allowed minter
+issuance, signed
+trade fill, or
+protocol-signed
+credit spend, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed
+Decentraland
+Polygon MANA +
+collection V2
+factory/manager
++ marketplace /
+credits leftover
+is exhausted at
+the opened-contract
+level. Remaining
+listed Polygon
+rows (if any
+unopened store /
+rarities /
+committee
+helpers) can be
+a later pass.
