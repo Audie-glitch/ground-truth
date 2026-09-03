@@ -77,7 +77,8 @@ zkSync Era leftover L1 Mailbox +
 AssetRouter leftover is logged;
 Polygon leftover LXLY AggLayer leftover is logged;
 Parallel leftover ETH savings +
-sPRL leftover is logged).
+sPRL leftover is logged;
+Avail leftover ETH bridge leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -561,6 +562,10 @@ sPRL1 / sPRL2 / Lockbox; KYC) is
 logged (remaining listed is
 Parallelizer facets 404 / TokenP
 404 / other-chain).
+Avail leftover ETH bridge leftover
+(`f3bd9d9` AvailBridgeV1 / Fusion /
+AvailWormhole; KYC) is logged
+(remaining listed is Bridge UI).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1181,6 +1186,8 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (Sourcify; KYC),
   Parallel leftover ETH savings +
   sPRL leftover (Sourcify; KYC),
+  Avail leftover ETH bridge leftover
+  (`f3bd9d9`; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover

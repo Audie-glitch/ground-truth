@@ -32589,6 +32589,109 @@ TokenP 404,
 other-chain
 twins.
 
+## 2026-09-03: Avail leftover ETH bridge leftover (`f3bd9d9`)
+
+Immunefi program
+`avail`
+($250,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`availproject/contracts`
+HEAD
+`f3bd9d9`.
+Extract
+`/tmp/avail`
+via jsDelivr.
+No mainnet
+interaction.
+
+Files:
+`src/AvailBridgeV1.sol`,
+`src/Fusion.sol`,
+`src/AvailWormhole.sol`,
+`src/Avail.sol`.
+
+Checked for: a
+stranger
+`sendAVAIL`
+that burns
+another
+account;
+`receiveAVAIL`
+that mints to
+the caller;
+Fusion
+`execute`
+deposit that
+pulls another
+user.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `sendAVAIL`
+  burns
+  `msg.sender`
+  via
+  `delegateAvailBurn`.
+  `sendMessage`
+  binds
+  `msg.sender`
+  and charges
+  `msg.value`.
+- `receiveAVAIL`
+  is
+  permissionless
+  after a Merkle
+  leaf + unused
+  hash. Mints to
+  `message.to`.
+  ETH / ERC20
+  receive revert
+  unimplemented.
+- Fusion
+  `execute`
+  deposits
+  `safeTransferFrom`
+  `msg.sender`.
+  Withdraw /
+  claim /
+  unbond are
+  Avail-side
+  intentions
+  bound to
+  `msg.sender`.
+- AvailWormhole
+  `mint` is
+  `MINTER_ROLE`.
+  `burn` burns
+  `msg.sender`.
+
+Do not file
+permissionless
+receive of a
+Merkle-proven
+Avail→ETH
+message to the
+recorded `to`.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`availproject/contracts`
+opens is
+exhausted at
+this money-path
+level.
+Remaining listed:
+Bridge UI.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -34239,6 +34342,11 @@ sPRL1 / sPRL2 / Lockbox; KYC)
 is logged (remaining listed
 is Parallelizer facets 404 /
 TokenP 404 / other-chain);
+Avail leftover ETH bridge leftover
+(`f3bd9d9` AvailBridgeV1 /
+Fusion / AvailWormhole; KYC) is
+logged (remaining listed is
+Bridge UI);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
