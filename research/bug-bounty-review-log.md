@@ -50833,3 +50833,125 @@ listed: Algorand
 lend TEAL if a
 public source
 drop opens.
+
+## 2026-09-03: Axelar leftover DLT axelar-core evm / axelarnet / nexus (`186e889`)
+
+Immunefi program
+`axelarnetwork`
+($500,000, `kyc: true`).
+Listed remaining after
+ITS token tree
+(`fbe0017`). Official
+sparse clone
+`/tmp/axelar-core`
+`186e889`. Opened
+`x/evm/keeper`,
+`x/evm/abci.go`,
+`x/axelarnet/keeper`,
+`x/axelarnet/message_handler.go`,
+`x/nexus/keeper`.
+No mainnet writes.
+
+Files:
+`x/evm/keeper/msg_server.go`,
+`x/evm/keeper/vote_handler.go`,
+`x/evm/abci.go`,
+`x/axelarnet/keeper/msg_server.go`,
+`x/nexus/keeper/transfer.go`,
+`x/nexus/keeper/lockable_asset.go`.
+
+Checked for: a
+stranger
+`ConfirmGatewayTxs`
+that mints
+without a
+validator poll;
+`HandleResult`
+that accepts a
+voter-supplied
+chain; `UnlockTo`
+to an arbitrary
+address;
+`ExecutePendingTransfers`
+that pays the
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `ConfirmGatewayTxs`
+  only starts
+  polls. Events
+  become confirmed
+  in
+  `HandleResult`
+  after the poll
+  result chain
+  matches poll
+  metadata (not
+  the
+  voter-supplied
+  field).
+- EndBlocker
+  routes only
+  `ContractCall`
+  /
+  `ContractCallWithToken`.
+  `TokenSent` is
+  marked failed.
+  Amount / sender
+  / dest come from
+  the confirmed
+  event.
+- Destination
+  mint is an
+  `ApproveContractCallWithMint`
+  command after
+  multisig
+  `SignCommands`.
+- `LockFrom` /
+  `UnlockTo` move
+  bank coins from
+  the given
+  account or
+  escrow. Native /
+  ICS20 escrow;
+  external mint /
+  burn is module
+  bank.
+- `ExecutePendingTransfers`
+  is
+  permissionless
+  but unlocks to
+  the pending
+  transfer's
+  recipient, then
+  fees to the
+  configured
+  collector.
+
+Do not file
+permissionless
+poll start,
+quorum-confirmed
+GMP mint, or
+recipient-bound
+pending unlock as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Axelar DLT
+evm / axelarnet /
+nexus leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed: tofnd
+and Hyperliquid
+ITS if a live
+deploy is in
+scope.
