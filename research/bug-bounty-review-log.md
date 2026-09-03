@@ -24134,10 +24134,10 @@ reconfig.
 Not submitted.
 Remaining Lido
 listed GitHub:
-leftover
 aave-delivery
-adapters /
-mev-boost-relay-allowed-list.
+adapters leftover.
+mev-boost-relay-allowed-list
+is logged.
 Remaining
 aave-delivery:
 CCIP / LayerZero /
@@ -24146,6 +24146,98 @@ Wormhole / Polygon
 zkEVM / Scroll /
 Metis / Gnosis /
 CBase adapters.
+
+## 2026-09-03: Lido mev-boost-relay leftover (`47211c6`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Core,
+L2, easy-track, CSM,
+dual-governance,
+governance-crosschain-bridges,
+aragon-apps, and
+aave-delivery are
+already logged. This
+slice is
+`mev-boost-relay-allowed-list`.
+Local clone
+`/tmp/lidofinance-mev-boost`
+at `47211c6`. No
+mainnet interaction.
+
+File:
+`contracts/MEVBoostRelayAllowedList.vy`.
+
+Checked for: a
+stranger
+`add_relay` /
+`remove_relay`;
+`recover_erc20` to
+the caller; ETH
+receive that locks
+user funds.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `add_relay` and
+  `remove_relay` are
+  owner or manager.
+  URI must be
+  non-empty. Duplicate
+  URI reverts. Max 40
+  relays.
+- `change_owner`,
+  `set_manager`,
+  `dismiss_manager`,
+  and `recover_erc20`
+  are owner-only.
+  Recovery transfers
+  a listed ERC-20 from
+  this contract to a
+  non-zero recipient.
+- `__default__`
+  reverts, so the
+  contract cannot
+  receive ETH.
+- The list is
+  off-chain config.
+  There is no
+  on-chain user
+  deposit or
+  withdrawal.
+
+Not submitted.
+Listed Lido GitHub
+repos in this pass
+are opened.
+Remaining
+aave-delivery:
+CCIP / LayerZero /
+Wormhole / Polygon
+/ HyperLane /
+zkEVM / Scroll /
+Metis / Gnosis /
+CBase adapters.
+Remaining
+in already-opened
+trees: aragon-apps
+Voting /
+DisputableVoting /
+Agreement;
+dual-governance
+TiebreakerSubCommittee
+/ wrappers; CSM
+MerkleGateFactory /
+ValidatorStrikes /
+HashConsensus /
+MetaRegistry;
+easy-track NO /
+MEV-relay / vault-hub
+/ OperatorGrid / CSM
+settle factories.
 
 ## Next candidates
 
@@ -24482,10 +24574,12 @@ leftover (`659e236`) is logged.
 Lido aragon-apps leftover
 (`e44f928`) is logged.
 Lido aave-delivery-infrastructure
-leftover (`27e7d4e`) is logged
-(remaining Lido is leftover
-aave-delivery adapters /
-mev-boost-relay-allowed-list).
+leftover (`27e7d4e`) is logged.
+Lido mev-boost-relay leftover
+(`47211c6`) is logged
+(remaining Lido listed
+GitHub is aave-delivery
+adapters).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -24842,10 +24936,12 @@ leftover (`659e236`) is logged.
 Lido aragon-apps leftover
 (`e44f928`) is logged.
 Lido aave-delivery-infrastructure
-leftover (`27e7d4e`) is logged
-(remaining Lido is leftover
-aave-delivery adapters /
-mev-boost-relay-allowed-list);
+leftover (`27e7d4e`) is logged.
+Lido mev-boost-relay leftover
+(`47211c6`) is logged
+(remaining Lido listed
+GitHub is aave-delivery
+adapters);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
 rETH2 / Oracles /
