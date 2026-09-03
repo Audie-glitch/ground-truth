@@ -21,7 +21,7 @@ exhausted). Marinade liquid-staking leftover (`b8fe3f8`) is
 logged (remaining Marinade is crank / admin / validators).
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool
-v1.4 deposit / rETH / megapool queue leftover, megapool dissolve / rewards / exit leftover, and vault + RPL auction leftover are logged (remaining Rocket Pool is minipool / DAO / smoothing). Beanstalk Basin
+v1.4 deposit / rETH / megapool queue leftover, megapool dissolve / rewards / exit leftover, vault + RPL auction leftover, smoothing / rewards leftover, and minipool leftover are logged (remaining Rocket Pool is DAO settings / voting). Beanstalk Basin
 leftover (Pipeline / Depot / Well / Aquifer / CP2 /
 MultiFlowPump) is logged. Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
@@ -35,9 +35,10 @@ V2 + polygon / arbitrum). Hermetica hBTC
 vault leftover is logged (listed Clarity exhausted).
 CoW GPv2 leftover (`6ebbd81`) is logged (listed CoW
 GitHub leftover exhausted). Stader ETHx user deposit
-/ withdraw leftover (`9d4a921`) is logged (remaining
-Stader is oracle / registries / pools / vaults).
-Twyne vaults still Sourcify 404.
+/ withdraw leftover (`9d4a921`) plus oracle / factory
+/ insurance / auction / socializing leftover is
+logged (remaining Stader is registries / vaults / SD
+collateral / pools). Twyne vaults still Sourcify 404.
 
 ## Opportunities, ranked by expected payout per unit of work
 

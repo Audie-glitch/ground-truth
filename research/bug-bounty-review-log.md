@@ -16410,6 +16410,163 @@ Rocket Pool listed
 GitHub: DAO settings /
 voting.
 
+## 2026-09-03: Stader oracle / factory / insurance / auction / socializing leftover (`9d4a921`)
+
+Immunefi program
+`staderforeth`
+($1,000,000, `kyc: false`).
+User deposit / withdraw
+on the same pin
+`9d4a921` is already
+logged. This slice is
+the remaining listed
+control / reward path:
+StaderOracle
+`0xF64bAe65f6f2a5277571143A24FaaFDFC0C2a737`,
+VaultFactory
+`0x03ABEEC03BF39ac5A5C8886cF3496326d8164E1E`,
+StaderInsuranceFund
+`0xbe3781CE437Cc3fC8c8167913B4d462347D11F20`,
+Auction
+`0x85A22763f94D703d2ee39E9374616ae4C1612569`,
+and both socializing
+pools
+`0x9d4C3166c59412CEdBe7d901f5fDe41903a1d6Fc`
+/
+`0x1DE458031bFbe5689deD5A8b9ed57e1E79EaB2A4`.
+Local clone
+`/tmp/stader-ethx`. No
+mainnet interaction.
+
+Files:
+`StaderOracle.sol`,
+`factory/VaultFactory.sol`,
+`VaultProxy.sol`,
+`StaderInsuranceFund.sol`,
+`Auction.sol`,
+`SocializingPool.sol`.
+
+Checked for: a single
+node or a stranger
+pushing a fake ETHx
+rate; factory clones
+that a stranger can
+re-init; insurance
+withdraw that is not
+manager / pool gated;
+auction claim of
+someone else’s bid or
+SD; socializing claim
+that pays a stranger.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Oracle
+  `submitExchangeRateData`
+  is `trustedNodeOnly`,
+  needs
+  `trustedNodesCount/2+1`
+  matching attestations,
+  a past aligned
+  reporting block, and
+  `updateWithInLimitER`
+  (default 5%). Over
+  the cap enters
+  inspection mode.
+  `closeERInspectionMode`
+  applies the inspected
+  rate only after the
+  7-day cooldown unless
+  the caller is
+  manager. Manager
+  `disableERInspectionMode`
+  during the window
+  drops the update
+  without applying it.
+  Trusted-node add /
+  remove is
+  manager-gated with
+  cooldown and a min of
+  3.
+- POR ER is a manager
+  toggle
+  (`togglePORFeedBasedERData`).
+  Do not file a
+  negative-`answer`
+  wrap on the POR
+  `int256` cast without
+  proving that feed is
+  the live source and
+  can return
+  `answer < 0`.
+- VaultFactory deploy
+  is
+  `NODE_REGISTRY_CONTRACT`
+  only. The
+  implementation
+  constructor sets
+  `isInitialized`.
+  Clones
+  `initialise` once.
+  Fallback
+  `delegatecall`s the
+  config
+  implementation
+  (admin of config, not
+  a stranger).
+- Insurance
+  `depositFund` is a
+  gift.
+  `withdrawFund` is
+  manager-only.
+  `reimburseUserFund`
+  is the permissioned
+  pool only and pays
+  that pool.
+- Auction `createLot`
+  pulls SD from the
+  caller. `claimSD` is
+  the highest bidder
+  after end.
+  `transferHighestBidToSSPM`
+  sends ETH to SPM.
+  Losing bidders
+  withdraw their own
+  bids.
+  Unbid SD goes to the
+  treasury.
+- Socializing
+  `handleRewards` is
+  oracle-only and caps
+  splits against idle
+  ETH / SD minus
+  reserved operator
+  leftovers. `claim`
+  verifies
+  `keccak256(operator,
+  amountSD, amountETH)`
+  against that cycle’s
+  root and pays
+  `getOperatorRewardAddress
+  (msg.sender)`.
+
+Do not file majority-
+oracle misreport as
+user theft. That is a
+trusted-node
+assumption.
+
+Not submitted.
+Remaining Stader
+listed: node
+registries, validator /
+node EL vaults, SD
+collateral,
+permissioned /
+permissionless pools.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -16964,13 +17121,16 @@ listed blobs) is logged
 leftover exhausted);
 Stader ETHx user deposit
 / withdraw leftover
-(`9d4a921`) is logged
+(`9d4a921`) plus oracle /
+factory / insurance /
+auction / socializing
+leftover is logged
 (remaining Stader is
-oracle / registries /
-pools / vaults / SD /
-socializing / auction /
-insurance /
-VaultFactory);
+node registries /
+validator and node EL
+vaults / SD collateral /
+permissioned and
+permissionless pools);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
