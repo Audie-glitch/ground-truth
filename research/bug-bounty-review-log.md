@@ -50604,3 +50604,109 @@ the opened-file
 level. Remaining
 listed: website
 / toolkit rows.
+
+## 2026-09-03: Folks leftover live native / ERC20 spokes (`7f631fe`)
+
+Immunefi program
+`folksfinance`
+($200,000, `kyc: true`).
+Listed remaining after
+Circle spokes
+(`2764498`). Official
+clone `/tmp/folks-xchain`
+`7f631fe`. Live
+addresses from
+`xchain-js-sdk`
+`chain.ts`. No mainnet
+writes.
+
+Files / live:
+ETH native
+`SpokeGasToken`
+`0xe3B0e4Db870aA58A24f87d895c62D3dc5CD05883`
+and ETH wBTC
+`SpokeErc20Token`
+`0xb39c03297E87032fF69f4D42A6698e4c4A934449`
+(Sourcify
+`exact_match`;
+Base native is the
+same CREATE3
+gas spoke),
+Avalanche AVAX
+`0xe69e068539Ee627bAb1Ce878843a6C76484CBd2c`
+and sAVAX
+`0x23a96D92C80E8b926dA40E574d615d9e806A87F6`
+(Sourcify 404;
+Routescan
+verified
+`SpokeGasToken` /
+`SpokeErc20Token`).
+
+Checked for: a
+native spoke that
+credits another
+account from the
+caller's ETH; an
+ERC20 spoke that
+`transferFrom`s a
+victim; `_sendToken`
+without a hub
+`SendToken`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Live
+  `SpokeGasToken.sol`
+  (`ca1f37ac3117f94b`)
+  and
+  `SpokeErc20Token.sol`
+  (`043913c418cd73e3`)
+  hash-match the
+  clone, as do
+  `SpokeToken.sol`
+  / `RateLimited.sol`.
+- Gas
+  `_receiveToken`
+  only subtracts
+  `amount` from
+  `msg.value`;
+  payload
+  `userAddress`
+  is still
+  `msg.sender`.
+- ERC20
+  `_receiveToken`
+  `safeTransferFrom`s
+  `msg.sender`.
+- `_sendToken`
+  still only runs
+  after hub-gated
+  `SendToken`.
+
+Do not file
+hash-matched
+native/ERC20
+pull-from-sender
+or hub-gated
+payout as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Folks
+EVM spoke token
+types (Circle /
+gas / ERC20) are
+exhausted at the
+opened-file /
+exact-match
+level. Remaining
+listed: rewards
+(out of scope as
+incentives) and
+the Algorand
+docs path.
