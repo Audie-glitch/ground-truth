@@ -10,6 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 items empty this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~10:10 UTC;
 246 programs; no Sep 2026 launches; Babylon leftover node
+incentive leftover is logged;
+Babylon leftover node
 btcstaking leftover is logged;
 Babylon leftover
 staking-queue-client leftover is logged;

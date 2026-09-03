@@ -35398,11 +35398,14 @@ staking-queue-client leftover
 (`c4b08ad`; KYC) is logged;
 Babylon leftover node
 btcstaking leftover
+(`132d050`; KYC) is logged;
+Babylon leftover node
+incentive leftover
 (`132d050`; KYC) is logged
 (remaining listed is
-incentive / finality /
-checkpointing / other
-x/ modules and websites);
+finality / checkpointing /
+other x/ modules and
+websites);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -48382,6 +48385,111 @@ opened-file
 level. Remaining
 listed: incentive
 withdraw, finality
+votes,
+checkpointing /
+epoching /
+costaking / mint,
+btclightclient,
+and website /
+toolkit rows.
+
+## 2026-09-03: Babylon leftover node incentive leftover (`132d050`)
+
+Immunefi program
+`babylon-labs`
+($500,000, `kyc: true`).
+Node btcstaking
+leftover already
+logged on
+`v4.4.0`
+`132d050`. This
+slice is
+`x/incentive`
+withdraw /
+set-withdraw.
+No chain writes
+from this VM.
+
+Files:
+`x/incentive/keeper/msg_server.go`,
+`x/incentive/keeper/reward_gauge.go`,
+`x/incentive/keeper/store.go`,
+`x/incentive/keeper/reward_tracker.go`,
+`proto/babylon/incentive/tx.proto`.
+
+Checked for: a
+stranger
+WithdrawReward
+that drains
+another
+stakeholder's
+gauge;
+SetWithdrawAddress
+that redirects
+someone else's
+payout;
+BTC-staker
+withdraw that
+also pulls a
+different
+costaker's
+coins.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `MsgWithdrawReward`
+  proto signer is
+  `address`. The
+  handler loads
+  that address's
+  gauge, pays
+  `GetWithdrawAddr`
+  (fallback: the
+  stakeholder),
+  then
+  `SetFullyWithdrawn`.
+- BTC-staker
+  withdraw first
+  `sendAllBtcRewardsToGauge`
+  for that
+  delegator only,
+  then also
+  withdraws the
+  same address's
+  COSTAKER gauge.
+- `MsgSetWithdrawAddress`
+  proto signer is
+  `delegator_address`.
+  Blocked
+  withdraw
+  addresses are
+  rejected.
+
+Do not file
+proto-signer
+enforced self-
+withdraw or a
+self-set
+withdraw address
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+babylon `v4.4.0`
+opens for
+incentive
+withdraw is
+exhausted at the
+opened-file
+level. Remaining
+listed: finality
 votes,
 checkpointing /
 epoching /
