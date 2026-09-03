@@ -27969,6 +27969,95 @@ PositionHelper (view /
 helper) and same-bytecode
 other-chain factories.
 
+## 2026-09-03: Aster leftover (Sourcify)
+
+Immunefi program
+`Aster` ($200,000,
+`kyc: false`). Unique
+no-KYC listed BSC slice.
+Sourcify `exact_match`
+`asBTC` / `USDF` /
+`asUSDF` / `AsBNB` and
+`match` ERC1967 proxies
+whose implementations
+are `Earn`,
+`WithdrawVault`,
+`USDFEarn`,
+`asUSDFEarn`, and
+`RewardDispatcher`.
+Extract `/tmp/aster`.
+No mainnet interaction.
+
+Files:
+`contracts/oft/asBTC.sol`,
+`contracts/oft/USDF.sol`,
+`contracts/oft/asUSDF.sol`,
+`src/AsBNB.sol`,
+`contracts/Earn.sol`,
+`contracts/USDFEarn.sol`,
+`contracts/asUSDFEarn.sol`,
+`contracts/WithdrawVault.sol`,
+`contracts/RewardDispatcher.sol`,
+`contracts/Withdrawable.sol`.
+
+Checked for: a stranger
+`deposit` that mints to
+the caller without
+pulling that caller;
+`claimWithdraw` of
+another user's request;
+role-less `mint` /
+`burn` on asBTC / USDF /
+asUSDF / AsBNB.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Earn `deposit` /
+  `depositNative` pull
+  `msg.sender` (or
+  `msg.value`) and mint
+  ass tokens to that
+  sender. Request locks
+  that sender's ass
+  tokens. Claim requires
+  `receipt == msg.sender`.
+- USDFEarn /
+  asUSDFEarn pull
+  `msg.sender` and mint
+  to that sender.
+  `Withdrawable` request
+  `transferFrom`s the
+  caller; claim pays
+  that receipt via the
+  vault.
+- Token `mint` / `burn`
+  are
+  `MINTER_AND_BURN_ROLE`
+  or AsBNB `onlyMinter`.
+  Vault `transfer` /
+  `transferNative` are
+  `TRANSFER_ROLE`.
+  Exchange-rate upload
+  and Ceffu sweep are
+  `BOT_ROLE`.
+
+Do not file minter /
+bot / admin privilege,
+custodial Ceffu sweep,
+first-deposit
+`exchangePrice` 1e18, or
+signed rate updates as
+theft.
+
+Not submitted.
+Listed leftover that
+Sourcify opens is
+exhausted. Remaining
+listed: the website.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -28415,6 +28504,13 @@ logged (remaining listed is V3
 TickLens / Quoter /
 PositionHelper and same-bytecode
 other-chain factories).
+Aster leftover (Sourcify BSC
+asBTC / USDF / asUSDF / AsBNB +
+Earn / USDFEarn / asUSDFEarn /
+WithdrawVault) is logged (listed
+leftover that Sourcify opens is
+exhausted; remaining listed is
+the website).
 Beefy Finance leftover (Sourcify
 Polygon `BeefyVaultV6` + common
 chef / DFYN / Curve / BIFI-maxi
@@ -29053,6 +29149,15 @@ TickLens / Quoter /
 PositionHelper and
 same-bytecode other-chain
 factories);
+Aster leftover (Sourcify
+BSC asBTC / USDF / asUSDF
+/ AsBNB + Earn / USDFEarn
+/ asUSDFEarn /
+WithdrawVault) is logged
+(listed leftover that
+Sourcify opens is
+exhausted; remaining
+listed is the website);
 Beefy Finance leftover
 (Sourcify Polygon
 `BeefyVaultV6` + common
