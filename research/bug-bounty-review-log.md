@@ -55407,3 +55407,231 @@ gmxV2,
 and
 `mux-staking`.
 
+
+## 2026-09-03: MUX leftover mux-protocol core + orderbook leftover (`0f70a70`)
+
+Immunefi program
+`mux`
+($100,000, `kyc: false`).
+Listed leftover
+after mux3.
+Official clone
+`/tmp/mux-protocol`
+`0f70a70`.
+Opened
+`contracts/orderbook/OrderBook.sol`,
+`Admin.sol`,
+`libraries/LibOrderBook.sol`,
+`LibOrder.sol`,
+`LibSubAccount.sol`,
+`core/Account.sol`,
+`Liquidity.sol`,
+`Storage.sol`,
+`components/NativeUnwrapper.sol`,
+`governance/Vault.sol`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+place/fill that
+spends another
+subAccountId;
+cancel that
+refunds to
+the caller;
+add/remove
+liquidity that
+pays a
+non-LP;
+core
+deposit/withdraw
+callable
+outside the
+OrderBook;
+NativeUnwrapper
+unwrap to an
+arbitrary
+recipient.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `placePositionOrder3`,
+  `placeWithdrawalOrder`,
+  and
+  `depositCollateral`
+  require
+  `msg.sender
+  ==
+  subAccountId.getSubAccountOwner()`
+  unless
+  `aggregators[msg.sender]`
+  (maintainer-set).
+  `placeLiquidityOrder`
+  records
+  `_msgSender()`
+  as the
+  LP
+  account
+  and
+  `_transferIn`
+  pulls
+  ERC20
+  from
+  that
+  trader
+  (or
+  wraps
+  `msg.value`
+  WETH).
+  `withdrawAllCollateral`
+  is
+  owner-only
+  and
+  requires
+  position
+  size
+  0.
+- Fills
+  (`fillPositionOrder`,
+  `fillLiquidityOrder` /
+  `fillLiquidityOrder2`,
+  `fillWithdrawalOrder`,
+  `fillRebalanceOrder`,
+  `liquidate`,
+  funding
+  updates)
+  are
+  `onlyBroker`.
+  Core
+  `depositCollateral`,
+  `withdrawCollateral`,
+  `withdrawAllCollateral`,
+  `addLiquidity`,
+  `removeLiquidity`,
+  and
+  `redeemMuxToken`
+  are
+  `onlyOrderBook`.
+  Withdraw
+  and
+  remove-liquidity
+  `transferOut`
+  to the
+  decoded
+  trader /
+  `order.account`.
+  Add
+  liquidity
+  `transfer`s
+  MLP to
+  `trader`.
+- Cancel:
+  owner
+  (or
+  broker
+  after
+  expiry,
+  or
+  aggregator)
+  for
+  position /
+  withdrawal.
+  Open-position
+  collateral
+  refunds
+  to
+  `getOrderOwner()`
+  (account
+  in the
+  packed
+  subAccountId).
+  Liquidity
+  cancel is
+  owner-only
+  and
+  returns
+  collateral
+  or MLP
+  to
+  `order.account`.
+- `NativeUnwrapper.unwrap`
+  requires
+  owner
+  whitelist
+  of
+  callers
+  and
+  sends
+  ETH (or
+  re-wrapped
+  WETH on
+  failed
+  call) to
+  the
+  supplied
+  `to`.
+  `Vault`
+  ETH /
+  ERC20
+  sweeps
+  are
+  `onlyOwner`.
+  `POL` is
+  a
+  protocol-owned
+  liquidity
+  helper
+  with
+  owner
+  gates.
+
+Do not file
+broker-only
+fills,
+maintainer
+aggregator /
+broker
+lists,
+owner-only
+Vault /
+unwrapper
+whitelist,
+or a
+trader
+paying
+their own
+tokens
+into a
+priced
+order as
+stranger
+theft.
+
+Not submitted.
+Listed leftover
+that official
+GitHub opens
+for
+mux-protocol
+core /
+orderbook /
+components /
+Vault is
+exhausted at
+the
+opened-file
+level.
+Remaining
+listed MUX
+trees:
+`mux-aggregator-protocol`
+proxyFactory /
+gmxV2,
+`mux-degen-protocol`,
+and
+`mux-staking`.
+
