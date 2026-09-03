@@ -837,9 +837,44 @@ Result: no user-exploitable finding.
 Not submitted. LayerZero internals of the flattened `TMX.sol` were
 not reviewed.
 
+## 2026-09-03: TermMax V2 market issue/redeem + order swap (`e314f3f`)
+
+Same Immunefi program (`termstructurelabs`). Local clone `/tmp/termmax-v2`.
+No mainnet interaction.
+
+Files: `contracts/v2/TermMaxMarketV2.sol` (`mint`/`burn`/`issueFt`/
+`leverageByXt`/`redeem`), `contracts/v2/tokens/MintableERC20V2.sol`,
+`contracts/v2/TermMaxOrderV2.sol` (`swapExactTokenToToken`,
+`swapTokenToExactToken`, `_rebalance`).
+
+Checked for: burning someone else’s FT/XT without allowance; redeem
+before the liquidation window; flash-leverage without returning
+collateral; order swap without `minOut` or with a fake pair.
+
+Result: no user-exploitable finding.
+
+- `MintableERC20V2.burn(owner, spender, amount)` spends allowance when
+  `owner != spender`. Market `burn` / `redeem` / `leverageByXt` all
+  go through that path. Pair mint pulls debt tokens from the caller
+  1:1 into FT+XT.
+- `issueFt` mints a GT (LTV-checked, collateral pulled) then FT minus
+  the mint fee. `issueFtByExistedGt` is `augmentDebt` as the GT
+  owner/delegate. `leverageByXt` flashes debt to the loan receiver,
+  requires collateral in the callback, then burns XT.
+- `redeem` is blocked until maturity (+ liquidation window if the GT
+  is liquidatable). Market FT reserves from repay/liquidate are burned
+  first so they do not inflate the redeemer’s share. Delivery and
+  remaining debt tokens are pro-rata.
+- Order swaps allow only debt↔FT and debt↔XT. Deadline and
+  `minTokenOut` / `maxTokenIn` are enforced. Input is pulled after the
+  quote; `nonReentrant`. `afterSwap` is a maker-set hook, not a user
+  entry.
+
+Not submitted.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. the402.ai still paused. No KeeperHub implementation before the
-6 Sep build window. Remaining TermMax slice: V2 market/order curves if
+6 Sep build window. Remaining TermMax slice: V2 router adapters if
 still unreviewed.
