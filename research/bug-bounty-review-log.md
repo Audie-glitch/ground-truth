@@ -288,9 +288,65 @@ Result: no exploitable finding.
 Bitcoin peg-in/out correctness is signer-trusted and was not verified
 against emily/signer. Not submitted. Payment requires user KYC.
 
+## 2026-09-03: sBTC signer deposit / withdraw (sbtc `18caa9d`)
+
+Same Immunefi program. Reviewed the signer crate's deposit and withdrawal
+validation, request voting, and complete/accept Stacks calls. Did not
+review `emily/handler`, the `sbtc` deposit-script crate, or `wsts` (those
+directories were not in the sparse clone). Local clone `/tmp/sbtc`. No
+mainnet interaction.
+
+Files: `signer/src/stacks/contracts.rs` (`CompleteDepositV1`,
+`AcceptWithdrawalV1`), `signer/src/bitcoin/validation.rs`
+(`DepositRequestReport`, `WithdrawalRequestReport`, pre-sign uniqueness /
+fee-rate), `signer/src/request_decider.rs`, `signer/src/block_observer.rs`
+(Emily load + UTXO validate), `signer/src/transaction_coordinator.rs`
+(complete-deposit amount = request amount − assessed input fee),
+`signer/src/emily_client.rs` (client surface only).
+
+Checked for: user-driven over-mint or under-burn; coordinator proposing a
+mint that ignores the sweep fee; sweep-txid / outpoint replay; dust and
+max-fee bypass; unconfirmed or reorged sweeps; first-input not being the
+signer UTXO; deposit requests that never confirmed; voting without a
+request record; unverified DKG shares being used to sign.
+
+Result: no user-exploitable finding.
+
+- `CompleteDepositV1::validate` requires a live on-chain incomplete
+  outpoint, a canonical sweep that spends that outpoint with the signers'
+  UTXO as vin0, mint amount exactly `request.amount − assess_input_fee`,
+  mint ≥ dust, and assessed fee ≤ `max_fee`. The coordinator constructs
+  the same mint amount; other signers re-check it before signing.
+- `AcceptWithdrawalV1::validate` requires a Fulfilled report whose sweep
+  txid matches, output script and sat amount match the request, assessed
+  output fee equals `tx_fee`, fee ≤ `max_fee`, vin0 is a signer script,
+  and outputs 0/1 cannot be withdrawal outputs (`assess_output_fee`
+  returns `None` there).
+- Bitcoin pre-sign validation refuses empty packages, duplicate
+  deposits/withdrawals, and out-of-range fee rates. A deposit must be
+  confirmed and unspent, inside per-deposit min/cap, outside the reclaim
+  locktime buffer, voted `can_accept` + `can_sign`, and locked to
+  **Verified** DKG shares. Withdrawals need a local accept vote, cap/dust
+  checks, `WITHDRAWAL_MIN_CONFIRMATIONS`, and not past
+  `WITHDRAWAL_BLOCKS_EXPIRY`.
+- Request-decider votes are only blocklist + “can this signer sign.” If
+  the blocklist client is unset, `can_accept` is true. That is operator
+  policy, not a user mint path. Incoming deposit decisions are stored
+  only after Emily fetch + `load_requests` validation. Incoming
+  withdrawal decisions can be stored before the request row exists
+  (explicit TODO); votes are still keyed by signer pubkey and later
+  counted only against the current aggregate key, so an outsider cannot
+  inject a vote.
+- `CreateDepositRequest::validate` in the observer requires a confirmed
+  non-coinbase UTXO and `validate_tx` on the bitcoin transaction. Script
+  parsing lives in the `sbtc` crate, which was not in this clone.
+
+Not submitted. Payment requires user KYC. Next slice: `emily/handler`
+and/or `sbtc` deposit scripts.
+
 ## Next candidates
 
-sBTC `signer` / `emily` (large Rust, KYC) or a later `gmsol_model`
+sBTC `emily` / `sbtc` crate / `wsts` (KYC) or a later `gmsol_model`
 decrease/liquidation pass. Sherlock `/api/contests` returned no live
 items as of 01:28 UTC 3 Sep 2026. No KeeperHub implementation before
 the 6 Sep build window.
