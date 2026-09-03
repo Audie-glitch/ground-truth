@@ -231,9 +231,16 @@ Threshold leftover gov / relay leftover
 (`502cd39`) is logged.
 Pareto Credit leftover (`19e7cde` IdleCDO /
 CreditVault / Tranche / epoch
-request-claim) is logged (remaining listed
-is IdleCreditVault strategy / epoch admin /
-proxy impls / other docs addresses).
+request-claim) is logged.
+Pareto Credit leftover strategy leftover
+(`19e7cde` IdleCreditVault receipt / APR=0)
+is logged.
+Pareto Credit leftover epoch admin leftover
+(`19e7cde` startEpoch / stopEpoch /
+depositDuringEpoch) is logged (remaining
+listed is IdleCDOEpochQueue / Prefunded /
+L2 variants / proxy impls / other docs
+addresses).
 Puffer Finance leftover (Sourcify
 `PufferDepositor` / `PufferVaultV5`) is
 logged.
@@ -518,7 +525,13 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Pareto Credit leftover
   (`19e7cde` IdleCDO /
   CreditVault / Tranche /
-  epoch request-claim), and
+  epoch request-claim)
+  plus strategy leftover
+  (IdleCreditVault receipt
+  / APR=0) plus epoch
+  admin leftover
+  (startEpoch / stopEpoch /
+  depositDuringEpoch), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

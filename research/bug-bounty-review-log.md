@@ -27441,6 +27441,204 @@ Puffer Timelock is
 OZ-style delay, not a
 user money path.
 
+## 2026-09-03: Pareto Credit leftover strategy leftover (`19e7cde`)
+
+Immunefi program
+`Pareto Credit` ($50,000,
+`kyc: false`). IdleCDO /
+CreditVault / Tranche /
+epoch request-claim is
+already logged. This
+slice is the
+IdleCreditVault strategy
+receipt and APR=0
+accounting. Official
+clone `/tmp/idle-tranches`
+at `19e7cde`. No mainnet
+interaction.
+
+Files:
+`contracts/strategies/idle/IdleCreditVault.sol`.
+
+Checked for: a stranger
+`requestWithdraw` /
+`claimWithdrawRequest`
+that pays another user's
+receipt; instant claim
+without a request;
+`mintStrategyTokens`
+without being the CDO.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `deposit` /
+  `mintStrategyTokens` /
+  `requestWithdraw` /
+  `claimWithdrawRequest` /
+  instant request-claim /
+  `collect*Funds` /
+  `prepareStopEpochWithApr0`
+  are `_onlyIdleCDO`.
+- `requestWithdraw` burns
+  principal from the CDO
+  and mints a receipt to
+  `_user`. Claim waits
+  one epoch (unless
+  `epochEndDate == 0`),
+  settles APR=0, burns
+  that user's receipt,
+  and `safeTransfer`s
+  underlyings to `_user`.
+- Instant claim burns
+  that user's receipt
+  and pays that user.
+  Collect pulls from
+  the CDO only.
+- `_transfer` is blocked
+  unless the CDO or
+  `canTransfer` after
+  default (manager).
+- `setApr` is CDO or
+  manager. `transferToken`
+  / `setWhitelistedCDO`
+  are owner. `redeem` /
+  `redeemUnderlying` /
+  `redeemRewards` are
+  unused no-ops.
+
+Do not file owner
+rescue, manager APR,
+CDO-only mint, address-
+bound receipts, unused
+redeem stubs, or APR=0
+stopEpoch revert when
+APR is later set as
+theft.
+
+Not submitted.
+Listed leftover is the
+IdleCreditVault strategy
+slice. Remaining listed:
+other epoch admin, proxy
+implementations not
+independently
+Sourcify-fetched, and
+other docs addresses.
+
+## 2026-09-03: Pareto Credit leftover epoch admin leftover (`19e7cde`)
+
+Immunefi program
+`Pareto Credit` ($50,000,
+`kyc: false`). IdleCDO
+request-claim and
+IdleCreditVault strategy
+are already logged. This
+slice is epoch start /
+stop / instant-fund
+pull and mid-epoch
+deposit. Official clone
+`/tmp/idle-tranches` at
+`19e7cde`. No mainnet
+interaction.
+
+Files:
+`contracts/IdleCDOEpochVariant.sol`.
+
+Checked for: a stranger
+`startEpoch` /
+`stopEpoch` /
+`getInstantWithdrawFunds`
+that drains borrower
+funds to the caller;
+`depositDuringEpoch`
+that mints without
+pulling the caller;
+`sendFundsToBorrower` /
+`getFundsFromBorrower`
+without being this
+contract.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `setEpochParams` /
+  `setInstantWithdrawParams`
+  / `startEpoch` /
+  `stopEpoch` /
+  `getInstantWithdrawFunds`
+  are owner or strategy
+  manager. Epoch duration
+  0 is reserved for
+  pool close.
+- `startEpoch` skims
+  donations, pauses
+  deposits, funds instant
+  receipts on the
+  strategy, then sends
+  surplus to the
+  borrower via
+  `sendFundsToBorrower`
+  (only self). Failed
+  borrower transfer
+  defaults.
+- `stopEpoch` pulls
+  interest + pending
+  withdraws from the
+  borrower via
+  `getFundsFromBorrower`
+  (only self),
+  `collectWithdrawFunds`
+  to the strategy, then
+  accrues. Catch path
+  defaults. `_interest
+  == 1` closes the pool.
+- `stopEpochWithDuration`
+  burns `_lossAmount`
+  only after pending
+  receipts are funded
+  (documented).
+- `depositDuringEpoch`
+  pulls `msg.sender`,
+  mints that sender at
+  a time-weighted price,
+  mints strategy tokens
+  to the CDO, and sends
+  underlyings to the
+  borrower. Disabled
+  for programmable /
+  AYS / first-tranche
+  supply 0.
+- `restoreOperations`
+  is owner and reverts
+  if `defaulted`.
+
+Do not file owner /
+manager epoch control,
+borrower default pause,
+minted-interest NAV
+fronting, Keyring
+allowlist, or pending
+receipts not haircut by
+`_lossAmount` as theft.
+
+Not submitted.
+Listed leftover is the
+epoch start / stop /
+mid-epoch deposit
+slice. Remaining listed:
+IdleCDOEpochQueue /
+Prefunded and L2
+variants, proxy
+implementations not
+independently
+Sourcify-fetched, and
+other docs addresses.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -27941,11 +28139,22 @@ Pareto Credit leftover
 (`19e7cde` IdleCDO /
 CreditVault / Tranche /
 epoch request-claim) is
+logged.
+Pareto Credit leftover
+strategy leftover
+(`19e7cde`
+IdleCreditVault receipt
+/ APR=0) is logged.
+Pareto Credit leftover
+epoch admin leftover
+(`19e7cde` startEpoch /
+stopEpoch /
+depositDuringEpoch) is
 logged (remaining listed
-is IdleCreditVault
-strategy / epoch admin /
-proxy impls / other docs
-addresses).
+is IdleCDOEpochQueue /
+Prefunded / L2 variants
+/ proxy impls / other
+docs addresses).
 RootstockLabs RIF token leftover
 (Sourcify `match` `RIFToken`)
 is logged (KYC; remaining
@@ -28474,11 +28683,22 @@ Pareto Credit leftover
 (`19e7cde` IdleCDO /
 CreditVault / Tranche /
 epoch request-claim) is
+logged;
+Pareto Credit leftover
+strategy leftover
+(`19e7cde`
+IdleCreditVault receipt
+/ APR=0) is logged;
+Pareto Credit leftover
+epoch admin leftover
+(`19e7cde` startEpoch /
+stopEpoch /
+depositDuringEpoch) is
 logged (remaining listed
-is IdleCreditVault
-strategy / epoch admin /
-proxy impls / other docs
-addresses);
+is IdleCDOEpochQueue /
+Prefunded / L2 variants
+/ proxy impls / other
+docs addresses);
 RootstockLabs RIF token leftover
 (Sourcify) is logged (KYC;
 remaining listed is PegIn /
