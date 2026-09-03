@@ -27165,6 +27165,94 @@ and
 `keep-network/tbtc-v2`
 typescript.
 
+## 2026-09-03: Threshold leftover gov / relay leftover (`502cd39`)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+Bridge leftover is
+already logged.
+This slice is listed
+Ethereum Sourcify
+`BridgeGovernance`
+(`0xA94DD662E2A247493fACCeab9f2459AAF90778Ee`),
+`LightRelay`
+(`0x836cdFE63fe2d63f8Bdb69b96f6097F36635896E`),
+and
+`TokenholderGovernor`
+(`0xd101f2b25bcbf992bdf55db67c104fe7646f5447`).
+Local clone
+`/tmp/threshold-tbtc`
+at `502cd39` plus Sourcify
+for the governor.
+No mainnet interaction.
+
+Files:
+`solidity/contracts/bridge/BridgeGovernance.sol`,
+`solidity/contracts/relay/LightRelay.sol`,
+Sourcify
+`contracts/governance/TokenholderGovernor.sol`.
+
+Checked for: a
+stranger
+`setVaultStatus` /
+`setRebateStaking`;
+`retarget` that
+skips header
+checks; governor
+`execute` without
+a passed proposal.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- BridgeGovernance
+  param updates are
+  `onlyOwner` and
+  two-step with
+  `governanceDelay`.
+  `setVaultStatus` /
+  `setSpvMaintainerStatus`
+  /
+  `setRedemptionWatchtower`
+  /
+  `setRebateStaking`
+  are owner (the
+  last two are
+  documented one-off
+  wiring).
+- LightRelay
+  `retarget` checks
+  header length and
+  pre/post targets.
+  Auth of submitters
+  /
+  `setProofLength`
+  are owner.
+- TokenholderGovernor
+  is an OZ Governor
+  + timelock wrapper
+  (1.5% quorum,
+  0.25% proposal
+  threshold). Votes
+  come from liquid T
+  plus staking
+  checkpoints.
+
+Not submitted.
+Listed Threshold
+explorer leftover in
+this pass is
+exhausted at the
+opened-contract
+level. Remaining
+listed:
+`keep-network/tbtc-v2`
+typescript (not a
+Solidity money path).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -27630,6 +27718,9 @@ ReimbursementPool leftover
 (`502cd39`) is logged.
 Threshold Bridge leftover
 (`502cd39`) is logged.
+Threshold leftover gov /
+relay leftover
+(`502cd39`) is logged.
 Arkadiko leftover (Hiro vaults /
 tokens / liq-pool) is logged
 (remaining listed is the website).
@@ -27798,11 +27889,13 @@ Threshold validator +
 ReimbursementPool leftover
 (`502cd39`) is logged;
 Threshold Bridge leftover
+(`502cd39`) is logged;
+Threshold leftover gov /
+relay leftover
 (`502cd39`) is logged
-(remaining Threshold is
-BridgeGovernance /
-LightRelay /
-TokenholderGovernor +
+(listed Threshold
+explorer leftover
+exhausted; remaining is
 keep-network typescript);
 Pancake MasterChefV3 +
 LmPool + V2 periphery
