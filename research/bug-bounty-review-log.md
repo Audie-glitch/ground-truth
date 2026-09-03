@@ -45949,6 +45949,8 @@ Jito leftover remaining jito-solana compute-budget leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana zk-elgamal-proof leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana vote_reward leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45970,7 +45972,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` remaining runtime if still unused.
+Remaining listed Jito: `jito-solana` check_transactions / partitioned epoch rewards / remaining runtime if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -46039,6 +46041,7 @@ Do not rematch Jito jito-solana vote leftover.
 Do not rematch Jito jito-solana bpf leftover.
 Do not rematch Jito jito-solana compute-budget leftover.
 Do not rematch Jito jito-solana zk-elgamal-proof leftover.
+Do not rematch Jito jito-solana vote_reward leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -48788,7 +48791,10 @@ Jito leftover remaining jito-solana bpf leftover
 Jito leftover remaining jito-solana compute-budget leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana zk-elgamal-proof leftover
-(`d0e3a47`) is logged (remaining listed is remaining runtime);
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana vote_reward leftover
+(`d0e3a47`) is logged (remaining listed is check_transactions /
+partitioned epoch rewards / remaining runtime);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover
@@ -70814,3 +70820,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a verified proof-context close as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` remaining runtime if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana vote_reward leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after zk-elgamal-proof leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/block_component_processor.rs`, `runtime/src/block_component_processor/vote_reward.rs`, and `runtime/src/block_component_processor/vote_reward/epoch_inflation_account_state.rs`. Do not rematch runtime fee leftover, vote leftover, or zk-elgamal-proof leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `calc_vote_rewards_update_vote_states` that credits a stranger vote account; `calculate_reward` that mints lamports into `VoteState`; footer `reward_cert` accepted without `ValidatedRewardCert`.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Footer path builds `ValidatedRewardCert::try_new` from skip/notar certs and `ValidatedBlockFinalizationCert` before `update_bank_with_footer_fields`. Invalid certs abort the footer.
+- `update_account` increments epoch credits only for pubkeys in the validated reward-cert set. Leader extra credits go to `bank.leader().vote_address`. `VoteState::serialize` copies the original lamports and owner; this crate does not `checked_add_lamports`.
+- `calculate_reward` is stake × epoch inflation / (slots × total stake), then split 50/50 validator/leader. Inflation metadata lives on an off-curve PDA (`vote_reward_account` / alpenglow feature id).
+- `store_accounts` writes the serialized vote-state updates for the working bank slot. A stranger shred still needs a valid reward / finalization certificate.
+
+Do not file a certificate-gated credit increment as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` check_transactions / partitioned epoch rewards / remaining runtime if still unused.
