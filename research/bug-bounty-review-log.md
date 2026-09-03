@@ -9893,13 +9893,13 @@ finding. Not submitted.
   auth / same-block /
   healthy gates.
 
-Remaining Zest leftover:
-DAO executor / multisig
-/ treasury and the
-zvstBTC strategy vault
-(in-repo, not a listed
-Hiro row). Not
-submitted.
+Remaining Zest leftover
+was DAO executor /
+multisig / treasury and
+the zvstBTC strategy
+vault; logged in the
+DAO + strategy pass
+below. Not submitted.
 
 ## 2026-09-03: GammaSwap staking + GS token + timelock + airdrop leftover
 
@@ -10056,11 +10056,143 @@ is exhausted. Do not
 re-review factory /
 DeltaSwap / May 2026
 vault. Next leftover:
-Zest DAO + zvstBTC,
+StackingDAO cores,
 TermMax adapters, Twyne
 Sourcify-404 vaults, or
 Olympus CDEPO if source
 appears. Not submitted.
+
+## 2026-09-03: Zest Protocol V2 DAO + zvstBTC strategy leftover (`f2fce52`)
+
+Immunefi program
+`zest-protocol-v2`
+($100,000, `kyc: false`,
+Clarity / Stacks). Listed
+Hiro principals include
+`dao-executor` /
+`dao-multisig` /
+`dao-treasury`. The
+zvstBTC strategy vault
+is in the official
+`Zest-Protocol/zest-v2-contracts`
+tree at `f2fce52` (not a
+listed Hiro row; Primacy
+of Impact only if a
+finding existed). Local
+extract `/tmp/zest-v2`.
+No mainnet interaction.
+
+Files:
+`mainnet/contracts/dao/{dao-executor,dao-multisig,dao-treasury,dao-traits}.clar`,
+`mainnet/contracts/strategy-vault/{zvstBTC,zv-engine-stbtc-0,zv-ops-stbtc-0,zv-state-stbtc-0,zv-traits}.clar`.
+
+Checked for: proposal
+execution that skips the
+multisig impl; treasury
+withdraw that is not
+executor-gated; strategy
+share mint without a
+pull; redeem that pays a
+stranger; first-depositor
+inflation; claim
+double-fund; trader
+redirect of borrowed
+sBTC or removed
+collateral; ops sweep
+that drains state past
+funded-claim liability.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `dao-executor`
+  `execute-proposal` /
+  `set-impl` require
+  `contract-caller ==
+  impl`. `init` is
+  deployer-once.
+  `as-contract` so
+  proposal scripts see
+  `tx-sender ==
+  dao-executor`.
+- Multisig signer
+  management and impl
+  schedule / execute /
+  cancel are
+  `tx-sender ==
+  dao-executor`. Propose /
+  approve / execute are
+  signer-gated. Execute
+  requires matching
+  script, threshold,
+  unexpired, and either
+  the 1-day timelock or
+  the `urgent` flag (DAO
+  trust). Impl replace
+  has a 7-day timelock.
+- Treasury `withdraw`
+  is executor-only and
+  pays the proposal-
+  chosen recipient.
+- `zvstBTC` mint / burn
+  are engine-only.
+  `set-authorized-minter`
+  is state-only.
+- Engine `initialize`
+  seeds 1000 dead shares
+  to the null principal.
+  Deposit mints
+  `amount * supply /
+  gross` after
+  crystallize; sBTC
+  deposit converts first,
+  then uses pre-deposit
+  NAV. Request-redeem
+  locks a share price
+  and escrows shares.
+  `fund-claim` pays
+  `min(quoted, live NAV)`
+  and can run after
+  cooldown or by
+  manager/engine.
+  `redeem` always pays
+  the stored user.
+  Cancel is user-only
+  and unfunded-only.
+- State pulls / pays
+  are engine- or
+  ops-gated. Collateral
+  to ops cannot drop
+  the state stBTC
+  balance below
+  `funded-claim-liability`.
+  Owner / trader /
+  guardian are
+  privileged; hot-role
+  changes are immediate
+  (admin trust).
+- Ops open / borrow /
+  close / unstack keep
+  sBTC and stBTC inside
+  ops → StackingDAO /
+  Zest market → state.
+  Borrow receiver is
+  `none` (ops). Collateral
+  remove receiver is
+  `zv-state`. Close
+  requires zero leftover
+  scaled debt. Permissionless
+  `restack-ops-sbtc` /
+  `sweep-ops-stbtc` only
+  return leftovers to
+  state.
+
+Listed Zest Clarity is
+exhausted. Next leftover
+is StackingDAO cores
+(separate Immunefi
+program), not a second
+Zest pass. Not submitted.
 
 ## Next candidates
 
@@ -10216,10 +10348,14 @@ out of this track.
 Zest Protocol V2
 `v0-6-market` +
 market-vault + sBTC vault
-(`f2fce52` / Hiro) are
-logged. Remaining Zest is
-DAO + zvstBTC strategy
-vault. Next
+(`f2fce52` / Hiro) plus
+DAO executor / multisig /
+treasury and the zvstBTC
+strategy vault / engine /
+ops / state (`f2fce52`)
+are logged. Listed Zest
+Clarity leftover is
+exhausted. Next
 unreviewed Immunefi
 GitHub-or-recent trees:
 Olympus V1Migrator + Cooler
