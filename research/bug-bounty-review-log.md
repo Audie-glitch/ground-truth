@@ -33681,6 +33681,111 @@ exhausted at
 this money-path
 level.
 
+## 2026-09-03: The Graph leftover ETH L1 staking leftover (Sourcify)
+
+Immunefi program
+`thegraph`
+($50,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+L1Staking proxy
+`0xF55041E37E12cD407ad00CE2910B8269B01263b9`
+impl
+`0x20a14D78848BC8B3F3d4B77239F2adC3C0259A10`.
+RewardsManager
+proxy
+`0x9Ac758AB77733b4150A901ebd659cbF8cB93ED66`
+impl
+`0xD92944C84826Be7d1D168B239D30AF4583E085e5`.
+GRT
+`0xc944E90C64B2c07662A292be6244BDf05Cda44a7`.
+Extract
+`/tmp/graph-stake`,
+`/tmp/graph-rewards`,
+`/tmp/graph-grt`.
+No mainnet
+writes.
+
+Files:
+`contracts/staking/Staking.sol`,
+`contracts/staking/L1Staking.sol`,
+`contracts/rewards/RewardsManager.sol`,
+`GraphToken.sol`.
+
+Checked for: a
+stranger
+`stake` that
+pulls another
+account; a
+`withdraw` that
+pays the
+caller
+someone else's
+thawed GRT; a
+stranger
+`transferStakeToL2`;
+a
+permissionless
+`takeRewards`
+that mints to
+the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `stakeTo`
+  pulls GRT
+  from
+  `msg.sender`
+  and credits
+  `_indexer`.
+  `unstake` /
+  `withdraw`
+  bind
+  `msg.sender`.
+- `collect`
+  is
+  authorized
+  asset-holder
+  only.
+  `takeRewards`
+  is staking
+  contract only
+  and mints to
+  staking.
+- `transferStakeToL2`
+  /
+  `transferDelegationToL2`
+  bind
+  `msg.sender`
+  as indexer /
+  delegator.
+- `GraphToken.mint`
+  is
+  `onlyMinter`.
+
+Do not file
+stake-to-named
+indexer or
+staking-gated
+reward mint.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+Arbitrum
+HorizonStaking /
+PaymentsEscrow /
+L2 gateway;
+Curation /
+DisputeManager /
+BillingConnector.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -35418,6 +35523,15 @@ Glo Dollar leftover USDGLO
 leftover (Sourcify
 GloDollarV3; KYC) is logged
 (listed leftover exhausted);
+The Graph leftover ETH L1
+staking leftover (Sourcify
+L1Staking / RewardsManager /
+GRT; KYC) is logged
+(remaining listed is
+Arbitrum HorizonStaking /
+PaymentsEscrow / L2 gateway /
+Curation / DisputeManager /
+BillingConnector);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
