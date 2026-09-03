@@ -50079,3 +50079,135 @@ epoching,
 btclightclient,
 and website /
 toolkit rows.
+
+## 2026-09-03: Folks leftover live spoke addrs (`7f631fe`)
+
+Immunefi program
+`folksfinance`
+($200,000, `kyc: true`).
+Listed remaining after
+live Avalanche hub
+addrs (`59649a2`).
+Official clone
+`/tmp/folks-xchain`
+`7f631fe`. Live spoke
+addresses from
+`xchain-js-sdk`
+`src/common/constants/chain.ts`.
+Extract
+`/tmp/folks-spoke-src`.
+No mainnet writes.
+
+Files / live:
+ETH / Base
+SpokeCommon
+`0xc7bc4A43384f84B8FC937Ab58173Edab23a4c3cD`
+(Sourcify `match`),
+ETH / Base / Arb
+USDC
+`SpokeCircleToken`
+`0xF4c542518320F09943C35Db6773b2f9FeB2F847e`
+(Sourcify
+`exact_match`),
+Arbitrum
+SpokeCommon
+`0x57D77FD37670e22188d1c92D7cEc931bccf074A4`
+(Sourcify `match`),
+Avalanche
+SpokeCommon
+`0xc03094C4690F3844EA17ef5272Bf6376e0CF2AC6`
+and USDC
+`0xcD68014c002184707eaE7218516cB0762A44fDDF`
+(Sourcify 404;
+Routescan
+verified).
+
+Checked for: a
+chain-specific
+spoke fork that
+credits another
+account while
+pulling the
+caller; hub
+`SendToken` from
+a non-hub
+source.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Live
+  `SpokeCommon.sol`
+  (`6fc7733a72c52b22`),
+  `SpokeToken.sol`
+  (`eadef8ff666d3ef8`),
+  and
+  `SpokeCircleToken.sol`
+  (`b74655134ebc9005`)
+  hash-match the
+  already opened
+  clone.
+- `deposit` /
+  `repay` /
+  `createLoanAndDeposit`
+  still pull
+  `msg.sender` via
+  `_receiveToken`
+  (`safeTransferFrom`
+  on Circle) and
+  set payload
+  `userAddress` to
+  `msg.sender`.
+- `_receiveMessage`
+  `SendToken` still
+  requires
+  `sourceChainId`
+  / `sourceAddress`
+  to be the hub.
+- Live
+  `Messages.sol`
+  lacks the
+  clone's later
+  `ClaimRewardsV2`
+  + padding enum
+  slots. Encode /
+  decode of
+  `userAddress`
+  is unchanged.
+  Immunefi
+  already excludes
+  incentive
+  contracts.
+
+Do not file
+hash-matched
+spoke pull-from-
+sender or
+hub-gated
+`SendToken` as
+stranger theft
+on another
+chain.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Folks
+live spoke addrs
+on ETH / Base /
+Arbitrum /
+Avalanche are
+exhausted at the
+opened-file /
+exact-match
+level. Remaining
+listed: rewards
+(out of scope as
+incentives),
+other spoke
+tokens if they
+diverge, and the
+Algorand docs
+path.
