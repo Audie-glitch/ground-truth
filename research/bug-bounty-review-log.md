@@ -26440,6 +26440,140 @@ and
 `keep-network/tbtc-v2`
 typescript.
 
+## 2026-09-03: Threshold watchtower + Wormhole L1 leftover (`502cd39`)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+Vault / MaintainerProxy
+leftover is already
+logged. This slice is
+listed Ethereum
+Sourcify
+`RedemptionWatchtower`
+impl
+(`0xbfD04E3928923aD8C86256B9A8F64eBD01Cf1dAf`
+behind
+`0xB8dF0A949aC45ff8f401553A1dcb742Feb38E6D3`),
+`BTCDepositorWormhole`
+impl
+(`0x9A5250c7beA10f7472eB9d50bB757B83d67FB5ED`
+behind
+`0xb810AbD43d8FCFD812d6FEB14fefc236E92a341A`),
+`L1BTCDepositorWormholeV2Arbitrum`
+impl
+(`0x82FDDF79765Ed75325bCBdf65F67dF0879AAbe8C`
+behind
+`0x75A6e4A7C8fAa162192FAD6C1F7A6d48992c619A`),
+and `L1BTCRedeemerWormhole`
+impl
+(`0x14D93D4c4e07130fFfE6083432b66b96D8eB9DC0`
+behind
+`0x5D4d83aaB53B7E7cA915AEB2d4d3f4e03823DbDe`).
+Local clone
+`/tmp/threshold-tbtc`
+at `502cd39`.
+No mainnet interaction.
+
+Files:
+`solidity/contracts/bridge/RedemptionWatchtower.sol`,
+`solidity/contracts/cross-chain/AbstractL1BTCDepositor.sol`,
+`solidity/contracts/cross-chain/wormhole/BTCDepositorWormhole.sol`,
+`solidity/contracts/cross-chain/wormhole/L1BTCDepositorWormholeV2Base.sol`,
+`solidity/contracts/cross-chain/wormhole/L1BTCRedeemerWormhole.sol`,
+`solidity/contracts/integrator/AbstractBTCDepositor.sol`,
+`solidity/contracts/integrator/AbstractBTCRedeemer.sol`.
+
+Checked for: a
+stranger
+`withdrawVetoedFunds`;
+guardian-less veto;
+finalize that bridges
+tBTC to the caller
+instead of extraData;
+Wormhole redeem that
+ignores
+`allowedSenders`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Watchtower
+  `raiseObjection` is
+  `onlyGuardian` and
+  needs a pending
+  Bridge redemption.
+  Third objection
+  finalizes, bans the
+  redeemer, pulls
+  Bank balance via
+  `notifyRedemptionVeto`,
+  and burns the
+  penalty.
+  `withdrawVetoedFunds`
+  pays only
+  `veto.redeemer`
+  after the freeze.
+  `disableWatchtower`
+  is lifetime-gated.
+- L1 depositor
+  `initializeDeposit`
+  reveals with
+  extraData bound in
+  the Bitcoin script.
+  `finalizeDeposit`
+  is one-shot
+  Initialized →
+  Finalized, reads
+  extraData from the
+  Bridge deposit, and
+  `_transferTbtc`
+  locks that amount
+  to the configured
+  Wormhole gateway
+  with the recorded
+  receiver as
+  payload. Relayer
+  `msg.sender` is not
+  the L2 owner.
+- L1 redeemer
+  `requestRedemption`
+  measures tBTC
+  received from
+  `completeTransferWithPayload`,
+  requires
+  `allowedSenders`,
+  unmints through the
+  vault, and requests
+  Bridge redemption
+  to the VAA payload
+  script. VAA replay
+  is Token Bridge
+  plus
+  `nonReentrant`.
+
+Do not refile 1496
+(cross-chain
+redemption timeout)
+or 1410
+(TOB-TBTCACEXT-30).
+
+Not submitted.
+Remaining Threshold
+listed leftover:
+Bridge /
+BridgeGovernance /
+RebateStaking /
+WalletProposalValidator /
+LightRelay /
+TokenholderGovernor /
+ReimbursementPool,
+and
+`keep-network/tbtc-v2`
+typescript.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -26888,6 +27022,9 @@ Threshold Bank leftover
 Threshold vault +
 MaintainerProxy leftover
 (`502cd39`) is logged.
+Threshold watchtower +
+Wormhole L1 leftover
+(`502cd39`) is logged.
 Arkadiko leftover (Hiro vaults /
 tokens / liq-pool) is logged
 (remaining listed is the website).
@@ -27021,14 +27158,18 @@ Threshold Bank leftover
 (`502cd39`) is logged;
 Threshold vault +
 MaintainerProxy leftover
+(`502cd39`) is logged;
+Threshold watchtower +
+Wormhole L1 leftover
 (`502cd39`) is logged
 (remaining Threshold is
-Bridge / watchtower /
-Wormhole proxies /
+Bridge /
+BridgeGovernance /
 RebateStaking /
-ReimbursementPool /
+WalletProposalValidator /
 LightRelay /
-TokenholderGovernor +
+TokenholderGovernor /
+ReimbursementPool +
 keep-network typescript);
 Pancake MasterChefV3 +
 LmPool + V2 periphery
