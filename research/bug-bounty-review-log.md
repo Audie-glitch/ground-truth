@@ -11021,10 +11021,11 @@ is exhausted.
   tvl_ld >= fee_ld`.
 
 Next leftover:
-TermMax leftover
-adapters, Twyne
-Sourcify-404 vaults.
-Not submitted.
+Sky L1/L2 governance
+relays + TermMax leftover
+adapters (logged below),
+or Twyne Sourcify-404
+vaults. Not submitted.
 
 ## 2026-09-03: StackingDAO native-pool + signer leftover (Hiro 13 Aug 2026)
 
@@ -11102,6 +11103,257 @@ exhausted.
   keeper-only.
   `withdraw-residual`
   is protocol-gated.
+
+## 2026-09-03: Sky L1/L2 governance relay leftover (`ff964bb` / `82918f4`)
+
+Immunefi program `sky`
+($10,000,000, `kyc:
+false`). Remaining
+listed relays after
+sky-oapp-oft:
+sky-ecosystem/lz-governance-relay
+`master` `ff964bb`
+and
+sky-ecosystem/op-token-bridge
+`master` `82918f4`.
+Local clones
+`/tmp/lz-gov-relay` and
+`/tmp/op-token-bridge`.
+No mainnet interaction.
+
+Files:
+`lz-governance-relay/src/{L1,L2}GovernanceRelay.sol`,
+`op-token-bridge/src/{L1,L2}GovernanceRelay.sol`.
+
+Checked for:
+permissionless `relay`
+that executes a stranger
+spell; L2 `file` that
+re-points the OApp /
+L1 sender; OP messenger
+spoof (`xDomainMessageSender`
+unchecked).
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- LZ L1 `relayEVM` /
+  `relayRaw` /
+  `reclaim*` are
+  `wards`. The payload
+  is
+  `L2GovernanceRelay.relay(target,
+  targetData)` via the
+  already-reviewed
+  GovernanceOAppSender
+  (src sender must be
+  allowlisted per
+  dst target).
+- LZ L2 `relay` is
+  `messageAuth`:
+  `msg.sender == l2Oapp`,
+  `srcEid == l1Eid`,
+  `srcSender ==
+  l1GovernanceRelay`.
+  Execution is
+  `delegatecall`.
+  `file` requires
+  `msg.sender ==
+  address(this)` (only
+  via that relay).
+- OP L1 `relay` is
+  `wards` and always
+  targets the immutable
+  `l2GovernanceRelay`
+  through the immutable
+  messenger. L2
+  `onlyL1GovRelay`
+  requires
+  `msg.sender ==
+  messenger` and
+  `xDomainMessageSender
+  == l1GovernanceRelay`.
+
+Remaining Sky listed
+relays are the older
+Optimism / Arbitrum /
+Starknet DAI-bridge
+copies of the same
+ward + messenger
+pattern. Not
+submitted.
+
+## 2026-09-03: StackingDAO swap + rewards-pox5 leftover (Hiro 13 Aug 2026)
+
+Same Immunefi program
+`stackingdao` ($100,000,
+`kyc: false`). Listed
+wrappers the native-pool
+pass did not open:
+Hiro
+`swap-ststx-ststxbtc-v4`,
+`rewards-pox5-v1`,
+`reward-split-calculator-v1`.
+Source pulled read-only
+(`/tmp/stackingdao`).
+No mainnet interaction.
+
+Checked for: swap that
+mints stSTXbtc without
+locking idle; harvest
+of the already-logged
+paper PPS bump after
+pending stSTXbtc exit;
+permissionless
+`process-rewards` that
+skims new inbound
+sBTC.
+
+Result: no user-exploitable
+finding. Not submitted.
+Listed StackingDAO
+money-path leftover
+that Hiro would open
+is exhausted (tracking
+/ withdraw NFTs were
+reviewed with the
+cores).
+
+- Forward swap pulls
+  stSTX, quotes
+  `get-stx-per-ststx`
+  (round down), burns,
+  mints `value-v`
+  stSTXbtc, and
+  `lock-stx-for-ststxbtc`.
+  Reverse uses
+  `get-stx-per-ststx-up`
+  so shares round
+  against the swapper,
+  then unlocks only
+  when idle covers
+  amount + reserved
+  withdrawals.
+  `get-stx-available`
+  subtracts
+  `stx-for-ststxbtc-idle`.
+  After
+  `init-withdraw` of
+  stSTXbtc the quoted
+  stSTX PPS can rise
+  (circulating
+  `get-stx-for-ststxbtc`
+  drops) but available
+  idle does not, so
+  the inflated quote
+  fails
+  `ERR_INSUFFICIENT_IDLE`
+  the same way
+  `withdraw-idle` does.
+- `rewards-pox5-v1
+  process-rewards` is
+  permissionless only
+  for already-queued
+  sBTC (split by
+  protocol bps).
+  Commission on new
+  inbound sBTC and
+  the fold are
+  keeper-only.
+  `reward-split-
+  calculator-v1
+  compute-and-apply`
+  is protocol-gated.
+
+## 2026-09-03: TermMax leftover swap adapters (`e314f3f`)
+
+Same Immunefi program
+`termstructurelabs`
+($80,000, `kyc: false`).
+Remaining V2 adapters
+after the already-logged
+1inch / LiFi / Odos /
+UniV3 / Pendle /
+TermMaxSwap set:
+`KyberswapV2AdapterV2`,
+`OkxSwapAdapter`,
+`PancakeSmartAdapter`,
+`KodiakSwapAdapter`,
+`ERC4626VaultAdapterV2`,
+`StrataVaultAdapter`,
+`TerminalVaultAdapter`,
+`OndoSwapAdapter`.
+Local clone
+`/tmp/termmax-v2` at
+`e314f3f`. No mainnet
+interaction.
+
+Checked for: adapter
+`swap` callable on the
+implementation;
+user calldata that
+pays a third party
+while returning a
+fake `tokenOutAmt`;
+vault redeem that
+credits a stranger;
+Ondo quote that
+spends a different
+asset than `tokenIn`.
+
+Result: no user-exploitable
+finding. Not submitted.
+Listed TermMax leftover
+adapters are exhausted.
+
+- Parent
+  `ERC20SwapAdapterV2.swap`
+  is `onlyProxy`
+  (`delegatecall` from
+  the router). Markets
+  / adapters stay on
+  the already-logged
+  whitelist.
+- Kyber scales via
+  the immutable helper
+  then `functionCall`s
+  the immutable router.
+  OKX / Pancake /
+  Kodiak measure or
+  decode output on the
+  router and revert on
+  `LessThanMinTokenOut`
+  / `InvalidTradeAmount`.
+  A payload that pays
+  a third party yields
+  zero observed output.
+- 4626 / Strata
+  deposit to
+  `recipient` and
+  redeem from
+  `address(this)`.
+  Terminal instant
+  paths leave output
+  on the router and
+  forward the balance
+  (same intentional
+  leftover-sweep as
+  `useBalanceOnchain`).
+- Ondo checks
+  `quote.asset` against
+  `tokenOut` (BUY) or
+  `tokenIn` (SELL) and
+  refunds unused input
+  / USDon to the
+  user-set
+  `refundAddress`.
+
+Next leftover: Sky
+Optimism / Arbitrum /
+Starknet DAI-bridge
+relays, or Twyne
+Sourcify-404 vaults.
+Not submitted.
 
 ## Next candidates
 
@@ -11316,9 +11568,12 @@ AdministeredAgent
 (`5e6b52f`) are logged.
 Remaining Sky leftover
 `sky-oapp-oft` is
-logged below; listed
-Sky leftover is
-exhausted.
+logged; LZ / OP
+governance relays are
+logged below. Older
+Optimism / Arbitrum /
+Starknet DAI-bridge
+relays remain.
 Yearn Accountant
 `0x5A74…DE69` (Sourcify)
 plus 3.0.4 Tokenized
@@ -11335,8 +11590,8 @@ wrappers / EVC / factories are
 still Sourcify 404. TermMax TMX
 token (Sourcify BSC `MyOFT`)
 is logged; remaining TermMax
-adapters are lower-priority
-copies. Yearn stYFI
+adapters are logged
+below. Yearn stYFI
 July leftover + February
 StakedYFI / LL depositor
 (`69e262e`) plus leftover
@@ -11459,16 +11714,18 @@ leftover are logged
 (listed Yearn leftover
 impls exhausted);
 Sky PAUFactory + Kicker
-and StackingDAO
-strategy-v6 / stakers /
-commission / rewards-stx
-are logged; Sky
-`sky-oapp-oft` and
-StackingDAO native-pool
-/ signer leftover are
-logged (listed Sky and
-StackingDAO leftover
-exhausted);
++ `sky-oapp-oft` + LZ/OP
+governance relays and
+StackingDAO strategy /
+native-pool / signers /
+swap / rewards-pox5 are
+logged; TermMax leftover
+adapters (`e314f3f`) are
+logged; remaining Sky is
+older DAI-bridge relays;
+listed StackingDAO and
+TermMax leftover
+adapters are exhausted;
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;

@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~05:15 UTC. Dates verified against each
+Status as of 3 September 2026, ~05:10 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging), and Immunefi
@@ -195,13 +195,24 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`3f918a0`), Sky
   StarGuard +
   SubProxyMethods + PAU
-  assembler, Yearn
+  assembler + PAUFactory
+  + Kicker + sky-oapp-oft
+  + LZ/OP governance
+  relays, Yearn
   Accountant `0x5A74…DE69`
   + 3.0.4 Tokenized
   Strategy / Vault V3
   leftover (listed Yearn
   leftover impls
   exhausted),
+  StackingDAO cores +
+  strategy / native-pool
+  / signers / swap /
+  rewards-pox5 (listed
+  money-path leftover
+  exhausted), TermMax
+  leftover adapters
+  (`e314f3f`),
   Zest Protocol V2 market
   + vault + DAO / zvstBTC
   (`f2fce52`; listed
