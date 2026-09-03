@@ -34378,8 +34378,10 @@ Payment requires
 user KYC.
 Remaining listed:
 L2 dispensers /
+veOLAS
+(now leftover-
+logged);
 Bridge2Burner /
-veOLAS /
 marketplace /
 registries.
 
@@ -34812,6 +34814,310 @@ common utils
 already opened
 with the
 controller.
+
+## 2026-09-03: OpenZeppelin leftover Stellar packages leftover (`v0.7.2`)
+
+Immunefi program
+`openzeppelin-stellar`
+($25,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`OpenZeppelin/stellar-contracts`
+tag
+`v0.7.2`
+(`a9c42169`).
+Extract
+`/tmp/oz-stellar`.
+No mainnet
+writes.
+
+Files:
+`packages/tokens/src/fungible/storage.rs`,
+`packages/tokens/src/vault/storage.rs`,
+`packages/tokens/src/vault/mod.rs`.
+
+Checked for: a
+stranger
+`transfer` that
+moves another
+account's
+tokens; a
+vault
+`withdraw` /
+`redeem` that
+burns someone
+else's shares
+without
+allowance.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Fungible
+  `transfer`
+  requires
+  `from.require_auth()`.
+  `transfer_from`
+  requires
+  `spender.require_auth()`
+  and spends
+  allowance.
+- Vault
+  `deposit` /
+  `mint` /
+  `withdraw` /
+  `redeem`
+  require
+  `operator.require_auth()`.
+  `deposit_internal`
+  pulls `from`
+  via
+  `transfer` or
+  `transfer_from`.
+  `withdraw_internal`
+  spends share
+  allowance
+  when
+  `operator !=
+  owner` then
+  pays
+  `receiver`.
+- Trait
+  wrappers
+  document that
+  higher-level
+  contracts
+  must add
+  authorization.
+
+Do not file
+operator-gated
+vault
+deposit /
+withdraw or
+`from`-authed
+fungible
+transfer.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+RWA /
+governance /
+accounts
+packages
+(same library
+tree).
+
+## 2026-09-03: Autonolas leftover remaining L2 dispenser + veOLAS leftover (Sourcify)
+
+Immunefi program
+`autonolas`
+($5,000,
+`kyc: true`).
+Already leftover-
+logged as ETH
+Depository +
+Treasury.
+Sourcify
+Polygon
+`0x17d96ba4532fe91809326092fE4D5606A7B7a0d8`
+is
+`PolygonTargetDispenserL2`.
+Optimism
+`0xaea9ef993d8a1A164397642648DF43F053d43D85`
+is
+`OptimismTargetDispenserL2`.
+ETH veOLAS
+`0x7e01A500805f8A52Fad229b3015AD130A332B7b3`.
+Extract
+`/tmp/olas-poly-disp`,
+`/tmp/olas-op-disp`,
+`/tmp/olas-ve`.
+No mainnet
+writes.
+
+Files:
+`contracts/staking/DefaultTargetDispenserL2.sol`,
+`contracts/staking/PolygonTargetDispenserL2.sol`,
+`contracts/staking/OptimismTargetDispenserL2.sol`,
+`contracts/veOLAS.sol`.
+
+Checked for: a
+stranger
+`redeem` that
+deposits OLAS
+to an
+unqueued
+target; a
+`processDataMaintenance`
+without owner;
+a
+`withdraw` of
+someone else's
+expired lock.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `_receiveMessage`
+  requires the
+  configured L2
+  relayer and
+  L1 processor
+  then
+  `_processData`.
+  `processDataMaintenance`
+  is
+  `owner`-only.
+- `redeem` is
+  permissionless
+  after a
+  queued
+  `target` +
+  `amount` +
+  `batchHash`
+  and deposits
+  OLAS to that
+  recorded
+  target.
+- `veOLAS.createLock`
+  /
+  `increaseAmount`
+  pull
+  `msg.sender`.
+  `createLockFor`
+  locks for
+  `account` but
+  still
+  `transferFrom`
+  `msg.sender`.
+  `withdraw`
+  pays
+  `msg.sender`
+  after expiry.
+
+Do not file
+permissionless
+redeem of a
+queued L2
+staking batch
+to the
+recorded
+target or
+lock-for-named
+account with
+the caller's
+OLAS.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+Bridge2Burner /
+marketplace /
+registries.
+
+## 2026-09-03: Pragma leftover cairo oracle leftover (`83094b9`)
+
+Immunefi program
+`pragmaoracle`
+($50,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`Astraly-Labs/pragma-oracle`
+HEAD
+`83094b93`.
+Voyager
+oracle /
+PublisherRegistry
+/
+TWAP listed.
+Extract
+`/tmp/pragma-oracle`.
+No mainnet
+writes.
+
+Files:
+`pragma-oracle/src/oracle/oracle.cairo`,
+`pragma-oracle/src/publisher_registry/publisher_registry.cairo`,
+`pragma-oracle/src/erc4626/erc4626.cairo`.
+
+Checked for: a
+stranger
+`publish_data`
+as an
+unregistered
+publisher; a
+stranger
+`add_publisher`;
+a live
+`erc4626`
+withdraw of
+someone else's
+assets.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `publish_data`
+  requires
+  `validate_sender_for_source`:
+  caller must
+  be the
+  registered
+  publisher
+  address and
+  allowed for
+  that source.
+- `add_publisher`
+  is
+  admin-only.
+  `update_publisher_address`
+  requires
+  `caller ==
+  existing_publisher_address`.
+- Listed
+  `erc4626`
+  deposit /
+  mint /
+  withdraw /
+  redeem are
+  stubs that
+  return 0.
+  Getters are
+  view.
+
+Do not file
+publisher-
+gated oracle
+writes or
+admin
+registry
+updates.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+TWAP /
+randomness /
+website
+(Astraly-Labs/Pragma
+is the
+marketing
+site).
 
 ## Next candidates
 
@@ -36648,6 +36954,22 @@ XOXNO leftover MultiversX
 lending leftover (`bffbbd9` /
 `2e8c81d`; KYC) is logged
 (listed leftover exhausted);
+OpenZeppelin leftover Stellar
+packages leftover (`v0.7.2`
+fungible / vault; KYC) is
+logged (remaining listed is
+RWA / governance / accounts);
+Autonolas leftover remaining
+L2 dispenser + veOLAS leftover
+(Sourcify Polygon / OP
+dispenser + ETH veOLAS; KYC)
+is logged (remaining listed
+is Bridge2Burner /
+marketplace / registries);
+Pragma leftover cairo oracle
+leftover (`83094b9`; KYC) is
+logged (remaining listed is
+TWAP / randomness / website);
 Axelar leftover Aurora/Fantom
 gateways + remaining axlUSDC
 leftover (Sourcify / official

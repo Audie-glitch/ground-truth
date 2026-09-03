@@ -144,7 +144,12 @@ withdrawal leftover is logged;
 KAST leftover Solana
 USDK/USDKY extension leftover is logged;
 XOXNO leftover MultiversX
-lending leftover is logged).
+lending leftover is logged;
+OpenZeppelin leftover Stellar
+packages leftover is logged;
+Autonolas leftover remaining
+L2 dispenser + veOLAS leftover is logged;
+Pragma leftover cairo oracle leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -754,6 +759,22 @@ XOXNO leftover MultiversX
 lending leftover (`bffbbd9` /
 `2e8c81d`; KYC) is logged
 (listed leftover exhausted).
+OpenZeppelin leftover Stellar
+packages leftover (`v0.7.2`
+fungible / vault; KYC) is
+logged (remaining listed is
+RWA / governance / accounts).
+Autonolas leftover remaining
+L2 dispenser + veOLAS leftover
+(Sourcify Polygon / OP
+dispenser + ETH veOLAS; KYC)
+is logged (remaining listed
+is Bridge2Burner /
+marketplace / registries).
+Pragma leftover cairo oracle
+leftover (`83094b9`; KYC) is
+logged (remaining listed is
+TWAP / randomness / website).
 Axelar leftover Aurora/Fantom
 gateways + remaining axlUSDC
 leftover (Sourcify / official
@@ -1430,6 +1451,14 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   XOXNO leftover MultiversX
   lending leftover (`bffbbd9` /
   `2e8c81d`; KYC),
+  OpenZeppelin leftover Stellar
+  packages leftover (`v0.7.2`;
+  KYC),
+  Autonolas leftover remaining
+  L2 dispenser + veOLAS leftover
+  (Sourcify; KYC),
+  Pragma leftover cairo oracle
+  leftover (`83094b9`; KYC),
   Axelar leftover Aurora/Fantom
   gateways + remaining axlUSDC
   leftover (Sourcify; KYC),
