@@ -64328,3 +64328,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a STARK verifier that asserts FRI/quotient equality and binds setup caps as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: airbender CS / prover / verifier_generator / field.
+
+## 2026-09-03: Wormhole leftover remaining CosmWasm accountant leftover (`c58827e`)
+
+Immunefi program `wormhole` ($1,000,000, `kyc: true`). Official remaining listed after CosmWasm IBC leftover. Official clone `/tmp/wormhole` `c58827e` (sparse `cosmwasm/contracts/{global-accountant,ntt-global-accountant,cw20-wrapped}`). Opened accountant `execute` / `handle_observation` / `handle_vaa`, NTT accountant `execute`, and `cw20-wrapped` mint/burn. No mainnet writes. No exploit PoCs.
+
+Checked for: a single guardian observation committing a fake transfer; `ModifyBalance` without a governance VAA; `cw20-wrapped` mint/burn by a non-bridge caller.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `global-accountant` `SubmitObservations` verifies a guardian signature (`VerifyMessageSignature` + accountant prefix) and only `commit_transfer`s after `num_signatures >= quorum`, a registered emitter, and a matching digest. Duplicate keys with a different digest fail. The ledger is accounting state only — no bank or CW20 sends.
+- `SubmitVaas` requires `VerifyVaa`. Governance (Solana + `GOVERNANCE_EMITTER`) can `RegisterChain` (Wormchain/Any) or `ModifyBalance` (Wormchain only). Other VAAs must come from a registered token-bridge emitter, then `commit_transfer` and drop pending. Digest replay is rejected.
+- `ntt-global-accountant` uses the same observation-quorum and `VerifyVaa` gates; `ModifyBalance` is still accountant governance only.
+- `cw20-wrapped` sets the instantiator (token-bridge) as minter and `bridge`. `Mint` / `UpdateMetadata` require `info.sender == bridge`. `Burn` / `BurnFrom` are cw20-base allowance burns.
+
+Do not file a quorum-gated accountant ledger update or a bridge-gated wrapped mint as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / wormchain / algorand / aptos / near, and Relayer Sourcify 404.
