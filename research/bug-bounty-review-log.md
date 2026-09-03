@@ -56725,3 +56725,178 @@ gmxV2,
 and
 `mux-staking`.
 
+
+## 2026-09-03: MUX leftover mux-aggregator proxyFactory + gmxV2 leftover (`0f36131`)
+
+Immunefi program
+`mux`
+($100,000, `kyc: false`).
+Last listed
+MUX GitHub
+tree after
+mux3 /
+mux-protocol /
+mux-degen.
+Official clone
+`/tmp/mux-agg`
+`0f36131`.
+Opened
+`contracts/proxyFactory/ProxyFactory.sol`,
+`aggregators/gmxV2/GmxV2Adapter.sol`,
+`aggregators/gmx/GmxAdapter.sol`,
+`lendingPool/LendingPool.sol`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+proxy call
+that spends
+another
+account's
+tokens;
+borrow/repay
+from a
+non-proxy;
+GmxV2
+place/cancel
+by a
+non-owner;
+LendingPool
+withdraw by
+a non-owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `proxyFunctionCall` /
+  `proxyFunctionCall2`,
+  `transferToken` /
+  `transferToken2`,
+  `wrapAndTransferNative` /
+  `2`,
+  `muxFunctionCall`,
+  `mux3PositionCall`,
+  and
+  cancels
+  require
+  `_verifyCaller`
+  (`msg.sender
+  == account`
+  or
+  owner-set
+  `_delegators`).
+  ERC20
+  pulls use
+  `safeTransferFrom(account, proxy)`.
+  Proxies
+  are
+  created
+  per
+  `(project, account, collateral, asset, isLong)`
+  and
+  initialize
+  with that
+  owner.
+- `borrowAsset`
+  /
+  `repayAsset`
+  on the
+  factory
+  require
+  `_isCreatedProxy(msg.sender)`.
+  LendingPool
+  `borrowToken`
+  /
+  `repayToken`
+  are
+  `onlyBorrower`
+  (owner-set).
+  `withdraw`
+  is
+  `onlyOwner`.
+  `deposit`
+  pulls
+  from
+  `msg.sender`
+  into
+  protocol
+  supply
+  (no
+  depositor
+  claim
+  token).
+- GmxV2
+  `placeOrder`
+  /
+  `updateOrder`
+  are
+  `onlyTrader`
+  (factory
+  or
+  `account.owner`).
+  Cancel
+  is
+  trader
+  or
+  keeper.
+  Liquidate
+  is
+  `onlyKeeper`.
+  Gmx V1
+  `openPosition`
+  hard-reverts
+  `NotAllowed`.
+- Keepers,
+  delegators,
+  and
+  maintainers
+  are
+  owner-set.
+
+Do not file
+owner-set
+keeper /
+delegator
+lists,
+owner-only
+LendingPool
+withdraw,
+protocol
+deposit-without-shares,
+or a
+trader
+paying
+their own
+tokens into
+their proxy
+as stranger
+theft.
+
+Not submitted.
+Listed leftover
+that official
+GitHub opens
+for
+mux-aggregator
+proxyFactory /
+gmxV2 is
+exhausted at
+the
+opened-file
+level.
+`mux-staking`
+clone is
+private /
+404.
+MUX listed
+GitHub
+smart-contract
+scope is
+exhausted
+at the
+opened-file
+level.
+
