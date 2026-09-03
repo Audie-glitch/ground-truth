@@ -73287,3 +73287,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a testnet faucet or Auth0 signup as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink OCR / core node if still unused.
+
+## 2026-09-03: Chainlink leftover remaining OCR leftover (`618b5bf`)
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after websites leftover. Official `smartcontractkit/libocr` `618b5bf` (`618b5bf7f342075a81ca1273a04abce15529a101`). Opened listed `contract2/{OCR2Aggregator,AccessControlledOCR2Aggregator,OCR2Abstract}.sol`. Extract `/tmp/cl-ocr/`. Do not rematch websites leftover or llo-feeds leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `transmit` that a stranger can call to credit themselves; `withdrawPayment` that pays the caller a different oracle's LINK; `withdrawFunds` that drains owed oracle balances.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `transmit` requires `s_transmitters[msg.sender].active`, a newer `epochAndRound`, matching `s_latestConfigDigest`, and `f+1` ECDSA signatures from distinct active signers over `keccak256(keccak256(report), reportContext)`. Median must sit in `[minAnswer, maxAnswer]`. Payment is credited to that transmitter via `_payTransmitter`, not to an arbitrary caller.
+- `withdrawPayment` requires `msg.sender == s_payees[transmitter]` and `_payOracle` transfers owed juels to that payee. `owedPayment` is observation-round delta plus stored `paymentJuels`. `withdrawFunds` is owner or billing-access and only `balance - _totalLinkDue`.
+- `setConfig` / `setPayees` are owner-only. Existing payees cannot be overwritten. `transferPayeeship` / `acceptPayeeship` is a two-step payee change.
+
+Do not file an authorized-transmitter report or payee withdraw as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink core node if still unused.
