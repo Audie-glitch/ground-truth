@@ -61799,3 +61799,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file caller-associated reward withdraws, authz-gated withdraws, retired IBC/oracle precompiles, or pointer metadata upserts as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `go-ethereum`, `sei-cosmos` / `sei-wasmd` / tendermint, other `sei-chain` modules (wasm / IBC host), and Primacy of Impact.
+
+## 2026-09-03: Sei leftover go-ethereum leftover (`bb451e2`)
+
+Immunefi program `sei` ($500,000, `kyc: true`). Follow-on leftover after remaining `sei-chain` precompiles (`05c2abd`). Official clone `/tmp/sei-geth` `bb451e2`. Opened `core/state_transition.go`, `core/types/transaction_signing.go`. No mainnet writes. No exploit PoCs.
+
+Checked for: a `TransactionToMessage` that accepts a caller-supplied `From`; `BuyGas` / value transfer that debit another account; `feeCharged` skipping both gas and value; EIP-7702 auth that sets code for a stranger without a matching signature.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `TransactionToMessage` sets `msg.From` only via `types.Sender(signer, tx)` (ecrecover + signer cache). It does not take an unauthenticated from.
+- `BuyGas` requires `msg.From` balance ≥ gas (or fee-cap) plus `Value` (plus blob fee post-Cancun) and `SubBalance`s that sender. `ApplyMessage` constructs `NewStateTransition(..., feeCharged=false, shouldIncrementNonce=true)`. `feeCharged` skips `StatelessChecks` + `BuyGas` only for the sei-chain integration that already charged CosmWasm-side; `CanTransfer(msg.From, value)` still runs before `Create`/`Call`.
+- Value moves with `evm.Create(msg.From, …, value)` / `evm.Call(msg.From, to, …, value)`. Nonce increments the same `From` when `shouldIncrementNonce`.
+- Coinbase is funded with `gasUsed * (baseFee + tip)` — comment: Sei does not burn base fee. Not stranger mint.
+- EIP-7702 `validateAuthorization` recovers `auth.Authority()`, requires chain id match or zero, nonce match, and empty-or-delegation code before `SetCode`.
+
+Do not file recovered-sender gas debit, sei-chain pre-charged `feeCharged`, or coinbase base-fee credit as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `sei-cosmos` / `sei-wasmd` / tendermint, other `sei-chain` modules (wasm / IBC host), and Primacy of Impact.
