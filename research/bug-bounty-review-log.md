@@ -40755,12 +40755,21 @@ Filecoin leftover remaining lotus miner leftover
 (`7740217`) is logged.
 Filecoin leftover remaining FVM leftover (`d4efdd4`)
 is logged.
+ZKsync OS leftover zk_ee + basic_system IO leftover
+(`9efc8bf`) is logged.
+Filecoin leftover remaining proofs-api leftover
+(`7637843`) is logged.
 Remaining listed Hedera: hashed transaction-tool website.
-Remaining listed Filecoin: proofs / filecoin.io.
+Remaining listed Filecoin: rust-fil-proofs / ffi /
+filecoin.io.
+Remaining listed ZKsync OS: airbender CS / prover /
+verifier, `zkos-wrapper`.
 Do not rematch Hedera consensus-node,
 json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
-lotus miner, or FVM.
+lotus miner, FVM, or proofs-api.
+Do not rematch ZKsync bootloader, interpreter,
+storage_models, proof_running_system, or zk_ee.
 Do not loop `reffinance` 404s or mux-staking auth.
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -63749,3 +63758,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file address-parameter IO traits or checked debit/credit caches as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: airbender CS / prover / verifier, and `zkos-wrapper` circuits.
+
+## 2026-09-03: Filecoin leftover remaining proofs-api leftover (`7637843`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Listed remaining after FVM leftover. Official clone `/tmp/filecoin-proofs-api` at `7637843`. Opened `src/seal.rs`, `src/post.rs`, `src/update.rs`, `src/lib.rs`. Thin wrapper over `filecoin_proofs_v1`. Do not rematch builtin-actors, boost, go-f3, lotus miner, or FVM leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `verify_seal` / `verify_winning_post` / `verify_window_post` accepting a proof without the named `prover_id`; PoSt type mix-up; aggregate seal verify skipping `comm_rs` / seeds.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `verify_seal` / `verify_batch_seal` pass `comm_r`, `comm_d`, `prover_id`, `sector_id`, `ticket`, `seed`, and the proof bytes into `filecoin_proofs_v1`.
+- `verify_winning_post` requires `PoStType::Winning` and the same registered proof on every replica, then verifies with that `prover_id`. `verify_window_post` requires `PoStType::Window`, v1, and a single proof.
+- `verify_aggregate_seal_commit_proofs` requires SnarkPack V1/V2 and forwards `comm_rs`, `seeds`, and `commit_inputs`. Sector-update verify forwards old/new `comm_r` and `comm_d`.
+
+Do not file a wrapper that forwards prover_id and commitments as stranger theft. This crate does not move FIL.
+
+Not submitted. Payment requires user KYC. Remaining listed: rust-fil-proofs / rust-fil-proofs-ffi / filecoin.io.
