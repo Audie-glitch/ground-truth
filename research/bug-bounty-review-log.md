@@ -73021,3 +73021,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator-signed pull or aggregator fee sweep as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink automation-cre / llo-feeds / operatorforwarder / OCR / core node / websites if still unused.
+
+## 2026-09-03: Chainlink leftover remaining chainlink-evm automation-cre leftover (`b274ca1`)
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after payments leftover. Official `smartcontractkit/chainlink-evm` `b274ca1` (`b274ca1ca00559ad434ca8f43026b16a6a196242`). Opened listed `contracts/src/v0.8/automation-cre/{AutomationReceiver,EthBalanceMonitor,ReceiverTemplate,IReceiver}.sol`. Extract `/tmp/cl-acre/`. Do not rematch payments leftover or VRF leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `topUp` that pays the caller; `withdraw` that drains without owner; `onReport` that executes an unallowlisted target so a stranger pulls ETH.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `EthBalanceMonitor.topUp` is permissionless while unpaused, but only `.send`s `topUpAmountWei` to an owner-set watchlist address that is active, under `minBalanceWei`, and past `minWaitPeriod`. Recipients cannot add themselves. `.send` forwards 2300 gas so the recipient cannot reenter before `lastTopUpTimestamp` is written. `performUpkeep` is `onlyKeeperRegistry`. `withdraw` / `setWatchList` / pause / registry address are `onlyOwner`.
+- `AutomationReceiver._processReport` rejects a zero forwarder (closes `ReceiverTemplate.setForwarderAddress(0)`) and requires a complete workflow identity (`workflowId` or both owner + name). `onReport` still requires `msg.sender == s_forwarderAddress` when the forwarder is set. The outbound call is closed-by-default: `(target, selector)` must be owner-allowlisted; zero target / missing selector revert. Failed allowed calls emit `CallFailed` and consume the report. Pause / allowlist / gas-limit / block-number checks are owner-only.
+
+Do not file a watchlist top-up or CRE-forwarded allowlisted call as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink llo-feeds / operatorforwarder / OCR / core node / websites if still unused.
