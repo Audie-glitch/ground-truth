@@ -42302,3 +42302,204 @@ factory rows)
 and Polygon
 MANA /
 collections.
+
+## 2026-09-03: Decentraland leftover ETH collections, marketplace, and remaining vesting
+
+Immunefi program
+`decentraland`
+($500,000, `kyc: true`).
+MANA / LAND /
+ESTATE and names
++ ETH vesting
+leftovers already
+logged. This slice
+is listed ETH
+`ERC721Collection`
+wearables, the
+listed Ethereum
+marketplace, and
+remaining ETH
+vesting /
+ProxyAdmin rows.
+Sourcify:
+`ERC721Collection`
+`0xc04528c14c8FfD84c7c1fb6719B4A89853035CDd`
+(`match`),
+`ERC721Collection`
+`0xeCf073f91101cE5628669C487AeE8f5822A101b1`
+(`match`),
+`DecentralandMarketplaceEthereum`
+`0x1b67D0e31eeB6B52D8eEEd71D3616C2F5b33b8E7`
+(`exact_match`),
+`PeriodicTokenVesting`
+`0xB76b389cd04595321D51F575f5D950df1Cef3dD7`
+(`exact_match`),
+`OwnableBatchVestings`
+`0x24B18Ac1C0cC1cFa14b03Fe5c4580Ab85191608A`
+(`exact_match`),
+`ProxyAdmin`
+`0xb49882c17281D3451972ae7e476CB3E0698Af712`
+(`exact_match`).
+No mainnet writes.
+
+Files:
+`ERC721Collection.sol`
+(both),
+`DecentralandMarketplaceEthereum.sol`,
+`Marketplace.sol`,
+`Verifications.sol`,
+`PeriodicTokenVesting.sol`,
+`OwnableBatchVestings.sol`.
+
+Checked for: a
+stranger
+`issueToken` past
+max issuance;
+`batchTransferFrom`
+of someone else's
+wearable; marketplace
+`accept` that moves
+assets without a
+valid signer
+signature or after
+expiry / reuse;
+vesting `release`
+by a
+non-beneficiary;
+`releaseSurplus`
+that pulls vested
+tokens.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Both
+  collections
+  `issueToken` /
+  `issueTokens`
+  are
+  `onlyAllowed`.
+  `addWearable`
+  is `onlyOwner`
+  and cannot
+  rewrite an
+  existing key.
+  Issuance
+  increments
+  `issued[key]`
+  and reverts
+  when
+  `issued >=
+  maxIssuance`.
+  `batchTransferFrom`
+  / 
+  `safeBatchTransferFrom`
+  loop OZ
+  `transferFrom`
+  /
+  `safeTransferFrom`
+  (owner,
+  approved, or
+  operator).
+- Marketplace
+  `accept` is
+  `whenNotPaused`
+  +
+  `nonReentrant`.
+  `_verifyTrade`
+  checks unused
+  trade id,
+  cancelled /
+  overused
+  signature,
+  effective +
+  expiration,
+  contract /
+  signer
+  indexes,
+  optional
+  allowlist
+  Merkle, then
+  EIP-712
+  signature.
+  Sent assets
+  leave the
+  signer;
+  received
+  assets leave
+  the caller.
+  ERC20 takes a
+  `feeRate /
+  1e6` cut to
+  `feeCollector`.
+  Composable
+  ERC721
+  (`verifyFingerprint`)
+  is checked
+  before
+  `safeTransferFrom`.
+- Periodic
+  vesting
+  `release` is
+  `onlyBeneficiary`
+  and capped by
+  `getReleasable`.
+  `revoke` /
+  `releaseSurplus`
+  /
+  `releaseForeignToken`
+  are
+  `onlyOwner`.
+  Surplus
+  cannot exceed
+  `balance -
+  (nonSurplus -
+  released)`.
+- Ownable
+  batch
+  vestings
+  `createVestings`
+  is owner-only
+  after a
+  one-shot
+  `initialize`.
+- ProxyAdmin
+  is stock OZ
+  owner-gated
+  upgrade
+  admin.
+
+Do not file
+allowed-minter
+issuance,
+owner wearable
+adds, signed
+trade fill at
+the signed
+price, owner
+revoke /
+surplus of a
+revocable vest,
+or ProxyAdmin
+upgrade, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed
+Decentraland ETH
+collections +
+marketplace +
+remaining ETH
+vesting leftover
+is exhausted at
+the opened-contract
+level. Remaining
+listed: Polygon
+MANA /
+collections
+(and other
+Polygon rows).
