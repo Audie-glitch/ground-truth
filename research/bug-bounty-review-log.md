@@ -39602,3 +39602,117 @@ and treasury
 (Sourcify 404),
 and the web /
 Omni apps.
+
+## 2026-09-03: Velodrome leftover Router + Pool (`b3065d8`)
+
+Immunefi program
+`velodromefinance`
+($100,000, `kyc: true`).
+Unique unused
+standing AMM
+program. Not
+previously logged
+(0x Settler
+Velodrome adapter
+is a different
+program). Official
+clone
+`/tmp/velo-contracts`
+`b3065d8`. Optimism
+Sourcify `match`
+on listed Router
+`0xa062aE8A9c5e11aaA026fc2670B0D65cCc8B2858`,
+PoolFactory
+`0xF1046053aa5682b4F9a81b5481394DA16BE5FF5a`,
+and Voter
+`0x41C914ee0c7E1A5edCD0295623e6dC557B5aBf3C`.
+No mainnet writes.
+
+Files:
+`contracts/Router.sol`,
+`contracts/Pool.sol`.
+
+Checked for: a
+router swap that
+pulls a victim
+while sending
+output to the
+caller; LP
+`removeLiquidity`
+that burns
+another user's
+shares; pool
+`swap` that
+violates K;
+permissionless
+`skim` of
+reserves.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Router
+  add / remove /
+  swap pull
+  `_msgSender()`
+  (ERC2771 trusted
+  forwarder) and
+  mint / send
+  output to the
+  `to` argument.
+  Routes must
+  resolve through
+  an approved
+  factory
+  CREATE2 pool.
+- Pool `mint`
+  credits `to`
+  from the reserve
+  delta. First
+  mint locks
+  `MINIMUM_LIQUIDITY`
+  at `address(1)`.
+  `burn` pays `to`
+  from LP sitting
+  on the pool.
+- `swap` pays out
+  then requires
+  `_k(balance) >=
+  _k(reserve)`
+  after fees.
+  Flash callback
+  is to `to`.
+- `skim` sends
+  only
+  `balance -
+  reserve`.
+
+Do not file
+trusted-forwarder
+meta-tx, user-
+supplied
+`UNSAFE_swap`
+amounts, or
+permissionless
+skim of donated
+excess, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Velodrome
+Router + Pool
+leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed: Voter,
+gauges,
+distributor,
+minter, VELO,
+VotingEscrow,
+sink stack, and
+reward factories.
