@@ -33868,10 +33868,16 @@ zapper leftover (`39e70f0`
 AbstractAdapter / Uniswap
 V2+V3 / Curve base /
 ERC4626 / ZapperBase; KYC)
-is logged (remaining listed
-is other integrations
-adapters / helpers /
-bots-v3 / permissionless /
+is logged.
+Gearbox leftover bots-v3
+leftover (`ebec19d`
+PartialLiquidationBotV3;
+KYC) is logged (listed
+bots-v3 leftover
+exhausted; remaining
+listed is other
+integrations adapters /
+helpers / permissionless /
 periphery-v3);
 Burrow leftover
 `contract.main.burrow.near`
@@ -43747,3 +43753,149 @@ logged Router /
 Pool / Voter /
 VE / Gauge /
 Distributor.
+
+## 2026-09-03: Gearbox leftover bots-v3 leftover (`ebec19d`)
+
+Immunefi program
+`gearbox` ($150,000,
+`kyc: true`). Official
+scope is
+`Gearbox-protocol/security`
+`bug-bounty/v3_1-scope.md`:
+`bots-v3` everything in
+`contracts/bots`. This
+slice is `main`
+`ebec19d`: the only
+in-scope bot,
+`PartialLiquidationBotV3`.
+Clone `/tmp/gearbox-bots`.
+No mainnet writes.
+
+Files:
+`contracts/bots/PartialLiquidationBotV3.sol`,
+`contracts/interfaces/IPartialLiquidationBotV3.sol`.
+
+Checked for: a
+stranger
+`partiallyLiquidate`
+on a healthy
+account; a
+liquidation that
+seizes collateral
+without paying
+underlying; a
+price-update that
+bypasses the
+health-factor
+gate; a withdraw
+of underlying as
+the seized token;
+a fee sent to the
+caller instead of
+treasury.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `partiallyLiquidate`
+  is
+  permissionless
+  but
+  `botMulticall`
+  requires an
+  approved bot
+  with
+  `DECREASE_DEBT
+  | WITHDRAW_COLLATERAL`
+  and
+  `BOT_PERMISSIONS_SET`.
+  The liquidator
+  `transferFrom`s
+  their own
+  underlying onto
+  the account
+  (fee-on-transfer
+  measured).
+- Account must
+  be liquidatable
+  under
+  `minHealthFactor`
+  before the
+  call. Seized
+  token cannot be
+  underlying (or
+  a phantom whose
+  deposited token
+  is underlying).
+- Seized amount
+  is
+  `convert(repaid)
+  * 1e4 /
+  liquidationDiscount`,
+  using scaled
+  manager premium
+  / fee. Fee
+  withdraws to
+  the immutable
+  `treasury`.
+  Seized
+  collateral goes
+  to caller-
+  chosen `to`
+  (liquidation
+  premium, not a
+  victim pull).
+- Optional
+  `priceUpdates`
+  go through the
+  facade
+  `priceFeedStore`.
+  Withdraw
+  triggers the
+  facade
+  collateral
+  check. After
+  the multicall,
+  HF must remain
+  inside
+  `[minHealthFactor,
+  maxHealthFactor]`.
+- `nonReentrant`.
+  Constructor
+  rejects a zero
+  treasury and
+  `maxHF < 100%`
+  or
+  `maxHF < minHF`.
+
+Do not file
+owner-approved
+bot
+liquidation,
+configurator
+premium / fee
+scale, or
+liquidator
+`to` as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`bots-v3`
+opens is
+exhausted at the
+opened-file
+level. Remaining
+listed: other
+integrations
+adapters /
+helpers;
+permissionless;
+periphery-v3
+emergency / kyc /
+migration.
