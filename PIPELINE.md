@@ -97,8 +97,10 @@ dual-governance submit / timelock and
 committees leftovers are logged. Lido
 CSM bond leftover (`2824e21`) is
 logged. Lido CSM gates leftover
-(`2824e21`) is logged (remaining Lido
-is easy-track / governance bridges).
+(`2824e21`) is logged. Lido
+easy-track leftover (`3183d1f`) is
+logged (remaining Lido is governance
+bridges).
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis

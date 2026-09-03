@@ -23439,6 +23439,123 @@ Remaining listed:
 sUSDN Enzyme
 `VaultLib`
 internals.
+## 2026-09-03: Lido easy-track leftover (`3183d1f`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Core,
+L2, vaults, CSM, and
+dual-governance
+leftovers are already
+logged. This slice is
+the Easy Track motion
+and payout path.
+Local clone
+`/tmp/lido-easy-track`
+at `3183d1f`. No
+mainnet interaction.
+
+Files:
+`contracts/EasyTrack.sol`,
+`EVMScriptExecutor.sol`,
+`EVMScriptFactoriesRegistry.sol`,
+`TrustedCaller.sol`,
+`payouts/multi-token/TopUpAllowedRecipients.sol`,
+`EVMScriptFactories/TopUpRewardPrograms.sol`.
+
+Checked for: a
+stranger `createMotion`
+that binds an
+attacker payout
+script; `enactMotion`
+with swapped calldata
+that pays the caller;
+`executeEVMScript` by
+a non-EasyTrack
+caller; top-up to an
+unlisted recipient.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `createMotion`
+  requires a
+  registered factory.
+  The stored hash is
+  `keccak256` of
+  `factory.createEVMScript(msg.sender, calldata)`.
+  Factory add/remove
+  is admin-only.
+  Resulting scripts
+  must match the
+  factory’s stored
+  permissions.
+- `enactMotion` is
+  permissionless
+  after `duration`,
+  deletes the motion
+  first, then
+  recreates the
+  script with the
+  original creator
+  and calldata and
+  requires the same
+  hash. The executor
+  is EasyTrack-only
+  and
+  `delegatecall`s
+  Aragon
+  `CallsScript`.
+- `objectToMotion`
+  weights
+  `governanceToken.balanceOfAt`
+  at the snapshot
+  and rejects the
+  motion at the
+  stored threshold.
+  `cancelMotion` is
+  creator-only.
+- `TopUpAllowedRecipients`
+  / `TopUpRewardPrograms`
+  are
+  `onlyTrustedCaller(_creator)`.
+  Recipients must be
+  on the allowed /
+  reward-program
+  registry, tokens
+  must be allowed,
+  and the sum must
+  stay under the
+  spendable balance.
+  Scripts call
+  Finance
+  `newImmediatePayment`.
+
+Do not file a
+trusted-caller
+payout motion
+(designed operator);
+admin factory
+registration; or
+permissionless
+enact after the
+wait (intended).
+
+Not submitted.
+Remaining
+easy-track: NO
+management factories,
+MEV relay factories,
+vault-hub /
+OperatorGrid
+factories, CSM
+settle / vetted-tree
+factories.
+Remaining Lido
+listed GitHub:
+governance bridges /
+aragon-apps.
 
 ## Next candidates
 
@@ -23767,8 +23884,10 @@ tiebreaker wrappers).
 Lido CSM bond leftover
 (`2824e21`) is logged.
 Lido CSM gates leftover
-(`2824e21`) is logged
-(remaining Lido is easy-track /
+(`2824e21`) is logged.
+Lido easy-track leftover
+(`3183d1f`) is logged
+(remaining Lido is
 governance bridges).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
@@ -24113,9 +24232,10 @@ leftover is logged.
 Lido CSM bond leftover
 (`2824e21`) is logged.
 Lido CSM gates leftover
-(`2824e21`) is logged
+(`2824e21`) is logged.
+Lido easy-track leftover
+(`3183d1f`) is logged
 (remaining Lido is
-easy-track /
 governance bridges);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
