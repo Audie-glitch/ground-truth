@@ -117,7 +117,13 @@ circle-integration leftover is logged;
 Ante Finance leftover ETH
 pool leftover is logged;
 YO Protocol leftover yoVault leftover is logged;
-Axelar leftover Aurora/Fantom gateways + remaining axlUSDC leftover is logged).
+Axelar leftover Aurora/Fantom gateways + remaining axlUSDC leftover is logged;
+Autonolas leftover ETH
+Depository + Treasury leftover is logged;
+Zerion leftover ETH Premium
+Purchaser leftover is logged;
+NUVA leftover ETH depositor +
+withdrawal leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -696,6 +702,32 @@ leftover (Sourcify yoVault /
 YoGateway; KYC) is logged
 (remaining listed is
 multisig / website).
+Autonolas leftover ETH
+Depository + Treasury leftover
+(Sourcify Depository /
+Treasury / OLAS / Dispenser;
+KYC) is logged (remaining
+listed is L2 dispensers /
+Bridge2Burner / veOLAS /
+marketplace / registries).
+Zerion leftover ETH Premium
+Purchaser leftover (Sourcify
+PurchaserL1; KYC) is logged
+(remaining listed is
+other-chain same purchaser /
+zkSync variant / Paymaster /
+websites / apps).
+NUVA leftover ETH depositor +
+withdrawal leftover (Sourcify
+Depositor / Withdrawal /
+CustomToken; KYC) is logged
+(remaining listed is vault /
+router impls 404 / Provenance
+vaults / website).
+Axelar leftover Aurora/Fantom
+gateways + remaining axlUSDC
+leftover (Sourcify / official
+cgp; KYC) is logged.
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1352,6 +1384,18 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   pool leftover (Sourcify;
   KYC),
   YO Protocol leftover yoVault
+  leftover (Sourcify; KYC),
+  Autonolas leftover ETH
+  Depository + Treasury leftover
+  (Sourcify; KYC),
+  Zerion leftover ETH Premium
+  Purchaser leftover (Sourcify;
+  KYC),
+  NUVA leftover ETH depositor +
+  withdrawal leftover (Sourcify;
+  KYC),
+  Axelar leftover Aurora/Fantom
+  gateways + remaining axlUSDC
   leftover (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),

@@ -34251,6 +34251,344 @@ Remaining listed:
 multisig /
 website.
 
+## 2026-09-03: Autonolas leftover ETH Depository + Treasury leftover (Sourcify)
+
+Immunefi program
+`autonolas`
+($5,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+Depository
+`0xfF8697d8d2998d6AA2e09B405795C6F4BEeB0C81`,
+Treasury
+`0xa0DA53447C0f6C4987964d8463da7e6628B30f82`,
+OLAS
+`0x0001A500A6B18995B03f44bb040A5fFc28E45CB0`,
+Dispenser
+`0x5650300fCBab43A0D7D02F8Cb5d0f039402593f0`.
+Extract
+`/tmp/olas-dep`,
+`/tmp/olas-treasury`,
+`/tmp/olas-token`,
+`/tmp/olas-dispenser`.
+No mainnet
+writes.
+
+Files:
+`contracts/Depository.sol`,
+`contracts/Treasury.sol`,
+`contracts/OLAS.sol`,
+`contracts/Dispenser.sol`.
+
+Checked for: a
+stranger
+`deposit` that
+pulls another
+account; a
+`redeem` that
+pays the
+caller someone
+else's matured
+bond; a
+stranger
+`withdraw` of
+treasury
+reserves; a
+permissionless
+`mint` of OLAS.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `Depository.deposit`
+  records the
+  bond to
+  `msg.sender`
+  then
+  `Treasury.depositTokenForOLAS`
+  which is
+  depository-
+  only and
+  `transferFrom`
+  the recorded
+  account.
+- `redeem`
+  requires
+  `mapUserBonds[id].account
+  == msg.sender`
+  after
+  maturity and
+  transfers
+  OLAS to
+  `msg.sender`.
+- `Treasury.withdraw`
+  is
+  `owner`-only.
+  `withdrawToAccount`
+  is
+  dispenser-
+  only.
+  `rebalanceTreasury`
+  is
+  tokenomics-
+  only.
+  `drainServiceSlashedFunds`
+  is
+  `owner`-only.
+- `OLAS.mint`
+  is
+  `minter`-only.
+  `burn` burns
+  `msg.sender`.
+- `Dispenser.claimOwnerIncentives`
+  accounts
+  `msg.sender`
+  units then
+  pays
+  `msg.sender`.
+  `claimStakingIncentives`
+  is
+  permissionless
+  and deposits
+  minted OLAS
+  to the
+  recorded
+  staking
+  target.
+
+Do not file
+owner-only
+treasury
+withdraw,
+minter-gated
+OLAS mint, or
+permissionless
+claim of
+staking
+incentives to
+the recorded
+target.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+L2 dispensers /
+Bridge2Burner /
+veOLAS /
+marketplace /
+registries.
+
+## 2026-09-03: Zerion leftover ETH Premium Purchaser leftover (Sourcify)
+
+Immunefi program
+`zerion`
+($25,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+`0x1AB3747DA0F88E883895DE58c105Fd25C21491ce`
+is
+`PurchaserL1`.
+Same address
+on many L2s.
+Extract
+`/tmp/zerion-prem`.
+No mainnet
+writes.
+
+Files:
+`contracts/purchaser/Purchaser.sol`,
+`contracts/purchaser/PurchaserL1.sol`,
+`contracts/shared/InputHandler.sol`.
+
+Checked for: a
+stranger
+`purchasePremium`
+that pulls
+another
+account; a
+permissionless
+`mintAndPurchasePremium`
+that mints DNA
+to the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `purchasePremium`
+  /
+  `requestPremium`
+  `handleInput`
+  from
+  `msg.sender`
+  to the owner-
+  set
+  `beneficiary`.
+  The
+  signature is
+  emitted, not
+  verified
+  on-chain.
+- `mintAndPurchasePremium`
+  is
+  `onlyOwner`
+  and mints
+  DNA to
+  `receiver`.
+- `setBeneficiary`
+  is
+  `onlyOwner`.
+
+Do not file
+purchase that
+pulls the
+caller's
+tokens to the
+configured
+beneficiary.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+other-chain
+same purchaser
+/ zkSync
+variant /
+Paymaster /
+websites /
+apps.
+
+## 2026-09-03: NUVA leftover ETH depositor + withdrawal leftover (Sourcify)
+
+Immunefi program
+`nuva`
+($40,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+Depositor
+`0xCB74517bfDe9Af6692C5C7D4A125b20bA7FA14D5`,
+Withdrawal
+`0xBB2f90A20AbC107161c0C66e2f7015bdb1D2c2f9`,
+nvYLDS token
+`0x5965f8e28eC14B58E49569f382A50F4f0B238327`
+is
+`CustomToken`.
+nvPRIME vault
+proxy
+`0xC360e625F19A7ea47e47810B13E386221d5187D1`
+impl
+`0x7aBb7b7cA500BcEb4F1936820Bf34D7481b9A652`
+(Sourcify
+404).
+Router proxy
+`0x50AE1e4A612A4623b747aEeFb30aFBA82804e12c`
+impl
+`0x027207E16E2BB920dc89AA9FeF7826e23091588a`
+(Sourcify
+404).
+Extract
+`/tmp/nuva-dep`,
+`/tmp/nuva-wd`,
+`/tmp/nuva-token`.
+No mainnet
+writes.
+
+Files:
+`contracts/Depositor.sol`,
+`contracts/Withdrawal.sol`,
+`contracts/CustomToken.sol`.
+
+Checked for: a
+stranger
+`deposit` that
+pulls another
+account
+without a
+permit; a
+`withdraw`
+that spends
+someone else's
+shares; a
+permissionless
+`mint`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `Depositor.deposit`
+  requires an
+  AML ECDSA
+  over
+  `msg.sender`
+  + amount +
+  destination +
+  deadline then
+  `safeTransferFrom`
+  `msg.sender`
+  to an
+  allowlisted
+  destination.
+- `depositWithPermit`
+  is the same
+  plus a
+  `permit` from
+  `msg.sender`.
+- `Withdrawal.withdraw`
+  requires an
+  AML ECDSA
+  over
+  `msg.sender`
+  + amount +
+  deadline then
+  pulls shares
+  from
+  `msg.sender`.
+  `burn` is
+  `BURN_ROLE`.
+- `CustomToken.mint`
+  is
+  `MINTER_ROLE`
+  and mints to
+  `to`.
+  `burn` burns
+  `_msgSender`.
+  `burnFrom`
+  spends
+  allowance.
+
+Do not file
+AML-signed
+deposit of the
+caller's
+tokens to an
+allowlisted
+destination or
+role-gated
+mint / burn.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+vault / router
+impls 404 /
+Provenance
+vaults /
+website.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -36034,6 +36372,32 @@ leftover (Sourcify yoVault /
 YoGateway; KYC) is logged
 (remaining listed is
 multisig / website);
+Autonolas leftover ETH
+Depository + Treasury leftover
+(Sourcify Depository /
+Treasury / OLAS / Dispenser;
+KYC) is logged (remaining
+listed is L2 dispensers /
+Bridge2Burner / veOLAS /
+marketplace / registries);
+Zerion leftover ETH Premium
+Purchaser leftover (Sourcify
+PurchaserL1; KYC) is logged
+(remaining listed is
+other-chain same purchaser /
+zkSync variant / Paymaster /
+websites / apps);
+NUVA leftover ETH depositor +
+withdrawal leftover (Sourcify
+Depositor / Withdrawal /
+CustomToken; KYC) is logged
+(remaining listed is vault /
+router impls 404 / Provenance
+vaults / website);
+Axelar leftover Aurora/Fantom
+gateways + remaining axlUSDC
+leftover (Sourcify / official
+cgp; KYC) is logged;
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
