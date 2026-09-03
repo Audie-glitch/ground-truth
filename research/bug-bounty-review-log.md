@@ -12351,9 +12351,132 @@ Next leftover: remaining
 Obyte
 `prediction-markets-aa` /
 `counterstake-bridge`, or
-Mux `mux3-protocol`, or
+Mux leftover
+(mux-protocol / aggregator
+/ degen / staking), or
 Twyne Sourcify-404
 vaults. Not submitted.
+
+## 2026-09-03: Obyte prediction-markets AA leftover (`1292a09`)
+
+Immunefi program `obyte`
+($50,000, `kyc: false`).
+19 Aug 2025 leftover
+`byteball/prediction-markets-aa`
+(Prophet / prophet.ooo).
+Official clone
+`/tmp/obyte-prediction` at
+`1292a09` (“solvency
+checks”). Custom OOS:
+fund-loss under $1,000;
+attacker expense ≥ 50%
+of damage. No mainnet
+interaction.
+
+Files: `agent.oscript`
+(define / mint / redeem /
+add_liquidity / commit /
+claim_profit),
+`aa-lib.oscript`
+(library-only LMSR-style
+math), `factory.oscript`.
+
+Checked for: redeem that
+pays more reserve than
+the curve holds; claim
+that pays losing tokens;
+commit before
+`event_date`; mint after
+result; first-LP ratio
+that inflates supply
+above reserve; factory
+that overwrites another
+market’s params;
+`to` that redirects a
+stranger’s tokens.
+
+Result: no
+user-exploitable finding.
+Not submitted.
+
+- Market reserve is
+  `coef * hypot(yes, no,
+  draw)`. Issue / redeem
+  fees and a 90% arb-profit
+  tax stay in the reserve
+  and raise `coef`. Soft
+  bounce returns reserve
+  on curve errors; sending
+  outcome tokens on error
+  hard-bounces so they
+  come back.
+- Trading is closed from
+  `event_date -
+  quiet_period` until
+  `event_date +
+  waiting_period` (default
+  5 days). After a
+  committed result, mint /
+  redeem refuse (`result
+  already exists`). After
+  the wait with no
+  result, trading
+  reopens (by design).
+- End-of-trade solvency:
+  `new_reserve <=
+  balance[reserve] -
+  payout` and reserve
+  growth cannot exceed
+  the added reserve
+  (the named solvency
+  commit).
+- `add_liquidity` mints
+  pro-rata yes/no/draw.
+  First LP sets weights
+  via `sqrt(ratio)` so
+  `hypot` equals the
+  deposited reserve.
+- `commit` is
+  permissionless after
+  `event_date` and reads
+  the creator-chosen
+  oracle feed. Draw wins
+  only when the yes
+  comparison is false
+  and the feed equals
+  `datafeed_draw_value`.
+  Oracle choice is
+  market-creator trust.
+- `claim_profit` pays
+  `floor(winner_amount /
+  winner_supply *
+  reserve)` and requires
+  a positive winner
+  amount. Losing tokens
+  sent in the same unit
+  are burned without
+  payout (self-loss).
+  Last winner gets the
+  remaining reserve
+  (`winner_amount ==
+  supply`).
+- Factory `chash160`s
+  params so a duplicate
+  market is refused.
+  Asset definition is
+  sequential via the
+  factory bounce. Fees
+  must be in `[0, 1)`.
+
+Next leftover: remaining
+Obyte
+`counterstake-bridge`, or
+Mux leftover
+(mux-protocol /
+aggregator / degen /
+staking), or Twyne
+Sourcify-404 vaults.
+Not submitted.
 
 ## Next candidates
 
@@ -12768,9 +12891,10 @@ mux-protocol core,
 aggregator, degen,
 staking);
 Obyte Coop AA
-(`d7d5e57`) and Friends
-AA (`45019f9`) are
-logged;
+(`d7d5e57`), Friends AA
+(`45019f9`), and
+prediction-markets AA
+(`1292a09`) are logged;
 Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase
