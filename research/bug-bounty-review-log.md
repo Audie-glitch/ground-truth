@@ -52688,3 +52688,159 @@ listed: none
 crates are not
 in the asset
 list).
+
+## 2026-09-03: Livepeer leftover go-livepeer client (`38eb47d`)
+
+Immunefi program
+`livepeer`
+($40,000, `kyc: true`).
+Listed remaining after
+rounds / votes /
+governor / helpers
+(`281a0b4`). Official
+clone
+`/tmp/go-livepeer`
+`38eb47d`
+(release
+`v0.9.2`).
+Opened
+`pm/validator.go`,
+`pm/recipient.go`,
+`pm/sender.go`,
+`pm/ticket.go`,
+`pm/sigverifier.go`,
+`crypto/verify.go`,
+`eth/accountmanager.go`,
+`server/webserver.go`,
+`server/remote_signer.go`,
+`cmd/livepeer/starter/starter.go`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+ticket redeem
+without the
+sender sig;
+forged
+`recipientRand`
+that steals
+deposit;
+unauth CLI
+`transferTokens`
+on the default
+bind;
+remote-signer
+ticket mint
+against another
+operator's
+key without
+reaching their
+signer.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `ValidateTicket`
+  requires
+  recipient
+  match, non-zero
+  sender,
+  `keccak256(pad32(recipientRand))
+  ==
+  RecipientRandHash`,
+  and
+  `VerifySig(sender,
+  ticket.Hash(),
+  sig)`.
+  `VerifySig`
+  uses
+  `accounts.TextHash`
+  and rejects
+  high-s / bad
+  v.
+- `recipientRand`
+  is HMAC-SHA256
+  of seed +
+  sender +
+  faceValue +
+  winProb +
+  expiry + price
+  + aux under a
+  local 32-byte
+  secret.
+  Winning check
+  is
+  `keccak(sig,
+  pad32(rand))
+  < WinProb`.
+- Sender tickets
+  are signed by
+  the node's
+  Ethereum
+  account
+  keystore
+  (unlock /
+  passphrase).
+- CLI defaults to
+  `127.0.0.1`.
+  Tx routes
+  (`transferTokens`,
+  `withdraw`,
+  `bond`,
+  `signMessage`,
+  ticket fund /
+  unlock) are
+  behind
+  `-enableCliTxRoutes`
+  (default
+  false).
+  Wildcard
+  `-cliAddr`
+  logs a
+  warning.
+- Remote signer
+  `GenerateLivePayment`
+  signs tickets
+  with the local
+  key. State
+  updates need
+  that key's
+  sig.
+  Webhook auth
+  is optional.
+  Designed as an
+  operator
+  sidecar.
+
+Do not file
+unauthenticated
+localhost CLI
+tx routes,
+optional
+wildcard bind,
+or a reachable
+remote-signer
+without webhook
+as stranger
+theft of a
+user who did
+not run that
+node.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Livepeer
+go-livepeer
+client leftover
+is exhausted at
+the opened-file
+level. Remaining
+listed: none
+for this
+program (L1
+contracts stay
+paused).
