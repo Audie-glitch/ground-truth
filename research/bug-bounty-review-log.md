@@ -70109,3 +70109,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file index / treasury accrual helpers as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: primacy. Unused official Aave v3 logic leftover that listed trees open is exhausted on this pin.
+
+## 2026-09-03: Jito leftover remaining jito-solana proxy leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after banking_stage leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `core/src/proxy/{mod,auth,block_engine_stage,relayer_stage}.rs` and `core/src/forwarding_stage.rs`. Do not rematch banking_stage leftover, bundle_stage leftover, or tip_manager leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger gRPC that authenticates as the validator; `trust_packets` minting unbacked spends; forwarding_stage signing or rewriting a stranger tx.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Relayer / Block Engine auth is a challenge signed with `cluster_info.keypair()`. Tokens must be non-empty and have `expires_at_utc`. Identity rotation aborts. A stranger cannot mint a validator Bearer token.
+- `BlockEngineStage` / `RelayerStage` subscribe only after that auth. Bundles are sanitized later (leftover-logged bundle_stage). Relayer packets go to the untrusted channel. `trust_packets` is operator config for an already-authenticated stream, not a public submit API.
+- `ForwardingStage` sanitizes, priority-orders, and rate-limits packets toward the next leader TPU-forwards. Failed sanitize drops the packet. It does not sign or move validator funds.
+
+Do not file a validator-to-relayer client as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` replay_stage (if still unused).
