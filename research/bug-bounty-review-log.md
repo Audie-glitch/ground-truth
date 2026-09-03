@@ -36755,14 +36755,17 @@ Livepeer leftover Arb bonding
 TicketBroker / Minter /
 L2LPTGateway / L1LPTGateway /
 BridgeMinter / L1Escrow; KYC)
-is logged (remaining listed is
-RoundsManager / BondingVotes /
-Governor / Treasury /
-ServiceRegistry /
+is logged;
+Livepeer leftover remaining
+rounds + votes + migrators leftover
+(Sourcify RoundsManager /
+BondingVotes / Governor /
+Treasury / ServiceRegistry /
 MerkleSnapshot / L2Migrator /
 DelegatorPool / PollCreator /
-L1Migrator / data caches /
-go-livepeer website);
+L1Migrator / data caches; KYC)
+is logged (remaining listed is
+the go-livepeer website);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -36994,10 +36997,21 @@ Solana / Sui / staking);
 Axelar leftover ETH gateway
 / ITS / ITF leftover
 (Sourcify + official GitHub;
+KYC) is logged;
+Axelar leftover DLT
+axelar-core evm / axelarnet /
+nexus leftover (`186e889`;
+KYC) is logged;
+Axelar leftover DLT tofnd
+leftover (`98de47e`; KYC) is
+logged;
+Axelar leftover Hyperliquid
+ITS live leftover (`ff21991`;
 KYC) is logged (remaining
-listed is other-chain
-gateways / axlUSDC and
-axelar-core / tofnd);
+listed is historic Fantom
+gateway proxy if source
+opens);
+
 DeXe Protocol leftover
 (Sourcify + official
 GitHub UserRegistry /
@@ -51744,6 +51758,264 @@ PollCreator,
 L1Migrator,
 L1/L2 data
 caches, and the
+go-livepeer
+website.
+
+## 2026-09-03: Livepeer leftover remaining rounds + votes + migrators leftover (Sourcify)
+
+Immunefi program
+`livepeer`
+($40,000, `kyc: true`).
+Listed remaining after
+Arb bonding + tickets
++ LPT bridge leftover
+(`a5ab106`). Sourcify
+opens every remaining
+listed address.
+Official protocol clone
+`/tmp/livepeer-protocol`
+`e02052a`. No mainnet
+writes from this VM
+except read-only
+`eth_call` /
+`eth_getStorageAt`.
+No exploit PoCs.
+
+Files (Sourcify):
+RoundsManager impl
+`0x92d804ed…e841`
+(proxy
+`0xdd6f56Dc…c39f`),
+BondingVotes impl
+`0x68af8037…3119`
+(proxy
+`0x0B9C2548…169A`),
+LivepeerGovernor impl
+`0xd2ce37bc…1634`
+(proxy
+`0xcFE4E287…6aa0`),
+Treasury
+`0xf82C1FF4…8C4`,
+ServiceRegistry impl
+`0x38093cdc…b0a7`
+(proxy
+`0xC92d3A36…7431`),
+MerkleSnapshot
+`0x10736ffa…5f7`,
+L2Migrator impl
+`0x93bb0307…58c`
+(proxy
+`0x148D5b6B…2085`),
+DelegatorPool
+`0xfdb06109…567`,
+PollCreator
+`0x8bb50806…2E6`,
+L2LPTDataCache
+`0xd78b6bD0…b0B1`,
+ETH L1Migrator
+`0x2a69191B…7759`,
+ETH L1LPTDataCache
+`0x1d24838b…23D7`.
+
+Checked for: a
+stranger
+`initializeRound`
+that mints extra
+LPT; BondingVotes
+checkpoint that
+rewrites another
+account's votes
+without
+BondingManager;
+L2 `claimStake`
+that steals
+another EOA's
+snapshot stake;
+L1 migrate of
+another address
+without their
+key/sig;
+DelegatorPool
+claim of another
+delegator's
+share;
+permissionless
+Merkle root set.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `initializeRound`
+  is permissionless
+  once per round
+  (`lastInitializedRound
+  < currRound`).
+  It stores
+  `blockHash(block-1)`,
+  then
+  `bondingManager.setCurrentRoundTotalActiveStake()`
+  and
+  `minter.setCurrentRewardTokens()`
+  (already reviewed
+  `onlyRoundsManager`).
+  `setRoundLength` /
+  `setRoundLockAmount` /
+  `setLIPUpgradeRound`
+  are
+  `onlyControllerOwner`.
+- BondingVotes
+  `checkpointBondingState`
+  /
+  `checkpointTotalActiveStake`
+  are
+  `onlyBondingManager`.
+  `delegate` /
+  `delegateBySig`
+  revert
+  (`MustCallBondingManager`).
+  Votes are view-only
+  from checkpoints.
+- Treasury is an
+  OZ
+  `TimelockControllerUpgradeable`
+  wrapper;
+  `initialize` is
+  `initializer`.
+- LivepeerGovernor
+  is standard OZ
+  Governor +
+  Timelock +
+  overridable
+  counting.
+  `relay` is
+  `onlyGovernance`.
+  `bumpGovernorVotesTokenAddress`
+  is permissionless
+  but only copies
+  Controller
+  `BondingVotes`.
+- L2Migrator
+  `finalizeMigrateDelegator`
+  / UnbondingLocks
+  / Sender are
+  `onlyL1Counterpart(l1MigratorAddr)`
+  (L1 alias).
+  One-time per
+  l1Addr / lock /
+  sender.
+  `claimStake`
+  needs
+  `claimStakeEnabled`
+  + Merkle `LIP-73`
+  proof for
+  `keccak(delegator,
+  delegate, stake,
+  fees)` with
+  `delegator ==
+  msg.sender`.
+  Fees pay that
+  delegator.
+  `bondFor` approves
+  LPT then
+  `bondForWithHint`
+  (already reviewed).
+- L1Migrator
+  `requireValidMigration`:
+  `_l1Addr ==
+  _l2Addr` AND
+  (`msg.sender ==
+  _l1Addr` OR
+  EIP-712 sig from
+  `_l1Addr`).
+  Replay rejected
+  on L2. Params
+  built from live
+  L1 BondingManager
+  / TicketBroker
+  reads. Admin
+  pause /
+  `setL2Migrator` /
+  `setBridgeMinter`.
+- DelegatorPool
+  `claim` is
+  `onlyMigrator`;
+  proportional
+  owed stake/fees;
+  `transferBond` +
+  `withdrawFees` to
+  `_delegator`.
+- MerkleSnapshot
+  `setSnapshot` is
+  `onlyControllerOwner`;
+  `verify` is view.
+- ServiceRegistry
+  `setServiceURI`
+  writes
+  `msg.sender`
+  only. No tokens.
+- PollCreator
+  needs
+  `POLL_CREATION_COST`
+  (100 LPT) stake
+  and deploys a
+  Poll. No token
+  transfer. Poll
+  `vote` is an
+  event;
+  `destroy` after
+  end is empty
+  `selfdestruct`.
+- L2LPTDataCache
+  `increase` /
+  `decreaseL2SupplyFromL1`
+  are
+  `onlyL2LPTGateway`;
+  `finalizeCacheTotalSupply`
+  is
+  `onlyL1Counterpart`.
+  `l1CirculatingSupply`
+  is view.
+- L1LPTDataCache
+  `cacheTotalSupply`
+  is permissionless
+  payable (pays
+  the retryable
+  ticket); L2
+  finalize is
+  counterpart-gated.
+
+Do not file
+permissionless
+`initializeRound`,
+a valid L1-signed
+same-address
+migrate, or
+`claimStake` of
+the caller's own
+Merkle leaf as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for
+Livepeer rounds /
+votes / governor /
+treasury /
+registry /
+Merkle /
+migrators /
+DelegatorPool /
+PollCreator /
+data caches is
+exhausted at the
+opened-file
+level. Remaining
+listed: the
 go-livepeer
 website.
 
