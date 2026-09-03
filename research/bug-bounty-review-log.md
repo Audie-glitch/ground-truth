@@ -45589,6 +45589,8 @@ Jito leftover remaining jito-solana tvu leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana bundle + fee leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana scheduler leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45610,7 +45612,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` scheduler / tokens / programs / runtime (if still unused).
+Remaining listed Jito: `jito-solana` tokens / programs / runtime if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45671,6 +45673,7 @@ Do not rematch Jito jito-solana replay_stage leftover.
 Do not rematch Jito jito-solana poh leftover.
 Do not rematch Jito jito-solana tvu leftover.
 Do not rematch Jito jito-solana bundle + fee leftover.
+Do not rematch Jito jito-solana scheduler leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -70327,3 +70330,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator TVU wiring crate as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` scheduler if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana scheduler leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after tvu leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `unified-scheduler-logic/src/lib.rs`, `unified-scheduler-pool/src/lib.rs`, and `core/src/scheduler_bindings_server.rs`. Do not rematch banking_stage leftover (including `transaction_scheduler`), bundle_stage leftover, tip_manager leftover, proxy leftover, replay leftovers, poh leftover, or tvu leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger Unix-socket handshake that schedules a drain; `DefaultTaskHandler` executing an unsigned tip-program crank; `SchedulingStateMachine` minting a token that spends validator funds.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `unified-scheduler-logic` is an in-process FIFO lock sorter. It does not know about banks, signatures, or lamports. The "Unauthorized token minting" comment is a `TokenCell` miri test, not a crypto mint.
+- `DefaultTaskHandler` runs leftover-logged `execute_batch` on a `ReplayTransaction` already attached to the working bank. This crate has no tip / bundle / block-engine hooks.
+- `scheduler_bindings_server::spawn` binds a local Unix path, accepts `handshake::server` sessions, and forwards `BankingControlMsg::External` on a local mpsc. That is operator-local IPC, not a public submit API.
+
+Do not file a validator-local scheduler as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` tokens / programs / runtime if still unused.
