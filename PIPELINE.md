@@ -19,7 +19,7 @@ organizer's own page on that day.
 | 6 | KeeperHub main track, Best Integration into a Live Project | $2,000 / $1,200 / $800 | Stablecoins | Sep 6-18 | Needs a KeeperHub account, a funded testnet wallet, and a real third-party project on the other side | Plan: `plugin-keeperhub` for elizaOS (KeeperHub as the execution layer for Eliza agents: dry run, idempotent execute, status, balances). See `keeperhub/main-track-plan.md`. Needs your KeeperHub API key by Sep 9. |
 | 7 | [3rd-Web-Hack](https://3rd-web-hack.devpost.com/) (Devpost) | $500 / $200 / $50 | USDT | Deadline Sep 27 | 86 participants, tiny pool, low bar | Rules require a project "original and developed for the hackathon," so no re-entry of CreditPassport. **Built 3 Sep: SignLens** (`signlens/`), a pre-signature inspector for wallet requests; MVP, 23 tests, README, presentation. Needs your Devpost registration and a demo video upload; see `signlens/SUBMISSION.md`. |
 | 8 | [Arbitrum Open House Singapore buildathon](https://web3voyager.com/event/arbitrum-open-house-singapore-online-buildathon) | $115,000 pool | Not stated | Sep 13 - Oct 4; existing projects allowed | Large field | Re-target the ETHOnline or CTC project after Sep 16. |
-| 9 | [Monad Metropolis](https://www.monad.xyz/developers/hackathons/metropolis) | $250,000 pool, $30k per track | Not stated | Sep 1 - Oct 13 | Very large field, startup-oriented | Only if items 1-4 are shipped early. |
+| 9 | [Monad Metropolis](https://www.monad.xyz/developers/hackathons/metropolis) | Four tracks at $30,000 each split evenly between 3 teams ($10,000 per winning team), $25,000 grand champion, sponsor bounties (Kuru $5k x2, Dynamic $5k, Perpl $5k, Chainlink CRE $3k, CVI $2k, Envio $1k) | Not stated | Sep 1 - Oct 13; judging Oct 14-27; winners Nov 3 | Very large field; judged by Monad founders; "what you show on Oct 13 should have been built during the six weeks"; existing projects allowed if the work is new | Track 1's own example list includes "undercollateralised lending priced on onchain credit history": CreditPassport's thesis. Plan after Sep 18: a Monad-native passport (payment history from Monad events via Envio, Chainlink CRE underwriting workflow) for Track 1, stacking Envio and CRE bounties; SignLens for Track 4 (Trust, Identity & AI) if capacity. Decide Sep 19. |
 
 Verified dead ends: Sherlock has 0 active audit contests; Code4rena wound down
 in May 2026; Colosseum's Solana hackathon does not open until Sep 28.
@@ -75,7 +75,7 @@ share the username.
 | Sep 13 | BUIDL CTC submission deadline. |
 | Sep 16 | ETHOnline submission deadline. |
 | Sep 18 | KeeperHub submission deadline. Finalist calls Sep 18-25. |
-| Sep 18+ | Re-target builds at Arbitrum / 3rd-Web-Hack; KeeperHub main track if account exists. |
+| Sep 18+ | Arbitrum buildathon (existing projects allowed, registration closes Oct 2) with SignLens; Monad Metropolis Track 1 entry (Monad-native CreditPassport) through Oct 13. |
 
 ## What only you can do
 
