@@ -73380,3 +73380,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a local test bank client as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`prioritization_fee`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Chainlink leftover remaining core keystore leftover (`58d2ba6`)
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after core node leftover. Official `smartcontractkit/chainlink` `58d2ba6` (`58d2ba658feb47a8d2b8580816d212c84a4e566f`). Opened listed `core/services/keystore/{master,eth,keystore,orm}.go`. Extract `/tmp/cl-ks/`. Do not rematch core node leftover (web transfers). No mainnet writes. No exploit PoCs.
+
+Checked for: `Unlock` that accepts any password and exposes keys; `Export` that returns raw private key bytes without a password; `Sign` that a stranger can call over HTTP.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Unlock` decrypts `encrypted_key_rings` with the supplied password. A second unlock with a different password reverts. `isLocked()` is `len(password)==0`. `Get` / `Create` / `Import` / `Export` / `EthSigner.Sign` all return `ErrLocked` while locked.
+- `Export` re-encrypts the in-memory key with the caller-supplied password (`ToEncryptedJSON`). It does not write plaintext key material. `Import` requires that same decrypt password and rejects duplicates.
+- ORM persists only the encrypted blob. This package is in-process; leftover-logged web export/transfer routes stay admin-gated. `Sign` is the node-internal loopp signer after unlock, not a public endpoint.
+
+Do not file an unlocked-node signer or password-gated export as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink evm txmgr package / ocr2 services / common keystore if still unused.
