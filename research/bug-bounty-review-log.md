@@ -23830,6 +23830,145 @@ Voting /
 DisputableVoting /
 Agreement.
 
+## 2026-09-03: IPOR leftover (Sourcify)
+
+Immunefi program
+`IPOR` ($20,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Ethereum
+Sourcify-open:
+ipUSDT
+`0x9Bd2177027edEE300DC9F1fb88F24DB6e5e1edC6`
+`match` `IpTokenUsdt`;
+ipUSDC
+`0x7c0e72f431FD69560D951e4C04A4de3657621a88`
+`match` `IpTokenUsdt`;
+ipweETH
+`0xaC5B04988BC71bEE96f8D93040777Db3ef166125`
+`match` `IpToken`;
+ipstETH
+`0xc40431b6C510AeB45Fbb5e21E40D49F12b0c1F0c`
+`match` `IpToken`;
+Router proxy
+`0x16d104009964e694761C0bf09d7Be49B7E3C26fd`
+impl
+`0xCC735cAf5354415308dBD826e9734A70b69461d6`
+`match`
+`IporProtocolRouterEthereum`;
+AmmStorage USDC/USDT
+impls `AmmStorage`;
+AmmTreasury USDC/USDT
+impls `AmmTreasury`;
+AmmTreasury weETH impl
+`AmmTreasuryBaseV2`;
+AmmStorage weETH
+`AmmStorageBaseV1`.
+Extract `/tmp/ipor`.
+No mainnet
+interaction.
+
+Files:
+`IpToken.sol`,
+`IpTokenUsdt.sol`,
+`IporProtocolRouterEthereum.sol`,
+`IporProtocolRouterAbstract.sol`,
+`AccessControl.sol`,
+`AmmTreasury.sol`,
+`AmmTreasuryBaseV2.sol`,
+`AmmStorage.sol`,
+`AmmStorageBaseV1.sol`.
+
+Checked for: a
+stranger mint of
+ipTokens; treasury
+withdraw to the
+caller; storage
+liquidity write
+without the router;
+router fallback that
+delegatecalls an
+unknown selector;
+batch ETH refund
+that steals another
+user’s `msg.value`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- ipToken `mint` /
+  `burn` are
+  `onlyJoseph` (USDT
+  / USDC) or
+  `onlyTokenManager`
+  (weETH / stETH).
+  Manager / Joseph
+  setters are owner.
+- AmmTreasury AM
+  deposit / withdraw
+  are `onlyRouter`
+  and pay
+  `address(this)`.
+  Owner
+  `grantMaxAllowanceForSpender`
+  is privilege.
+- AmmStorage
+  liquidity / swap /
+  treasury writes are
+  `onlyRouter` (AM
+  vault updates
+  `onlyAmmTreasury`).
+- Router unknown
+  selectors revert.
+  Open / provide /
+  redeem / close map
+  to immutable or
+  stored services.
+  Governance writes
+  and emergency
+  close are
+  `_onlyOwner`.
+  `transferToTreasury`
+  / Charlie are
+  public and go to
+  the governance
+  service (pays the
+  configured
+  recipient, not
+  `msg.sender`).
+- `batchExecutor` is
+  `nonReentrant`.
+  Leftover ETH is
+  returned to the
+  current caller
+  after a mutating
+  dispatch.
+
+Do not file Joseph /
+token-manager mint,
+owner allowance /
+upgrade, or
+permissionless
+treasury sweep to
+the configured
+recipient.
+
+Not submitted.
+Listed leftover is
+the Sourcify-open
+ipToken / router /
+storage / treasury
+path.
+Remaining listed:
+AmmTreasury ETH impl
+Sourcify 404. Pool /
+open / close service
+implementations are
+not listed assets.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -24185,6 +24324,10 @@ farming / rebalancer) is logged.
 USDN sUSDN VaultLib leftover is
 logged (listed USDN leftover
 exhausted).
+IPOR leftover (Sourcify ipToken /
+router / AmmStorage / AmmTreasury)
+is logged (remaining listed is
+AmmTreasury ETH impl Sourcify 404).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -24543,6 +24686,12 @@ rebalancer) is logged.
 USDN sUSDN VaultLib leftover
 is logged (listed USDN
 leftover exhausted);
+IPOR leftover (Sourcify
+ipToken / router /
+AmmStorage / AmmTreasury)
+is logged (remaining listed
+is AmmTreasury ETH impl
+Sourcify 404);
 Beets stS
 (`877087b`) + token
 leftover is logged
