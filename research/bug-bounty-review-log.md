@@ -5220,6 +5220,122 @@ Result: no user-exploitable finding.
 bridge mixins treated as exhausted.
 Not submitted.
 
+## 2026-09-03: Extra Finance VeToken (LYF)
+
+Same Immunefi program `extrafinance` ($100,000,
+`kyc: false`). Scope address
+`0xe0BeC4F45aEF64CeC9dCB9010d4beFfB13e91466`
+(Optimism). Sourcify `match` fetched to
+`/tmp/extrafinance/vetoken/VeToken.sol`.
+No mainnet interaction.
+
+Checked for: withdraw of another user’s
+lock; `depositFor` that extends a
+stranger’s unlock time; transfer of
+voting-escrow balance.
+
+Result: no user-exploitable finding.
+
+- Curve-style voting escrow. Locks are
+  per `msg.sender`. `withdraw` requires
+  `block.timestamp >= end` and pays
+  `account` (`msg.sender`) only.
+- `depositFor` cannot create a lock or
+  extend `end`; it only adds tokens to
+  an existing unexpired lock. Tokens
+  come from `_msgSender()` via
+  `safeTransferFrom`.
+- `createLock` / `increaseAmount` /
+  `increaseUnlockTime` are
+  `msg.sender`-scoped. Unlock is
+  rounded to weeks and capped at
+  `MAX_TIME`. `checkpoint` is
+  permissionless bookkeeping.
+- `balanceOf` is voting power, not an
+  ERC-20 transferable balance.
+
+Remaining Extra Finance: vault position
+logic (registry ids 101–105, Sourcify
+404; vault 1 `0x2f8305…A33C` also 404).
+Not submitted.
+
+## 2026-09-03: Lista DAO Moolah + PublicLiquidator (`ce72699`)
+
+Immunefi program `listadao` ($1,000,000,
+`kyc: false`, updated 2026-05-29). Newest
+in-scope adds that day:
+Moolah
+`0x8F73b65B4caAf64FBA2aF91cC5D4a2A1318E5D8C`
+and PublicLiquidator
+`0x882475d622c687b079f149B69a15683FCbeCC6D9`
+(BSC). Official tree
+[lista-dao/moolah](https://github.com/lista-dao/moolah)
+cloned at `ce72699`. Sourcify
+`exact_match` for live Moolah. No mainnet
+interaction.
+
+Files: `src/moolah/Moolah.sol`
+(borrow / repay / supplyCollateral /
+withdrawCollateral / liquidate /
+flashLoan / authorization),
+`src/liquidator/PublicLiquidator.sol`.
+
+Checked for: borrow of another user’s
+position; liquidate of a healthy
+position; PublicLiquidator callback
+that spends a non-whitelisted pair or
+keeps leftover approval; flash loan
+that does not pull back.
+
+Result: no user-exploitable finding
+in this first slice.
+
+- Borrow / withdrawCollateral require
+  `_isSenderAuthorized` unless a
+  market `provider` or `broker` is
+  set (then only that role). Supply
+  and borrow also gate `isWhiteList`
+  (empty list = open). Health is
+  checked after share math; liquidity
+  is `totalBorrow <= totalSupply`.
+- `liquidate` requires the caller on
+  the market’s liquidation whitelist
+  (empty = open), exactly one of
+  seized/repaid, and
+  `!_isHealthy`. Collateral is sent,
+  then `onMoolahLiquidate`, then
+  `transferFrom` of `repaidAssets`.
+  `_isHealthyAfterLiquidate` forbids
+  leaving a dust unhealthy leftover
+  below `minLoan`.
+- `liquidateBrokerPosition` is
+  `msg.sender == brokers[id]` and
+  writes off shares without seizing
+  collateral (broker-gated).
+- Flash loan transfers out, callback,
+  then `transferFrom` the same
+  amount. Token blacklist is
+  admin-set.
+- PublicLiquidator `isLiquidatable`
+  is an extra allowlist (Moolah
+  open-liq / market / per-user), not
+  the health check — Moolah still
+  requires unhealthy. Flash paths
+  `call` only `pairWhitelist` /
+  `smartProviders` (MANAGER).
+  `NoProfit` compares pre/post loan
+  or collateral balances. Approvals
+  are zeroed after the swap.
+  `onMoolahLiquidate` is `OnlyMoolah`.
+
+Remaining Lista: older lisUSD /
+slisBNB / clipper / gemJoin /
+distributor / PSM / OFT / strategy
+addresses, plus Moolah vault /
+IRM / broker / credit-loan in the
+same repo if a later pass wants
+depth. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -5284,14 +5400,19 @@ Nucleus (`1df9087`) are logged.
 are exhausted. Extra Finance LYF LendingPool +
 VeloPositionManager + RewardDistributor
 (Sourcify, 2024-08 verified) plus ExtraX
-factory / creators / live proxy and the
-Aave-fork Pool skim are logged;
+factory / creators / live proxy, the
+Aave-fork Pool skim, and VeToken
+(`0xe0Be…1466`) are logged;
 remaining Extra Finance is vault logic
-(not Sourcify) and veToken. Index Coop
+(not Sourcify). Index Coop
 Set Protocol V2 (all five in-scope
-addresses) is logged. Next unreviewed
-Immunefi GitHub-or-recent trees: Extra Finance
-vault / veToken, Jito `jito-solana` /
+addresses) is logged. Lista DAO Moolah
++ PublicLiquidator (`ce72699`, newest
+2026-05-29 assets) is logged.
+Next unreviewed Immunefi
+GitHub-or-recent trees: Extra Finance
+vault logic, Lista leftover
+lisUSD/clipper/strategy, Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted),
