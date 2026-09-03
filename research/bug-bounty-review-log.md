@@ -45850,6 +45850,8 @@ Jito leftover remaining jito-solana programs leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana vote leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana bpf leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45871,7 +45873,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` bpf_loader / remaining runtime / other programs if still unused.
+Remaining listed Jito: `jito-solana` compute-budget / zk-elgamal-proof / remaining runtime if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45937,6 +45939,7 @@ Do not rematch Jito jito-solana tokens leftover.
 Do not rematch Jito jito-solana runtime fee leftover.
 Do not rematch Jito jito-solana programs leftover.
 Do not rematch Jito jito-solana vote leftover.
+Do not rematch Jito jito-solana bpf leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -48680,8 +48683,10 @@ Jito leftover remaining jito-solana runtime fee leftover
 Jito leftover remaining jito-solana programs leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana vote leftover
-(`d0e3a47`) is logged (remaining listed is bpf_loader /
-remaining runtime / other programs);
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana bpf leftover
+(`d0e3a47`) is logged (remaining listed is compute-budget /
+zk-elgamal-proof / remaining runtime);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover
@@ -70653,3 +70658,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a signed vote-account withdraw or a delayed voter authorize as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` bpf_loader / remaining runtime / other programs if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana bpf leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after vote leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `programs/bpf_loader/src/lib.rs`. Do not rematch vote leftover, programs leftover (`programs/system`), or runtime fee leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `Upgrade` that replaces ProgramData without the upgrade authority; `SetAuthority` that hands a buffer or program to a stranger; `Close` that drains ProgramData without the authority; `ExtendProgram` that mutates ELF bytes or steals rent.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Management IXs run only when the invoked program is native-loader-owned `bpf_loader_upgradeable`. v1 / deprecated loaders return `UnsupportedProgramId`. Invocation uses the cached executor and rejects Closed / FailedVerification / DelayVisibility.
+- `Write`, `DeployWithMaxDataLen`, and `Upgrade` require the buffer authority to match the signed upgrade authority. `Upgrade` also checks ProgramData `upgrade_authority_address`, rejects a same-slot deploy, and refuses an immutable program. ProgramData PDA must be `find_program_address([program_id], loader)`.
+- `SetAuthority` requires the present authority to sign. Buffers cannot drop authority. `SetAuthorityChecked` also requires the new authority to sign. Making a pre-v3 ELF immutable is rejected when `disable_sbpf_v0_v1_v2_deployment` is on.
+- `Close` of Buffer / ProgramData goes through `common_close_account` (authority must match and sign). ProgramData close also checks the Program account pointer and writes a Closed tombstone. Closing Uninitialized is the stock loader drain of an uninitialized loader-owned account, not a funded program.
+- `ExtendProgram` does not require the upgrade authority. A stranger can pay rent to grow ProgramData; `deploy_program!` re-verifies the existing ELF and does not rewrite it. Immutable programs cannot be extended. Same-slot extend / upgrade / close still fail.
+
+Do not file a signed upgrade-authority deploy or an unpaid ELF rewrite as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` compute-budget / zk-elgamal-proof / remaining runtime if still unused.
