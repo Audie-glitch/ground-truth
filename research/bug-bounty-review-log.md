@@ -66156,3 +66156,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a keystore that signs only keys it holds as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Aave leftover remaining GHO token leftover (`23859bb`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after StableDebtToken leftover. Official `aave-dao/gho-origin` `23859bb`. Opened listed `GhoToken.sol` and `UpgradeableGhoToken.sol`. Official `GhoOracle.so` URL 404 (truncated). Do not rematch Pool / StableDebt leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `mint` of GHO without a facilitator bucket; `addFacilitator` without the manager role; `burn` that credits a stranger bucket.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `mint` reads `_facilitators[msg.sender]`. Capacity 0 (unregistered) fails `FACILITATOR_BUCKET_CAPACITY_EXCEEDED`. Amount must be > 0. Level is `uint128`.
+- `burn` subtracts `msg.sender`'s bucket level (underflow-reverts) and `_burn`s the caller.
+- `addFacilitator` / `removeFacilitator` are `onlyRole(FACILITATOR_MANAGER_ROLE)`. Remove requires `bucketLevel == 0`. `setFacilitatorBucketCapacity` is `onlyRole(BUCKET_MANAGER_ROLE)`.
+
+Do not file a bucket-capped facilitator mint as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: PoolConfigurator / ACL / oracles / periphery / rewards / GSM.
