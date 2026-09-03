@@ -17626,6 +17626,115 @@ listed tree is
 `harvest-strategy-arbitrum`
 `125270d`.
 
+## 2026-09-03: Harvest polygon Gamma / Pearl / Meshswap leftover (`f24a06a`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Aave /
+Aura leftover on the
+same pin `f24a06a` is
+already logged. This
+slice is Gamma Merkl,
+Quick Gamma (V1/V2),
+Uniswap Gamma, Pearl
+hodl, Caviar, and
+Meshswap. Local clone
+`/tmp/harvest-strategy-polygon`.
+No mainnet interaction.
+
+Files:
+`contracts/strategies/gamma-merkl/GammaMerklStrategy.sol`,
+`quick-gamma/QuickGammaStrategy.sol`,
+`quick-gamma/QuickGammaStrategyV2.sol`,
+`uniswap-gamma/UniswapGammaStrategy.sol`,
+`pearl/PearlHodlStrategy.sol`,
+`pearl/CaviarStrategy.sol`,
+`meshswap/MeshswapStrategy.sol`.
+
+Checked for: a stranger
+redeeming hypervisor /
+gauge / chef LP;
+withdraw that pays
+more than idle plus
+staked; chef or gauge
+`deposit` to a
+mismatched LP; salvage
+of receipt tokens by a
+third party.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Gamma Merkl holds
+  hypervisor LP idle
+  (no stake). Withdraw
+  is `restricted` and
+  transfers the
+  requested amount
+  (reverts if short).
+  Reward swaps and
+  UniProxy deposit use
+  `minOut = 1` / zero
+  minIn (known Harvest
+  keeper sandwich).
+- Quick Gamma V1/V2
+  require MasterChef
+  `lpToken(poolId)` =
+  `underlying`.
+  Partial chef
+  withdraw is capped;
+  transfer of the
+  requested amount
+  reverts if short.
+- Uniswap Gamma
+  requires the
+  staking-rewards
+  `stakingToken` =
+  `underlying`. Same
+  restricted unwrap +
+  exact transfer.
+- Pearl hodl requires
+  gauge `TOKEN()` =
+  `underlying`.
+  Rewards are swapped
+  and deposited into a
+  separate hodl vault,
+  then notified to a
+  PotPool (not
+  returned as vault
+  principal). Partial
+  gauge withdraw is
+  capped.
+- Caviar requires
+  chef `underlying()`
+  = strategy
+  `underlying`. Same
+  restricted unwrap +
+  exact transfer.
+  Only the claimed
+  underlying slice is
+  treated as reward.
+- Meshswap holds the
+  Mesh pair LP idle
+  and claims on the
+  pair. Withdraw is
+  `restricted`.
+  `addLiquidity` mins
+  of 1 are keeper-
+  trusted. Token0 /
+  token1 are read from
+  the pair.
+
+Not submitted. Remaining
+Harvest polygon is
+Jarvis / Complifi /
+compound-v2 / Yel /
+Ape wrappers. Remaining
+Harvest listed tree is
+`harvest-strategy-arbitrum`
+`125270d`.
+
 ## 2026-09-03: Marinade crank / withdraw-stake leftover (`b8fe3f8`)
 
 Immunefi program
@@ -19055,12 +19164,15 @@ leftover (`f24a06a`)
 and polygon
 Aave / Aura / Balancer /
 Convex / Idle leftover
-(`f24a06a`) are logged
+(`f24a06a`) and polygon
+Gamma / Pearl / Meshswap
+leftover (`f24a06a`)
+are logged
 (remaining Harvest is
-polygon Gamma / Pearl /
-Meshswap / Jarvis /
-Complifi / compound-v2
-plus arbitrum `125270d`);
+polygon Jarvis /
+Complifi / compound-v2 /
+Yel / Ape plus
+arbitrum `125270d`);
 ICHI oneToken leftover
 (`4873873`) is logged;
 Yearn yCRV token +
