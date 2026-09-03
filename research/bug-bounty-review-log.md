@@ -62244,3 +62244,19 @@ miner-only claims as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: lotus,
 proofs / boost / graphsync / FVM / go-f3, and filecoin.io.
+
+## 2026-09-03: Hedera leftover TokenBurn + CryptoApproveAllowance leftover (`0d3d9a2`)
+
+Immunefi program `hedera` ($30,000, `kyc: true`). Follow-on leftover after CryptoTransfer / TokenMint (`0d3d9a2`) and json-rpc-relay (`2b51a98`). Official clone `/tmp/hiero-consensus` `0d3d9a2`. Opened `TokenBurnHandler.java`, `CryptoApproveAllowanceHandler.java`, `ContractCallHandler.java`. No mainnet writes. No exploit PoCs.
+
+Checked for: a `TokenBurn` that burns a stranger's tokens; `CryptoApproveAllowance` that grants spend rights without the owner; `ContractCall` that spends another payer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `TokenBurn` `preHandle` requires the token **supply key**. `handle` burns fungible from the **treasury relation** and NFTs only if `treasuryOwnsNft`. Missing supply key fails in handle (`TOKEN_HAS_NO_SUPPLY_KEY`).
+- `CryptoApproveAllowance` `preHandle`: if `owner` is set and ≠ payer, `requireKeyOrThrow(owner)`. Empty owner means payer. NFT `approvedForAll` requires the owner; otherwise a `delegatingSpender` (or owner) must sign. `handle` writes allowances on `getEffectiveOwnerAccount` (payer if owner omitted). Delegating spender cannot change approveForAll.
+- `ContractCall` `preHandle` verifies no extra keys. The HAPI payer is the EVM sender for the in-scope call. Zero EVM address is rejected.
+
+Do not file supply-key treasury burns, owner-signed allowances, or payer-scoped contract calls as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `hiero-consensus-node` other handlers, `hiero-mirror-node`, `hiero-cryptography`, SDKs, and the hashed transaction-tool website leftover.
