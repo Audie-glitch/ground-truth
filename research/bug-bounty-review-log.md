@@ -7474,10 +7474,10 @@ factory set
 (FixedPriceLBPoolFactory,
 Gyro2CLPPoolFactory,
 StableLPOracleFactory,
-LBPoolFactory, Stable /
-Weighted / ReClamm /
-StableSurge factories,
-EclpLPOracleFactory,
+LBPoolFactory this pass
+below, Stable / Weighted /
+ReClamm / StableSurge
+factories, EclpLPOracleFactory,
 GyroECLPPoolFactory). Not
 submitted.
 
@@ -7705,6 +7705,78 @@ in the table and were not
 re-read here. Not
 submitted.
 
+## 2026-09-03: Balancer V3 LBPoolFactory (Sourcify)
+
+Immunefi program `balancer`
+($1,000,000, `kyc: false`).
+23 Jun 2026 leftover factory
+row: V3 LBPoolFactory (V4)
+`0x6642…069A`. Sourcify
+exact match, verified
+2026-05-16. Extract under
+`/tmp/balancer/lb_factory`.
+WeightedPoolFactory
+`0x3326…1D99` and
+StablePoolFactory
+`0x4eFc…3228` are Sourcify
+404 on Ethereum / Base /
+Arbitrum / Optimism /
+Polygon from this VM. No
+mainnet interaction.
+
+Files: `contracts/lbp/{LBPoolFactory,
+BaseLBPFactory,LBPValidation,
+LBPool,LBPCommon}.sol`,
+`@balancer-labs/v3-pool-utils/contracts/BasePoolFactory.sol`.
+
+Checked for: `create` that
+registers attacker bytecode
+as a Balancer pool; hook
+set to a stranger; add
+liquidity by a non-owner
+through an untrusted router;
+remove during the sale.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `create` deploys the
+  factory’s `LBPool`
+  creationCode via create2
+  (salt binds `msg.sender` +
+  chainid) and registers
+  that pool as its own hook.
+  Tokens are the two LBP
+  tokens, STANDARD, sorted.
+  Unbalanced liquidity is
+  disabled.
+- `onRegister` requires
+  `pool == address(this)`
+  and two STANDARD tokens.
+- `onBeforeAddLiquidity`
+  requires the trusted
+  router and
+  `getSender() == owner()`,
+  and `onlyBeforeSale`.
+- `onBeforeInitialize` is
+  owner-via-`getSender` and
+  `onlyBeforeSale`. Seedless
+  LBPs reject a non-zero
+  reserve amount. Init
+  frontrun is the documented
+  factory DoS, not a steal.
+- `onBeforeRemoveLiquidity`
+  reverts while the sale is
+  live.
+
+Remaining Balancer 23 Jun
+factories: FixedPrice LBP,
+Gyro2CLP, GyroECLP, ReClamm,
+StableSurge, plus
+Weighted / Stable (Sourcify
+404) and the two LP oracle
+factories. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -7839,10 +7911,14 @@ TokenizedStrategy /
 Factory V3.1.0 (Sourcify)
 are logged. Balancer V3
 Router + CompositeLiquidityRouter
-+ ProtocolFeeController (23 Jun,
++ ProtocolFeeController +
+LBPoolFactory (23 Jun,
 Sourcify) are logged; remaining
-Balancer is the V3 factory /
-oracle factory set. Remaining
+Balancer is FixedPrice LBP /
+Gyro / ReClamm / StableSurge
+factories, Weighted / Stable
+(Sourcify 404), and the two
+LP oracle factories. Remaining
 Lista leftover slices (new-contracts
 oracles / VeLista lock / airdrop /
 CDP ResilientOracle + pips at
