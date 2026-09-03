@@ -269,11 +269,18 @@ Vester / EsGMX) is logged (remaining
 listed is Avax twins, Sourcify-404 Glp
 Vester / Staked Glp Distributor, and
 V2 Oracle / Reader rows).
-SSV Network leftover (Sourcify Network /
-Views / Clusters / Operators / Staking;
-KYC) is logged (listed leftover
-exhausted at the opened-contract
-level).
+deBridge leftover (Sourcify ETH
+DeBridgeGate / DeBridgeToken /
+SignatureVerifier / CallProxy /
+SimpleFeeProxy / WethGate /
+TokenDeployer) is logged (listed
+leftover that Sourcify opens on
+Ethereum is exhausted; remaining
+listed is other-chain twins).
+Royco factory + Makina strategy leftover
+(Sourcify Factory /
+RoycoVaultMakinaStrategy; KYC) is
+logged.
 CapyFi leftover (Sourcify Comptroller /
 CEther / CErc20; KYC) is logged
 (remaining listed is Unitroller Sourcify
@@ -765,10 +772,13 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (RewardDistributor /
   BonusDistributor / Vester /
   EsGMX),
-  SSV Network leftover
-  (Sourcify Network / Views /
-  Clusters / Operators /
-  Staking; KYC),
+  deBridge leftover (Sourcify
+  ETH Gate / Token / Verifier /
+  CallProxy / FeeProxy /
+  WethGate),
+  Royco factory + Makina
+  strategy leftover (Sourcify;
+  KYC),
   CapyFi leftover (Sourcify
   Comptroller / CEther / CErc20;
   KYC),

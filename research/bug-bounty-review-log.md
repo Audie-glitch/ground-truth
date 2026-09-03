@@ -29034,6 +29034,131 @@ Do not re-review
 same-bytecode Avax
 twins.
 
+## 2026-09-03: deBridge leftover (Sourcify)
+
+Immunefi program
+`debridge` ($200,000,
+`kyc: false`). Unique
+unused standing
+program. Not previously
+logged. Ethereum
+Sourcify `exact_match`
+`DeBridgeGate`
+`0x24455aa55DED7728783c9474bE8eA2f5C935f8EB`
++ `DeBridgeToken`
+`0xf8A2902c0a5f817F5e22C82f453538d3f0734C2b`
++ `SignatureVerifier`
+`0xfE7De3c1e1BD252C67667B56347cABFC6df08dF4`
++ `CallProxy`
+`0xBd3d657AE87671eC6f8D6272A9f431a7c4a9B6f8`
++ `SimpleFeeProxy`
+`0x37a52ddb753c924f8C914de65ef00b5210Caa83C`
+and `match`
+`DeBridgeTokenDeployer`
+`0x4c7CA8fcFFE77281A8B81D4580CFf8257d785491`
++ `WethGate`
+`0xFCf83648b8cDeF62e5d03319a6f1FCE16e4D6A59`.
+Gate / token / sig /
+call proxies are
+`TransparentUpgradeableProxy`.
+Extract `/tmp/debridge`.
+No mainnet interaction.
+
+Files:
+`gate/contracts/transfers/DeBridgeGate.sol`,
+`sig/contracts/transfers/SignatureVerifier.sol`,
+`callproxy/contracts/periphery/CallProxy.sol`,
+`token/contracts/periphery/DeBridgeToken.sol`,
+`deployer/contracts/transfers/DeBridgeTokenDeployer.sol`,
+`fee/contracts/periphery/SimpleFeeProxy.sol`,
+`wethgate/contracts/transfers/WethGate.sol`.
+
+Checked for: a stranger
+`send` that locks
+another account's
+tokens; `claim` that
+mints / pays the
+caller instead of the
+signed receiver;
+`flash` that skips
+the fee; CallProxy
+`call` from a
+non-gate; unguarded
+`WethGate.withdraw`
+of gate WETH.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `_send` pulls
+  `msg.sender` /
+  `msg.value` and
+  burns wrapped
+  deTokens from the
+  gate.
+- `claim` builds
+  `submissionId`
+  from the signed
+  receiver / amount /
+  auto-params, marks
+  it used, then
+  `_checkConfirmations`
+  via
+  SignatureVerifier
+  (`onlyDeBridgeGate`,
+  oracle threshold).
+  Tokens mint or
+  transfer to
+  `_receiver` or
+  CallProxy.
+  `executionFee` pays
+  the claimer.
+- `flash` requires
+  the fee repaid
+  before return.
+- CallProxy `call` /
+  `callERC20` are
+  `onlyGateRole`.
+  `multiSend` is
+  self-only.
+- DeBridgeToken
+  `mint` is
+  `onlyMinter`.
+  `burn` burns
+  `msg.sender`.
+- TokenDeployer
+  `deployAsset` is
+  `onlyDeBridgeGate`.
+- SimpleFeeProxy
+  fee withdraws pay
+  `treasury`.
+
+Do not file
+permissionless claim
+of a signed
+submission to that
+receiver, keeper
+`executionFee`,
+public fee sweep to
+treasury, donated
+WETH on WethGate,
+or admin oracle /
+threshold.
+
+Not submitted.
+Listed leftover that
+Sourcify opens on
+Ethereum is
+exhausted.
+Remaining listed:
+other-chain Gate /
+Token / Verifier /
+CallProxy /
+FeeProxy twins
+(same types).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -30282,14 +30407,25 @@ Sourcify-404 Glp Vester
 / Staked Glp
 Distributor, and V2
 Oracle / Reader rows);
-SSV Network leftover
-(Sourcify Network /
-Views / Clusters /
-Operators / Staking;
-KYC) is logged
-(listed leftover
-exhausted at the
-opened-contract level);
+deBridge leftover
+(Sourcify ETH
+DeBridgeGate /
+DeBridgeToken /
+SignatureVerifier /
+CallProxy /
+SimpleFeeProxy /
+WethGate /
+TokenDeployer) is
+logged (listed leftover
+that Sourcify opens on
+Ethereum is exhausted;
+remaining listed is
+other-chain twins);
+Royco factory + Makina
+strategy leftover
+(Sourcify Factory /
+RoycoVaultMakinaStrategy;
+KYC) is logged;
 CapyFi leftover (Sourcify
 Comptroller / CEther /
 CErc20; KYC) is logged
