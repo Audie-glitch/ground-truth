@@ -63733,3 +63733,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file caller-scoped FVM send or `msg.from` gas debit as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: proofs / filecoin.io.
+
+## 2026-09-03: ZKsync OS leftover zk_ee + basic_system IO leftover (`9efc8bf`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Official remaining listed after proof_running_system leftover. Official clone `/tmp/zksync-os` at listed commit `9efc8bf70ae77d1d4df67eff5c60c8a8cfc21268`. Sparse `zk_ee` + `basic_system`. Do not rematch evm_interpreter, bootloader, storage_models, crypto, or proof_running leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `transfer_nominal_token_value` debiting a stranger; `update_account_nominal_token_balance` unchecked wrap; `storage_write` remapping onto another address.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `zk_ee` `IOSubsystem` is a trait: transfer / update / deploy take the caller-supplied address. `System::deploy_bytecode` only remaps the returned slice.
+- `basic_system` `io_subsystem` forwards those addresses to the storage model. Persistent `storage_write` uses `WarmStorageKey { address, key }` unchanged. `update_account_nominal_token_balance` uses `checked_sub` / `checked_add`.
+- Ethereum and flat `account_cache` transfers `overflowing_sub` the named `from` then `overflowing_add` the named `to`, failing closed on insufficient balance or overflow. L2 EOA / CALL-value callers are already leftover-logged on the bootloader.
+
+Do not file address-parameter IO traits or checked debit/credit caches as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: airbender CS / prover / verifier, and `zkos-wrapper` circuits.
