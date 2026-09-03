@@ -10,8 +10,10 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana snapshot_controller leftover is logged;
-Optimism leftover remaining op-reth consensus + txpool leftover is logged;Jito leftover remaining jito-solana serde_snapshot leftover is logged;
+246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana snapshot_minimizer leftover is logged;
+Jito leftover remaining jito-solana snapshot_controller leftover is logged;
+Optimism leftover remaining op-reth consensus + txpool leftover is logged;
+Jito leftover remaining jito-solana serde_snapshot leftover is logged;
 Optimism leftover remaining op-reth leftover is logged;
 Jito leftover remaining jito-solana stake_weighted_timestamp leftover is logged;
 Optimism leftover remaining ProxyAdmin leftover is logged;
@@ -1734,11 +1736,14 @@ jito-solana serde_snapshot leftover
 (`d0e3a47`; KYC) is logged.
 Jito leftover remaining
 jito-solana snapshot_controller leftover
+(`d0e3a47`; KYC) is logged.
+Jito leftover remaining
+jito-solana snapshot_minimizer leftover
 (`d0e3a47`; KYC) is logged
 (remaining listed is unused
 remaining-runtime slices
 `snapshot_utils` / `snapshot_bank_utils` /
-`snapshot_minimizer` / `bank.rs`
+`bank.rs`
 if still unused).
 Optimism leftover remaining
 PolicyEngineStaking leftover
