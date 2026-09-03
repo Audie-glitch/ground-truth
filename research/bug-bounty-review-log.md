@@ -44894,8 +44894,10 @@ Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
 is logged.
+Filecoin leftover remaining lotus lib backupds leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus lib (backupds / rpcenc / peermgr) if still unused.
+Remaining listed Filecoin: remaining lotus lib (rpcenc / peermgr) if still unused.
 Remaining listed Aave: v3 logic libraries / primacy.
 Remaining listed Jito: `jito-solana` other crates (if still unused).
 Remaining listed Rootstock: `rskj` / `rsk-powhsm` (if still unused).
@@ -69318,3 +69320,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a local verify shim as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus lib (backupds / rpcenc / peermgr) if still unused.
+
+## 2026-09-03: Filecoin leftover remaining lotus lib backupds leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus lib sigs leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `lib/backupds`. Opened `datastore.go`, `read.go`, and `log.go`. Local datastore dump/restore. Do not rematch lotus node leftover (`backup` / `LOTUS_BACKUP_BASE_PATH`). No mainnet writes. No exploit PoCs.
+
+Checked for: `RestoreInto` applying a stranger dump over a remote node without admin; `ReadBackup` skipping the SHA-256 checksum; `Backup` writing outside the leftover-logged backup base path.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Wrap` proxies a local `Batching` datastore. `Backup` dumps all KVs as CBOR plus a SHA-256 of the array. Puts are logged to a local `*.log.cbor` when `logdir` is set.
+- `ReadBackup` requires array(2) + indefinite array, then compares the trailing 32-byte checksum. A truncated log errors unless `LOTUS_ALLOW_TRUNCATED_LOG=1` (local env). `RestoreInto` only `Put`s into a caller-supplied dest.
+- Path gating and JWT admin live in leftover-logged `node/impl` backup RPC. This package does not sign or move FIL.
+
+Do not file a local DS dump helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus lib (rpcenc / peermgr) if still unused.
