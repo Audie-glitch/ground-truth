@@ -32994,6 +32994,15 @@ logged (remaining listed is
 oracles-v3 / integrations /
 bots / permissionless /
 periphery);
+Burrow leftover
+`contract.main.burrow.near`
+leftover (`0dbfa18`
+execute / ft_on_transfer /
+oracle_on_call /
+liquidate; KYC) is logged
+(listed leftover that
+official burrowland opens
+is exhausted);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
@@ -41143,3 +41152,144 @@ permissionless,
 and periphery-v3
 emergency / kyc /
 migration.
+
+## 2026-09-03: Burrow leftover main contract leftover (`0dbfa18`)
+
+Immunefi program
+`burrow` ($250,000,
+`kyc: true`). Unique
+unused standing
+program. Listed
+asset is
+`contract.main.burrow.near`.
+Official repo
+`NearDeFi/burrowland`
+at `0dbfa18`. Clone
+`/tmp/burrowland`.
+No mainnet writes.
+
+Files:
+`contract/src/actions.rs`,
+`contract/src/fungible_token.rs`,
+`contract/src/price_receiver.rs`,
+`contract/src/booster_staking.rs`.
+
+Checked for: a
+stranger
+`execute` /
+`ft_on_transfer`
+that withdraws
+another account;
+`oracle_on_call`
+from a non-oracle;
+liquidation of a
+healthy account;
+`force_close` that
+pays the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `execute` is
+  one-yocto and
+  loads
+  `predecessor`.
+  Withdraw burns
+  that account's
+  supplied shares
+  and
+  `ft_transfer`s
+  to the same
+  account. Borrow /
+  decrease-
+  collateral
+  require a post-
+  action health
+  check
+  (`max_discount
+  == 0`) and need
+  prices, so they
+  fail on the
+  empty
+  `Prices::new()`
+  path.
+- `ft_on_transfer`
+  credits
+  `sender_id` for
+  the predecessor
+  token, then
+  optionally
+  `Execute`s as
+  that sender
+  (same empty
+  prices).
+  `DepositToReserve`
+  increases
+  `reserved`.
+- `oracle_on_call`
+  requires
+  `predecessor ==
+  oracle` and
+  recency /
+  staleness
+  checks, then
+  executes as
+  `sender_id`.
+- `Liquidate`
+  cannot target
+  self. Victim
+  must have
+  `max_discount >
+  0`. In-assets
+  repay from the
+  liquidator's
+  supplied
+  shares; out-
+  assets move
+  discounted
+  collateral to
+  the liquidator.
+  Post-health
+  must stay at
+  risk and
+  improve.
+- `ForceClose`
+  is config-gated
+  and requires
+  borrowed >
+  collateral. It
+  moves
+  collateral into
+  `reserved` and
+  does not pay
+  the caller.
+- Booster
+  stake / unstake
+  bind
+  `predecessor`.
+
+Do not file
+permissionless
+liquidation of an
+at-risk account,
+oracle-gated
+priced actions,
+or reserve
+force-close as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`burrowland` opens
+is exhausted at
+the opened-file
+level. Remaining
+listed: none on
+the unofficial
+dump (single
+NEAR contract).

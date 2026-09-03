@@ -4,12 +4,14 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~09:40 UTC. Dates verified against each
+Status as of 3 September 2026, ~09:45 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~09:40 UTC;
-246 programs; no Sep 2026 launches; Gearbox leftover
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~09:45 UTC;
+246 programs; no Sep 2026 launches; Burrow leftover
+main contract leftover is logged;
+Gearbox leftover
 core-v3 pool + credit leftover is logged;
 FBTC leftover
 ETH FireBridge + minter leftover is logged;
