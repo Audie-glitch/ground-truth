@@ -17080,6 +17080,94 @@ inactive + MorphoVault
 V2 + polygon /
 arbitrum.
 
+## 2026-09-03: Harvest Penpie / Notional / StakeDAO / Yel leftover (`0364901`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Vault /
+4626 lend / Convex
+slices on the same pin
+`0364901` are already
+logged. This slice is
+the Pendle/Penpie,
+Notional nToken,
+StakeDAO, and Yel
+MasterChef strategies.
+Local clone
+`/tmp/harvest-strategy`.
+No mainnet interaction.
+
+Files:
+`contracts/strategies/penpie/PenpieStrategy.sol`,
+`notional/NotionalStrategy.sol`,
+`stakeDao/StakeDaoStrategy.sol`,
+`yel/YelStrategy.sol`.
+
+Checked for: a stranger
+unstaking Penpie /
+StakeDAO / Yel LP;
+withdraw that pays the
+vault more than idle
+plus staked;
+permissionless salvage
+of underlying.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Penpie
+  `depositMarket` /
+  `withdrawMarket` go
+  through the fixed
+  helper. Withdraw and
+  hard-work are
+  `restricted`.
+  Salvage refuses
+  underlying / reward.
+  Extra rewards swap
+  through the
+  liquidator with
+  `minOut = 1` (known
+  Harvest keeper
+  sandwich).
+- Notional holds
+  nTokens as
+  `underlying` on the
+  strategy. Withdraw
+  is a
+  `restricted`
+  transfer of that
+  balance.
+  `doHardWork` claims
+  nToken incentives
+  then mints more
+  nTokens via
+  `batchBalanceAction`.
+- StakeDAO stakes the
+  Curve LP in the
+  StakeVault. Partial
+  withdraw unstakes
+  `min(staked, need)`
+  then transfers the
+  requested amount
+  (reverts if short).
+  Claim is accountant
+  `try/catch`.
+- Yel uses
+  MasterChef
+  `withdraw(poolId,
+  amount)`. Same
+  restricted withdraw
+  / salvage pattern.
+
+Not submitted. Remaining
+Harvest is ZeroLend /
+CompoundV3 / Idle /
+inactive + MorphoVault
+V2 + polygon /
+arbitrum.
+
 ## 2026-09-03: Marinade crank / withdraw-stake leftover (`b8fe3f8`)
 
 Immunefi program
@@ -17939,10 +18027,10 @@ leftover (`0364901`) and
 4626 / Dolomite lend
 leftover and Convex /
 Aura / Aave fold leftover
+and Penpie / Notional /
+StakeDAO / Yel leftover
 are logged
 (remaining Harvest is
-Penpie / Notional /
-StakeDAO / Yel /
 ZeroLend / CompoundV3 /
 Idle / inactive +
 MorphoVault V2 + polygon
