@@ -39017,3 +39017,126 @@ public program
 repo, only
 `kliquidity-sdk`)
 and the website.
+## 2026-09-03: Folks Finance leftover spoke + hub loan (`7f631fe`)
+
+Immunefi program
+`folksfinance`
+($200,000, `kyc: true`).
+Unique unused
+standing program.
+Listed assets are
+docs URLs; in-scope
+is Exact Match
+Verified code from
+`folks-finance-xchain-contracts`.
+Official clone
+`/tmp/folks-xchain`
+`7f631fe`. No live
+Sourcify address
+match this pass.
+No mainnet writes.
+
+Files:
+`contracts/spoke/SpokeToken.sol`,
+`contracts/spoke/SpokeErc20Token.sol`,
+`contracts/spoke/SpokeCommon.sol`,
+`contracts/hub/Hub.sol`,
+`contracts/hub/LoanManager.sol`,
+`contracts/hub/AccountManager.sol`.
+
+Checked for: a
+spoke deposit that
+credits another
+account while
+pulling the
+caller; hub
+withdraw / borrow
+without loan
+ownership; hub
+`directOperation`
+fToken withdraw to
+a stranger;
+liquidation that
+moves a healthy
+loan.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Spoke
+  `deposit` /
+  `repay` /
+  `createLoanAndDeposit`
+  pull
+  `msg.sender` via
+  `_receiveToken`
+  and set payload
+  `userAddress` to
+  `msg.sender`.
+  Hub
+  `_receiveMessage`
+  requires that
+  address is
+  registered to
+  `accountId` on
+  the source
+  chain.
+- `LoanManager`
+  deposit /
+  withdraw /
+  borrow / repay
+  are `HUB_ROLE`
+  and
+  `isUserLoanOwner`.
+- Hub
+  `directOperation`
+  needs
+  `verifyCallerPermissionOnHub`
+  (registered or
+  delegate).
+  `withdrawFToken`
+  pays
+  `msg.sender`.
+  `liquidate` uses
+  the caller's
+  `accountId` as
+  liquidator and
+  requires that
+  account owns
+  `liquidatorLoanId`.
+- Spoke
+  `SendToken`
+  accepts only the
+  hub and pays
+  `payload.userAddress`.
+
+Do not file
+admin listing /
+fee claim, or
+permissionless
+liquidation of an
+undercollateralised
+loan into the
+liquidator's own
+loan, as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Folks
+Finance spoke +
+hub loan leftover
+is exhausted at
+the opened-file
+level. Remaining
+listed: Exact
+Match live
+addresses if
+docs resolve
+them, hub pools,
+oracle nodes, and
+bridge adapters
+(Wormhole / CCIP).
