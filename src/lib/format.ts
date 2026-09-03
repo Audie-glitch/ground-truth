@@ -61,3 +61,10 @@ export function formatShortDate(t: number): string {
     day: "numeric",
   });
 }
+
+/** Human-readable strategy parameters for walk-forward verdicts. */
+export function formatStrategyParams(params: Record<string, number>): string {
+  const entries = Object.entries(params);
+  if (entries.length === 0) return "defaults (no tunable parameters)";
+  return entries.map(([k, v]) => `${k}=${v}`).join(", ");
+}

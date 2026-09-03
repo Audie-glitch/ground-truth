@@ -37,6 +37,11 @@ own chosen asset is more convincing than being told.
 The **Strategy shootout** tab is the fastest way to see this: it runs every
 built-in strategy at its default settings over the same window and ranks them.
 
+The **Walk-forward** tab goes one step further: it grid-searches parameters on
+the first portion of the window (train), freezes the winner, and runs it on the
+remaining unseen dates (test). A strategy that looks brilliant on train and
+collapses on test was fitted to the past, not discovered in the market.
+
 ## Running it
 
 ```bash

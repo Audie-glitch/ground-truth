@@ -139,3 +139,48 @@ export type PaperAccount = {
   fills: PaperFill[];
   openedAt: number;
 };
+
+export type WalkForwardObjective = "return" | "sharpe";
+
+export type WalkForwardPeriodMetrics = {
+  from: number;
+  to: number;
+  days: number;
+  totalReturn: number;
+  maxDrawdown: number;
+  sharpe: number;
+  tradeCount: number;
+  feesPaid: number;
+  finalEquity: number;
+};
+
+export type WalkForwardResult = {
+  strategyId: StrategyId;
+  strategyName: string;
+  coinId: string;
+  coinLabel: string;
+  initialCapital: number;
+  feeBps: number;
+  slippageBps: number;
+  trainRatio: number;
+  objective: WalkForwardObjective;
+  /** Params chosen by grid search on the train window only. */
+  optimizedParams: Record<string, number>;
+  /** How many parameter combinations were evaluated on train. */
+  combinationsTried: number;
+  train: WalkForwardPeriodMetrics & {
+    params: Record<string, number>;
+    benchmarkReturn: number;
+  };
+  /** Out-of-sample with params frozen from train. */
+  testOptimized: WalkForwardPeriodMetrics & {
+    benchmarkReturn: number;
+  };
+  /** Out-of-sample with default params, never seeing test data. */
+  testDefault: WalkForwardPeriodMetrics & {
+    params: Record<string, number>;
+    benchmarkReturn: number;
+  };
+  /** train.totalReturn − testOptimized.totalReturn. Large positive ⇒ overfit. */
+  overfitGap: number;
+};

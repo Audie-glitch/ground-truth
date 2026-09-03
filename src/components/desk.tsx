@@ -7,6 +7,7 @@ import { BacktestLab, type AssetOption } from "@/components/backtest-lab";
 import { MarketTable } from "@/components/market-table";
 import { PaperDesk } from "@/components/paper-desk";
 import { StrategyShootout } from "@/components/strategy-shootout";
+import { WalkForwardLab } from "@/components/walk-forward-lab";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -75,6 +76,7 @@ export function Desk({ initialCoins, initialError }: Props) {
     <Tabs value={tab} onValueChange={setTab} className="gap-4">
       <TabsList className="w-full justify-start overflow-x-auto sm:w-auto">
         <TabsTrigger value="backtest">Backtest</TabsTrigger>
+        <TabsTrigger value="walkforward">Walk-forward</TabsTrigger>
         <TabsTrigger value="shootout">Strategy shootout</TabsTrigger>
         <TabsTrigger value="markets">Markets</TabsTrigger>
         <TabsTrigger value="paper">Paper desk</TabsTrigger>
@@ -93,6 +95,14 @@ export function Desk({ initialCoins, initialError }: Props) {
 
       <TabsContent value="backtest">
         <BacktestLab
+          assets={assets}
+          coinId={selectedCoinId}
+          onCoinIdChange={setCoinId}
+        />
+      </TabsContent>
+
+      <TabsContent value="walkforward">
+        <WalkForwardLab
           assets={assets}
           coinId={selectedCoinId}
           onCoinIdChange={setCoinId}

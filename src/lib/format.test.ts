@@ -4,6 +4,7 @@ import {
   formatPct,
   formatPctMagnitude,
   formatPlainPct,
+  formatStrategyParams,
   formatUnits,
   formatUsd,
 } from "./format";
@@ -26,6 +27,12 @@ describe("formatPctMagnitude", () => {
 describe("formatPlainPct", () => {
   it("renders an unsigned share", () => {
     expect(formatPlainPct(0.75, 0)).toBe("75%");
+  });
+});
+
+describe("formatStrategyParams", () => {
+  it("describes an empty parameter set plainly", () => {
+    expect(formatStrategyParams({})).toMatch(/no tunable/i);
   });
 });
 
