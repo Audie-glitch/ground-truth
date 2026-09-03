@@ -12,6 +12,7 @@ ZNS), Sherlock contests API (paginated; page-1 Tare is
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
 246 programs; no Sep 2026 launches; Arbitrum leftover remaining websites leftover is logged;
 Optimism leftover remaining ResourceMetering leftover is logged;
+Optimism leftover remaining CrossDomainOwnable leftover is logged;
 Jito leftover remaining jito-solana runtime_config leftover is logged;
 Jito leftover remaining jito-solana static_ids leftover is logged;
 Jito leftover remaining jito-solana read_optimized_dashmap leftover is logged;
@@ -1902,6 +1903,9 @@ open).
 Optimism leftover remaining
 ResourceMetering leftover
 (`eea9542`; KYC) is logged.
+Optimism leftover remaining
+CrossDomainOwnable leftover
+(`eea9542`; KYC) is logged.
 Arbitrum leftover remaining
 nitro challenge leftover
 (`7fc6624`; KYC) is logged.
@@ -3074,6 +3078,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`a8a3b818`; KYC),
   Optimism leftover remaining
   ResourceMetering leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  CrossDomainOwnable leftover
   (`eea9542`; KYC),
   Arbitrum leftover remaining
   nitro challenge leftover

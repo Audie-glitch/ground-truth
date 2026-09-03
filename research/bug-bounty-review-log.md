@@ -47572,7 +47572,7 @@ Remaining listed Filecoin: unused official leftover that listed trees open is ex
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
 Remaining listed Jito: unused official leftover that listed remaining-runtime trees open is exhausted on this pin. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_client leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana prioritization_fee leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana commitment leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana slot_params leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana genesis_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana alpenglow_epoch_type leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana leader_schedule leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana sysvar_account leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana loader_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana vote_sender leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana installed_scheduler leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana read_optimized_dashmap leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana static_ids leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana runtime_config leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
-Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
+Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -47699,6 +47699,7 @@ Do not rematch Optimism leftover remaining op-reth consensus leftover.
 Do not rematch Optimism leftover remaining op-reth consensus + txpool leftover.
 Do not rematch Optimism leftover remaining rust/op-reth flashblocks leftover.
 Do not rematch Optimism leftover remaining ResourceMetering leftover.
+Do not rematch Optimism leftover remaining CrossDomainOwnable leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
 Do not rematch Arbitrum leftover remaining governance leftover.
@@ -73810,3 +73811,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an EIP-1559 deposit gas burn as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused bedrock helpers (`CrossDomainOwnable` / other unlogged `packages/contracts-bedrock` slices) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Optimism leftover remaining CrossDomainOwnable leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining unused bedrock leftover after ResourceMetering leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `packages/contracts-bedrock/src/L2/{CrossDomainOwnable,CrossDomainOwnable2,CrossDomainOwnable3}.sol`. Official raw GitHub **200**. Local extract `/tmp/op-cross/` (23 / 29 / 57 lines). Do not rematch L1 portal / StandardBridge leftover, dispute games leftover, ETHLockbox leftover, or ResourceMetering leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `_checkOwner` that accepts an unaliased L2 EOA as owner when `isLocal` is false; messenger spoof that sets `xDomainMessageSender` to an attacker-chosen address without a real L1→L2 relay; `transferOwnership(_owner, _isLocal)` that lets a non-owner flip `isLocal` or assign ownership.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `CrossDomainOwnable` (portal-direct path): `_checkOwner` requires `owner() == AddressAliasHelper.undoL1ToL2Alias(msg.sender)`. Only the aliased L1 owner contract can pass when calling through the portal.
+- `CrossDomainOwnable2` (messenger path): requires `msg.sender == Predeploys.L2_CROSS_DOMAIN_MESSENGER` and `owner() == messenger.xDomainMessageSender()`. A random L2 caller cannot satisfy both.
+- `CrossDomainOwnable3`: when `isLocal`, standard `owner() == msg.sender`. When not local, same messenger + `xDomainMessageSender` gate as v2. `transferOwnership` is `onlyOwner` and rejects zero address; it updates `isLocal` atomically with ownership transfer.
+
+Do not file cross-domain aliasing or messenger sender checks as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused bedrock helpers (`CrossL2Inbox` / `SuperchainConfig` / `LegacyMessagePasser` / `L2ProxyAdmin` / other unlogged `packages/contracts-bedrock` slices) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
