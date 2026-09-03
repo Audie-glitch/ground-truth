@@ -1,6 +1,6 @@
 # Goal evidence matrix
 
-**Audited:** 3 September 2026 03:13 UTC  
+**Audited:** 3 September 2026 16:00 UTC  
 **Goal:** Gain crypto assets through legitimate, legal, non-custodial earning opportunities.
 
 | Requirement | Authoritative evidence | Status | Remaining proof |
@@ -13,8 +13,8 @@
 | Execute repository contribution | No KeeperHub source change. CreditPassport is original Attestcoin work in-tree; it is not submitted and not deployed to testnet. T3N Vendor Receipts and Mermail skill are in-tree; both still need the participant to submit. | **Not achieved** | KeeperHub window opens Sep 6. CTC deploy + DoraHacks / Superteam / Devpost submit need the participant. |
 | Submit contribution to the earning program | No KeeperHub PR or DoraHacks BUIDL exists | **Not achieved** | Requires the participant's authenticated GitHub fork, DoraHacks account, contact details, and truthful eligibility. |
 | Verify acceptance or judging result | No PR acceptance or official judging result exists | **Not achieved** | Inspect authoritative PR and DoraHacks state after submission. |
-| Inspect wallet access and balances | Rechecked 01:23 UTC 3 Sep 2026. Still no `session.json` / `addresses.json` / `user-provided.json`. First-client tokens valid until ~01:58 UTC. DCR2 Connect code reminted to `xc7DQseV` (10 min TTL). Client `b90d07cd-…` still a stub whitelist row. | **Not achieved** | Need a real Portal App ID with the device-code grant, Connect approval that actually returns a `walletId`, or a MetaMask address shared on `/connect`. |
-| Execute a legal acquisition on a funded wallet | Rechecked 03:12 UTC 3 Sep. CreditPassport deployer `0x8F72A0f832068555C0edAf649b1F8A37d33bA14D` is **0 ETH on Sepolia and 0 tCTC on CC3**. No participant payout address. | **Not achieved** | Need faucet gas on that testnet-only deployer, plus later a winner payout to the participant's own wallet. |
+| Inspect wallet access and balances | Rechecked 16:00 UTC 3 Sep 2026. Still no `session.json` / `addresses.json` / `user-provided.json`. First-client tokens refreshed (~55 min left). DCR2 Connect code `K7Kw6eej` live at http://127.0.0.1:43117/connect. Client `b90d07cd-…` still a stub whitelist row. Phantom MCP `wallet_status` timed out (no session). | **Not achieved** | Need Connect approval that returns a `walletId`, a real Portal App ID, or a MetaMask/Base address pasted on `/connect`. |
+| Execute a legal acquisition on a funded wallet | Rechecked 16:00 UTC 3 Sep. `/tmp/funded-acquisition-status.json` still `no-address`. Agent Bounties parent `0x71b7…` needs ~1.1 USDC + Base gas on a distinct child solver. No on-chain tx executed. | **Not achieved** | Funded Base signer + Connect session, or user signs Agent Bounties from own MetaMask at https://agentbounties.app/earn.html . |
 | Verify crypto assets gained | No transaction or payout exists | **Not achieved** | Require an onchain transfer or balance change at an address the participant controls. Never publish or take custody of wallet secrets. |
 
 ## Current blockers

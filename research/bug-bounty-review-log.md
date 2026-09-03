@@ -74230,3 +74230,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an endpoint-gated channel commit, an OApp-gated lzReceive, or an admin-only proxy call as stranger theft.
 
 Not submitted. Payment requires user KYC. LayerZero listed non-EVM leftovers that official trees open are exhausted at leftover-heading level. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Quantus audit competition chain (`3b243b8`)
+
+Immunefi program `audit-comp-quantus` ($20,000 pool, `kyc: false`, launched 12 Aug 2026). In-scope GitHub tree: `immunefi-team/audit-comp-quantus-chain`. Pin `3b243b8` (`3b243b870a5442a6e5f443056f67bbba87d472f5`, committer 10 Aug 2026). Local clone `/tmp/quantus-chain`. Reviewed money-moving pallets only: `pallets/reversible-transfers`, `pallets/wormhole` (settlement + nullifiers), `pallets/mining-rewards`, `pallets/treasury`, `pallets/vesting` (claim path skim), `pallets/zk-tree` (leaf insert API). No mainnet interaction. No exploit PoCs.
+
+Checked for: permissionless mint/credit without a valid ZK proof; nullifier reuse or intra-bundle collision that still mints; reversible-transfer hold release to the wrong party; guardian `recover_funds` stealing from non-high-security accounts; miner reward inflation beyond `MaxSupply`; treasury portion mis-route; vesting claim that credits a stranger.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `wormhole::verify_private_batch` / `verify_public_batch` require compiled plonky2 verifier artifacts, canonical circuit profiles, and `MAX_PROOF_BYTES` caps before parsing. `process_exit_bundle` recomputes segment validity at inclusion, marks nullifiers before minting, rejects duplicate nullifiers within a segment, and skips dummy-padded segments. Failed below-ED credits skip mint but nullifier stays spent (documented griefing, not theft).
+- `reversible-transfers`: native holds via `pallet_balances::hold`; execution is scheduler-signed only (`InvalidSchedulerOrigin` otherwise). Cancel authority is frozen in `pending.guardian` at schedule time; volume fee burns on guardian cancel for high-security accounts. `recover_funds` requires live guardian match and is intentional seize-the-account semantics.
+- `mining-rewards`: block reward is `remaining_supply / EmissionDivisor` capped by `MaxSupply`; fees re-minted to miner/treasury via `on_finalize`. Miner ID comes from pre-runtime digest, not caller-supplied.
+- `treasury`: genesis requires explicit account + portion; defaults to unconfigured (panics on use) rather than minting sentinel `[1u8;32]`.
+
+Time spent: roughly 45 minutes on chain pallets only. Remaining Quantus scope (mobile SDK, Poseidon circuits, hdwallet/dilithium crates) not read this pass. Submission would require Immunefi account; payout is audit-competition pool, not instant on finding.
+
+Not submitted. Next unused Immunefi program: `audit-competition-ens` (KYC) or Quantus app/circuit repos if continuing this program.
