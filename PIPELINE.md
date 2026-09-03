@@ -201,6 +201,12 @@ Gamma leftover (Sourcify ETH xGamma /
 Hypervisor / UniProxy) is logged
 (listed leftover that Sourcify opens is
 exhausted).
+SPOT leftover (Sourcify ETH
+PerpetualTranche / RouterV1 /
+BondFactory / BondIssuer) is logged
+(listed leftover that Sourcify opens is
+exhausted; remaining listed is the
+website).
 Beefy Finance leftover (Sourcify Polygon
 `BeefyVaultV6` + common chef / DFYN /
 Curve / BIFI-maxi strategies) is logged.
@@ -618,6 +624,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   xGamma / Hypervisor /
   UniProxy; listed leftover
   that Sourcify opens is
+  exhausted),
+  SPOT leftover (Sourcify ETH
+  PerpetualTranche / RouterV1 /
+  BondFactory / BondIssuer;
+  listed leftover that
+  Sourcify opens is
   exhausted),
   and
   Horizen ZenStaker (no submittable finding).

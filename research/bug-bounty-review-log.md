@@ -28160,6 +28160,117 @@ Sourcify opens is
 exhausted (all three
 listed addresses).
 
+## 2026-09-03: SPOT leftover (Sourcify)
+
+Immunefi program
+`SPOT` ($10,000,
+`kyc: false`). Unique
+no-KYC listed Ethereum
+slice. Sourcify
+`exact_match`
+`TransparentUpgradeableProxy`
+`0xC1f33e0cf7e40a67375007104B929E49a581bafE`
+→ impl `PerpetualTranche`
+`0x62cbE9F24413485f04FA62F9548C7855ec4a5425`
+(`exact_match`) and
+`BondIssuer`
+`0x2E2E49eDCd5ce08677Bab6d791C863f1361B52F2`;
+`match` `RouterV1`
+`0x38f600e08540178719BF656e6B43FC15A529c393`
++ `BondFactory`
+`0x2b135C839d61808E1eC6F84151CD9429B0920374`.
+Extract `/tmp/spot`.
+No mainnet interaction.
+
+Files:
+`token_impl/contracts/PerpetualTranche.sol`,
+`router/contracts/RouterV1.sol`,
+`factory/contracts/BondFactory.sol`,
+`factory/contracts/BondController.sol`,
+`issuer/contracts/BondIssuer.sol`.
+
+Checked for: a stranger
+`deposit` that mints
+perp or tranche tokens
+without pulling that
+caller; `redeem` that
+pays a caller other
+than the burner;
+router helpers that
+pull a third party.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- PerpetualTranche
+  `deposit` pulls
+  `msg.sender` into the
+  reserve and mints
+  perp to that sender.
+  `redeem` burns
+  `msg.sender` (fee
+  stays via
+  `transfer` from that
+  sender) and pays
+  reserve tokens to
+  that sender.
+  `rollover` /
+  `claimFees` /
+  `payProtocolFee` /
+  `rebalanceToVault`
+  are `onlyVault`.
+- RouterV1
+  `trancheAndDeposit`
+  / `trancheAndRollover`
+  `transferFrom`
+  `msg.sender` and
+  return leftover
+  collateral / fee /
+  unused tranches /
+  minted perp to that
+  sender. The listed
+  Router still calls
+  `perp.rollover`,
+  which is `onlyVault`
+  on the listed
+  PerpetualTranche
+  impl (reverts).
+- BondController
+  `deposit` pulls
+  `msg.sender` and
+  mints tranches to
+  that sender.
+  `redeem` /
+  `redeemMature` burn
+  or redeem
+  `msg.sender` and pay
+  that sender. First
+  deposit requires
+  `MINIMUM_FIRST_DEPOSIT`.
+- BondIssuer `issue`
+  is a timed factory
+  poke. BondFactory
+  `createBond` clones
+  a new controller.
+
+Do not file first-
+deposit minimum,
+owner fee / mature,
+vault-only rollover
+or debasement mint,
+keeper pause / mint
+caps, or leftover
+tokens sitting on
+the router as theft.
+
+Not submitted.
+Listed leftover that
+Sourcify opens is
+exhausted. Remaining
+listed: the website.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -29283,6 +29394,14 @@ UniProxy) is logged
 (listed leftover that
 Sourcify opens is
 exhausted);
+SPOT leftover (Sourcify
+ETH PerpetualTranche /
+RouterV1 / BondFactory /
+BondIssuer) is logged
+(listed leftover that
+Sourcify opens is
+exhausted; remaining
+listed is the website);
 Beefy Finance leftover
 (Sourcify Polygon
 `BeefyVaultV6` + common
