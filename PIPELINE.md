@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~11:50 UTC. Dates verified against each
+Status as of 3 September 2026, ~11:55 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
@@ -41,6 +41,8 @@ Hedera leftover remaining SDK-go leftover is logged;
 Filecoin leftover remaining lotus miner leftover is logged;
 Filecoin leftover remaining proofs leftover is logged;
 Filecoin leftover remaining filecoin.io website leftover is logged;
+Filecoin leftover remaining filecoin-ffi leftover is logged;
+Filecoin leftover remaining go-graphsync leftover is logged;
 Filecoin leftover builtin-actors market + paych leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 ZKsync OS leftover evm_interpreter leftover is logged;
@@ -1268,6 +1270,19 @@ is logged (remaining listed
 is go-graphsync / remaining
 go-* / lotus non-miner /
 paired / filecoin-ffi).
+Filecoin leftover remaining
+filecoin-ffi leftover
+(`17b1c64`; KYC) is logged
+(remaining listed is
+go-graphsync / remaining go-* /
+lotus non-miner / paired).
+Filecoin leftover remaining
+go-graphsync leftover
+(`12cbffa`; KYC) is logged
+(remaining listed is
+remaining go-* / lotus
+non-miner / paired /
+go-data-transfer).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2122,6 +2137,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`d451d23`; KYC),
   Filecoin leftover remaining
   filecoin.io website leftover,
+  Filecoin leftover remaining
+  filecoin-ffi leftover
+  (`17b1c64`; KYC),
+  Filecoin leftover remaining
+  go-graphsync leftover
+  (`12cbffa`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai

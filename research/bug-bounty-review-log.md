@@ -40946,6 +40946,189 @@ paired /
 filecoin-ffi.
 
 
+## 2026-09-03: Filecoin leftover remaining filecoin-ffi leftover (`17b1c64`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`filecoin-project/filecoin-ffi`
+after rust-fil-proofs leftover.
+Official
+`filecoin-project/filecoin-ffi`
+`17b1c64`.
+Extract
+`/tmp/filecoin-ffi`.
+Do not rematch
+proofs /
+proofs-api /
+proofs-ffi leftovers.
+No mainnet
+writes.
+
+Files:
+`cgo/proofs.go`,
+`rust/src/proofs/api.rs`.
+
+Checked for:
+a stranger
+`VerifySeal`
+that
+accepts a
+proof without
+the named
+`proverId`;
+`verify_winning_post`
+/
+`verify_window_post`
+that
+drop
+`prover_id`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Go
+  `VerifySeal`
+  /
+  `VerifyWinningPoSt`
+  /
+  `VerifyWindowPoSt`
+  pass
+  `proverId`
+  into C
+  `verify_*`.
+- Rust
+  `verify_winning_post`
+  /
+  `verify_window_post`
+  forward
+  `prover_id`
+  into
+  leftover-
+  logged
+  `filecoin_proofs_api`.
+- `verify_aggregate_seal_proof`
+  rebuilds
+  seal
+  inputs
+  from
+  `prover_id`
+  plus
+  each
+  commit
+  input.
+- Wrappers
+  return
+  bool
+  only;
+  they
+  do not
+  move FIL.
+
+Do not file
+an FFI
+that
+forwards
+`prover_id`
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+go-graphsync /
+remaining go-* /
+lotus non-miner /
+paired.
+
+## 2026-09-03: Filecoin leftover remaining go-graphsync leftover (`12cbffa`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`ipfs/go-graphsync`
+after filecoin-ffi leftover.
+Official
+`ipfs/go-graphsync`
+`12cbffa`.
+Extract
+`/tmp/go-graphsync`.
+No mainnet
+writes.
+
+Files:
+`impl/graphsync.go`,
+`requestmanager/client.go`.
+
+Checked for:
+a GraphSync
+request
+that
+spends
+another
+peer's
+FIL;
+a voucher
+or
+payment
+channel
+in the
+IPLD
+exchange.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `GraphSync`
+  is an
+  IPLD
+  block
+  exchange
+  over
+  libp2p.
+- Request
+  manager
+  tracks
+  outgoing
+  CID
+  selectors
+  and
+  incoming
+  blocks.
+- No
+  wallet,
+  voucher,
+  or FIL
+  transfer
+  in this
+  crate.
+
+Do not file
+an IPLD
+block
+exchange
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining go-* /
+lotus non-miner /
+paired /
+go-data-transfer.
+
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -40973,8 +41156,12 @@ Filecoin leftover remaining proofs leftover (`d451d23`)
 is logged.
 Filecoin leftover remaining filecoin.io website leftover
 is logged.
+Filecoin leftover remaining filecoin-ffi leftover (`17b1c64`)
+is logged.
+Filecoin leftover remaining go-graphsync leftover (`12cbffa`)
+is logged.
 Remaining listed Hedera: hashed transaction-tool website.
-Remaining listed Filecoin: go-graphsync / remaining go-* / lotus non-miner / paired / filecoin-ffi.
+Remaining listed Filecoin: remaining go-* / lotus non-miner / paired / go-data-transfer.
 
 Remaining listed ZKsync OS: airbender CS / prover /
 verifier, `zkos-wrapper`.
@@ -40983,6 +41170,7 @@ json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
 lotus miner, FVM, proofs-api, proofs-ffi, or proofs.
 Do not rematch filecoin.io website leftover.
+Do not rematch filecoin-ffi or go-graphsync leftover.
 Do not rematch ZKsync bootloader, interpreter,
 storage_models, proof_running_system, or zk_ee.
 Do not loop `reffinance` 404s or mux-staking auth.
@@ -43532,6 +43720,14 @@ Filecoin leftover remaining filecoin.io website leftover
 is logged (remaining listed is go-graphsync /
 remaining go-* / lotus non-miner / paired /
 filecoin-ffi);
+Filecoin leftover remaining filecoin-ffi leftover
+(`17b1c64`) is logged (remaining listed is
+go-graphsync / remaining go-* / lotus non-miner /
+paired);
+Filecoin leftover remaining go-graphsync leftover
+(`12cbffa`) is logged (remaining listed is
+remaining go-* / lotus non-miner / paired /
+go-data-transfer);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
 Sei leftover go-ethereum leftover (`bb451e2`) is logged;
