@@ -3525,6 +3525,50 @@ Result: no user-exploitable finding.
 Remaining DFS protocol actions: Aave / Liquity /
 CurveUsd / Fluid / Euler / … Not submitted.
 
+## 2026-09-03: DeFi Saver Liquity V2 trove + SP (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction.
+
+Files: `contracts/actions/liquityV2/trove/{LiquityV2Open,
+LiquityV2Borrow,LiquityV2Withdraw,LiquityV2Close,
+LiquityV2Adjust,LiquityV2AdjustZombieTrove,
+LiquityV2Payback,LiquityV2Supply,LiquityV2Claim}.sol`,
+`stabilityPool/{LiquityV2SPDeposit,LiquityV2SPWithdraw,
+LiquityV2SPClaimColl}.sol`,
+`helpers/LiquityV2Helper.sol`.
+
+Checked for: open/borrow on a trove the wallet does
+not own; close that sends more coll than the trove
+returned; payback past `MIN_DEBT` that bricks the
+trove; SP withdraw of another depositor; WETH max
+open that spends the gas-compensation lock as coll.
+
+Result: no user-exploitable finding.
+
+- Open always sets Liquity `owner` to `address(this)`
+  (the wallet). `troveId = keccak256(wallet,
+  ownerIndex)`. 0.0375 WETH gas lock is pulled in
+  addition to coll; WETH-max open subtracts that
+  lock before `openTrove`. BOLD minted is sent to
+  `to`.
+- Borrow / withdraw / adjust / close / addColl call
+  `BorrowerOperations` as the wallet. Liquity
+  requires the caller to be owner or manager. A
+  third-party `troveId` reverts.
+- Close pulls `entireDebt` BOLD, then sends
+  `entireColl` (+ gas lock if WETH market) to `to`.
+  Payback / adjust-payback cap at
+  `entireDebt - MIN_DEBT`.
+- SP deposit/withdraw/claim use `address(this)` as
+  the depositor. Gains are snapshotted, then claimed
+  in the same call, then sent to the recipe
+  recipients.
+
+Remaining DFS protocol actions: Aave / CurveUsd /
+Fluid / Euler / Liquity V1. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3564,10 +3608,10 @@ exhausted. 1inch Aqua opcode set and Aqua-listed
 solidity-utils mixins / libraries (`5b597e4`) are
 exhausted. DeFi Saver V3 executor + FL + auth
 (`e623f20`) and exchangeV3 + sell actions (`e623f20`)
-are logged; Morpho Blue actions (`e623f20`) are
-logged. Remaining DFS is protocol `actions/*`
-(Aave / Liquity / CurveUsd / Fluid / Euler) and
-the rest of `tx-saver`. Next unreviewed Immunefi
+are logged; Morpho Blue and Liquity V2 actions
+(`e623f20`) are logged. Remaining DFS is protocol
+`actions/*` (Aave / CurveUsd / Fluid / Euler /
+Liquity V1) and the rest of `tx-saver`. Next unreviewed Immunefi
 GitHub-or-recent trees: DeFi Saver protocol actions,
 Jito restaking `restaking_*` / `vault_*`
 plus `jito-solana` / `mev-programs` ($250k, KYC;
