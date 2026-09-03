@@ -43675,6 +43675,112 @@ Remaining listed:
 CCIP GHO pools /
 protocol-v2.
 
+## 2026-09-03: Aave leftover remaining CCIP GHO leftover (`d5c6ced`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after L2Pool leftover.
+Official
+`aave/ccip`
+`d5c6ced`.
+Extract
+`/tmp`.
+Do not rematch
+GHO token leftover.
+Do not rematch
+FlashMinter leftover.
+No mainnet
+writes.
+
+Files:
+`contracts/src/v0.8/ccip/pools/GHO/UpgradeableLockReleaseTokenPool.sol`,
+`contracts/src/v0.8/ccip/pools/GHO/UpgradeableBurnMintTokenPool.sol`.
+
+Checked for:
+a
+stranger
+`releaseOrMint`
+that
+pays
+without
+an
+offRamp;
+`withdrawLiquidity`
+without
+the
+rebalancer.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `lockOrBurn`
+  /
+  `releaseOrMint`
+  call
+  `_validateLockOrBurn`
+  /
+  `_validateReleaseOrMint`,
+  which
+  require
+  the
+  router
+  onRamp
+  /
+  offRamp
+  for
+  that
+  chain.
+- Lock-release
+  `provideLiquidity`
+  /
+  `withdrawLiquidity`
+  require
+  `s_rebalancer`.
+  `transferLiquidity`
+  /
+  `setRebalancer`
+  /
+  `setCurrentBridgedAmount`
+  are
+  `onlyOwner`.
+  `setBridgeLimit`
+  is
+  owner
+  or
+  `s_bridgeLimitAdmin`.
+- Burn-mint
+  `directMint`
+  /
+  `directBurn`
+  are
+  `onlyOwner`.
+  `initialize`
+  is
+  OZ
+  `initializer`.
+
+Do not file
+a
+router-
+gated
+CCIP
+GHO
+pool
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+protocol-v2.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43836,9 +43942,11 @@ Aave leftover remaining VotingStrategy leftover (`497226e`)
 is logged.
 Aave leftover remaining L2Pool leftover (`cff15de`)
 is logged.
+Aave leftover remaining CCIP GHO leftover (`d5c6ced`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: CCIP GHO pools / protocol-v2.
+Remaining listed Aave: protocol-v2.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43888,6 +43996,7 @@ Do not rematch Aave governance-v3 leftover.
 Do not rematch Aave governance voting leftover.
 Do not rematch Aave VotingStrategy leftover.
 Do not rematch Aave L2Pool leftover.
+Do not rematch Aave CCIP GHO leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -46530,6 +46639,9 @@ L2Pool / CCIP GHO pools / protocol-v2);
 Aave leftover remaining L2Pool leftover
 (`cff15de`) is logged (remaining listed is
 CCIP GHO pools / protocol-v2);
+Aave leftover remaining CCIP GHO leftover
+(`d5c6ced`) is logged (remaining listed is
+protocol-v2);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
