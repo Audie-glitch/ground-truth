@@ -3602,9 +3602,98 @@ Result: no user-exploitable finding.
   clears leftover approval. `signed256` reverts above
   `int256.max`.
 
-Remaining Fluid: Dex T2/T3/T4 operate paths. Remaining
-DFS: Aave / CurveUsd / Euler / Liquity V1. Not
-submitted.
+Remaining Fluid: Dex T2/T3/T4 operate paths.
+Aave V3 / Comp / Spark / Liquity V1 follow.
+Not submitted.
+
+## 2026-09-03: DeFi Saver Aave V3 money actions (`e623f20`)
+
+Same Immunefi program (`defisaver`, $350,000, no KYC).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction. Exchange/sell already logged;
+this slice is Aave V3 supply / withdraw / borrow /
+payback.
+
+Files: `contracts/actions/aaveV3/{AaveV3Supply,AaveV3Withdraw,AaveV3Borrow,AaveV3Payback}.sol`.
+
+Checked for: a fake AddressProvider that drains an
+approved pull; withdraw/borrow of another wallet’s
+position; `onBehalf` without Aave credit delegation.
+
+Result: no user-exploitable finding.
+
+- Token is `getReserveAddressById` on the pool
+  returned by the caller-chosen market (or
+  `useDefaultMarket`). Supply/payback pull from
+  `from` (needs allowance if not the wallet).
+- Borrow/withdraw move the wallet’s own position.
+  `onBehalf` needs Aave credit delegation.
+- A fake AddressProvider would need the wallet
+  owner or a `BotAuth` bot to pass it in. Bots
+  are owner-approved (already logged).
+
+## 2026-09-03: DeFi Saver Comp V2/V3 + Spark + Liquity V1 (`e623f20`)
+
+Same program and clone. Liquity V2 trove/SP already
+logged; this slice adds Comp, Spark, and Liquity V1,
+plus a V2 fake-registry note.
+
+Files: `contracts/actions/compoundV3/{CompV3Supply,CompV3Withdraw,CompV3Borrow,CompV3Payback,CompV3Transfer,CompV3Allow,CompV3Claim}.sol`,
+`contracts/actions/compound/{CompSupply,CompWithdraw,CompBorrow,CompPayback}.sol`,
+`contracts/actions/spark/{SparkSupply,SparkWithdraw,SparkBorrow,SparkPayback,SparkSpTokenPayback,SparkDelegateCredit}.sol`,
+`contracts/actions/spark/helpers/SparkHelper.sol`,
+`contracts/actions/liquity/trove/{LiquityOpen,LiquityClose}.sol`,
+`contracts/actions/liquity/stabilityPool/LiquitySPWithdraw.sol`,
+`contracts/utils/token/TokenUtils.sol`.
+
+Checked for: CompV3 withdraw/borrow/transfer of
+another account without `allow`; a fake Comet /
+Spark AddressProvider that makes `withdrawTokens`
+send the wallet’s existing balance; Spark delegate
+that a stranger can set; Liquity V1 close that
+over-pulls LUSD.
+
+Result: no user-exploitable finding.
+
+- CompV3 `onBehalf == 0` defaults to the wallet.
+  `withdrawFrom` / `transferAssetFrom` against
+  another account need Comet `allow`. `CompV3Allow`
+  calls `allow` as the wallet. Claim uses hardcoded
+  `COMET_REWARDS_ADDR` and a receiver balance
+  delta. A fake Comet cannot move a real position.
+- Comp V2 `getUnderlyingAddr` is
+  `cToken.underlying()` (cETH hardcoded). Withdraw
+  uses a wallet balance delta. Borrow / supply to
+  a fake cToken that returns `NO_ERROR` then
+  `withdrawTokens` of the requested amount would
+  drain existing wallet tokens of that underlying
+  — owner-or-bot fake-target, same as Aave
+  `market`. Payback caps at
+  `borrowBalanceCurrent`.
+- Spark resolves the pool via
+  `ISparkPoolAddressesProvider(_market).getPool()`
+  unless `useDefaultMarket`. Withdraw sends from
+  the pool to `to`. Borrow then
+  `withdrawTokens(_to, amount)` is the same
+  fake-pool drain if the owner/bot passes a
+  hostile AddressProvider. Delegate credit is
+  `approveDelegation` as the wallet.
+- Liquity V2 (already logged): money actions take
+  `IAddressesRegistry(market)` as given.
+  `getDebtInFront` whitelists WETH/wstETH/rETH,
+  but open/adjust/close/SP do not. A fake
+  registry that reports a huge `entireColl` / SP
+  gain would make `withdrawTokens` send the
+  wallet’s existing coll/BOLD; owner/bot only.
+- Liquity V1 addresses are hardcoded in
+  `LiquityHelper`. Close reads the wallet’s own
+  trove debt/coll, pulls that LUSD, then wraps
+  and sends coll to `to`. SP withdraw caps at
+  the wallet’s compounded deposit.
+
+Remaining DFS: `curveusd`, Fluid Dex T2/T3/T4,
+`eulerV2`, `aaveV4` / leftover Aave, `llamalend`,
+`mcd`, `tx-saver`, triggers. Not submitted.
 
 ## Next candidates
 
@@ -3645,16 +3734,18 @@ exhausted. 1inch Aqua opcode set and Aqua-listed
 solidity-utils mixins / libraries (`5b597e4`) are
 exhausted. DeFi Saver V3 executor + FL + auth
 (`e623f20`) and exchangeV3 + sell actions (`e623f20`)
-are logged; Morpho Blue, Liquity V2, and Fluid T1
-+ liquidity logic (`e623f20`) are logged. Remaining
-DFS is protocol `actions/*` (Aave / CurveUsd / Euler /
-Liquity V1 / Fluid Dex) and the rest of `tx-saver`. Next unreviewed Immunefi
-GitHub-or-recent trees: DeFi Saver protocol actions,
-Jito restaking `restaking_*` / `vault_*`
+are logged; Morpho Blue, Liquity V2, Fluid T1
++ liquidity logic, Aave V3, Comp V2/V3, Spark,
+and Liquity V1 (`e623f20`) are logged. Remaining
+DFS is `curveusd` / `eulerV2` / `aaveV4` /
+leftover Aave / Fluid Dex T2–T4 / `llamalend` /
+`mcd`, `tx-saver`, and triggers. Next unreviewed
+Immunefi GitHub-or-recent trees: those DFS
+trees, Jito restaking `restaking_*` / `vault_*`
 plus `jito-solana` / `mev-programs` ($250k, KYC;
 interceptor `dbd8ce4` is exhausted), Enzyme Blue
 adapters added as etherscan addresses after Apr 2026
-(Bebop / ThreeOneThird / SharesSplitter). Superteam API rechecked 03:34 UTC
+(Bebop / ThreeOneThird / SharesSplitter). Superteam API rechecked 03:39 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
@@ -3691,8 +3782,9 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-03:24 UTC 3 Sep: KeeperHub #2105 still `open` +
+03:39 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
+Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
