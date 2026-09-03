@@ -47572,7 +47572,7 @@ Remaining listed Filecoin: unused official leftover that listed trees open is ex
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
 Remaining listed Jito: unused official leftover that listed remaining-runtime trees open is exhausted on this pin. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_client leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana prioritization_fee leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana commitment leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana slot_params leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana genesis_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana alpenglow_epoch_type leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana leader_schedule leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana sysvar_account leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana loader_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana vote_sender leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana installed_scheduler leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana read_optimized_dashmap leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana static_ids leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana runtime_config leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
-Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
+Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining SuperchainConfig leftover is logged. Optimism leftover remaining LegacyMessagePasser leftover is logged. Optimism leftover remaining L2ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -47701,6 +47701,9 @@ Do not rematch Optimism leftover remaining rust/op-reth flashblocks leftover.
 Do not rematch Optimism leftover remaining ResourceMetering leftover.
 Do not rematch Optimism leftover remaining CrossDomainOwnable leftover.
 Do not rematch Optimism leftover remaining CrossL2Inbox leftover.
+Do not rematch Optimism leftover remaining SuperchainConfig leftover.
+Do not rematch Optimism leftover remaining LegacyMessagePasser leftover.
+Do not rematch Optimism leftover remaining L2ProxyAdmin leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
 Do not rematch Arbitrum leftover remaining governance leftover.
@@ -73844,3 +73847,50 @@ Result: no user-exploitable finding. Not submitted.
 Do not file intentional permissionless interop validation as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused bedrock helpers (`SuperchainConfig` / `LegacyMessagePasser` / `L2ProxyAdmin` / other unlogged `packages/contracts-bedrock` slices) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Optimism leftover remaining SuperchainConfig leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining unused bedrock leftover after CrossL2Inbox leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `packages/contracts-bedrock/src/L1/SuperchainConfig.sol` plus parent `ProxyAdminOwnedBase.sol`. Official raw GitHub **200**. Local extract `/tmp/op-crossl2/SuperchainConfig.sol` (171 lines). Do not rematch L1 portal / StandardBridge leftover, dispute games leftover, ETHLockbox leftover, ResourceMetering leftover, CrossDomainOwnable leftover, or CrossL2Inbox leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `pause` / `unpause` / `extend` that blocks withdrawals without being `guardian`; `initialize` that lets a random caller set `guardian`; expired pause that still reads as active; identifier collision that unpauses another cluster.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Global superchain pause registry. `initialize` is gated by leftover-logged `ProxyAdminOwnedBase._assertOnlyProxyAdminOrProxyAdminOwner()`. `_setGuardian` is internal-only from init/upgrade paths.
+- `pause`, `unpause`, and `extend` all call `_assertOnlyGuardian()` (`msg.sender == guardian`). Re-pausing an active identifier reverts `AlreadyPaused`; extending a non-paused identifier reverts `NotAlreadyPaused`.
+- `paused(_identifier)` returns false once `block.timestamp >= pauseTimestamps[_identifier] + PAUSE_EXPIRY` (3 months). Legacy `paused()` delegates to identifier `address(0)`.
+
+Do not file intentional guardian pause controls as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused bedrock helpers (`LegacyMessagePasser` / `L2ProxyAdmin` / other unlogged `packages/contracts-bedrock` slices) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Optimism leftover remaining LegacyMessagePasser leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining unused bedrock leftover after SuperchainConfig leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `packages/contracts-bedrock/src/legacy/LegacyMessagePasser.sol`. Official raw GitHub **200**. Local extract `/tmp/op-crossl2/LegacyMessagePasser.sol` (26 lines). Do not rematch SuperchainConfig leftover or prior Optimism bedrock leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `passMessageToL1` that marks another sender’s hash; withdrawal finalize on L1 that trusts an unauthenticated `sentMessages` entry from this deprecated predeploy.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Deprecated Bedrock-predecessor L2→L1 message recorder at predeploy `0x4200…0000`. `passMessageToL1` sets `sentMessages[keccak256(abi.encodePacked(_message, msg.sender))] = true` for the caller’s own `(message, sender)` pair only.
+- No ETH transfer, no L1 execution, no cross-chain auth beyond recording intent. Modern withdrawals use leftover-logged `L2ToL1MessagePasser`, not this contract.
+
+Do not file deprecated message recording as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused bedrock helpers (`L2ProxyAdmin` / other unlogged `packages/contracts-bedrock` slices) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Optimism leftover remaining L2ProxyAdmin leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining unused bedrock leftover after LegacyMessagePasser leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `packages/contracts-bedrock/src/L2/L2ProxyAdmin.sol` plus inherited leftover-logged `ProxyAdmin.sol`. Official raw GitHub **200**. Local extract `/tmp/op-crossl2/L2ProxyAdmin.sol` (59 lines). Do not rematch SuperchainConfig / LegacyMessagePasser leftovers or prior Optimism bedrock leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `upgradePredeploys` callable by a random L2 EOA; delegatecall to attacker-chosen `_l2ContractsManager` that upgrades predeploys without `Constants.DEPOSITOR_ACCOUNT`; owner bypass on standard `ProxyAdmin.upgrade` inherited paths.
+
+Result: no user-exploitable finding. Not submitted.
+
+- L2 predeploy proxy admin at `0x4200…0018`. Extends leftover-logged `ProxyAdmin` with batch `upgradePredeploys`.
+- `upgradePredeploys` requires `msg.sender == Constants.DEPOSITOR_ACCOUNT` (L1 deposit/system path), rejects empty code at `_l2ContractsManager`, and delegatecalls `IL2ContractsManager.upgrade()`. Failure reverts `UpgradeFailed`.
+- Standard proxy upgrade/remove/change-owner functions remain on inherited `ProxyAdmin` and are owner-gated there; constructor sets owner to `address(0)` because L2 genesis sets ownership via proxy storage.
+
+Do not file system-depositor predeploy upgrades as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused bedrock helpers on other standing Immunefi programs if still open; Optimism listed bedrock helpers on pin `eea9542` are largely exhausted at leftover-heading level. Next unused leftover is a different Immunefi program, not a rematch.

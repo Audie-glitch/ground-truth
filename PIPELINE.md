@@ -14,6 +14,9 @@ recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
 Optimism leftover remaining ResourceMetering leftover is logged;
 Optimism leftover remaining CrossDomainOwnable leftover is logged;
 Optimism leftover remaining CrossL2Inbox leftover is logged;
+Optimism leftover remaining SuperchainConfig leftover is logged;
+Optimism leftover remaining LegacyMessagePasser leftover is logged;
+Optimism leftover remaining L2ProxyAdmin leftover is logged;
 Jito leftover remaining jito-solana runtime_config leftover is logged;
 Jito leftover remaining jito-solana static_ids leftover is logged;
 Jito leftover remaining jito-solana read_optimized_dashmap leftover is logged;
@@ -1910,6 +1913,18 @@ CrossDomainOwnable leftover
 Optimism leftover remaining
 CrossL2Inbox leftover
 (`eea9542`; KYC) is logged.
+Optimism leftover remaining
+SuperchainConfig leftover
+(`eea9542`; KYC) is logged.
+Optimism leftover remaining
+LegacyMessagePasser leftover
+(`eea9542`; KYC) is logged.
+Optimism leftover remaining
+L2ProxyAdmin leftover
+(`eea9542`; KYC) is logged
+(remaining listed Optimism bedrock
+helpers on this pin are largely
+exhausted at leftover-heading level).
 Arbitrum leftover remaining
 nitro challenge leftover
 (`7fc6624`; KYC) is logged.
@@ -3088,6 +3103,15 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`eea9542`; KYC),
   Optimism leftover remaining
   CrossL2Inbox leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  SuperchainConfig leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  LegacyMessagePasser leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  L2ProxyAdmin leftover
   (`eea9542`; KYC),
   Arbitrum leftover remaining
   nitro challenge leftover
