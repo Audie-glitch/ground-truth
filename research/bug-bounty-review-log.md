@@ -40292,6 +40292,126 @@ and the
 transaction-tool
 website leftover.
 
+## 2026-09-03: Hedera leftover remaining Node leftover (`0d3d9a2`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+after Contract
+leftover.
+Official
+`hiero-ledger/hiero-consensus-node`
+`0d3d9a2`.
+CDN extract
+`/tmp/hedera-other/node`
+`NodeCreateHandler`
+/
+`NodeUpdateHandler`
+/
+`NodeDeleteHandler`.
+`UtilPrng`
+has no
+funds
+path.
+No mainnet
+writes.
+
+Files:
+`handlers/NodeCreateHandler.java`,
+`handlers/NodeUpdateHandler.java`,
+`handlers/NodeDeleteHandler.java`.
+
+Checked for:
+a stranger
+`NodeCreate`
+that binds
+another
+account;
+`NodeUpdate`
+that
+replaces
+admin
+without
+the
+existing
+admin
+key;
+`NodeDelete`
+without
+admin or
+system
+payer.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `NodeCreate`
+  `requireKeyOrThrow`
+  the new
+  admin key
+  and, if
+  the
+  account
+  exists,
+  that
+  account
+  key.
+- `NodeUpdate`
+  requires
+  the
+  existing
+  admin
+  key, plus
+  a new
+  account
+  key when
+  changing
+  `accountId`
+  and the
+  new admin
+  key when
+  rotating.
+- `NodeDelete`
+  requires
+  the admin
+  key
+  unless
+  the payer
+  is
+  treasury,
+  system
+  admin, or
+  address-
+  book
+  admin.
+
+Do not file
+admin-
+signed
+node
+create /
+update /
+delete as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-mirror-node`,
+`hiero-cryptography`,
+other consensus
+modules,
+SDKs,
+and the
+transaction-tool
+website leftover.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -42797,6 +42917,9 @@ Hedera leftover remaining Schedule leftover
 (`0d3d9a2`) is logged (remaining listed is
 mirror-node / cryptography / contract / SDKs);
 Hedera leftover remaining Contract leftover
+(`0d3d9a2`) is logged (remaining listed is
+mirror-node / cryptography / other modules / SDKs);
+Hedera leftover remaining Node leftover
 (`0d3d9a2`) is logged (remaining listed is
 mirror-node / cryptography / other modules / SDKs);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)

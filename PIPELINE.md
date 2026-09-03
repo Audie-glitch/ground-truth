@@ -25,6 +25,7 @@ Hedera leftover remaining TokenFeeSchedule leftover is logged;
 Hedera leftover remaining File leftover is logged;
 Hedera leftover remaining Schedule leftover is logged;
 Hedera leftover remaining Contract leftover is logged;
+Hedera leftover remaining Node leftover is logged;
 Filecoin leftover builtin-actors market + paych leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 ZKsync OS leftover evm_interpreter leftover is logged;
@@ -1182,6 +1183,12 @@ Contract leftover
 (remaining listed is
 mirror-node / cryptography /
 other modules / SDKs).
+Hedera leftover remaining
+Node leftover
+(`0d3d9a2`; KYC) is logged
+(remaining listed is
+mirror-node / cryptography /
+other modules / SDKs).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2009,6 +2016,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`0d3d9a2`; KYC),
   Hedera leftover remaining
   Contract leftover
+  (`0d3d9a2`; KYC),
+  Hedera leftover remaining
+  Node leftover
   (`0d3d9a2`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
