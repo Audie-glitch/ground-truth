@@ -28,7 +28,12 @@ v1.4 listed GitHub leftover is exhausted (deposit /
 megapool / vault / auction / smoothing / minipool /
 DAO). Beanstalk Basin
 leftover (Pipeline / Depot / Well / Aquifer / CP2 /
-MultiFlowPump) is logged. Beets stS + token leftover
+MultiFlowPump) is logged. Beanstalk L2 diamond +
+tokens leftover (`8e22cd2`, Sourcify
+`exact_match`) is logged (remaining Beanstalk
+is Junctions / UnwrapETH / LSD oracle /
+Fertilizer proxy Sourcify 404 / marketplace /
+season / pipeline-convert). Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
 leftover is logged (yvUSD / Woofy still Sourcify 404).
 Benqi Dual Oracle leftover is logged. Benqi core

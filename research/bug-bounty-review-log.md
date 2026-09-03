@@ -18808,6 +18808,147 @@ timelock / JLP staking
 Sourcify-open Benqi
 leftover is exhausted.
 
+## 2026-09-03: Beanstalk L2 diamond + tokens leftover (`8e22cd2`)
+
+Immunefi program
+`beanstalk`
+($1,100,000, `kyc: false`).
+Basin leftover
+(Pipeline / Depot /
+Well / Aquifer / CP2 /
+MFP) is already
+logged. This slice is
+the L2 diamond and
+listed tokens.
+Arbitrum Sourcify
+`exact_match`: L2
+Beanstalk
+`0xD1A0060b…15FB70`
+(`Diamond.sol`, solc
+0.8.25), Bean /
+Unripe Bean / Unripe
+LP
+(`BeanstalkERC20.sol`),
+Fertilizer impl
+`0xFEFEFE2c…5f1490`,
+Shipment Planner
+`0x55555598…EEef5`.
+L1 diamond
+`0xC1E088fC…5624C5`
+is Ethereum Sourcify
+`match` (`Diamond.sol`
+0.7.6). Fertilizer
+proxy Sourcify 404.
+Official tree
+`BeanstalkFarms/Beanstalk`
+`8e22cd2`. No mainnet
+interaction.
+
+Files:
+`contracts/beanstalk/Diamond.sol`,
+`silo/SiloFacet/SiloFacet.sol`,
+`TokenSilo.sol`,
+`ConvertFacet.sol`,
+`field/FieldFacet.sol`,
+`barn/FertilizerFacet.sol`,
+`UnripeFacet.sol`,
+`farm/TractorFacet.sol`,
+`tokens/ERC20/BeanstalkERC20.sol`,
+`tokens/Fertilizer/Fertilizer.sol`,
+`ecosystem/ShipmentPlanner.sol`.
+
+Checked for: a
+stranger withdrawing
+or transferring
+another farmer’s Silo
+deposit without
+allowance; harvest of
+another account’s
+plots; Fertilizer mint
+or rinse that pays
+the caller someone
+else’s Beans; chop
+that burns a victim’s
+Unripe; Tractor that
+runs without a valid
+publisher signature;
+Bean mint without
+`MINTER_ROLE`.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Silo `deposit` /
+  `withdrawDeposit`
+  move tokens for
+  `LibTractor._user()`.
+  `transferDeposit`
+  spends deposit
+  allowance unless
+  `sender == _user()`.
+- Field `sow` /
+  `harvest` credit
+  `_user()`. Harvest
+  deletes
+  `s.accts[account].plots`
+  for `_user()` only.
+- Fertilizer
+  `claimFertilized` /
+  `mintFertilizer` use
+  `_user()`.
+  `payFertilizer`
+  requires
+  `msg.sender ==
+  fertilizer`.
+  Impl
+  `beanstalkMint` /
+  `beanstalkUpdate`
+  are `onlyOwner`.
+- `chop` burns Unripe
+  from `_user()` and
+  sends ripe to
+  `_user()`.
+- Tractor
+  `activePublisher`
+  is set only after
+  EIP-712 recover of
+  the blueprint
+  publisher.
+  `_user()` is that
+  publisher, else
+  `msg.sender`.
+- Bean / Unripe
+  `mint` is
+  `MINTER_ROLE`.
+  Planner getters are
+  view. Diamond `cut`
+  is owner.
+- Anti-lambda convert
+  is same-token BDV
+  restem, documented
+  as permissionless.
+  Do not file as
+  theft.
+
+Do not file Tractor
+operator paste or
+anti-lambda restem
+without a signed-
+slot / token-move
+bypass.
+
+Not submitted.
+Remaining Beanstalk
+listed: Junctions,
+Unwrap-and-Send-ETH,
+LSD Chainlink Oracle,
+Fertilizer proxy
+(Sourcify 404),
+marketplace / season /
+pipeline-convert
+facets.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -19321,10 +19462,17 @@ Beanstalk Basin leftover
 (Pipeline / Depot / Well
 / Aquifer / CP2 / MFP,
 Sourcify + `ecf6923`) is
-logged (remaining
-Beanstalk is the L1/L2
-diamond + tokens /
-planner);
+logged. Beanstalk L2
+diamond + tokens
+leftover (`8e22cd2`,
+Sourcify `exact_match`)
+is logged (remaining
+Beanstalk is Junctions /
+UnwrapETH / LSD oracle /
+Fertilizer proxy
+Sourcify 404 /
+marketplace / season /
+pipeline-convert);
 Beets stS
 (`877087b`) + token
 leftover is logged
