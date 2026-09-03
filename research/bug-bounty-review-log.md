@@ -5543,6 +5543,104 @@ ThreeOneThird / SharesSplitter.
 Extra Finance vault / veToken still
 not on Sourcify. Not submitted.
 
+## 2026-09-03: Lista leftover PSM / LisUSD / clip-join / slisBNB (`3e120da` + `67e524c`)
+
+Same Immunefi program `listadao` ($1,000,000,
+`kyc: false`). Moolah + PublicLiquidator
+already logged. Official trees
+[lista-dao/lista-dao-contracts](https://github.com/lista-dao/lista-dao-contracts)
+at `3e120da` and
+[lista-dao/synclub-contracts](https://github.com/lista-dao/synclub-contracts)
+at `67e524c`. Immunefi HTML
+(scraped 04:00 UTC 3 Sep) lists lisUSD
+`0x0782…41E5`, PSM(USDT)
+`0xaa57…eC0c`, LisUSDPoolSet
+`0x37DB…D0Bf`, clipCE / clipper
+rows, GemJoin rows, and slisBNB
+`0xB0b8…14A1`. No mainnet
+interaction.
+
+Files: `contracts/{LisUSD,clip,join}.sol`,
+`contracts/psm/{PSM,VaultManager,
+LisUSDPoolSet,EarnPool}.sol`,
+`contracts/ListaStakeManager.sol`,
+`contracts/SLisBNB.sol`.
+
+Checked for: PSM buy that skips the
+lisUSD pull; LisUSDPoolSet withdraw
+that skips a user’s emission bucket;
+EarnPool that credits a stranger’s
+PSM fill; Clipper `take` of a healthy
+vault; GemJoin exit without vat slip;
+slisBNB mint without BNB / claim of
+another user’s unconfirmed request.
+
+Result: no user-exploitable finding.
+
+- PSM `sell` pulls token, pays
+  `amount - fee` lisUSD, deposits the
+  full token amount to
+  `VaultManager` (`onlyPSMOrManager`).
+  `buy` pulls `amount` lisUSD and
+  withdraws `amount - fee` token to
+  the caller. A 100% `buyFee` can
+  increment `fees` without a pull —
+  `setBuyFee` is `MANAGER`. Daily
+  buy cap and `minBuy` apply.
+- VaultManager leftover token stays
+  in the vault when adapter points
+  sum to zero; otherwise it
+  distributes by point. Withdraw
+  walks live adapters until `remain
+  == 0`.
+- LisUSDPoolSet shares accrue a
+  synthetic `duty` (BOT, capped by
+  `maxDuty`). Rate does not read the
+  token balance, so donations do not
+  inflate shares. Withdraw rounds
+  shares up and requires the caller
+  to drain emission weights first.
+  `depositFor` is `onlyEarnPool`.
+- EarnPool sells through a
+  manager-set PSM whose `token()`
+  must match, then
+  `depositFor(token, msg.sender,
+  delta)`. Leftover lisUSD in
+  EarnPool is a gift to the next
+  depositor, not a steal.
+- LisUSD mint is `onlyMinter`. Burn
+  spends the holder or their
+  allowance. `DEFAULT_ADMIN` is
+  hardcoded TimeLock
+  `0x07D2…5253`.
+- GemJoin / HayJoin `join` / `exit`
+  are `auth` (Interaction-gated),
+  not public Maker-style joins.
+  Clipper `take` is also `auth` +
+  Maker dust / `chost` rules;
+  PublicLiquidator was the previous
+  slice.
+- slisBNB mint/burn is
+  `onlyStakeManager`. Deposit mints
+  against `amountToDelegate +
+  totalDelegated` (not
+  `address(this).balance`). Instant
+  withdraw is whitelist-gated,
+  burns the post-fee amount, and
+  subtracts from the buffer.
+  `claimWithdraw` only pays a
+  confirmed uuid to that request’s
+  user (or BOT-for-user). Two
+  hardcoded incident addresses
+  redirect to a recovery vault.
+
+Remaining Lista: SnBnb strategy /
+OFT / older distributors / oracles,
+and `lista-new-contracts` (`fa5dfa5`,
+RWA / slisXAUE / LisAster) if those
+addresses are later added to
+Immunefi. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -5615,13 +5713,16 @@ remaining Extra Finance is vault logic
 Set Protocol V2 (all five in-scope
 addresses) is logged. Lista DAO Moolah
 + PublicLiquidator (`ce72699`, newest
-2026-05-29 assets) is logged.
+2026-05-29 assets) plus leftover PSM /
+LisUSD / clip-join / slisBNB
+(`3e120da` + `67e524c`) are logged.
 Enzyme Blue BebopBlend / ThreeOneThird /
 SharesSplitter (`da3b870` + Sourcify) are
 logged. Next unreviewed Immunefi
 GitHub-or-recent trees: Extra Finance
 vault logic, Lista leftover
-lisUSD/clipper/strategy, Jito `jito-solana` /
+strategy / OFT / distributors /
+`lista-new-contracts` (`fa5dfa5`), Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted).
