@@ -68826,3 +68826,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a local actor CID map as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner (types / lib).
+
+## 2026-09-03: Jito leftover remaining jito-solana bundle_stage leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after tip_manager leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `core/src/bundle_stage.rs`, `bundle_stage/{bundle_consumer,bundle_storage,bundle_account_locker}.rs`, and `rpc/src/rpc/bundles.rs`. Do not rematch tip_manager leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: a stranger bundle that cranks leftover-logged tip-payment and sets the receiver to themselves; `simulate_bundle` committing to the working bank; forwarding a bundle so atomicity breaks.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Bundles execute sequentially, atomically, all-or-nothing. Account locks are held for the whole bundle. A failed tx cancels the commit. Tip-program accounts are `blacklisted_accounts` at insert (`try_handle_packet`); the consumer comment is that bundles/BankingStage must not call tip-payment (crank-to-self steal).
+- Each new leader slot, `handle_tip_programs` runs the leftover-logged `TipManager` crank **before** user bundles. Bundles are not forwarded (`Forward` drops them). BAM drain clears storage.
+- `simulate_bundle` is RPC simulation only (max 20 txs, Base64, optional sigverify). It does not record to PoH.
+
+Do not file a blacklisted tip-program bundle as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` other crates (if still unused). Official Jito mev-programs + tip_manager leftovers are logged.
