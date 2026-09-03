@@ -160,6 +160,10 @@ IndexSwap / Exchange / rebalance / fee /
 Safe module / handlers) is logged
 (remaining listed is two BSC addresses
 Sourcify 404).
+Mars Ecosystem leftover (Sourcify BSC
+Core / factory / router / farm / vesting
+/ airdrop) is logged (remaining listed is
+two BSC addresses Sourcify 404).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /

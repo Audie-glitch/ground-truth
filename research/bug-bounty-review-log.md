@@ -25647,6 +25647,110 @@ Sourcify 404.
 Velvet Capital V2 is a
 separate KYC program.
 
+## 2026-09-03: Mars Ecosystem leftover (Sourcify)
+
+Immunefi program
+`Mars Ecosystem`
+($10,000, `kyc: false`).
+Unique no-KYC listed
+slice. 7 of 9 BSC
+listed addresses
+Sourcify-open (chain
+56). Extract
+`/tmp/mars`. No
+mainnet interaction.
+
+Listed Sourcify-open:
+`Core`
+`0x00789Cfb69499c65ac9A3a68fb4917c9b4FcA2a7`
+`exact_match`;
+`MarsSwapFactory`
+`0x6f12482D9869303B998C54D91bCD8bCcba81f3bE`;
+`MarsSwapRouter`
+`0xb68825C810E67D4e444ad5B9DeB55BA56A66e72D`;
+`AirDrop`
+`0x01D152fF991E76b6cb310387c07cAfdFda790a25`;
+`LiquidityMiningMaster`
+`0xc7B8285a9E099e8c21CA5516D23348D8dBADdE4a`
+and
+`0x22D8d50454203bd5a41B49ef515891f1aD9f3e53`;
+`VestingMaster`
+`0x381Facb9282770a5E3Ac6c8637096b442039C3dB`
+`match`.
+
+Checked for: stranger
+farm `withdraw` of
+another user's LP;
+`claim` that pays a
+zero-allocation
+airdrop as a drain;
+VestingMaster `lock`
+by a non-farm;
+router
+`removeLiquidity`
+that burns another
+account's LP.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Farm `deposit`
+  `transferFrom`
+  `msg.sender` and
+  credits
+  `userInfo[pid]
+  [msg.sender]`.
+  `withdraw` /
+  `emergencyWithdraw`
+  pay that sender.
+- VestingMaster
+  `lock` is
+  `onlyFarms`.
+  `claim` pays
+  `msg.sender`'s
+  matured locks.
+- AirDrop `claim`
+  pays the stored
+  `userClaimed
+  [msg.sender].amount`
+  once. `addList` /
+  `recover` are
+  `onlyGovernor`.
+- Router
+  `removeLiquidity`
+  `transferFrom`
+  `msg.sender` LP
+  then `burn`s to
+  `to`. Factory
+  `setFeeTo` is
+  `onlyGovernor`.
+- Core
+  `allocateToken` /
+  XMS mint are
+  `onlyGovernor`.
+
+Do not file
+governor treasury
+allocate, MasterChef
+reward math, or
+Uniswap-style
+router slippage as
+a stranger drain.
+
+Not submitted.
+Listed leftover is
+the Sourcify-open
+BSC Core / factory /
+router / farm /
+vesting / airdrop.
+Remaining listed:
+`0x7859B01BbF675d67Da8cD128a50D155cd881B576`
+and
+`0xC35a8BdBB93A03dB362aF6dC3383cD2c6aEA6cBc`
+Sourcify 404.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -26060,6 +26164,11 @@ Velvet Capital leftover (Sourcify BSC
 IndexSwap / Exchange / rebalance /
 fee / Safe module / handlers) is
 logged (remaining listed is two BSC
+addresses Sourcify 404).
+Mars Ecosystem leftover (Sourcify BSC
+Core / factory / router / farm /
+vesting / airdrop) is logged
+(remaining listed is two BSC
 addresses Sourcify 404).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
@@ -26486,6 +26595,13 @@ handlers) is logged
 (remaining listed is two
 BSC addresses Sourcify
 404);
+Mars Ecosystem leftover
+(Sourcify BSC Core /
+factory / router / farm /
+vesting / airdrop) is
+logged (remaining listed
+is two BSC addresses
+Sourcify 404);
 Beets stS
 (`877087b`) + token
 leftover is logged
