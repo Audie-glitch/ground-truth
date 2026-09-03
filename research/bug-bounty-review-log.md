@@ -31896,6 +31896,160 @@ LibOCR, owner
 contracts,
 websites.
 
+## 2026-09-03: Optimism leftover L1 portal + StandardBridge leftover (`eea9542`)
+
+Immunefi program
+`optimism`
+($2,000,042,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`ethereum-optimism/optimism`
+HEAD
+`eea9542`.
+Sourcify ETH
+OptimismPortal
+`0xbEb5Fc579115071764c7423A4f12eDde41f106Ed`
+impl OptimismPortal2
+`0xe89F13c5ee4033B2D3cD76C9d6958eFBfe26D3C2`,
+listed portal impl
+`0xe2F826324b2faf99E513D16D266c3F80aE87832B`,
+L1StandardBridge
+`0x99C9fc46f92E8a1c0deC1b1747d010903E884bE1`
+(ChugSplash proxy),
+L1CrossDomainMessenger
+`0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1`
+(ResolvedDelegateProxy),
+L1ERC721Bridge
+`0x5a7749f83b81B301cAb5f48EB8516B986DAef23D`
+impl
+`0x9F164f1d02A81e06D639E55F65a87f0070E3Cb2e`.
+Extract
+`/tmp/op-portal2-impl`,
+`/tmp/op-erc721-impl`,
+`/tmp/op-bedrock`.
+No mainnet
+interaction.
+
+Files:
+`src/L1/OptimismPortal2.sol`,
+`src/L1/L1StandardBridge.sol`,
+`src/universal/StandardBridge.sol`,
+`src/universal/CrossDomainMessenger.sol`,
+`src/L1/L1ERC721Bridge.sol`,
+`src/universal/ERC721Bridge.sol`.
+
+Checked for: a
+stranger
+`bridgeERC20` /
+`depositERC20`
+that pulls
+another account;
+`finalizeBridgeETH`
+that pays the
+caller; portal
+`finalizeWithdrawal`
+that pays a
+proven
+withdrawal to
+the caller;
+`depositTransaction`
+that credits
+another user's
+ETH.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- StandardBridge
+  ETH deposits
+  charge
+  `msg.value`.
+  ERC20
+  `safeTransferFrom`s
+  `_from =
+  msg.sender`
+  (or burns
+  mintable from
+  that sender).
+- `finalizeBridgeETH`
+  / ERC20 are
+  `onlyOtherBridge`
+  and pay `_to`.
+- Portal
+  `depositTransaction`
+  locks
+  `msg.value`
+  and aliases a
+  contract
+  `msg.sender`.
+- `proveWithdrawal`
+  is
+  permissionless
+  against a
+  proper
+  respected
+  dispute game.
+  `finalizeWithdrawal`
+  is
+  permissionless
+  after the
+  proven +
+  challenge
+  window and
+  calls
+  `_tx.target`.
+- Messenger
+  `sendMessage`
+  binds
+  `msg.sender`.
+  `relayMessage`
+  is other-
+  messenger or
+  failed-replay
+  only.
+- ERC721
+  `transferFrom`s
+  `_from =
+  msg.sender`.
+
+Do not file
+permissionless
+finalize of a
+proven
+withdrawal to
+the recorded
+target, or
+other-bridge
+finalize that
+pays `_to`.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+Bedrock L1
+portal /
+StandardBridge /
+messenger /
+ERC721 opens is
+exhausted at
+this money-path
+level.
+Remaining listed:
+dispute games /
+MIPS /
+PreimageOracle,
+op-node /
+op-dispute-mon,
+L2 contracts,
+PolicyEngineStaking,
+websites.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -33461,6 +33615,15 @@ CCIP Solana / Sui / Aptos /
 chainlink-evm / OCR plugins /
 core node / LibOCR / owner
 contracts / websites);
+Optimism leftover L1 portal +
+StandardBridge leftover
+(`eea9542` Portal2 /
+StandardBridge / messenger /
+ERC721; KYC) is logged
+(remaining listed is dispute
+games / op-node / L2 /
+PolicyEngineStaking /
+websites);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
