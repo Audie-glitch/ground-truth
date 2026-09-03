@@ -766,9 +766,42 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: GMTrade swap + output/oracle checks (`50c4d8d`)
+
+Same Immunefi program. Local clone `/tmp/gmx-solana`. No mainnet
+interaction.
+
+Files: `crates/model/src/action/swap.rs`, `crates/model/src/price.rs`,
+`programs/store/src/ops/order.rs` (`execute_swap`),
+`programs/store/src/states/order.rs` (`validate_output_amount`),
+`programs/store/src/states/oracle/validator.rs`.
+
+Checked for: empty/zero-price swap minting out; impact pool over-pay;
+skipping `min_output`; user-set stale oracle prices.
+
+Result: no user-exploitable finding.
+
+- `Swap::try_new` rejects a zero `token_in` and `prices.validate()`.
+  Fees come out of token-in. Negative impact is taken from token-in
+  (and reverts if it cannot be paid). Positive impact is capped by the
+  impact pool; extra out is `pool_amount_out + capped impact`.
+  Conversion uses `pick_price(false)` on token-in and
+  `pick_price(true)` on token-out. After the pool delta the action
+  checks pool amount, reserve, and max PnL.
+- Store `execute_swap` runs the revertible path then
+  `validate_output_amount` against `min_output`. Limit-order misses
+  set `should_throw_error`; market misses cancel. Execute is still
+  `ORDER_KEEPER`.
+- `PriceValidator` enforces max age, a future-timestamp bound, and
+  optional max deviation from the reference mid. Users cannot assemble
+  oracle prices.
+
+Not submitted.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. the402.ai still paused. No KeeperHub implementation before the
-6 Sep build window. GMTrade model remaining: oracle price assembly /
-revertible swap if still unreviewed.
+6 Sep build window. In-scope GMTrade / Origin / sBTC / Horizen slices
+from these clones are largely covered. Next time-box: a newly added
+Immunefi program.
