@@ -14881,6 +14881,115 @@ delegate leftover,
 vault, auction, DAO
 settings / voting.
 
+## 2026-09-03: Raydium classic AMM leftover (`27f461d`)
+
+Immunefi program
+`raydium` ($505,000,
+`kyc: false`). Listed
+leftover is per-file
+URLs under
+`raydium-io/raydium-amm`
+`program/src` (added
+27 Dec 2023): `lib.rs`,
+`entrypoint.rs`,
+`instruction.rs`,
+`error.rs`, `invokers.rs`,
+`log.rs`, `math.rs`,
+`processor.rs`,
+`state.rs`. Local clone
+`/tmp/raydium-amm` at
+`27f461d` (“Remove
+openbook dependency
+(#69)”). Program id
+`675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8`.
+No mainnet interaction.
+
+This slice is
+initialize2 / deposit /
+withdraw / swap (v1+v2)
+/ withdraw-pnl / admin
+config after OpenBook
+accounts became unused
+padding.
+
+Checked for: LP minted
+without a matching
+vault pull; withdraw
+that pays more than
+pro-rata; swap that
+uses a stranger’s vault
+or skips slippage;
+permissionless pnl
+withdraw.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `Initialize2` requires
+  a signer wallet, the
+  AMM authority PDA, and
+  the config PDA. Coin
+  and PC mints must
+  differ. Create-pool
+  fee (if set) pays the
+  hardcoded fee
+  destination.
+- Deposit requires the
+  source owner signer.
+  Vault accounts must
+  match `amm.coin_vault`
+  / `pc_vault`; user
+  sources cannot be the
+  vaults. LP mint and
+  target-orders must
+  match the AMM. Amounts
+  follow the pool ratio
+  (ceiling on the other
+  side) with max and
+  optional min
+  slippage. LP minted
+  `floor(input /
+  reserve * lp_amount)`.
+  Empty `lp_amount` is
+  refused.
+- Withdraw requires the
+  LP owner signer, LP
+  mint match, and dest
+  mints = vault mints.
+  Cannot dest into the
+  vaults. Cannot redeem
+  `>= amm.lp_amount`.
+  Payout is
+  `floor(lp / total *
+  reserve)` per side
+  with optional mins.
+  LP is burned.
+- Swap v1/v2 require a
+  signer. Vaults bind to
+  the AMM. User ATAs
+  cannot be the vaults.
+  Direction is mint
+  pair. Exact-in: fee
+  `ceil`, then constant
+  product; `minimum_out`
+  and cannot take the
+  whole reserve.
+  Exact-out: input is
+  `ceil(need /
+  (1-fee))` vs
+  `max_amount_in`.
+- `WithdrawPnl` is the
+  hardcoded amm-owner
+  or config `pnl_owner`.
+  `SetParams` /
+  create/update config
+  are amm-owner only.
+
+Not submitted. Remaining
+Raydium listed GitHub:
+`raydium-cp-swap`.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -15360,9 +15469,10 @@ remaining assets are
 explorer addresses +
 PoI);
 Raydium CLMM leftover
-(`ed7c84a`) is logged
-(remaining Raydium is
-`raydium-amm` +
+(`ed7c84a`) plus classic
+AMM leftover (`27f461d`)
+are logged (remaining
+Raydium is
 `raydium-cp-swap`);
 Marinade liquid-staking
 leftover (`b8fe3f8`) is

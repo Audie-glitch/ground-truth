@@ -15,9 +15,10 @@ recheck), and Immunefi unofficial mirror rechecked 3 Sep. KeeperHub
 is exhausted. MtPelerin leftover is exhausted. Listed Orderly
 GitHub leftover is exhausted (Vault / Ledger / evm-cross-chain /
 Operator / Fee / Market / LedgerImpl B/C/D). Raydium CLMM leftover
-(`ed7c84a`) is logged (remaining Raydium is classic AMM +
-cp-swap). Marinade liquid-staking leftover (`b8fe3f8`) is
+(`ed7c84a`) and classic AMM leftover (`27f461d`) are logged
+(remaining Raydium is cp-swap). Marinade liquid-staking leftover (`b8fe3f8`) is
 logged (remaining Marinade is crank / admin / validators).
+Rocket Pool v1.4 deposit / rETH / megapool queue leftover is logged.
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Yearn yCRV token + Boosted Staker / distributor leftover
 is logged (yvUSD still Sourcify 404). Hermetica hBTC vault leftover
