@@ -20412,6 +20412,98 @@ Ankr: BNB Pool
 BNBStakingConfig
 Sourcify 404.
 
+## 2026-09-03: UTIX crowdsale leftover (Sourcify)
+
+Immunefi program
+`utix` ($500,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Single
+Ethereum asset
+`0xc9d7bd1Fad7D5621DdA20335818E9575Ae07Ea03`
+Sourcify
+`exact_match`
+`MintedTokenCappedCrowdsaleExtv1`
+(solc 0.7.6, TokenMarket
+ICO tree). Extract
+`/tmp/utix`. No mainnet
+interaction.
+
+Files:
+`MintedTokenCappedCrowdsaleExtv1.sol`,
+`MintedTokenCappedCrowdsaleExt.sol`,
+`CrowdsaleExt.sol`,
+`MintableTokenExt.sol`,
+`TokenVesting.sol`,
+`Allocatable.sol`.
+
+Checked for: a
+stranger mint of
+sale tokens; buy
+that mints without
+paying; withdraw of
+raised ETH to the
+caller; vesting
+release to the
+wrong wallet.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `buy` /
+  `invest` run only
+  in Funding.
+  Tokens come from
+  `pricingStrategy.
+  calculatePrice`
+  and
+  `assignTokens` →
+  mint-agent
+  `mint`. ETH goes
+  to the EOA
+  multisig after
+  the min goal
+  (`extcodesize ==
+  0`).
+- `allocate` is
+  `onlyAllocateAgent`
+  (owner-set).
+  `finalize` /
+  whitelist /
+  schedule /
+  pricing writes
+  are owner.
+- Token `mint` is
+  `onlyMintAgent
+  canMint`.
+  `setMintAgent` is
+  owner.
+- Vesting
+  `releaseAllVestedTokens`
+  is owner and
+  pays each
+  `_adr` on its
+  schedule. Set /
+  freeze / token
+  pointer are
+  allocate agents.
+
+Do not file owner
+rate / cap updates,
+allocate-agent
+preallocation, or
+the unused
+`investorCount.plus`
+return as theft.
+
+Not submitted.
+Listed UTIX leftover
+is this crowdsale
+row (exhausted).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -20949,6 +21041,11 @@ tokens leftover (Sourcify
 (remaining Ankr is BNB
 Pool / BNBStakingConfig
 Sourcify 404);
+UTIX crowdsale leftover
+(Sourcify `exact_match`
+`MintedTokenCappedCrowdsaleExtv1`)
+is logged (listed leftover
+exhausted);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
 dissolve / rewards /

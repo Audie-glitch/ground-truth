@@ -45,6 +45,11 @@ Ankr ETH pool + liquid tokens leftover
 `FETH_R20` / `aBNBc_R1`) is logged
 (remaining Ankr is BNB Pool /
 BNBStakingConfig Sourcify 404).
+UTIX crowdsale leftover (Sourcify
+`exact_match`
+`MintedTokenCappedCrowdsaleExtv1`)
+is logged (listed leftover
+exhausted).
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool
 v1.4 listed GitHub leftover is exhausted (deposit /
