@@ -39028,11 +39028,13 @@ immunefi.com scope
 placeholder);
 Exactly leftover Market +
 DebtManager leftover
-(Sourcify; KYC) is logged
-(remaining listed is Sourcify
-404 impls / ExaPlugin /
-ProposalManager / Webauthn /
-IssuerChecker);
+(Sourcify; KYC) is logged;
+Exactly leftover remaining
+ExaPlugin leftover (Sourcify;
+KYC) is logged (remaining
+listed is Sourcify-404 impls
+and the immunefi.com
+placeholder);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -57751,5 +57753,205 @@ ProposalManager /
 WebauthnOwnerPlugin /
 IssuerChecker,
 and the
+immunefi.com
+placeholder.
+
+## 2026-09-03: Exactly leftover remaining ExaPlugin leftover (Sourcify)
+
+Immunefi program
+`exactly`
+($25,000, `kyc: true`).
+Listed remaining after
+Market + DebtManager leftover
+(`58d5e53`). Optimism
+Sourcify
+`match`:
+ExaPlugin
+`0x3d73…473e`,
+ProposalManager
+`0x6817…c838`,
+IssuerChecker
+`0x59a6…eb3a`,
+WebauthnOwnerPlugin
+`0x8f49…4ca0`.
+Extract
+`/tmp/exactly-src`.
+No mainnet
+writes.
+No exploit
+PoCs.
+
+Opened
+`src/ExaPlugin.sol`,
+`src/ProposalManager.sol`,
+`src/IssuerChecker.sol`,
+`src/WebauthnOwnerPlugin.sol`.
+
+Checked for: a
+stranger
+`collectCredit`
+that borrows
+another
+account to
+the
+collector;
+`executeProposal`
+that spends
+another
+account's
+queued
+proposal;
+`propose`
+that queues
+for a
+victim;
+IssuerChecker
+replay;
+Webauthn
+`updateOwners`
+of another
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Collect
+  paths
+  (`collectCredit`
+  /
+  `collectDebit`
+  /
+  `collectCollateral`
+  /
+  `collectInstallments`)
+  are
+  keeper-only
+  in the
+  plugin
+  manifest
+  and
+  require an
+  IssuerChecker
+  EIP-712
+  collection
+  signature
+  for
+  `msg.sender`.
+  Credit
+  borrows
+  EXA_USDC
+  to the
+  stored
+  collector
+  for that
+  sender.
+  Debit
+  withdraws
+  the
+  sender's
+  EXA_USDC
+  to the
+  collector.
+- `propose`
+  is
+  self-only
+  and
+  queues
+  `msg.sender`
+  via
+  ProposalManager
+  `PROPOSER_ROLE`.
+  `executeProposal`
+  is keeper
+  or self,
+  waits
+  `delay`,
+  and
+  executes
+  `nextProposal(msg.sender)`.
+  Market
+  withdraw /
+  borrow
+  hooks
+  consume
+  that
+  account's
+  queued
+  proposal
+  or a
+  collector
+  role.
+- IssuerChecker
+  binds
+  account +
+  amount +
+  timestamp,
+  rejects
+  replay /
+  expiry /
+  future
+  drift, and
+  recovers
+  the stored
+  issuer.
+- Flash-loan
+  receive
+  requires
+  the stored
+  flashLoaner
+  and the
+  hashed
+  callback
+  payload.
+- Webauthn
+  `updateOwners`
+  is
+  `isInitialized(msg.sender)`
+  and only
+  mutates
+  that
+  account's
+  owner set.
+
+Do not file
+issuer-signed
+card
+collects,
+delay-gated
+self
+proposals,
+or keeper
+execute of
+the account's
+own queue as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for
+Exactly
+ExaPlugin /
+ProposalManager /
+IssuerChecker /
+Webauthn is
+exhausted at
+the
+opened-file
+level.
+Remaining
+listed:
+Sourcify-404
+proxy impls
+(`0x6E1B…3Cff`,
+`0xCEed…52b`
+and unnamed
+impls) and
+the
 immunefi.com
 placeholder.

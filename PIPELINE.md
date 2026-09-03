@@ -10,7 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~10:35 UTC;
-246 programs; no Sep 2026 launches; Exactly leftover Market + DebtManager leftover is logged;
+246 programs; no Sep 2026 launches; Exactly leftover remaining ExaPlugin leftover is logged;
+Exactly leftover Market + DebtManager leftover is logged;
 Linea leftover TokenBridge + rollup + yield leftover is logged;
 MUX leftover mux3 orderbook + pool + position leftover is logged;
 MUX leftover mux-protocol core + orderbook leftover is logged;
