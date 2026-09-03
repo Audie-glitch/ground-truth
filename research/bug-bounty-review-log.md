@@ -46453,7 +46453,7 @@ rust/op-reth
 (if still unused).
 
 
-## 2026-09-03: Optimism leftover remaining op-reth consensus + txpool leftover (`a8a3b818`)
+## 2026-09-03: Optimism leftover remaining rust/op-reth flashblocks leftover (`a8a3b818`)
 
 Immunefi program
 `optimism`
@@ -46461,7 +46461,8 @@ Immunefi program
 `kyc: true`).
 Official remaining
 listed after
-op-reth leftover.
+op-reth leftover /
+websites leftover.
 Official
 `ethereum-optimism/optimism`
 `rust/op-reth`
@@ -46471,100 +46472,101 @@ on develop
 404s this
 tree.
 Extract
-`/tmp/op-reth/`.
+`/tmp/op-reth-fb/`.
 Do not rematch
 op-reth leftover
-(payload / rpc).
+(payload / rpc)
+or consensus
+leftover
+(txpool).
 No mainnet
 writes.
 
 Files:
-`rust/op-reth/crates/consensus/src/{lib.rs,validation/mod.rs}`,
-`rust/op-reth/crates/txpool/src/{validator.rs,transaction.rs}`,
-`rust/op-reth/crates/evm/src/{l1.rs,tx.rs}`.
+`rust/op-reth/crates/flashblocks/src/{lib,payload,consensus,service,sequence,validation,worker,pending_state}.rs`,
+`rust/op-reth/crates/flashblocks/src/ws/{mod,decoding,stream}.rs`,
+`rust/op-reth/crates/storage/src/{lib,chain}.rs`.
 
 Checked for:
-txpool that
-admits a
-deposit tx;
-L1-fee helper
-that
-undercharges
-so a stranger
-tx is free;
-consensus
-that treats a
-pool deposit
-as a mint.
+WS flashblock
+that mints a
+deposit as
+canonical L2
+ETH; consensus
+client that
+pays a caller;
+storage crate
+that rewrites
+balances.
 
 Result: no
 user-exploitable
 finding. Not
 submitted.
 
-- Txpool
-  rejects
-  EIP-4844.
-  Deposits
-  are not
-  admitted
-  from the
-  pool.
-  Validation
-  reserves
-  L1 data
-  fee plus
-  Isthmus
-  operator
-  fee
-  against
-  the
-  sender
-  balance
-  and caps
-  gas below
-  the L1-
-  info
-  deposit
-  overhead.
-- `l1.rs`
-  reads
-  `L1BlockInfo`
-  from the
-  L1-block
-  predeploy
-  storage.
-  It does
-  not mint.
-- Consensus
-  validation
-  is fork
-  field
-  gates
-  (Canyon
-  withdrawals,
-  Isthmus
-  withdrawals
-  root).
-  It does
-  not
-  transfer
-  ETH.
-- Leftover-
-  logged
-  payload
-  builder
-  already
-  rejects
-  pool
-  deposits.
+- `OpStorage`
+  is
+  `EmptyBodyStorage`.
+  No credit
+  path.
+- `WsFlashBlockStream`
+  decodes a
+  configured
+  sequencer
+  URL. Index 0
+  resets;
+  followups
+  need the
+  same block
+  and
+  `payload_id`.
+- Pending
+  build is
+  speculative
+  RPC state.
+  Reorg /
+  catch-up /
+  depth-limit
+  clears it.
+- Worker
+  execute
+  skips when
+  parent is
+  not the
+  local tip
+  and no
+  pending
+  parent
+  exists.
+  `post_block_balance_increments`
+  is empty.
+- `FlashBlockConsensusClient`
+  submits
+  `engine_newPayload`
+  /
+  FCU on the
+  leftover-
+  logged JWT
+  engine
+  handle.
+  Zero
+  `state_root`
+  skips
+  newPayload.
+  This is
+  not a
+  public
+  user
+  entry.
 
-Do not file
-a txpool L1-
-fee reserve
-or fork
-field gate
-as stranger
+Do not file a
+configured
+flashblocks
+WS or
+speculative
+pending
+block as
+stranger
 theft.
 
 Not submitted.
@@ -46572,13 +46574,16 @@ Payment requires
 user KYC.
 Remaining listed:
 unused official
-rust/op-reth leftover
-that listed trees
-still open
-(flashblocks /
-storage) /
-websites
-(if still unused).
+leftovers if
+still open.
+Official
+Optimism leftover
+that listed
+trees open is
+exhausted except
+unused official
+leftovers if
+still open.
 
 
 ## Next candidates
@@ -46894,7 +46899,9 @@ Optimism leftover remaining ProxyAdmin leftover
 is logged.
 Optimism leftover remaining op-reth leftover (`eea9542`)
 is logged.
-Optimism leftover remaining op-reth consensus + txpool leftover (`a8a3b818`)
+Optimism leftover remaining op-reth consensus leftover (`eea9542`)
+is logged.
+Optimism leftover remaining rust/op-reth flashblocks leftover (`a8a3b818`)
 is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
@@ -46933,7 +46940,7 @@ Remaining listed Filecoin: unused official leftover that listed trees open is ex
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs` / `status_cache` / `bank_forks`) if still unused. Jito leftover remaining jito-solana snapshot_bank_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana accounts_background_service leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
-Remaining listed Optimism: unused official rust/op-reth leftover that listed trees still open (flashblocks / storage) if still unused. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining op-reth consensus + txpool leftover is logged.
+Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
 Do not rematch Hedera consensus-node,
@@ -47033,6 +47040,7 @@ Do not rematch Optimism leftover remaining op-reth leftover.
 Do not rematch Optimism leftover remaining websites leftover.
 Do not rematch Optimism leftover remaining op-reth consensus leftover.
 Do not rematch Optimism leftover remaining op-reth consensus + txpool leftover.
+Do not rematch Optimism leftover remaining rust/op-reth flashblocks leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -49847,10 +49855,11 @@ Optimism leftover remaining ProxyAdmin leftover
 is logged;
 Optimism leftover remaining op-reth leftover
 (`eea9542`) is logged;
-Optimism leftover remaining op-reth consensus + txpool leftover
+Optimism leftover remaining op-reth consensus leftover
+(`eea9542`) is logged;
+Optimism leftover remaining rust/op-reth flashblocks leftover
 (`a8a3b818`) is logged (remaining listed is unused official
-rust/op-reth leftover that listed trees still open
-(flashblocks / storage) / websites);
+leftovers if still open);
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
@@ -72232,7 +72241,7 @@ Result: no user-exploitable finding. Not submitted.
 
 Do not file an engine-API or payload builder as stranger theft of L2 ETH.
 
-Not submitted. Payment requires user KYC. Remaining listed: remaining `op-reth` (consensus / txpool) / websites if still unused.
+Not submitted. Payment requires user KYC. Remaining listed: flashblocks leftover is logged; unused official leftovers if still open.
 
 ## 2026-09-03: Jito leftover remaining jito-solana serde_snapshot leftover (`d0e3a47`)
 
@@ -72283,7 +72292,7 @@ Result: no user-exploitable finding. Not submitted.
 
 Do not file a consensus receipt root or txpool admission as stranger theft.
 
-Not submitted. Payment requires user KYC. Remaining listed: remaining `op-reth` websites / other unused official leftovers if still open.
+Not submitted. Payment requires user KYC. Remaining listed: flashblocks leftover is logged; unused official leftovers if still open.
 ## 2026-09-03: Jito leftover remaining jito-solana snapshot_minimizer leftover (`d0e3a47`)
 
 Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after snapshot_controller leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/snapshot_minimizer.rs`. Do not rematch snapshot_controller leftover, serde_snapshot leftover, or remaining runtime leftover. No mainnet writes. No exploit PoCs.

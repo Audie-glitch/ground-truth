@@ -15,6 +15,7 @@ Jito leftover remaining jito-solana snapshot_bank_utils leftover is logged;
 Jito leftover remaining jito-solana snapshot_utils leftover is logged;
 Jito leftover remaining jito-solana snapshot_minimizer leftover is logged;
 Jito leftover remaining jito-solana snapshot_controller leftover is logged;
+Optimism leftover remaining rust/op-reth flashblocks leftover is logged;
 Optimism leftover remaining op-reth consensus + txpool leftover is logged;
 Jito leftover remaining jito-solana serde_snapshot leftover is logged;
 Optimism leftover remaining op-reth leftover is logged;
@@ -1796,13 +1797,14 @@ Optimism leftover remaining
 op-reth leftover
 (`eea9542`; KYC) is logged.
 Optimism leftover remaining
-op-reth consensus + txpool leftover
+op-reth consensus leftover
+(`eea9542`; KYC) is logged.
+Optimism leftover remaining
+rust/op-reth flashblocks leftover
 (`a8a3b818`; KYC) is logged
 (remaining listed is unused
-official rust/op-reth leftover
-that listed trees still open
-(flashblocks / storage) /
-websites if still unused).
+official leftovers if still
+open).
 Filecoin leftover remaining
 go-jsonrpc leftover
 (`059363558429`; KYC) is logged.
@@ -2948,7 +2950,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   op-reth leftover
   (`eea9542`; KYC),
   Optimism leftover remaining
-  op-reth consensus + txpool leftover
+  op-reth consensus leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  rust/op-reth flashblocks leftover
   (`a8a3b818`; KYC),
   Filecoin leftover remaining
   go-jsonrpc leftover
