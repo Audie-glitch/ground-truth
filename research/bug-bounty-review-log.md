@@ -4238,6 +4238,199 @@ Result: no user-exploitable finding.
 TxSaver treated as exhausted. Remaining DFS:
 triggers. Not submitted.
 
+## 2026-09-03: DeFi Saver Aave V4 money actions (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/defisaver-v3` at `e623f20`. No mainnet
+interaction. Signature-relay / premium already logged;
+this is `contracts/actions/aavev4/` supply, borrow,
+withdraw, payback, and collateral-switch.
+
+Files: `contracts/actions/aavev4/{AaveV4Supply,
+AaveV4Borrow,AaveV4Withdraw,AaveV4Payback,
+AaveV4CollateralSwitch,AaveV4StoreRatio}.sol`,
+`helpers/{AaveV4Helper,MainnetAaveV4Addresses}.sol`.
+
+Checked for: borrow/withdraw of a third-party
+position without Aave manager approval; payback
+that over-pulls past debt; fake Spoke whose
+`getReserve` returns a real token so the trailing
+`withdrawTokens` drains the wallet.
+
+Result: no user-exploitable finding.
+
+- Giver / Taker / Config position managers are
+  hardcoded. `onBehalf == 0` defaults to the
+  wallet. Other-account supply/repay go through
+  `GiverPositionManager`; borrow/withdraw/
+  collateral-switch go through Taker / Config.
+  Aave must already have enabled that manager
+  and approved this wallet.
+- Payback caps at `getUserTotalDebt`. Supply
+  and payback pull from `from` (allowance).
+- After borrow/withdraw the action sends
+  `spoke.getReserve(id).underlying` of the
+  returned amount to `to`. A fake Spoke plus
+  that `withdrawTokens` is the same
+  owner-or-bot fake-target class already
+  logged. `StoreRatio` is a view helper.
+
+Aave V4 money actions treated as exhausted.
+Remaining DFS: triggers. Not submitted.
+
+## 2026-09-03: DeFi Saver triggers (`e623f20`)
+
+Same program and clone. No mainnet interaction.
+StrategyExecutor / BotAuth already logged.
+
+Files: `contracts/triggers/{OffchainPriceTrigger,
+TokenBalanceTrigger,TrailingStopTrigger,
+ChainLinkPriceTrigger,TimestampTrigger,
+GasPriceTrigger,ClosePriceTrigger,
+AaveV3RatioTrigger,AaveV2RatioTrigger,
+AaveV4RatioTrigger,CompV3RatioTrigger,
+CompoundRatioTrigger,SparkRatioTrigger,
+MorphoBlueRatioTrigger,MorphoBluePriceTrigger,
+FluidRatioTrigger,LiquityRatioTrigger,
+LiquityV2RatioTrigger,McdRatioTrigger,
+CurveUsdCollRatioTrigger,
+CurveUsdHealthRatioTrigger,
+CurveUsdSoftLiquidationTrigger,
+CurveUsdBorrowRateTrigger}.sol` plus the
+quote-price / debt-in-front / adjust-rate
+variants and `helpers/TriggerHelper.sol`.
+
+Checked for: a stranger firing a strategy
+without the subscribed condition; Offchain
+price that a non-bot can set; LimitSell that
+accepts a 1-wei attested price and dumps
+the position; TokenBalance that reads a
+spoofable token.
+
+Result: no user-exploitable finding.
+
+- `executeStrategy` is BotAuth-gated and the
+  `StrategySub` hash must match storage.
+  Trigger `callData` is bot-supplied;
+  `subData` is the user’s stored hash.
+- Ratio / Chainlink / Morpho / Fluid /
+  Liquity / MCD / CurveUsd / Spark /
+  Comp / Aave quote-price triggers read
+  on-chain oracles or protocol views.
+  `currRatio == 0` or a missing price
+  returns false (no fire).
+- `OffchainPriceTrigger` takes
+  `currentPrice` from bot calldata, writes
+  `CURR_PRICE`, and LimitSell requires
+  `minPrice == CURR_PRICE` before `_sell`.
+  A tiny attested price would weaken
+  slippage to nearly zero. Only approved
+  bots can pass that calldata — same
+  owner-or-bot class already logged for
+  LimitSell in the exchangeV3 slice.
+- `TrailingStopTrigger` takes a Chainlink
+  `maxRoundId` from the bot but prices
+  come from `getRoundInfo`; the round
+  must be after `startRoundId`.
+- Token balance / timestamp / gas-price
+  triggers are views on the subscribed
+  addresses and thresholds.
+
+DeFi Saver V3 treated as exhausted. Not
+submitted.
+
+## 2026-09-03: 0x Settler execute + Permit2 + RFQ/UniV3 (`1df9087`)
+
+Immunefi program `0x` ($1,000,000, `kyc: true`).
+In-scope GH tree is
+`https://github.com/0xProject/0x-settler/tree/master/src`.
+Web/API (Matcha, gasless, swap) are websites —
+not reviewed, no live-API probing. Local clone
+`/tmp/0x-settler` at `1df9087`. No mainnet
+interaction.
+
+Files: `src/Settler.sol`, `src/SettlerMetaTxn.sol`,
+`src/SettlerBase.sol` (`_checkSlippageAndTransfer`),
+`src/core/{Permit2Payment,Basic,RfqOrderSettlement,
+UniswapV3Fork}.sol`,
+`src/allowanceholder/AllowanceHolder.sol`,
+`src/bridge/BridgeSettler.sol`.
+
+Checked for: a later action that spends a
+payer the taker did not authorize; forwarded
+Permit2 that accepts a forged empty sig;
+meta-txn that skips the witness-binding VIP;
+RFQ self-funded that transfers more taker
+tokens than the maker signed; UniV3 callback
+from a non-pool; AllowanceHolder that leaves
+a standing allowance; slippage check that
+sends the buy-token to the operator.
+
+Result: no user-exploitable finding.
+
+- `takerSubmitted` sets transient payer to
+  `_operator()` (`_msgSender()`). After that,
+  `_msgSender()` is the payer. Restricted
+  targets are Permit2 and AllowanceHolder
+  (`ConfusedDeputy`). `executeWithPermit`
+  requires `_isForwarded()`.
+- Forwarded `_transferFrom` requires empty
+  sig, nonce 0, and a live deadline, then
+  AllowanceHolder `transferFrom`. Witness
+  transfers (`_transferFromIKnowWhatImDoing`)
+  revert `ForwarderNotAllowed` when
+  forwarded.
+- Meta-txn `executeMetaTxn` sets witness =
+  `keccak(slippage || actions hash)` and
+  payer = signed `msgSender`. First action
+  must be a VIP that spends that witness
+  (`METATXN_TRANSFER_FROM` /
+  `METATXN_UNISWAPV3_VIP`). `takerSubmitted`
+  on the meta-txn contract reverts. Operator
+  cannot equal `msgSender`. Forwarded
+  meta-txns revert. AllowanceHolder path
+  on meta-txn reverts `ConfusedDeputy`.
+- RFQ self-funded pays the maker from
+  Settler’s taker-token balance (capped at
+  `maxTakerAmount`, maker-favor rounding)
+  then `permitWitnessTransferFrom` of the
+  maker’s permit with a Consideration
+  witness of the taker. RFQ VIP is
+  commented out.
+- UniV3 VIP / multi-hop: pool address is
+  `CREATE2` from a trusted factory+initHash
+  (`_uniV3ForkInfo`). Callback is installed
+  via `_setOperatorAndCall`; payer `address(this)`
+  pays from Settler, payer `0` pays via
+  Permit2/AllowanceHolder packed into
+  callback data. Subsequent hops reset
+  callback data to Settler+token.
+- `basicSellToPool` rejects restricted
+  targets, patches `ppm` of balance into
+  calldata, and forbids empty-return to an
+  EOA.
+- AllowanceHolder `exec` sets an ephemeral
+  allowance, ERC-2771-appends sender,
+  rejects ERC20 targets via `balanceOf`
+  probe. If `sender != tx.origin` the
+  allowance is zeroed after exec.
+- Slippage: `minAmountOut==0 && buyToken==0`
+  skips (unless mandatory). Else require
+  Settler balance ≥ min and send the full
+  (or exact-min) buy-token/ETH to
+  `slippage.recipient`. Intentional leftover
+  sweep of the last hop.
+- BridgeSettler `execute` is takerSubmitted;
+  first action may be `TRANSFER_FROM` VIP
+  or a regular dispatch. No slippage helper
+  here — remaining work is the per-bridge
+  adapters.
+
+Remaining 0x: per-DEX `_dispatch` adapters
+and `src/bridge/` (Across, Stargate,
+LayerZero, CCIP, Mayan, deBridge). Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -4282,16 +4475,24 @@ are logged; Morpho Blue, Liquity V2, Fluid T1
 + GHO/Umbrella, Comp V2/V3, Spark, Liquity V1,
 CurveUsd core, CurveUsd advanced/transient,
 Euler V2, LlamaLend core, LlamaLend leftover +
-swapper, Aave V4 sig/premium, Maker MCD, and
-TxSaver leftover (`e623f20`) are logged.
-Remaining DFS is triggers. Next unreviewed Immunefi
-GitHub-or-recent trees: those DFS trees, Jito
-`jito-solana` / `mev-programs` ($250k, KYC;
-interceptor `dbd8ce4` and restaking
-`vault_*` / `restaking_*` at `db90840` are
-exhausted), Enzyme Blue adapters added as etherscan
+swapper, Aave V4 sig/premium, Aave V4 money
+actions, Maker MCD, TxSaver leftover, and
+triggers (`e623f20`) are logged. DeFi Saver V3
+is exhausted. 0x Settler execute / Permit2 /
+RFQ / UniV3 / AllowanceHolder / BridgeSettler
+entry (`1df9087`) is logged; remaining 0x is
+per-DEX adapters and bridge adapters. Next
+unreviewed Immunefi GitHub-or-recent trees:
+0x leftover adapters, Extra Finance Optimism
+verified sources (etherscan, $100k, no KYC,
+updated 2 Sep), Index Coop etherscan set
+($200k, no KYC), Jito `jito-solana` /
+`mev-programs` ($250k, KYC; interceptor
+`dbd8ce4` and restaking `vault_*` /
+`restaking_*` at `db90840` are exhausted),
+Enzyme Blue adapters added as etherscan
 addresses after Apr 2026 (Bebop / ThreeOneThird /
-SharesSplitter). Superteam API rechecked 03:41 UTC
+SharesSplitter). Superteam API rechecked 04:05 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
@@ -4328,7 +4529,7 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-03:41 UTC 3 Sep: KeeperHub #2105 still `open` +
+04:05 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
