@@ -627,9 +627,49 @@ Not submitted. Payment requires user KYC. sBTC in-scope slices from
 this clone are now exhausted (Clarity, signer mint/burn, emily,
 chainstate, wsts).
 
+## 2026-09-03: Horizen ZenStaker / RewardAccumulator (`ab92502`)
+
+Immunefi program `horizen` ($10,000 USDC, `kyc: true`, live). Scope is
+pinned to `HorizenOfficial/staker` commit `ab92502`. Upstream Tally /
+ScopeLift `Staker.sol` paths already covered by published audits are
+out of scope except where Horizen’s integration introduces a new
+issue. Local clone `/tmp/horizen-staker`. No mainnet or testnet
+broadcast.
+
+Files: `src/ZenStaker.sol`, `src/RewardAccumulator.sol`,
+`src/DelegationSurrogate.sol`, `src/calculators/IdentityEarningPowerCalculator.sol`.
+Read `Staker.notifyRewardAmount` / `_stake` only for the integration
+boundary (ZEN-on-ZEN, notifier, surrogate).
+
+Checked for: RewardAccumulator over-count vs balance; permissionless
+`notifyRewardAmount`; schedule skip stealing principal; surrogate
+drain; view helpers changing stake/claim.
+
+Result: no user-exploitable finding.
+
+- `ZenStaker` adds only view helpers and a non-voting
+  `ZenDelegationSurrogate`. `MAX_CLAIM_FEE` is 0. Stake still moves
+  ZEN into the surrogate (max-approve back to the Staker); rewards
+  sit on the Staker. Same token, separate balances. `getVotes` is
+  `depositorTotalStaked` and is not a governance hook in Phase 1.
+- `RewardAccumulator.transferAndNotifyRewards` pulls then increments
+  `accumulatedRewards`. `notifyAlreadyTransferredRewards` requires
+  `balance - accumulated >= amount` (0.8 underflow-safe). A second
+  notify of the same surplus reverts. `sendRewardsToStaker` is
+  permissionless after `timeWindow`, transfers exactly
+  `accumulatedRewards`, then `staker.notifyRewardAmount` (notifier-
+  gated on Staker) then zeros the counter. Empty flushes still snap
+  `lastRewardTime` to the latest grid; they do not move principal.
+- Admin whitelist / window changes are owner-gated. Donating ZEN
+  when the whitelist is off gifts stakers; it does not extract
+  stake. Fee-on-transfer inflation would be a ZEN-OFT property, not
+  present in this integration.
+
+Not submitted. Payment requires user KYC.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. the402.ai still paused. No KeeperHub implementation before the
-6 Sep build window. Remaining Immunefi time-box: Horizen (small, KYC)
-or another newly added Origin money-mover if source appears.
+6 Sep build window. Remaining Immunefi time-box: Origin
+`BridgedWOETHStrategy` if still unreviewed, or a newly added program.
