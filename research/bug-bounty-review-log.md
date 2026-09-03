@@ -43144,6 +43144,103 @@ Remaining listed:
 remaining lotus
 non-miner.
 
+## 2026-09-03: Aave leftover remaining IR strategy leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after transfer-
+strategy leftover.
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-ir.sol`.
+Do not rematch
+Pool leftover.
+Do not rematch
+PoolConfigurator
+leftover.
+Do not rematch
+L2Encoder leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/misc/DefaultReserveInterestRateStrategyV2.sol`.
+
+Checked for:
+a
+stranger
+`setInterestRateParams`
+that
+zeros
+borrow
+rates;
+a
+`calculateInterestRates`
+that
+mints
+liquidity
+to
+the
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `setInterestRateParams`
+  is
+  `onlyPoolConfigurator`
+  (`ADDRESSES_PROVIDER.getPoolConfigurator()`).
+- `calculateInterestRates`
+  is
+  `view`.
+  It
+  returns
+  liquidity
+  and
+  variable
+  borrow
+  rates
+  from
+  cached
+  slopes
+  and
+  usage
+  ratios.
+  This
+  contract
+  does
+  not
+  move
+  tokens.
+
+Do not file
+a
+configurator-
+gated
+rate
+curve
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+GHO remaining
+(Gsm4626 /
+flash minter /
+FixedFee) /
+stk /
+governance.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43273,9 +43370,13 @@ Aave leftover remaining transfer-strategy leftover (`cff15de`)
 is logged.
 Filecoin leftover remaining lotus eth leftover (`7740217`)
 is logged.
+Aave leftover remaining L2Encoder leftover (`cff15de`)
+is logged.
+Aave leftover remaining IR strategy leftover (`cff15de`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: IR strategy / other helpers.
+Remaining listed Aave: GHO remaining (Gsm4626 / flash minter / FixedFee) / stk / governance.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43309,6 +43410,8 @@ Do not rematch Aave WrappedTokenGateway leftover.
 Do not rematch Aave Collector leftover.
 Do not rematch Aave transfer-strategy leftover.
 Do not rematch Filecoin lotus eth leftover.
+Do not rematch Aave L2Encoder leftover.
+Do not rematch Aave IR strategy leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -45933,6 +46036,9 @@ IR strategy / other helpers);
 Filecoin leftover remaining lotus eth leftover
 (`7740217`) is logged (remaining listed is
 remaining lotus non-miner);
+Aave leftover remaining IR strategy leftover
+(`cff15de`) is logged (remaining listed is
+GHO remaining / stk / governance);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
