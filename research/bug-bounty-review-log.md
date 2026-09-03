@@ -45848,6 +45848,8 @@ Jito leftover remaining jito-solana runtime fee leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana programs leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana vote leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45869,7 +45871,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` vote / remaining runtime / other programs if still unused.
+Remaining listed Jito: `jito-solana` bpf_loader / remaining runtime / other programs if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45934,6 +45936,7 @@ Do not rematch Jito jito-solana scheduler leftover.
 Do not rematch Jito jito-solana tokens leftover.
 Do not rematch Jito jito-solana runtime fee leftover.
 Do not rematch Jito jito-solana programs leftover.
+Do not rematch Jito jito-solana vote leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -48675,7 +48678,9 @@ Jito leftover remaining jito-solana tokens leftover
 Jito leftover remaining jito-solana runtime fee leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana programs leftover
-(`d0e3a47`) is logged (remaining listed is vote /
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana vote leftover
+(`d0e3a47`) is logged (remaining listed is bpf_loader /
 remaining runtime / other programs);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
@@ -70630,3 +70635,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file leader fee distribution or simulation overrides as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` programs / remaining runtime if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana vote leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after programs leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `programs/vote/src/lib.rs`, `programs/vote/src/vote_processor.rs`, `programs/vote/src/vote_state/mod.rs`, and `programs/vote/src/vote_state/handler.rs`. Do not rematch programs leftover (`programs/system`), runtime fee leftover, or tokens leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `Withdraw` that drains a vote account without the authorized withdrawer; `Authorize` / `AuthorizeWithSeed` that hands voter or withdrawer to a stranger; `DepositDelegatorRewards` that pulls lamports out of the vote account; `UpdateCommissionCollector` that redirects inflation or block-revenue to an unsigned account.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Entrypoint rejects a non-vote owner. `Withdraw` requires `authorized_withdrawer` in the signer set, keeps rent plus `pending_delegator_rewards` on a partial withdraw, and refuses a close while recent epoch credits or pending rewards remain.
+- `Authorize(Voter)` accepts the current withdrawer or the epoch authorized voter. `Authorize(Withdrawer)` accepts only the current withdrawer. `AuthorizeWithSeed` inserts the derived key only when account 2 signed. Checked variants also require the new authority to sign. BLS voter authorize is feature-gated and verifies a proof of possession bound to `ALPENGLOW` + the vote pubkey.
+- Vote / tower-sync paths require the epoch authorized voter. `process_new_vote_state` rewrites lockouts, root, credits, and timestamp only. It does not change authorities or collectors.
+- `UpdateCommission`, `UpdateCommissionBps`, `UpdateCommissionCollector`, and `UpdateValidatorIdentity` require the withdrawer. A new collector must be the vote account or a writable, rent-exempt, system-owned account. `DepositDelegatorRewards` CPI-transfers from a signed source into the vote account and increments `pending_delegator_rewards`.
+- v1/v3 → v4 conversion copies `authorized_withdrawer` and `authorized_voters`. Collectors default to the vote pubkey / node pubkey until the withdrawer sets them.
+
+Do not file a signed vote-account withdraw or a delayed voter authorize as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` bpf_loader / remaining runtime / other programs if still unused.
