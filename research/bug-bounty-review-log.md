@@ -44657,6 +44657,199 @@ siblings)
 /
 primacy.
 
+## 2026-09-03: Aave leftover remaining v3 money-path logic leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-v3-logic/`.
+Do not rematch
+v3 Pool
+/
+L2Pool
+leftovers
+or
+protocol-v2
+logic leftovers
+(`ce53c4a`).
+Official
+`BridgeLogic.sol`
+/
+`IsolationModeLogic.sol`
+/
+`EModeLogic.sol`
+404 on
+`cff15de`.
+No mainnet
+writes.
+
+Files:
+`src/contracts/protocol/libraries/logic/{SupplyLogic,BorrowLogic,LiquidationLogic,FlashLoanLogic}.sol`.
+
+Checked for:
+supply that
+credits a
+stranger
+without
+`transferFrom`;
+withdraw that
+burns another
+user’s aTokens;
+borrow that
+skips HF or
+credit
+delegation;
+repay that
+clears a
+stranger’s
+debt from
+someone else’s
+aTokens;
+flash loan
+that skips
+repay;
+liquidate of
+a solvent
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `executeSupply`
+  `safeTransferFrom`s
+  `params.user`
+  and mints
+  aTokens to
+  `params.onBehalfOf`.
+- `executeWithdraw`
+  burns
+  `params.user`
+  aTokens
+  (scaled
+  balance of
+  `params.user`)
+  and sends
+  underlying
+  to
+  `params.to`.
+  Remaining
+  collateral
+  plus
+  borrowing
+  runs
+  `validateHFAndLtvzero`.
+- `executeBorrow`
+  mints
+  variable
+  debt
+  `mint(user,
+  onBehalfOf)`.
+  Underlying
+  goes to
+  `params.user`
+  when
+  `releaseUnderlying`.
+  Then
+  `validateHFAndLtv`
+  on
+  `onBehalfOf`.
+  Credit
+  delegation
+  sits on
+  leftover-logged
+  v3
+  VariableDebtToken.
+- `executeRepay`
+  burns
+  `onBehalfOf`
+  debt.
+  aToken
+  repay burns
+  `params.user`
+  aTokens.
+- `executeFlashLoan`
+  validates
+  first,
+  transfers
+  underlying
+  to the
+  receiver,
+  requires
+  `executeOperation`,
+  then mode
+  NONE pulls
+  amount plus
+  premium from
+  the receiver
+  via
+  `_handleFlashLoanRepayment`.
+  Else
+  `BorrowLogic.executeBorrow`
+  with
+  `releaseUnderlying:
+  false`.
+- `executeFlashLoanSimple`
+  always
+  repays
+  amount plus
+  premium.
+- `executeLiquidationCall`
+  computes HF
+  via
+  `GenericLogic.calculateUserAccountData`.
+  `validateLiquidationCall`
+  requires
+  `healthFactor
+  < 1e18`.
+  Close
+  factor is
+  50% when HF
+  is above
+  `CLOSE_FACTOR_HF_THRESHOLD`
+  and both
+  sides meet
+  `MIN_BASE_MAX_CLOSE_FACTOR_THRESHOLD`.
+
+Do not file
+standard v3
+supply /
+withdraw /
+borrow /
+repay /
+flash-loan
+repay /
+HF-gated
+liquidation
+as stranger
+theft.
+Do not loop
+the three
+official
+logic 404s.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+v3 ValidationLogic
+/
+GenericLogic
+/
+PoolLogic
+/
+ConfiguratorLogic
+/
+CalldataLogic
+/
+primacy.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -44890,6 +45083,8 @@ Aave leftover remaining v2 Collector impl leftover (Sourcify)
 is logged.
 Aave leftover remaining GhoOracle leftover (`23859bb`)
 is logged.
+Aave leftover remaining v3 money-path logic leftover (`cff15de`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -44908,7 +45103,7 @@ Filecoin leftover remaining lotus lib addrutil leftover (`7740217`)
 is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
-Remaining listed Aave: v3 logic libraries / primacy.
+Remaining listed Aave: v3 ValidationLogic / GenericLogic / PoolLogic / ConfiguratorLogic / CalldataLogic / primacy.
 Remaining listed Jito: `jito-solana` other crates (if still unused).
 Remaining listed Rootstock: `rsk-powhsm` (if still unused).
 
@@ -44959,6 +45154,18 @@ Do not rematch Aave v3 VariableDebtToken leftover.
 Do not rematch Aave FixedPriceStrategy leftover.
 Do not rematch Aave v2 Collector impl leftover.
 Do not rematch Aave GhoOracle leftover.
+Do not rematch Aave v3 money-path logic leftover.
+Do not rematch Filecoin lotus lib sigs leftover.
+Do not rematch Filecoin lotus lib backupds leftover.
+Do not rematch Filecoin lotus lib rpcenc leftover.
+Do not rematch Filecoin lotus lib peermgr leftover.
+Do not rematch Filecoin lotus lib httpreader leftover.
+Do not rematch Filecoin lotus lib addrutil leftover.
+Do not rematch Rootstock rskj Bridge leftover.
+Do not rematch Aave protocol-v2 ValidationLogic + GenericLogic leftover.
+Do not rematch Aave protocol-v2 ReserveLogic + IR strategy leftover.
+Do not rematch Aave protocol-v2 ReserveConfiguration + UserConfiguration leftover.
+Do not rematch Rootstock powpeg-node pegout leftover.
 Do not rematch Jito jito-solana tip_manager leftover.
 Do not rematch Jito jito-solana bundle_stage leftover.
 Do not rematch Jito priority-fee-distribution leftover.
@@ -47659,6 +47866,27 @@ Aave leftover remaining v2 Collector impl leftover
 (Sourcify) is logged;
 Aave leftover remaining GhoOracle leftover
 (`23859bb`) is logged;
+Aave leftover remaining v3 money-path logic leftover
+(`cff15de`) is logged (remaining listed is
+v3 ValidationLogic / GenericLogic / PoolLogic /
+ConfiguratorLogic / CalldataLogic / primacy);
+Rootstock leftover remaining powpeg-node pegout leftover
+(`254fb3d`) is logged;
+Filecoin leftover remaining lotus lib sigs leftover
+(`7740217`) is logged;
+Filecoin leftover remaining lotus lib backupds leftover
+(`7740217`) is logged;
+Filecoin leftover remaining lotus lib rpcenc leftover
+(`7740217`) is logged;
+Filecoin leftover remaining lotus lib peermgr leftover
+(`7740217`) is logged;
+Filecoin leftover remaining lotus lib httpreader leftover
+(`7740217`) is logged;
+Filecoin leftover remaining lotus lib addrutil leftover
+(`7740217`) is logged (listed lotus leftover on this pin
+is exhausted);
+Rootstock leftover remaining rskj Bridge leftover
+(`161c3f105d18`) is logged;
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);

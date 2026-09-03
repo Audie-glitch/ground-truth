@@ -10,7 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~13:02 UTC;
-246 programs; no Sep 2026 launches; Filecoin leftover remaining lotus lib addrutil leftover is logged;
+246 programs; no Sep 2026 launches; Aave leftover remaining v3 money-path logic leftover is logged;
+Filecoin leftover remaining lotus lib addrutil leftover is logged;
 Filecoin leftover remaining lotus lib httpreader leftover is logged;
 Rootstock leftover remaining rskj Bridge leftover is logged;
 Filecoin leftover remaining lotus lib peermgr leftover is logged;
@@ -1592,9 +1593,43 @@ v2 Collector impl leftover
 (Sourcify; KYC) is logged.
 Aave leftover remaining
 GhoOracle leftover
-(`23859bb`; KYC) is logged
+(`23859bb`; KYC) is logged.
+Aave leftover remaining
+v3 money-path logic leftover
+(`cff15de`; KYC) is logged
 (remaining listed is
-v3 logic libraries / primacy).
+v3 ValidationLogic /
+GenericLogic / PoolLogic /
+ConfiguratorLogic /
+CalldataLogic / primacy).
+Rootstock leftover remaining
+powpeg-node pegout leftover
+(`254fb3d`; KYC) is logged.
+Filecoin leftover remaining
+lotus lib sigs leftover
+(`7740217`; KYC) is logged.
+Filecoin leftover remaining
+lotus lib backupds leftover
+(`7740217`; KYC) is logged.
+Filecoin leftover remaining
+lotus lib rpcenc leftover
+(`7740217`; KYC) is logged.
+Filecoin leftover remaining
+lotus lib peermgr leftover
+(`7740217`; KYC) is logged.
+Filecoin leftover remaining
+lotus lib httpreader leftover
+(`7740217`; KYC) is logged.
+Filecoin leftover remaining
+lotus lib addrutil leftover
+(`7740217`; KYC) is logged
+(listed lotus leftover on
+this pin is exhausted).
+Rootstock leftover remaining
+rskj Bridge leftover
+(`161c3f105d18`; KYC) is logged
+(remaining listed is
+`rsk-powhsm` if still unused).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2566,6 +2601,33 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Aave leftover remaining
   GhoOracle leftover
   (`23859bb`; KYC),
+  Aave leftover remaining
+  v3 money-path logic leftover
+  (`cff15de`; KYC),
+  Rootstock leftover remaining
+  powpeg-node pegout leftover
+  (`254fb3d`; KYC),
+  Filecoin leftover remaining
+  lotus lib sigs leftover
+  (`7740217`; KYC),
+  Filecoin leftover remaining
+  lotus lib backupds leftover
+  (`7740217`; KYC),
+  Filecoin leftover remaining
+  lotus lib rpcenc leftover
+  (`7740217`; KYC),
+  Filecoin leftover remaining
+  lotus lib peermgr leftover
+  (`7740217`; KYC),
+  Filecoin leftover remaining
+  lotus lib httpreader leftover
+  (`7740217`; KYC),
+  Filecoin leftover remaining
+  lotus lib addrutil leftover
+  (`7740217`; KYC),
+  Rootstock leftover remaining
+  rskj Bridge leftover
+  (`161c3f105d18`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai
