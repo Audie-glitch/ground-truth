@@ -29394,6 +29394,109 @@ StakedGlp / USDG,
 Avax twins, and V2
 Oracle / Reader rows.
 
+## 2026-09-03: GMX leftover V2 GlvRouter leftover (Sourcify)
+
+Immunefi program
+`gmx` ($5,000,000,
+`kyc: false`). Sourcify
+Arbitrum `exact_match`
+`GlvHandler`
+`0x3f6dF0c3A7221BA1375E87e7097885a601B41Afc`
++ `GlvVault`
+`0x393053B58f9678C9c28c2cE941fF6cac49C3F8f9`
+and `match`
+`GlvRouter`
+`0xd59a808bCA24812C483C1B3bF0A0E8D7D5932E4c`
++ `SubaccountRouter`
+`0xa329221a77BE08485f59310b873b14815c82E10D`.
+Extract `/tmp/gmx-glv`.
+No mainnet interaction.
+
+Files:
+`router/contracts/router/GlvRouter.sol`,
+`handler/contracts/exchange/GlvHandler.sol`,
+`handler/contracts/glv/glvDeposit/GlvDepositUtils.sol`,
+`handler/contracts/glv/glvWithdrawal/GlvWithdrawalUtils.sol`,
+`vault/contracts/glv/GlvVault.sol`,
+`subaccount/contracts/router/SubaccountRouter.sol`,
+`subaccount/contracts/subaccount/SubaccountUtils.sol`.
+
+Checked for: a stranger
+`createGlvDeposit`
+that credits vault
+transfer-in to
+another account;
+`cancelGlvDeposit`
+that refunds the
+caller; a
+subaccount
+`createOrder` that
+pulls a non-owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- GlvRouter
+  `createGlvDeposit` /
+  `createGlvWithdrawal`
+  set `account =
+  msg.sender`.
+  Cancel requires
+  `account ==
+  msg.sender`.
+- GlvHandler
+  create / cancel
+  are
+  `onlyController`.
+  Execute is
+  `onlyOrderKeeper`.
+- `GlvDepositUtils`
+  records vault
+  transfer-in into
+  that account's
+  deposit. Cancel
+  refunds
+  `glvDeposit.account()`.
+- GlvVault is
+  StrictBank
+  (`transferOut`
+  `onlyController`).
+- SubaccountRouter
+  `createOrder`
+  requires
+  `validateSubaccount`
+  and
+  `receiver ==
+  account`.
+  `pluginTransfer`
+  pulls the listed
+  account.
+
+Do not file
+user-approved
+subaccount pulls,
+keeper execute /
+cancel of an aged
+GLV request, or
+`makeExternalCalls`
+of leftover tokens
+the caller sent.
+
+Not submitted.
+Remaining listed:
+ShiftHandler /
+Vault,
+ExternalHandler,
+FeeHandler, V1
+Order Book /
+Timelock /
+StakedGlp / USDG,
+Avax twins, and V2
+Oracle / Reader
+rows.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -30689,6 +30792,26 @@ Book / Timelock /
 StakedGlp / USDG, Avax
 twins, and V2 Oracle /
 Reader rows);
+GMX leftover V2
+GlvRouter leftover
+(Sourcify Arb GlvRouter /
+GlvHandler / GlvVault /
+SubaccountRouter) is
+logged (remaining listed
+is ShiftHandler / Vault,
+ExternalHandler,
+FeeHandler, V1 Order
+Book / Timelock /
+StakedGlp / USDG, Avax
+twins, and V2 Oracle /
+Reader rows);
+DeXe Protocol leftover
+(Sourcify UserRegistry /
+SphereXEngine; KYC) is
+logged (remaining listed
+is Sourcify-404 DAO /
+registry / factory
+rows);
 Royco factory + Makina
 strategy leftover
 (Sourcify Factory /

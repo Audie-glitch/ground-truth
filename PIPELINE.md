@@ -296,6 +296,19 @@ SubaccountRouter / ExternalHandler /
 FeeHandler, V1 Order Book / Timelock /
 StakedGlp / USDG, Avax twins, and V2
 Oracle / Reader rows).
+GMX leftover V2 GlvRouter leftover
+(Sourcify Arb GlvRouter / GlvHandler /
+GlvVault / SubaccountRouter) is logged
+(remaining listed is ShiftHandler /
+Vault, ExternalHandler, FeeHandler, V1
+Order Book / Timelock / StakedGlp /
+USDG, Avax twins, and V2 Oracle /
+Reader rows).
+DeXe Protocol leftover (Sourcify
+UserRegistry / SphereXEngine; KYC) is
+logged (remaining listed is
+Sourcify-404 DAO / registry / factory
+rows).
 Royco factory + Makina strategy leftover
 (Sourcify Factory /
 RoycoVaultMakinaStrategy; KYC) is
@@ -807,6 +820,13 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (OrderVault / DepositHandler
   / WithdrawalHandler /
   LiquidationHandler),
+  GMX leftover V2 GlvRouter
+  leftover (GlvHandler /
+  GlvVault /
+  SubaccountRouter),
+  DeXe Protocol leftover
+  (Sourcify UserRegistry /
+  SphereXEngine; KYC),
   Royco factory + Makina
   strategy leftover (Sourcify;
   KYC),
