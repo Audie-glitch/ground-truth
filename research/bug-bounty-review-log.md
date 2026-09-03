@@ -31942,6 +31942,12 @@ Kamino leftover klend + kvault leftover
 (remaining listed is Scope oracle,
 KFarms, Kamino Liquidity, and listed
 third-party oracles);
+Kamino leftover Scope + KFarms leftover
+(`fe53523` / `bfa1860`; KYC) is logged
+(listed leftover that official GitHub
+opens is exhausted; remaining listed
+is Kamino Liquidity program /
+`kliquidity-sdk` and the website);
 GMX leftover V2 AdlHandler leftover
 (Sourcify Arb AdlHandler /
 AdlUtils / GlpBalance /
@@ -38848,3 +38854,166 @@ Collections V1/V2,
 vesting factories,
 and Polygon MANA /
 collections.
+
+## 2026-09-03: Kamino leftover Scope + KFarms leftover (`fe53523` / `bfa1860`)
+
+Immunefi program
+`kamino`
+($1,500,000, `kyc: true`).
+klend + kvault leftover
+already logged. This
+slice is listed Scope
+oracle and KFarms.
+Official clones
+`/tmp/kamino-scope`
+`fe53523` (release
+0.41.0) and
+`/tmp/kamino-kfarms`
+`bfa1860` (release
+1.7.0). Listed program
+IDs:
+Scope
+`HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ`,
+KFarms
+`FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr`.
+No mainnet
+interaction.
+
+Files:
+`programs/scope/src/lib.rs`,
+`programs/scope/src/handlers/handler_refresh_prices.rs`,
+`handler_update_mapping_and_metadata.rs`,
+`handler_freeze_price.rs`,
+`programs/scope/src/program_id.rs`,
+`programs/kfarms/src/lib.rs`,
+`programs/kfarms/src/handlers/handler_stake.rs`,
+`handler_unstake.rs`,
+`handler_harvest_reward.rs`,
+`handler_withdraw_unstaked_deposits.rs`,
+`handler_deposit_to_farm_vault.rs`,
+`handler_withdraw_from_farm_vault.rs`,
+`handler_withdraw_treasury.rs`,
+`handler_withdraw_reward.rs`,
+`handler_set_stake_delegated.rs`,
+`handler_reward_user_once.rs`.
+
+Checked for: a
+stranger `refresh`
+that writes a price
+without a source
+oracle; mapping
+update without
+admin; farm `stake`
+that pulls another
+ATA; `harvest` that
+pays the caller;
+`withdraw_unstaked`
+of another user's
+deposits; vault
+withdraw without
+withdraw authority.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Scope
+  `refresh_price_list`
+  is permissionless
+  and copies from
+  mapped source
+  accounts (Pyth /
+  Switchboard /
+  CLMM / etc.).
+  Frozen entries
+  skip. Mapping /
+  metadata updates
+  require
+  `configuration.admin`.
+  Freeze / resume
+  need
+  `can_freeze` /
+  `can_resume`.
+- Scope
+  `*-itf` crates
+  are type bindings
+  to listed third-
+  party program IDs
+  (Meteora / JUP
+  perp / RedStone /
+  Securitize /
+  Switchboard /
+  Adrena / SBoD).
+  They have no
+  money-path
+  instructions.
+- KFarms `stake`
+  pulls
+  `user_ata` with
+  `owner` signer
+  and
+  `user_state.has_one
+  = owner`.
+  `unstake` /
+  `withdraw_unstaked_deposits`
+  bind that owner
+  and pay
+  `user_ata`
+  (`has_one =
+  owner`).
+- `harvest_reward`
+  pays
+  `token::authority
+  = user_state.owner`.
+  If
+  `is_harvesting_permissionless`
+  a stranger payer
+  must still use
+  the owner's ATA.
+- `deposit_to_farm_vault`
+  is
+  `farm_admin`.
+  `withdraw_from_farm_vault`
+  is
+  `withdraw_authority`.
+  `withdraw_reward`
+  is `farm_admin`.
+  `withdraw_treasury`
+  is
+  `global_admin`.
+- `set_stake_delegated`
+  and
+  `reward_user_once`
+  require the
+  farm
+  `delegate_authority`.
+
+Do not file
+permissionless
+oracle refresh from
+mapped sources,
+permissionless
+harvest-to-owner
+ATA, or admin /
+delegate farm
+withdraw as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Scope +
+KFarms leftover
+that official
+GitHub opens is
+exhausted at the
+opened-handler
+level. Remaining
+listed: Kamino
+Liquidity program
+(`6LtLpnUF…`; no
+public program
+repo, only
+`kliquidity-sdk`)
+and the website.
