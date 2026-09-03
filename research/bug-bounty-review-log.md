@@ -39520,6 +39520,199 @@ and the
 transaction-tool
 website leftover.
 
+## 2026-09-03: Hedera leftover remaining TokenUpdate leftover (`0d3d9a2`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+after TokenCreate
+leftover.
+Official
+`hiero-ledger/hiero-consensus-node`
+`0d3d9a2`.
+Extract
+`/tmp/hedera-consensus`
+`TokenUpdateHandler`
+/
+`TokenDeleteHandler`
+/
+`CryptoDeleteHandler`
+/
+`TokenGrantKycToAccountHandler`
+/
+`TokenPauseHandler`
+/
+`TokenRejectHandler`
+/
+`TokenAirdropHandler`
+/
+`TokenClaimAirdropHandler`
+/
+`TokenCancelAirdropHandler`.
+No mainnet
+writes.
+
+Files:
+`handlers/TokenUpdateHandler.java`,
+`handlers/TokenDeleteHandler.java`,
+`handlers/CryptoDeleteHandler.java`,
+`handlers/TokenGrantKycToAccountHandler.java`,
+`handlers/TokenPauseHandler.java`,
+`handlers/TokenRejectHandler.java`,
+`handlers/TokenAirdropHandler.java`,
+`handlers/TokenClaimAirdropHandler.java`,
+`handlers/TokenCancelAirdropHandler.java`.
+
+Checked for:
+a stranger
+`TokenUpdate`
+that
+replaces
+treasury
+without
+the admin
+key;
+`TokenDelete`
+of an
+immutable
+token;
+`CryptoDelete`
+that
+sweeps
+another
+account;
+`TokenClaimAirdrop`
+that
+claims
+another
+receiver's
+pending
+drop.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `TokenUpdate`
+  requires
+  the admin
+  key for
+  treasury /
+  auto-renew
+  / admin /
+  memo
+  changes,
+  plus the
+  new
+  treasury
+  or
+  auto-renew
+  key.
+  Role-key
+  updates
+  need the
+  role key
+  or admin
+  (HIP-540
+  empty
+  sentinel
+  =
+  disabled).
+- `TokenDelete`
+  `requireKey`
+  the admin
+  key;
+  handle
+  rejects
+  an empty
+  admin
+  key
+  (`TOKEN_IS_IMMUTABLE`).
+- `CryptoDelete`
+  `requireKeyOrThrow`
+  the
+  deleted
+  account
+  and
+  `requireKeyIfReceiverSigRequired`
+  the
+  transfer
+  account.
+- `TokenGrantKyc`
+  requires
+  the KYC
+  key
+  (empty
+  sentinel
+  =
+  disabled).
+  `TokenPause`
+  requires
+  the pause
+  key;
+  handle
+  rejects
+  an empty
+  pause
+  key.
+- `TokenReject`
+  requires
+  the owner
+  when
+  specified.
+  `TokenAirdrop`
+  reuses
+  transfer
+  preHandle
+  for
+  senders.
+  `TokenClaimAirdrop`
+  requires
+  the
+  receiver.
+  `TokenCancelAirdrop`
+  requires
+  the
+  sender.
+
+Do not file
+admin-gated
+token
+update or
+delete,
+owner-
+signed
+account
+delete,
+KYC-key
+grant,
+pause-key
+pause,
+owner
+reject,
+sender
+airdrop,
+or
+receiver
+claim as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-mirror-node`,
+`hiero-cryptography`,
+other consensus
+modules, SDKs,
+and the
+transaction-tool
+website leftover.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -42007,6 +42200,9 @@ Hedera leftover remaining CryptoApproveAllowance leftover
 (`0d3d9a2`) is logged (remaining listed is
 mirror-node / cryptography / other modules / SDKs);
 Hedera leftover remaining TokenCreate leftover
+(`0d3d9a2`) is logged (remaining listed is
+mirror-node / cryptography / other modules / SDKs);
+Hedera leftover remaining TokenUpdate leftover
 (`0d3d9a2`) is logged (remaining listed is
 mirror-node / cryptography / other modules / SDKs);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
