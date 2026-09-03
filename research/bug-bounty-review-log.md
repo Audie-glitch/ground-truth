@@ -14651,6 +14651,118 @@ Raydium listed GitHub:
 `raydium-amm` (classic)
 and `raydium-cp-swap`.
 
+## 2026-09-03: Marinade liquid-staking leftover (`b8fe3f8`)
+
+Immunefi program
+`marinade` ($250,000,
+`kyc: false`). Listed
+leftover is
+`marinade-finance/liquid-staking-program`
+(whole tree, added
+11 Feb 2022). Local clone
+`/tmp/marinade-lsp` at
+`b8fe3f8` (“[trivial]
+[GEN-8081] Update
+README.md (#89)”). This
+slice is the user SOL /
+mSOL / LP money path.
+No mainnet interaction.
+
+Files:
+`instructions/user/deposit.rs`,
+`deposit_stake_account.rs`
+(stake-account gates),
+`liq_pool/liquid_unstake.rs`,
+`liq_pool/add_liquidity.rs`,
+`liq_pool/remove_liquidity.rs`,
+`delayed_unstake/order_unstake.rs`,
+`delayed_unstake/claim.rs`.
+
+Checked for: mSOL minted
+without a matching SOL
+pull; liquid unstake that
+pays more SOL than the
+burned mSOL; claim of a
+stranger’s ticket;
+LP mint without a SOL
+deposit; remaining-ticket
+reuse.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Deposit pulls SOL from
+  the signer into the
+  liq-pool SOL leg and/or
+  reserve PDA, then
+  transfers existing
+  liq-pool mSOL and/or
+  mints the rest via the
+  mint-authority PDA.
+  `mint_to` is any mSOL
+  ATA (gift). Supply
+  cannot exceed the
+  recorded
+  `msol_supply`.
+- Liquid unstake requires
+  a token source check
+  (owner or delegate)
+  and pays
+  `msol_to_sol(amount -
+  fee)` from the SOL-leg
+  PDA, capped by
+  available liquidity
+  minus rent. Fee mSOL
+  stays in the pool;
+  treasury cut goes to
+  the state treasury.
+  SOL destination is
+  unconstrained (gift).
+- `order_unstake` burns
+  the caller’s mSOL and
+  writes a zeroed ticket
+  with beneficiary =
+  token-account owner
+  and lamports =
+  `msol_to_sol - delay
+  fee`. Claim requires
+  `transfer_sol_to ==
+  ticket.beneficiary`,
+  matching
+  `state_address`,
+  non-zero lamports,
+  one epoch + 30 minutes,
+  and reserve SOL above
+  rent. Anyone may
+  trigger claim; payout
+  is only to the
+  beneficiary. Ticket
+  closes to that
+  account.
+- Add liquidity pulls
+  signer SOL into the
+  SOL leg and mints LP
+  shares from
+  `shares_from_value`
+  after syncing
+  `lp_supply` to the
+  real mint (must not
+  exceed recorded).
+  Remove burns LP and
+  pays pro-rata SOL +
+  mSOL from the legs.
+
+Not submitted. Remaining
+Marinade: crank
+(stake_reserve /
+deactivate / merge /
+update), admin pause /
+config, and validator
+management /
+`withdraw_stake_account`
+split.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -15134,6 +15246,12 @@ Raydium CLMM leftover
 (remaining Raydium is
 `raydium-amm` +
 `raydium-cp-swap`);
+Marinade liquid-staking
+leftover (`b8fe3f8`) is
+logged (remaining
+Marinade is crank /
+admin / validator
+management);
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover
