@@ -22889,6 +22889,139 @@ dual-governance
 timelock +
 committees.
 
+## 2026-09-03: Lido dual-governance submit / timelock leftover (`ba9dfc9`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Escrow
+leftover is already
+logged on the same
+pin. This slice is
+submit / schedule /
+execute. Same clone
+`/tmp/lidofinance-dual-governance`
+at `ba9dfc9`. No
+mainnet interaction.
+
+Files:
+`DualGovernance.sol`,
+`EmergencyProtectedTimelock.sol`,
+`Executor.sol`,
+`libraries/{ExecutableProposals,Proposers,ExternalCalls}.sol`.
+
+Checked for: a
+stranger
+`submitProposal`
+that binds an
+attacker executor;
+`execute` that runs
+calls before the
+delays; cancel that
+does not mark
+later ids; emergency
+execute by a
+non-committee.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `submitProposal`
+  requires a
+  registered
+  proposer
+  (`getProposer`
+  reverts
+  otherwise) and
+  a state that
+  allows submit.
+  The executor is
+  the proposer’s
+  stored executor,
+  not caller-
+  chosen.
+  `registerProposer`
+  / unregister /
+  set executor are
+  admin-executor
+  only.
+- `scheduleProposal`
+  is permissionless
+  after
+  `canScheduleProposal`
+  and the after-
+  submit delay.
+  `cancelAllPendingProposals`
+  is the stored
+  canceller and
+  only in veto
+  signalling /
+  deactivation.
+- Timelock
+  `submit` /
+  `schedule` /
+  `cancelAll` are
+  governance-only.
+  `execute` is
+  permissionless
+  after after-
+  schedule delay
+  and
+  `MIN_EXECUTION_DELAY`,
+  and only if
+  emergency mode
+  is off. Status
+  is set to
+  `Executed`
+  before the
+  calls. Calls
+  run through the
+  proposal’s
+  executor
+  (`onlyOwner`).
+  `cancelAll`
+  raises
+  `lastCancelledProposalId`
+  to
+  `proposalsCount`.
+- Emergency
+  activate is the
+  activation
+  committee.
+  `emergencyExecute`
+  is the execution
+  committee and
+  skips delays.
+  `emergencyReset`
+  is that
+  committee and
+  points
+  governance at
+  `emergencyGovernance`
+  then cancels
+  pending.
+  Committee and
+  delay setters
+  are admin
+  executor.
+
+Not submitted.
+Remaining
+dual-governance:
+committees,
+ResealManager,
+Tiebreaker.
+Remaining Lido
+listed GitHub:
+easy-track /
+governance bridges /
+remaining CSM gates.
+CSM bond leftover is
+already logged on
+`2824e21`.
+
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -23204,9 +23337,12 @@ vesting-escrow + stonks leftover
 Lido `lido-l2-with-steth` leftover
 (`4fec842`) is logged.
 Lido dual-governance Escrow leftover
-(`ba9dfc9`) is logged (remaining
-dual-governance is DualGovernance /
-timelock / committees).
+(`ba9dfc9`) is logged.
+Lido dual-governance submit /
+timelock leftover (`ba9dfc9`) is
+logged (remaining dual-governance
+is committees / ResealManager /
+Tiebreaker).
 Lido CSM bond leftover
 (`2824e21`) is logged
 (remaining Lido is easy-track /
@@ -23542,11 +23678,13 @@ Lido 0.8.25 vault leftover
 (`2da0f48`) is logged.
 Lido dual-governance Escrow
 leftover (`ba9dfc9`) is
-logged.
+logged. Lido dual-governance
+submit / timelock leftover
+is logged.
 Lido CSM bond leftover
 (`2824e21`) is logged
 (remaining Lido is
-DualGovernance / timelock /
+committees / ResealManager /
 easy-track /
 governance bridges /
 remaining CSM gates);
