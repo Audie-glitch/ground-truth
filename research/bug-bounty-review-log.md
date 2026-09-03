@@ -23743,6 +23743,93 @@ redeem share-price
 path is not a listed
 USDN asset.
 
+## 2026-09-03: Lido aragon-apps leftover (`e44f928`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Core,
+L2, easy-track, CSM,
+dual-governance, and
+governance-crosschain-bridges
+are already logged.
+This slice is
+`aragon-apps`. Local
+clone
+`/tmp/lidofinance-aragon-apps`
+at `e44f928`. No
+mainnet interaction.
+
+Files:
+`apps/vault/contracts/Vault.sol`,
+`apps/finance/contracts/Finance.sol`,
+`apps/agent/contracts/Agent.sol`,
+`apps/token-manager/contracts/TokenManager.sol`.
+
+Checked for: a
+stranger Vault
+`transfer`; Finance
+`newImmediatePayment`
+to the caller;
+Agent `execute`
+without
+`EXECUTE_ROLE`;
+TokenManager `mint`
+without `MINT_ROLE`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Vault `deposit`
+  is permissionless
+  and pulls
+  `msg.sender`.
+  `transfer` is
+  `authP(TRANSFER_ROLE,
+  arr(token, to,
+  value))`.
+- Finance
+  `newImmediatePayment`
+  /
+  `newScheduledPayment`
+  are
+  `CREATE_PAYMENTS_ROLE`.
+  `executePayment`
+  is
+  `EXECUTE_PAYMENTS_ROLE`.
+  `receiverExecutePayment`
+  is the stored
+  receiver only and
+  pays that
+  receiver.
+- Agent `execute` /
+  `safeExecute` are
+  `EXECUTE_ROLE` /
+  `SAFE_EXECUTE_ROLE`.
+  Safe execute
+  reverts if a
+  protected token
+  balance drops or
+  the protected
+  list changes.
+- TokenManager
+  `mint` / `issue`
+  / `assign` /
+  `burn` are their
+  respective roles.
+
+Not submitted.
+Remaining Lido
+listed GitHub:
+aave-delivery-infrastructure /
+mev-boost-relay-allowed-list.
+Remaining
+aragon-apps:
+Voting /
+DisputableVoting /
+Agreement.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -24074,9 +24161,12 @@ Lido CSM gates leftover
 Lido easy-track leftover
 (`3183d1f`) is logged.
 Lido governance-crosschain-bridges
-leftover (`659e236`) is logged
-(remaining Lido is aragon-apps /
-aave-delivery-infrastructure).
+leftover (`659e236`) is logged.
+Lido aragon-apps leftover
+(`e44f928`) is logged
+(remaining Lido is
+aave-delivery-infrastructure /
+mev-boost-relay-allowed-list).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -24425,9 +24515,12 @@ Lido CSM gates leftover
 Lido easy-track leftover
 (`3183d1f`) is logged.
 Lido governance-crosschain-bridges
-leftover (`659e236`) is logged
-(remaining Lido is aragon-apps /
-aave-delivery-infrastructure);
+leftover (`659e236`) is logged.
+Lido aragon-apps leftover
+(`e44f928`) is logged
+(remaining Lido is
+aave-delivery-infrastructure /
+mev-boost-relay-allowed-list);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
 rETH2 / Oracles /
