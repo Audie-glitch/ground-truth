@@ -587,8 +587,49 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: sBTC wsts + signer signing gate (`18caa9d`)
+
+Same Immunefi program (`sbtc`, $250k, KYC). Local clones `/tmp/sbtc/wsts`
+and `/tmp/sbtc/signer`. No mainnet interaction.
+
+Files: `wsts/src/{v2,common,schnorr}.rs`,
+`wsts/src/state_machine/signer/mod.rs` (DKG end, nonce, sign-share,
+private-share decrypt), `signer/src/transaction_signer.rs`
+(`NonceRequest` / `SignatureShareRequest` and
+`validate_bitcoin_sign_request`).
+
+Checked for: unverified DKG shares becoming a signing key; nonce reuse;
+coordinator swapping the message after a nonce; a user forcing a
+signature on an unapproved bitcoin sighash.
+
+Result: no user-exploitable finding.
+
+- `check_public_shares` requires polynomial degree `== threshold` and a
+  Schnorr ownership proof of the constant term (`WSTS/polynomial-constant`).
+  `compute_secret` then checks each private share against
+  `s * G == poly(key_id)` and refuses `BadPrivateShares` before writing
+  `private_keys`. Decrypt failures go into `invalid_private_shares` and
+  block a successful `DkgEnd`.
+- `compute_secrets` remaps `src_party → dest_key` into
+  `dest_key → src_party` before that check.
+- `sign_with_tweak` `take()`s the private nonce. A second share request
+  returns `MissingNonce`. The library will sign whatever message the
+  caller passes; that is expected for a FROST crate.
+- The sBTC signer is the policy layer. Both `NonceRequest` and
+  `SignatureShareRequest` require a canonical coordinator, then
+  `validate_bitcoin_sign_request`: the message must be a known
+  `TapSighash` with `will_sign_bitcoin_tx_sighash == true` and a matching
+  prevout signature type. Unknown or rejected sighashes do not enter
+  WSTS. DKG-verification signs only the mock message for a non-failed
+  pending key inside the verification window.
+
+Not submitted. Payment requires user KYC. sBTC in-scope slices from
+this clone are now exhausted (Clarity, signer mint/burn, emily,
+chainstate, wsts).
+
 ## Next candidates
 
-sBTC `wsts` (KYC). Superteam `AGENT_ALLOWED` is still only Steve Arena
-and ZNS — do not execute. the402.ai still paused. No KeeperHub
-implementation before the 6 Sep build window.
+Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
+execute. the402.ai still paused. No KeeperHub implementation before the
+6 Sep build window. Remaining Immunefi time-box: Horizen (small, KYC)
+or another newly added Origin money-mover if source appears.
