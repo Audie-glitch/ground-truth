@@ -33998,7 +33998,14 @@ leftover (`ebec19d`
 PartialLiquidationBotV3;
 KYC) is logged (listed
 bots-v3 leftover
-exhausted; remaining
+exhausted).
+Gearbox leftover
+integrations-v3 remaining
+adapters leftover
+(`39e70f0` Pendle /
+Balancer V3 / Convex /
+Lido / Sky / Uniswap V4;
+KYC) is logged (remaining
 listed is other
 integrations adapters /
 helpers / permissionless /
@@ -44167,3 +44174,158 @@ Securitize /
 Switchboard /
 Adrena) if still
 unused.
+
+## 2026-09-03: Gearbox leftover integrations-v3 remaining adapters leftover (`39e70f0`)
+
+Immunefi program
+`gearbox` ($150,000,
+`kyc: true`). Official
+scope is
+`Gearbox-protocol/security`
+`bug-bounty/v3_1-scope.md`.
+Adapter + zapper core
+already logged. This slice
+is more `integrations-v3`
+`39e70f0` money-path
+adapters: Pendle Router,
+Balancer V3 Router,
+Convex BaseRewardPool,
+Lido V1, Sky DAI/USDS,
+Uniswap V4. Clone
+`/tmp/gearbox-int`.
+No mainnet writes.
+
+Files:
+`contracts/adapters/pendle/PendleRouterAdapter.sol`,
+`contracts/adapters/balancer/BalancerV3RouterAdapter.sol`,
+`contracts/adapters/convex/ConvexV1_BaseRewardPool.sol`,
+`contracts/adapters/lido/LidoV1.sol`,
+`contracts/adapters/sky/DaiUsdsAdapter.sol`,
+`contracts/adapters/uniswap/UniswapV4.sol`.
+
+Checked for: a
+stranger adapter
+call on a victim
+account; a Pendle
+or Balancer swap
+that honors a
+caller `receiver`;
+a Convex
+stake / withdraw
+that targets
+another staker; a
+Lido submit that
+mints stETH off
+the credit
+account; a Sky
+wrap that sends
+to a caller-chosen
+`usr`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- All six
+  adapters are
+  `creditFacadeOnly`
+  and execute on
+  the manager's
+  active credit
+  account.
+- Pendle forces
+  the credit
+  account as
+  receiver,
+  allowlists
+  market / token
+  / PT pairs, and
+  only redeems PT
+  after YT
+  expiry.
+- Balancer V3
+  swaps / add /
+  remove require
+  configurator
+  pool status.
+  `wethIsEth` and
+  `userData` are
+  forced false /
+  empty. Tokens
+  come from the
+  credit account.
+- Convex stake /
+  withdraw /
+  unwrap pass
+  through
+  `_execute` so
+  `msg.sender` on
+  the pool is the
+  credit account.
+  Phantom token
+  must match
+  `stakedPhantomToken`.
+  Extra rewards
+  are collateral-
+  checked.
+- Lido `submit`
+  wraps WETH
+  through the
+  gateway with
+  referral =
+  pool treasury.
+  WETH and stETH
+  are collateral.
+- Sky ignores
+  `usr` and wraps
+  to the credit
+  account. DAI
+  and USDS are
+  collateral.
+- Uniswap V4
+  requires an
+  allowed pool
+  key,
+  ignores
+  `hookData`, and
+  maps ETH
+  `address(0)` to
+  WETH. Tokens
+  must be
+  collateral.
+
+Do not file
+configurator pair
+/ pool
+allowlists or
+facade-gated
+adapter use on
+the caller's own
+account as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`integrations-v3`
+opens for these
+adapter types is
+exhausted at the
+opened-file
+level. Remaining
+listed: Camelot,
+Fluid, Infinifi,
+Mellow, Midas,
+Securitize,
+TraderJoe,
+Upshift,
+Velodrome
+adapters and
+helpers;
+permissionless;
+periphery-v3
+emergency / kyc /
+migration.
