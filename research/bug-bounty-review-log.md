@@ -63266,3 +63266,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file client-side builders or operator-only signing as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `hiero-mirror-node` (sparse only), `hiero-sdk-java` / `hiero-sdk-go`, and the transaction-tool website leftover.
+
+## 2026-09-03: Hedera leftover hiero-mirror-node importer leftover (`abfc59f`)
+
+Immunefi program `hedera` ($30,000, `kyc: true`). Official remaining listed after cryptography leftover (`ec74c65`). Official clone `/tmp/hiero-mirror` `abfc59f` (sparse `importer`). Opened `NodeSignatureVerifier.java`, `ConsensusValidatorImpl.java`, `Downloader.java`, `AccountBalancesDownloader.java`, `BlockStreamVerifier.java`, `TssVerifierImpl.java`, `CsvBalanceFileReader.java`. No mainnet writes. No exploit PoCs.
+
+Checked for: a stranger-signed account-balance or record file that overwrites mirrored balances; TSS / node-signature skip that accepts an unsigned block; hash-chain skip that splices a later file.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Record and account-balance downloaders share `Downloader`: each signature is `Signature.initVerify` against that node's public key over the file hash (and metadata hash when present). `ConsensusValidatorImpl` then requires stake-weighted `consensusRatio` (default 1/3, `RoundingMode.CEILING`) of **VERIFIED** signatures that agree on the same file hash; `totalStake == 0` fails closed. Duplicate node IDs are not double-counted. `consensusRatio == 0` is operator config (skip consensus after any verified signature).
+- After consensus, the data file's SHA-384 file/metadata hashes must match the signed hashes, and chained streams must match the previous verified running hash. CSV balance files are hashed with `DigestInputStream` while parsed.
+- Block streams: sequential block numbers + previous-hash chain; native blocks call `TSS.verifyTSS` on the root hash; wrapped record blocks reuse `NodeSignatureVerifier` on the record-file signatures. Amendments / initial-state / pre-v6 wrapped records are rejected.
+
+Do not file stake-weighted signed stream import or TSS-gated blocks as stranger theft. Mirror-node does not hold user funds.
+
+Not submitted. Payment requires user KYC. Remaining listed: `hiero-sdk-java` / `hiero-sdk-go`, and the hashed transaction-tool website leftover.
