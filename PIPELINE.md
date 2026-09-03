@@ -18,6 +18,7 @@ Jito leftover remaining jito-solana snapshot_bank_utils leftover is logged;
 Jito leftover remaining jito-solana snapshot_utils leftover is logged;
 Jito leftover remaining jito-solana snapshot_minimizer leftover is logged;
 Jito leftover remaining jito-solana snapshot_controller leftover is logged;
+Arbitrum leftover remaining governance leftover is logged;
 Arbitrum leftover remaining custom reverse gateway leftover is logged;
 Arbitrum leftover remaining nitro challenge leftover is logged;
 Optimism leftover remaining rust/op-reth flashblocks leftover is logged;
@@ -1821,9 +1822,11 @@ nitro challenge leftover
 (`7fc6624`; KYC) is logged.
 Arbitrum leftover remaining
 custom reverse gateway leftover
-(`1bdf3cd`; KYC) is logged
+(`1bdf3cd`; KYC) is logged.
+Arbitrum leftover remaining
+governance leftover
+(`9e413da`; KYC) is logged
 (remaining listed is
-governance /
 fund-distribution /
 remaining token-bridge
 libs / websites if
@@ -2984,6 +2987,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Arbitrum leftover remaining
   custom reverse gateway leftover
   (`1bdf3cd`; KYC),
+  Arbitrum leftover remaining
+  governance leftover
+  (`9e413da`; KYC),
   Filecoin leftover remaining
   go-jsonrpc leftover
   (`059363558429`; KYC),

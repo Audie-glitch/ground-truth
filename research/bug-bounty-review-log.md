@@ -46851,7 +46851,130 @@ Not submitted.
 Payment requires
 user KYC.
 Remaining listed:
-governance /
+governance leftover
+is logged;
+fund-distribution /
+remaining
+token-bridge
+libs /
+websites
+(if still unused).
+
+
+## 2026-09-03: Arbitrum leftover remaining governance leftover (`9e413da`)
+
+Immunefi program
+`arbitrum`
+($2,000,000,
+`kyc: true`).
+Official remaining
+listed after
+custom reverse
+gateway leftover.
+Official
+`ArbitrumFoundation/governance`
+`9e413da`.
+Extract
+`/tmp/arb-gov/`.
+`UpgradeExecutor.sol`
+404s on this
+pin.
+Do not rematch
+custom reverse
+gateway leftover
+or nitro
+challenge
+leftover.
+No mainnet
+writes.
+
+Files:
+`src/{TokenDistributor,L1ArbitrumToken,L2ArbitrumToken,L2ArbitrumGovernor,L1ArbitrumTimelock,ArbitrumTimelock,FixedDelegateErc20Wallet,UpgradeExecRouteBuilder}.sol`.
+
+Checked for:
+a stranger
+`claim` of
+another
+address's
+ARB; mint
+without
+owner;
+sweep that
+pays the
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `claim`
+  pays
+  `claimableTokens[msg.sender]`
+  then zeros
+  it. Sweep
+  after the
+  claim
+  window
+  sends
+  leftovers
+  to
+  `sweepReceiver`.
+  `setRecipients`
+  /
+  `withdraw`
+  are
+  `onlyOwner`.
+- L1
+  `bridgeMint`
+  /
+  `bridgeBurn`
+  are
+  `onlyArbOneGateway`.
+  L2 `mint`
+  is
+  `onlyOwner`
+  and
+  2%/year
+  capped.
+- Governor
+  `relay` is
+  `onlyOwner`.
+  Cancel is
+  the
+  proposer.
+- L1
+  timelock
+  schedule
+  is
+  L2-bridge
+  gated.
+  Wallet
+  `transfer`
+  is
+  `onlyOwner`.
+- Route
+  builder
+  encodes
+  upgrade
+  calldata.
+  It does
+  not move
+  tokens.
+
+Do not file
+owner-set
+claims or
+gateway-
+gated ARB
+mint as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
 fund-distribution /
 remaining
 token-bridge
@@ -47181,6 +47304,8 @@ Arbitrum leftover remaining nitro challenge leftover (`7fc6624`)
 is logged.
 Arbitrum leftover remaining custom reverse gateway leftover (`1bdf3cd`)
 is logged.
+Arbitrum leftover remaining governance leftover (`9e413da`)
+is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
 Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
@@ -47219,7 +47344,7 @@ Remaining listed Aave: primacy; unused official v3 logic leftover that listed tr
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
-Remaining listed Arbitrum: governance / fund-distribution / remaining token-bridge libs / websites if still unused. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged.
+Remaining listed Arbitrum: fund-distribution / remaining token-bridge libs / websites if still unused. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
 Do not rematch Hedera consensus-node,
@@ -47326,6 +47451,7 @@ Do not rematch Optimism leftover remaining op-reth consensus + txpool leftover.
 Do not rematch Optimism leftover remaining rust/op-reth flashblocks leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
+Do not rematch Arbitrum leftover remaining governance leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -50153,6 +50279,8 @@ Arbitrum leftover remaining nitro challenge leftover
 (`7fc6624`) is logged;
 Arbitrum leftover remaining custom reverse gateway leftover
 (`1bdf3cd`) is logged;
+Arbitrum leftover remaining governance leftover
+(`9e413da`) is logged;
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
