@@ -29960,6 +29960,27 @@ is logged (remaining listed
 is Avax twins, V1 trackers
 / vesters, and V2 Oracle /
 Reader rows);
+Kelp DAO leftover (Sourcify
+deposit / withdraw; KYC)
+is logged (remaining listed
+is the website Restaking
+page);
+Aera leftover (Sourcify Base
+MultiDepositorVault /
+Provisioner; KYC) is logged
+(listed leftover exhausted
+at the opened-contract
+level);
+Derive leftover matching +
+cash leftover (`f6c20f4` /
+`96796a6` Deposit /
+Withdrawal / Transfer /
+Trade / Matching +
+CashAsset) is logged
+(remaining listed is
+DutchAuction /
+SecurityModule / managers /
+assets / feeds);
 CapyFi leftover (Sourcify
 Comptroller / CEther /
 CErc20; KYC) is logged
@@ -33058,3 +33079,137 @@ vault leftover is
 exhausted at the
 opened-contract
 level.
+
+## 2026-09-03: Derive leftover matching + cash leftover (`f6c20f4` / `96796a6`)
+
+Immunefi program
+`derive`
+($50,000, `kyc: false`).
+Unique unused standing
+program. Not previously
+logged. Listed assets are
+Lyra-explorer addresses
+(explorer 403 from this
+VM; Sourcify 404 on
+common L2 chain ids).
+This slice is the official
+GitHub of the listed
+matching money modules
+plus CashAsset
+deposit / withdraw.
+Clones `/tmp/derive-v2-matching`
+at `f6c20f4` and
+`/tmp/derive-v2-core`
+at `96796a6`.
+No mainnet interaction.
+
+Files:
+`src/Matching.sol`,
+`src/ActionVerifier.sol`,
+`src/SubAccountsManager.sol`,
+`src/modules/{Base,Deposit,Withdrawal,Transfer,Trade}Module.sol`,
+`src/assets/CashAsset.sol`.
+
+Checked for: a
+stranger deposit that
+credits the caller
+without pulling that
+owner; withdraw that
+pays the caller from
+another subaccount;
+transfer that moves
+a stranger's
+balances; matching
+execute that skips
+the owner signature;
+CashAsset withdraw
+by a non-owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Matching
+  `verifyAndMatch` is
+  `onlyTradeExecutor`
+  and an allowed
+  module. Actions
+  share one module.
+  `_verifyAction`
+  requires an unexpired
+  EIP-712 signature
+  from `owner` or a
+  live session key, and
+  `subAccountToOwner[id]
+  == owner` (or unset
+  for id 0).
+- Deposit pulls
+  `wrappedAsset` from
+  `action.owner` and
+  credits that owner's
+  subaccount (or a new
+  one mapped to
+  `action.owner`).
+  Withdraw calls
+  `CashAsset.withdraw`
+  to `action.owner`.
+  Transfer requires
+  both signed actions
+  to share `owner`.
+- TradeModule fills
+  signed limit orders
+  within
+  `limitPrice` /
+  `worstFee` /
+  `desiredAmount`.
+  Recipient must be
+  the signed account
+  or another account
+  mapped to the same
+  owner. Fee and fill
+  price are
+  executor-chosen
+  inside those bounds.
+- CashAsset `deposit`
+  pulls `msg.sender`
+  and credits the
+  named account
+  (donation).
+  `withdraw` is
+  `ownerOf(accountId)`
+  only and pays
+  `recipient`.
+- SubAccountsManager
+  maps deposited NFTs
+  to `msg.sender` (or
+  a named recipient).
+  Complete-withdraw
+  returns the NFT to
+  that mapped owner
+  after cooldown.
+
+Do not file
+permissioned trade
+executor matching
+inside signed
+limits, owner
+session-key
+register, or
+permissionless
+donation deposit
+as stranger theft.
+
+Not submitted.
+Listed leftover is
+the matching
+deposit / withdraw /
+transfer / trade
+path plus CashAsset.
+Remaining listed:
+DutchAuction /
+SecurityModule /
+StandardManager /
+PMRM / Option /
+Perp / BaseAsset /
+feeds.
