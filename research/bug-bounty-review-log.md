@@ -25424,8 +25424,102 @@ Remaining Hydration
 listed GitHub:
 other pallets
 (omnipool / stableswap
-/ XYK / DCA leftover
-opened).
+/ XYK leftover is
+logged).
+
+## 2026-09-03: Hydration pool leftover (`672e02f`)
+
+Immunefi program
+`Hydration`
+($222,222, `kyc: false`).
+DCA / bonds /
+circuit-breaker leftover
+is already logged.
+This slice is
+omnipool, stableswap,
+XYK, and OTC. Local
+sparse clone
+`/tmp/hydration-node`
+at `672e02f`. No
+mainnet interaction.
+
+Files:
+`pallets/omnipool/src/lib.rs`,
+`pallets/stableswap/src/lib.rs`,
+`pallets/xyk/src/lib.rs`,
+`pallets/otc/src/lib.rs`.
+
+Checked for: a
+stranger
+`remove_liquidity`
+on someone else's
+position; `sell`
+that pays the
+caller without
+taking `asset_in`;
+OTC `cancel_order`
+that unreserves to
+the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Omnipool
+  `add_liquidity`
+  pulls the signer
+  and mints an NFT
+  to that signer.
+  `do_remove_liquidity`
+  requires
+  `NFTHandler::owner
+  == who` and pays
+  that owner.
+  `withdraw_protocol_liquidity`
+  is
+  `AuthorityOrigin`.
+  `sell` / `buy`
+  transfer
+  `asset_in` from
+  the signer and
+  `asset_out` to
+  the signer.
+- Stableswap
+  `sell` / `buy`
+  require the
+  signer's free
+  balance and
+  transfer that
+  signer.
+- XYK
+  `create_pool` /
+  `add_liquidity`
+  pull the signer.
+  Shares mint to
+  that signer.
+- OTC
+  `place_order`
+  reserves
+  `asset_out` from
+  the signer.
+  `fill_order` /
+  `partial_fill_order`
+  swap against the
+  reserved owner
+  amount.
+  `cancel_order`
+  is the stored
+  owner only.
+
+Not submitted.
+Remaining Hydration
+listed GitHub:
+liquidity-mining /
+staking / LBP /
+referrals / route-
+executor / EVM
+adapters.
 
 ## Next candidates
 
@@ -25789,9 +25883,15 @@ Nexus Mutual claims leftover
 (remaining listed is
 legacy modules).
 Hydration DCA leftover
+(`672e02f`) is logged.
+Hydration pool leftover
 (`672e02f`) is logged
 (remaining listed is
-other pallets).
+liquidity-mining /
+staking / LBP /
+referrals / route-
+executor / EVM
+adapters).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
@@ -26191,9 +26291,15 @@ Nexus Mutual claims leftover
 (remaining listed is
 legacy modules).
 Hydration DCA leftover
+(`672e02f`) is logged.
+Hydration pool leftover
 (`672e02f`) is logged
 (remaining listed is
-other pallets).
+liquidity-mining /
+staking / LBP /
+referrals / route-
+executor / EVM
+adapters).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
