@@ -71116,3 +71116,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a types-and-formula crate as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches (`go-paramfetch` / `go-commp-utils` if still unused).
+
+## 2026-09-03: Filecoin leftover remaining go-paramfetch leftover (`78a1658e6493`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after go-state-types leftover (avoid lotus collision). Official `filecoin-project/go-paramfetch` `78a1658e6493` (`78a1658e6493ff25f0e3149fd4971051a9d6c945`). Opened listed `paramfetch.go` and `paramfetch/paramfetch.go` (CLI wrapper). Do not rematch proofs leftover or filecoin-ffi leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: fetched params written without digest check so a stranger gateway can poison sealing; `GetParams` that spends FIL; path write that overwrites a wallet key from a CID.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `GetParams` unmarshals caller-supplied JSON maps and GETs `IPFS_GATEWAY` or `https://proofs.filecoin.io/ipfs/` + CID. It does not send messages or hold FIL.
+- After download, `checkFile` hashes the file with BLAKE2b-512 and compares the first 16 hex bytes to `info.Digest`. Mismatch removes the file and retries once.
+- `TRUST_PARAMS=1` skips the digest only for `.params` (not `v28-empty-sector-update*`) and logs `DO NOT USE IN PRODUCTION`. That is an operator opt-in, not a stranger call.
+- The CLI reads sector size plus two local JSON paths from argv and calls `GetParams`. Filename is `filepath.Join(paramdir, name)` from the JSON the caller already provided.
+
+Do not file a digest-checked proof-param downloader as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches (`go-commp-utils` if still unused).
