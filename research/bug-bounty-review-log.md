@@ -3569,6 +3569,43 @@ Result: no user-exploitable finding.
 Remaining DFS protocol actions: Aave / CurveUsd /
 Fluid / Euler / Liquity V1. Not submitted.
 
+## 2026-09-03: DeFi Saver Fluid T1 + liquidity logic (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction.
+
+Files: `contracts/actions/fluid/vaultT1/{FluidVaultT1Open,
+FluidVaultT1Borrow,FluidVaultT1Withdraw}.sol`,
+`logic/liquidity/{FluidSupply,FluidBorrow,FluidWithdraw,
+FluidPayback}LiquidityLogic.sol`,
+`helpers/FluidVaultTypes.sol`.
+
+Checked for: operate on an NFT the wallet does not
+own; ETH wrap that deposits the wrong amount; max
+payback that keeps leftover borrow tokens; T1
+helpers that accept a T2/T3 vault type.
+
+Result: no user-exploitable finding.
+
+- T1 actions hardcode `T1_VAULT_TYPE`. Liquidity
+  libraries `requireLiquidityCollateral` /
+  `requireLiquidityDebt`. `operate` is called as the
+  wallet; Fluid requires the NFT owner. Open uses
+  `nftId == 0` so the vault mints to the wallet.
+- ETH coll is unwrapped WETH then sent as `msg.value`.
+  Borrow/withdraw can wrap ETH to WETH on the wallet
+  then `withdrawTokens` to `to`. Wrap amount is the
+  requested borrow or the vault-returned withdraw.
+- Max payback pulls `borrow * 10001/10000 + 5`, uses
+  `type(int256).min`, refunds dust to `from`, and
+  clears leftover approval. `signed256` reverts above
+  `int256.max`.
+
+Remaining Fluid: Dex T2/T3/T4 operate paths. Remaining
+DFS: Aave / CurveUsd / Euler / Liquity V1. Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3608,10 +3645,10 @@ exhausted. 1inch Aqua opcode set and Aqua-listed
 solidity-utils mixins / libraries (`5b597e4`) are
 exhausted. DeFi Saver V3 executor + FL + auth
 (`e623f20`) and exchangeV3 + sell actions (`e623f20`)
-are logged; Morpho Blue and Liquity V2 actions
-(`e623f20`) are logged. Remaining DFS is protocol
-`actions/*` (Aave / CurveUsd / Fluid / Euler /
-Liquity V1) and the rest of `tx-saver`. Next unreviewed Immunefi
+are logged; Morpho Blue, Liquity V2, and Fluid T1
++ liquidity logic (`e623f20`) are logged. Remaining
+DFS is protocol `actions/*` (Aave / CurveUsd / Euler /
+Liquity V1 / Fluid Dex) and the rest of `tx-saver`. Next unreviewed Immunefi
 GitHub-or-recent trees: DeFi Saver protocol actions,
 Jito restaking `restaking_*` / `vault_*`
 plus `jito-solana` / `mev-programs` ($250k, KYC;
