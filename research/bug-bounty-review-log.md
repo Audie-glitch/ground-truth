@@ -11760,7 +11760,60 @@ Result: no user-exploitable finding.
 Not submitted. Remaining Silo listed Solidity: core
 `Silo` / `SiloConfig` / `SiloFactory` / router /
 leverage / kink IRM / incentives / hooks, plus
-share tokens.
+share tokens (core Actions logged below).
+
+## 2026-09-03: Silo Finance V3 core Actions leftover (`31b98b3`)
+
+Same Immunefi program `silofinance-v2`. Money path
+after the vault pass: `silo-core/contracts/Silo.sol`
+wrappers plus `lib/{Actions,SiloLendingLib,Views}.sol`.
+Local clone `/tmp/silo-v3` at `31b98b3`. No mainnet
+interaction.
+
+Checked for: flash-loan reentrancy that borrows
+against accounting liquidity after tokens left;
+repay that burns more debt than it pulls; withdraw
+that skips solvency when the deposit silo is the
+collateral silo; `transitionCollateral` that mints
+unbacked shares; `withdrawFees` that spends
+protected assets; `callOnBehalfOfSilo` from a
+non-hook.
+
+Result: no user-exploitable finding.
+
+- Deposit / withdraw / borrow / repay / transition
+  take `siloConfig` reentrancy, accrue, then mutate.
+  Borrow forbids an existing other-silo debt, sets
+  the other silo as collateral, then
+  `_checkLTVWithoutAccruingInterest`. Withdraw /
+  transition check solvency when
+  `depositConfig.silo == collateralConfig.silo`.
+- `SiloLendingLib.borrow` sizes from stored
+  `totalAssets[Debt]` and requires
+  `borrowedAssets <= collateral - debt`. Transfer
+  is live ERC20; a flash-loan callback that tries
+  to borrow more than the leftover balance reverts
+  on `safeTransfer`. Flash loan itself does not
+  change accounting (intentional) and only lends
+  `balance - protected`.
+- Repay converts, clamps shares to the borrower's
+  debt balance, requires `totalDebt >= assets`,
+  burns then `transferFrom` (commented fee-on-
+  transfer ignore). Anyone may repay anyone.
+- Transition withdraws with `_asset == 0` (no
+  transfer) and deposits the same `assets` onto
+  the other share token. No extra tokens appear.
+- `withdrawFees` subtracts protected from
+  `balanceOf(this)` before paying DAO/deployer.
+  Failed deployer transfer redirects to the DAO.
+- `callOnBehalfOfSilo` is `OnlyHookReceiver`.
+  Hook `delegatecall` is hook-admin trust.
+
+Not submitted. Remaining Silo listed Solidity:
+`SiloConfig` / factory, router, leverage, kink
+IRM, incentives, hooks (V1/V2/V3; V3
+`liquidationCall` reverts `NotSupported`), share
+tokens.
 
 ## Next candidates
 
@@ -12150,11 +12203,13 @@ Enzyme Onyx
 `CreWorkflowConsumer`
 (`7b48d24`) is logged;
 Silo Finance V3 vaults
+and core Actions
 (`silofinance-v2`,
 `31b98b3`) are logged
-(remaining Silo is core
-Silo / router / leverage
-/ hooks);
+(remaining Silo is
+SiloConfig / factory /
+router / leverage / IRM
+/ hooks / share tokens);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
