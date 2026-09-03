@@ -47574,7 +47574,7 @@ Remaining listed Jito: unused official leftover that listed remaining-runtime tr
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted at leftover-heading level. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining SuperchainConfig leftover is logged. Optimism leftover remaining LegacyMessagePasser leftover is logged. Optimism leftover remaining L2ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Ethena leftover remaining USDtb leftover is logged. Ethena leftover remaining USDeOFTAdapter leftover is logged. Ethena leftover remaining StakedUSDeOFTAdapter + ENAOFTAdapter leftover is logged. Remaining listed is TON rows (no verified TVM source) and other-chain OFT twins if still unused.
-Remaining listed LayerZero: unused official leftovers if still open. LayerZero leftover remaining ULN301 leftover is logged. LayerZero leftover remaining ExecutorFeeLib leftover is logged. LayerZero leftover remaining OApp OFT leftover is logged. LayerZero leftover remaining other-chain twins OmniCounter leftover is logged. Remaining listed is Aptos / Solana / TON rows if still unused.
+Remaining listed LayerZero: unused official leftovers if still open. LayerZero leftover remaining ULN301 leftover is logged. LayerZero leftover remaining ExecutorFeeLib leftover is logged. LayerZero leftover remaining OApp OFT leftover is logged. LayerZero leftover remaining other-chain twins OmniCounter leftover is logged. LayerZero leftover remaining Aptos Endpoint leftover is logged. LayerZero leftover remaining Solana EndpointV2 leftover is logged. Remaining listed is Solana ULN302 / DVN rows and TON rows if still unused.
 Remaining listed Ether.fi: unused official leftovers if still open. Ether.fi leftover remaining Auction leftover is logged. Ether.fi leftover remaining bridge adapters leftover is logged. Ether.fi leftover remaining weETH-cross-chain leftover is logged. Ether.fi leftover remaining RoleRegistry TopUpSourceFactory leftover is logged. Ether.fi leftover remaining Scroll Cash modules leftover is logged. Ether.fi leftover remaining eETH impl leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
@@ -74126,7 +74126,7 @@ Result: no user-exploitable finding. Not submitted.
 
 Do not file a peer-gated OApp demo counter increment or an admin-only OmniCounter withdraw as stranger theft.
 
-Not submitted. Payment requires user KYC. Remaining listed: Aptos / Solana / TON non-EVM rows if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+Not submitted. Payment requires user KYC. Remaining listed: Solana / TON non-EVM rows if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 
 ## 2026-09-03: Ethena leftover remaining StakedUSDeOFTAdapter + ENAOFTAdapter leftover (Blockscout)
 
@@ -74144,3 +74144,39 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a compliance blacklist redirect to owner or a rate-limited adapter lock as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: TON minter/vault/OFT rows (no verified TVM source in session) and other-chain `USDeOFT` / `StakedUSDeOFT` / `ENAOFT` twins if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: LayerZero leftover remaining Aptos Endpoint leftover (`9c741e7`)
+
+Immunefi program `layerzero` ($15,000,000, `kyc: true`). Official remaining unused leftover after other-chain twins OmniCounter leftover. Listed Immunefi Aptos Endpoint `0x54ad3d30af77b60d939ae356e6606de9a4da67583f02b962d2d3f2e481484e90` (EID 30108). Official `LayerZero-Labs/LayerZero-v2` `9c741e7` (`9c741e7f9790639537b1710a203bcdfd73b0b9ac`). Opened listed `packages/layerzero-v2/aptos/contracts/endpoint_v2/sources/{endpoint,admin}.move` plus `internal/{channels,msglib_manager,registration,messaging_composer}.move`. Official raw GitHub **200**. Local extract `/tmp/lz-aptos/` (597 / 57 / 609 / 469 / 85 / 140 lines). Do not rematch ETH Endpoint leftover, ULN301 leftover, ExecutorFeeLib leftover, OApp OFT leftover, or OmniCounter leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: permissionless `send` that attributes another OApp; `verify` that stores a payload hash without a registered receive library / pathway / msglib `commit_verification`; `clear` that delivers an unverified or wrong payload; `skip` / `nilify` / `burn` callable by a stranger on another OApp's channel; admin `register_library` / default-library set without `assert_layerzero_admin`; compose `send_compose` / `clear_compose` that forges another OApp's compose queue.
+
+Result: no user-exploitable finding. Not submitted.
+
+- OApp `send`, receive-pathway config, `clear`, `skip`, `nilify`, and `burn` require `CallRef` targets with `get_oapp_caller` asserting a registered OApp; sender is always the call-ref caller, not an arbitrary address parameter.
+- `verify` decodes the packet via msglib router `commit_verification`, then `verify_internal` requires a registered receive pathway, `is_valid_receive_library_for_oapp`, and `verifiable` nonce rules before `inbound` stores the payload hash.
+- `clear_payload` enforces gapless verified nonces up to the clear point, recomputes `keccak256(payload)`, and `remove_payload_hash` must match before delivery.
+- Admin paths in `admin.move` (`register_library`, default send/receive libraries, timeout) gate on `assert_layerzero_admin`. Msglib registration requires router `version()` connectivity.
+- Compose paths mirror EVM: `send_compose` attributes the call-ref caller; `clear_compose` requires a registered composer and clears the queued hash.
+
+Do not file a registered-OApp `send`, a msglib-gated `verify`, or a pathway-gated `clear` as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: Solana / TON non-EVM rows if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: LayerZero leftover remaining Solana EndpointV2 leftover (`9c741e7`)
+
+Immunefi program `layerzero` ($15,000,000, `kyc: true`). Official remaining unused leftover after Aptos Endpoint leftover. Listed Immunefi Solana EndpointV2 program `76y77prsiCMvXMjuoZ5VRrhG5qYBrUMYTE5WgHqgjEn6` (EID 30168). Official `LayerZero-Labs/LayerZero-v2` `9c741e7` (`9c741e7f9790639537b1710a203bcdfd73b0b9ac`). Opened listed `packages/layerzero-v2/solana/programs/programs/endpoint/src/{lib,errors,events}.rs` plus `instructions/{verify,init_verify}.rs` and `instructions/oapp/{send,clear,skip,burn,nilify,send_compose,clear_compose,register_oapp}.rs` and `instructions/admin/{register_library,init_endpoint,set_default_send_library,set_default_receive_library}.rs` and `state/{messaging_channel,endpoint,message_lib}.rs`. Spot-checked ULN302 `commit_verification` bridge `packages/layerzero-v2/solana/programs/programs/uln/src/instructions/dvn/commit_verification.rs`. Official raw GitHub **200**. Local extract `/tmp/lz-solana/` (~2805 endpoint lines). Do not rematch ETH Endpoint leftover, Aptos Endpoint leftover, ULN301 leftover, ExecutorFeeLib leftover, OApp OFT leftover, or OmniCounter leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: permissionless `send` that attributes another OApp; `verify` that stores a payload hash without a valid receive-library signer / grace-period check; `clear` that delivers an unverified payload; `skip` / `nilify` / `burn` callable by a stranger on another OApp's channel; admin `register_library` / default-library set without endpoint admin; compose queue forgery.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `send` requires `sender: Signer`, increments the sender's outbound nonce PDA, and `assert_send_library` binds the CPI target to the OApp/default send-library PDA for that dst EID.
+- `init_verify` + `verify` require the receive library to sign as `receive_library: Signer` and pass `is_valid_receive_library` (current config or unexpired grace timeout). `verify` writes the payload hash only after nonce/pending-nonce constraints.
+- `clear` requires signer == receiver or registered delegate; recomputes `keccak(guid||message)` and must match the stored payload hash before closing the account.
+- `skip` / `burn` / `nilify` mirror EVM: receiver-or-delegate gated, strict nonce rules, payload-hash presence checks on skip.
+- Admin paths (`register_library`, default send/receive libraries) require `endpoint.admin` via `has_one = admin`. ULN `commit_verification` checks DVN confirmations then CPIs `endpoint_verify::verify`.
+
+Do not file a registered-OApp send, a receive-library-signed verify, or a delegate-gated clear as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: Solana Send/Receive ULN302 / DVN rows and TON non-EVM rows if still unused. Next unused leftover is a different Immunefi program, not a rematch.
