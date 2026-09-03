@@ -16684,6 +16684,149 @@ vs this tree; Incremental
 ratio step logic is
 owner-parameterized.
 
+## 2026-09-03: Rocket Pool v1.4 DAO settings / voting leftover (`fb7d9c4`)
+
+Immunefi program
+`Rocket Pool`
+($150,000, `kyc: true`).
+Deposit / megapool /
+vault / smoothing /
+minipool slices on the
+same pin `fb7d9c4` are
+already logged. This
+slice is pDAO
+proposals, optimistic
+fraud-proof verifier,
+settings, voting
+snapshots, and
+security-council
+proposals. Local clone
+`/tmp/rocketpool`. No
+mainnet interaction.
+
+Files:
+`contracts/contract/dao/protocol/RocketDAOProtocol.sol`,
+`contracts/contract/dao/protocol/RocketDAOProtocolProposal.sol`,
+`contracts/contract/dao/protocol/RocketDAOProtocolProposals.sol`,
+`contracts/contract/dao/protocol/RocketDAOProtocolVerifier.sol`,
+`contracts/contract/dao/protocol/settings/RocketDAOProtocolSettings.sol`
+plus Network / Node /
+Minipool / Megapool /
+Deposit / Rewards /
+Inflation / Auction /
+Proposals / Security
+settings,
+`contracts/contract/network/RocketNetworkVoting.sol`,
+`contracts/contract/dao/security/RocketDAOSecurityProposals.sol`.
+
+Checked for: a stranger
+executing a treasury
+spend; a lying merkle
+root that steals RPL
+bonds; double-claim of
+a challenge or proposal
+bond; voting-power
+inflation after the
+snapshot; settings
+writes outside a passed
+proposal.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `propose` is a
+  registered node only
+  and locks an RPL
+  proposal bond. The
+  pollard is stored for
+  challenge during
+  `Pending` (vote
+  delay). `execute`
+  requires
+  `Succeeded` and runs
+  the payload only on
+  `rocketDAOProtocolProposals`.
+  `destroy` is
+  verifier-only.
+- Phase-1 `vote` checks
+  a merkle witness
+  against the submitted
+  root. Phase-2
+  `overrideVote` uses
+  on-chain
+  `getVotingPower` and
+  can reverse a
+  delegate. A lying
+  root that is not
+  challenged in
+  `Pending` is the
+  optimistic-oracle
+  model, not a
+  stranger extract.
+- Verifier
+  `createChallenge`
+  locks the
+  challenger’s bond
+  and requires a
+  witness under a
+  `Responded` parent.
+  `defeatProposal`
+  needs the challenge
+  period and then
+  destroys. Claims
+  mark each index
+  `Paid` and require
+  `msg.sender` is the
+  challenger or
+  proposer. Reward is
+  `proposalBond *
+  rewardedIndices /
+  totalDefeatingIndices`
+  with a 20% burn.
+  Double-claim reverts
+  on state.
+- Settings writes are
+  `onlyDAOProtocolProposal`
+  after deploy, with
+  per-path bounds
+  (fees, quorums,
+  timeouts, inflation).
+  Network share
+  adders also accept
+  an allow-listed
+  controller; the list
+  is a DAO address
+  setting and rETH
+  commission is
+  capped at 100%.
+- Voting power is
+  `sqrt` of RPL stake
+  clamped by bonded
+  ETH × max-percent /
+  price at a past
+  snapshot block.
+  `setDelegate` is
+  registered-node to
+  registered-node.
+- Bootstrap is
+  guardian + bootstrap
+  mode. Security
+  propose/vote is
+  council-member only
+  and can only change
+  allow-listed
+  setting paths.
+  Treasury
+  `spend` /
+  `newContract` /
+  `updateContract` are
+  `onlyExecutingContracts`.
+
+Not submitted. Listed
+Rocket Pool GitHub
+leftover is exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -17181,12 +17324,13 @@ Rocket Pool v1.4 deposit
 dissolve / rewards /
 exit, vault + RPL
 auction, smoothing /
-rewards leftover, and
-minipool leftover
+rewards leftover,
+minipool leftover, and
+DAO settings / voting
 (`fb7d9c4`) are logged
-(remaining Rocket Pool
-is DAO settings /
-voting);
+(listed Rocket Pool
+GitHub leftover
+exhausted);
 Beanstalk Basin leftover
 (Pipeline / Depot / Well
 / Aquifer / CP2 / MFP,
