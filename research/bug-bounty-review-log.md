@@ -3308,6 +3308,66 @@ Remaining DFS: `exchangeV3`, protocol `actions/*`
 (Aave/Morpho/Compound/Liquity/…), `tx-saver`,
 triggers. Not submitted.
 
+## 2026-09-03: Jito stake-deposit-interceptor (`dbd8ce4`)
+
+Immunefi program `jito` ($250,000, KYC). In-scope tree
+`jito-foundation/stake-deposit-interceptor`. Local clone
+`/tmp/jito-interceptor` at `dbd8ce4`. No mainnet
+interaction. Three published audits (Offside 2024-11,
+Certora 2024-12, Certora Coinbase integration 2026-03).
+
+Files: `stake_deposit_interceptor/src/{processor,state,state/hopper,instruction,error,entrypoint}.rs`.
+API / cranker / CLI not reviewed (off-chain).
+
+Checked for: init that binds the wrong pool mint or a
+writable vault an attacker owns; update that a
+non-authority can flip `fee_wallet` / whitelist program;
+deposit that credits a receipt to a third party without
+the staker’s authorize; claim that drains the vault past
+`lst_amount`; permissionless post-cooldown claim to a
+non-owner ATA; whitelist deposit that skips the list;
+hopper rebate or `WithdrawFromHopper` that a user can
+point at themselves.
+
+Result: no user-exploitable finding.
+
+- Init caps `initial_fee_bps` at 10_000, derives the
+  authority PDA from `stake_pool + base`, and forces
+  `vault` to the ATA of that PDA. Stake-pool program
+  and mint owners are checked. The `authority` account
+  does not sign (the pool manager later points
+  `stake_deposit_authority` at the PDA).
+- Update is current-authority signer only. Existing
+  receipts snapshot `cool_down_seconds` /
+  `initial_fee_bps` at deposit, so a later admin raise
+  does not reprice them.
+- `DepositStake` CPIs SPL `DepositStake` signed by the
+  interceptor PDA and records `vault.amount` delta.
+  `owner` is an instruction arg because the stake
+  account’s withdrawer is already the PDA (same as
+  vanilla SPL stake-pool after `Authorize`). Receipt
+  PDA is `deposit_receipt + pool + base`.
+- Claim: during cooldown the owner must sign; after
+  cooldown the path is permissionless but destination
+  ATA owner must equal `receipt.owner` and fee ATA
+  owner must equal `fee_wallet`. Transfers use
+  `transfer_checked` with the authority PDA. Receipt
+  closes to `owner`. Linear fee uses `div_ceil` (rounds
+  against the depositor; 1-lamport dust case is
+  tested).
+- Whitelisted deposit / withdraw require the signer
+  in `jito_whitelist_management` and CPI through the
+  stored stake-pool program. Destination of minted LST
+  is caller-chosen by design (Coinbase path). Hopper
+  rebate is `min(fee_lamports, hopper - rent)`; empty
+  hopper does not fail the withdraw. Hopper drain is
+  authority-only.
+
+Jito interceptor on-chain program treated as exhausted.
+Restaking `restaking_*` / `vault_*` and `jito-solana` /
+`mev-programs` remain. Do not submit. Payment requires
+user KYC.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3348,8 +3408,9 @@ set and Aqua-listed solidity-utils mixins / libraries
 logged; remaining DFS is `exchangeV3` and protocol
 `actions/*`. Next unreviewed Immunefi
 GitHub-or-recent trees: DeFi Saver protocol actions
-and exchange, Jito restaking /
-stake-deposit-interceptor ($250k, KYC), Enzyme Blue
+and exchange, Jito restaking `restaking_*` / `vault_*`
+plus `jito-solana` / `mev-programs` ($250k, KYC;
+interceptor `dbd8ce4` is exhausted), Enzyme Blue
 adapters added as etherscan addresses after Apr 2026
 (Bebop / ThreeOneThird / SharesSplitter). Superteam API rechecked 03:40 UTC
 3 Sep: still 28 open listings.
