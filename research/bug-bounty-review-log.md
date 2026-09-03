@@ -30823,6 +30823,17 @@ V1+V2 / StakedGlp) is logged
 (remaining listed is Avax
 twins and Sourcify-404
 Staked Glp Distributor);
+Kiln DeFi leftover ETH vault
+core leftover (Sourcify; KYC)
+is logged (remaining listed
+is other-chain vaults /
+factories);
+Acala leftover honzon / DEX /
+homa leftover (`cde2abf`) is
+logged (remaining listed is
+ORML / EVM / XCM /
+honzon-bridge /
+liquid-crowdloan / NFT);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
@@ -36165,3 +36176,142 @@ impls, factories,
 connectors, and
 additional live
 vault instances.
+
+## 2026-09-03: Acala leftover honzon / DEX / homa leftover (`cde2abf`)
+
+Immunefi program
+`acala`
+($1,000, `kyc: false`).
+Unique unused
+standing program.
+Not previously
+logged. Official
+clone `/tmp/acala`
+at `cde2abf`. Listed
+assets are the
+Acala runtime
+GitHub and
+`open-web3-stack/open-runtime-module-library`.
+This slice is the
+listed money-path
+pallets. No
+mainnet interaction.
+
+Files:
+`modules/honzon/src/lib.rs`,
+`modules/loans/src/lib.rs`,
+`modules/cdp-engine/src/lib.rs`,
+`modules/dex/src/lib.rs`,
+`modules/homa/src/lib.rs`,
+`modules/incentives/src/lib.rs`,
+`modules/earning/src/lib.rs`,
+`modules/currencies/src/lib.rs`,
+`modules/auction-manager/src/lib.rs`.
+
+Checked for: a
+stranger
+`adjust_loan` that
+moves another
+account's CDP;
+`transfer_loan_from`
+without
+authorization;
+DEX
+`claim_dex_share`
+that mints to the
+caller; homa
+`claim_redemption`
+that pays
+`msg.sender`;
+`liquidate` that
+credits the
+unsigned caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Honzon
+  `adjust_loan` /
+  close / expand /
+  shrink /
+  `transfer_debit`
+  all use
+  `ensure_signed`
+  and adjust that
+  signer's CDP.
+  `transfer_loan_from`
+  requires
+  `Authorization`
+  from the owner.
+- Loans
+  `adjust_position`
+  pulls / pays
+  `who`.
+  `transfer_loan`
+  is pallet-internal.
+- DEX swap / add /
+  remove liquidity
+  pull and pay the
+  signer.
+  Permissionless
+  `claim_dex_share`
+  / `refund_provision`
+  credit the named
+  `owner`, not the
+  caller.
+  Listing / abort
+  params are
+  `ListingOrigin`
+  or post-expiry
+  status only.
+- Homa `mint` /
+  `request_redeem`
+  lock the signer.
+  `fast_match_redeems`
+  / `claim_redemption`
+  pay the named
+  redeemer.
+- Incentives
+  deposit / withdraw
+  / claim use the
+  signer.
+- Earning bond /
+  unbond / withdraw
+  lock the signer.
+- Currencies
+  `transfer` pulls
+  the signer.
+  `update_balance`
+  is privileged.
+- CDP `liquidate`
+  / auction `cancel`
+  are unsigned
+  (`ensure_none`)
+  and settle the
+  named CDP / auction
+  into protocol
+  accounts.
+
+Do not file
+permissionless
+claim-to-owner,
+unsigned
+liquidation of an
+unsafe CDP, or
+root listing
+origin as stranger
+theft.
+
+Not submitted.
+Listed leftover is
+the opened Acala
+money-path
+pallets.
+Remaining listed:
+`open-runtime-module-library`,
+EVM / XCM /
+honzon-bridge /
+liquid-crowdloan /
+NFT pallets.

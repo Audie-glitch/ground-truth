@@ -4,11 +4,11 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~08:46 UTC. Dates verified against each
+Status as of 3 September 2026, ~08:49 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:46 UTC;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:49 UTC;
 246 programs; no Sep 2026 launches; Derive leftover
 PMRM + feeds leftover is logged;
 listed Derive leftover that official
@@ -21,7 +21,8 @@ V2 Shift leftover is logged; GMX leftover V2
 Oracle + V1 Order Book leftover is logged;
 Celer leftover is logged; Pyth EVM leftover is
 logged; Axelar leftover is logged; Kiln
-On-Chain v1 leftover is logged). KeeperHub
+On-Chain v1 leftover is logged; Kiln DeFi
+leftover is logged; Acala leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -332,6 +333,13 @@ GMX leftover V2 Oracle + V1 Order Book leftover
 USDG / Timelock V1+V2 / StakedGlp) is logged
 (remaining listed is Avax twins and
 Sourcify-404 Staked Glp Distributor).
+Kiln DeFi leftover ETH vault core (Sourcify;
+KYC) is logged (remaining listed is
+other-chain vaults / factories).
+Acala leftover honzon / DEX / homa leftover
+(`cde2abf`) is logged (remaining listed is
+ORML / EVM / XCM / honzon-bridge /
+liquid-crowdloan / NFT).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -874,6 +882,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   GMX leftover V2 Oracle + V1
   Order Book leftover (Reader /
   USDG / Timelock / StakedGlp),
+  Kiln DeFi leftover ETH vault
+  core (Sourcify; KYC),
+  Acala leftover honzon / DEX /
+  homa leftover (`cde2abf`),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover
