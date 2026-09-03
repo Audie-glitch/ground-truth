@@ -14990,6 +14990,106 @@ Not submitted. Remaining
 Raydium listed GitHub:
 `raydium-cp-swap`.
 
+## 2026-09-03: Raydium cp-swap leftover (`244e124`)
+
+Immunefi program
+`raydium` ($505,000,
+`kyc: false`). Listed
+leftover is per-file
+URLs under
+`raydium-io/raydium-cp-swap`
+`programs/cp-swap/src`
+(added 26 Mar 2024).
+Local clone `/tmp/raydium-cp`
+at `244e124`
+(“Feat/permissionless
+collect creator fee
+(#76)”). Program id
+`CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C`.
+No mainnet interaction.
+
+Files:
+`instructions/deposit.rs`,
+`withdraw.rs`,
+`swap_base_input.rs`,
+`swap_base_output.rs`,
+`admin/collect_protocol_fee.rs`,
+`admin/collect_fund_fee.rs`,
+`collect_creator_fee.rs`,
+plus `states/pool.rs`
+`get_swap_params`.
+
+Checked for: LP minted
+without a matching
+vault pull; withdraw
+that pays more than
+pro-rata; swap that
+uses the same vault
+twice or skips
+slippage; permissionless
+protocol / fund /
+creator fee collect.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Deposit requires the
+  owner signer. User
+  ATAs must be
+  owner-owned and match
+  vault mints. Vaults
+  bind to the pool. LP
+  mint binds to
+  `pool.lp_mint`. Token
+  amounts are
+  `ceiling(lp / supply *
+  reserve)` plus Token-
+  2022 inverse transfer
+  fees, capped by max.
+  LP is minted by the
+  auth PDA.
+- Withdraw burns the
+  owner’s LP and pays
+  `floor` pro-rata
+  (capped at
+  fee-exclusive vault)
+  with min slippage.
+  Dest ATAs need only
+  the vault mint (gift).
+- Swap vaults must be
+  the pool’s two
+  distinct vaults
+  (`get_swap_params`
+  else `InvalidVault`).
+  Exact-in deducts
+  input transfer fee,
+  charges trade /
+  protocol / fund /
+  creator fees, requires
+  `constant_after >=
+  constant_before` and
+  `minimum_amount_out`.
+  Exact-out adds the
+  output transfer fee
+  then checks
+  `max_amount_in`.
+  Payer must authorize
+  the input transfer.
+- Protocol / fund fee
+  collect is admin or
+  config owner /
+  fund_owner and caps
+  at recorded balances.
+  Creator fee collect
+  is `pool_creator`
+  only, to the
+  creator’s ATAs.
+
+Not submitted. Listed
+Raydium GitHub leftover
+is exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -15471,9 +15571,10 @@ PoI);
 Raydium CLMM leftover
 (`ed7c84a`) plus classic
 AMM leftover (`27f461d`)
-are logged (remaining
-Raydium is
-`raydium-cp-swap`);
+plus cp-swap leftover
+(`244e124`) are logged
+(listed Raydium GitHub
+leftover exhausted);
 Marinade liquid-staking
 leftover (`b8fe3f8`) is
 logged (remaining
