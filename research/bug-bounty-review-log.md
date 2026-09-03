@@ -67404,3 +67404,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an unsigned MessagePrototype helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Aave leftover remaining governance-v3 leftover (`497226e`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after StakeToken leftover. Official `bgd-labs/aave-governance-v3` `497226e`. Opened listed `Governance.sol`, `Executor.sol`, and `PayloadsController.sol` plus parents `GovernanceCore` / `PayloadsControllerCore` for queue/execute. Do not rematch GHO / stk leftovers. Official `PriceOracleSentinel.sol` and `OwnableFacilitator.sol` 404 on the listed pins. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `executeTransaction` on Executor; `receiveCrossChainMessage` queuing from a fake origin; `executeProposal` forwarding before a passing vote.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Executor.executeTransaction` is `onlyOwner`. It `call`s / `delegatecall`s the queued target. `receive()` only accepts ETH.
+- `PayloadsController.receiveCrossChainMessage` requires `msg.sender == CROSS_CHAIN_CONTROLLER`, `originSender == MESSAGE_ORIGINATOR`, and `originChainId == ORIGIN_CHAIN_ID`. Decode failure emits and does not queue. `_queuePayload` requires Created, `accessLevel >= maximumAccessLevelRequired`, and `proposalVoteActivationTimestamp > createdAt`.
+- `createPayload` is permissionless registration only. `executePayload` requires Queued and `timestamp > queuedAt + delay`, then each action runs through the access-level Executor. `cancelPayload` / `updateExecutors` are guardian / owner.
+- `Governance.createProposal` requires an approved voting portal, cancellation-fee `msg.value`, and min proposition power. `queueProposal` is only the proposal’s approved portal after the vote window, and only Queued if yes-threshold + differential still pass. `executeProposal` is permissionless after `COOLDOWN_PERIOD` and still-valid creator power; it only `_forwardPayloadForExecution` via immutable `CROSS_CHAIN_CONTROLLER`. `updateGasLimit` is `onlyOwner`. `initialize` is OZ `initializer`; `initializeWithRevision` is `reinitializer(3)`.
+
+Do not file a vote-gated cross-chain payload execute as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: VotingMachine / DataWarehouse / GovernancePowerStrategy / CCIP GHO pools. Official PriceOracleSentinel + OwnableFacilitator 404.
+
