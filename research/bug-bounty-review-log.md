@@ -43964,9 +43964,19 @@ Aave leftover remaining protocol-v2 CollateralManager leftover (`ce53c4a`)
 is logged.
 Filecoin leftover remaining lotus genesis leftover (`7740217`)
 is logged.
+Aave leftover remaining protocol-v2 Configurator leftover (`ce53c4a`)
+is logged.
+Aave leftover remaining protocol-v2 AToken leftover (`ce53c4a`)
+is logged.
+Aave leftover remaining protocol-v2 debt tokens leftover (`ce53c4a`)
+is logged.
+Aave leftover remaining protocol-v2 AaveOracle leftover (`ce53c4a`)
+is logged.
+Filecoin leftover remaining lotus beacon leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: LendingPoolConfigurator / v2 AToken / debt tokens / v2 AaveOracle.
+Remaining listed Aave: v2 GenericLogic / ValidationLogic / ReserveLogic / IR strategy.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43996,7 +44006,12 @@ Do not rematch Filecoin lotus node leftover.
 Do not rematch Filecoin lotus vm leftover.
 Do not rematch Filecoin lotus events leftover.
 Do not rematch Filecoin lotus genesis leftover.
+Do not rematch Filecoin lotus beacon leftover.
 Do not rematch Filecoin lotus miner leftover.
+Do not rematch Aave protocol-v2 Configurator leftover.
+Do not rematch Aave protocol-v2 AToken leftover.
+Do not rematch Aave protocol-v2 debt tokens leftover.
+Do not rematch Aave protocol-v2 AaveOracle leftover.
 Do not rematch Filecoin lotus market leftover.
 Do not rematch Aave ACL + PoolConfigurator leftover.
 Do not rematch Aave RewardsController leftover.
@@ -68017,7 +68032,6 @@ Do not file a pool-gated aToken as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: v2 VariableDebtToken / StableDebtToken / v2 AaveOracle.
 
-
 ## 2026-09-03: Aave leftover remaining protocol-v2 debt tokens leftover (`ce53c4a`)
 
 Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after AToken leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `VariableDebtToken.sol` and `StableDebtToken.sol` plus `DebtTokenBase.sol` for credit delegation. Do not rematch v3 StableDebtToken leftover or v2 LendingPool leftover. No mainnet writes. No exploit PoCs.
@@ -68050,3 +68064,18 @@ Do not file an owner-gated v2 source update as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: v2 GenericLogic / ValidationLogic / ReserveLogic / IR strategy (if still unused). Official PriceOracleSentinel + OwnableFacilitator 404.
 
+## 2026-09-03: Filecoin leftover remaining lotus beacon leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus genesis leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/beacon`. Opened `beacon.go`, `drand/drand.go`, and `mock.go`. Drand schedule / block-beacon verify. Do not rematch lotus sync leftover or genesis leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `ValidateBlockValues` accepting a beacon entry that fails `VerifyEntry`; `VerifyEntry` trusting an HTTP fetch without the configured pubkey; `MockBeacon` being used as a consensus beacon.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ValidateBlockValues` requires the last entry’s round to equal `MaxBeaconRoundForEpoch`. A chained fork needs exactly two entries. Each entry is `VerifyEntry`d against the previous signature (unchained also checks per-epoch rounds).
+- `DrandBeacon.VerifyEntry` calls `scheme.VerifyBeacon` with the pubkey from `buildconstants.DrandConfigs`. A cache hit must match the already-verified bytes. `Entry` only fetches; it does not skip verify.
+- `MockBeacon` is a local test helper (blake2b of the round). It is not wired as the mainnet schedule.
+
+Do not file a pubkey-verified drand entry as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
