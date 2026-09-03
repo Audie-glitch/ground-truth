@@ -26122,6 +26122,84 @@ Not submitted.
 Listed leftover is
 exhausted.
 
+## 2026-09-03: Threshold Bank leftover (`502cd39`)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+BOB cross-chain leftover
+is already logged.
+This slice is listed
+Ethereum Sourcify
+`Bank` plus Bank /
+VendingMachine from
+`keep-network/tbtc-v2`.
+Local clone
+`/tmp/threshold-tbtc`
+at `502cd39`. Sourcify
+`exact_match` for
+`0x65Fbae61ad2C8836fFbFB502A0dA41b0789D9Fc6`.
+No mainnet interaction.
+
+Files:
+`solidity/contracts/bank/Bank.sol`,
+`solidity/contracts/bridge/VendingMachine.sol`.
+
+Checked for: a
+stranger
+`increaseBalance`;
+`transferBalance`
+from another
+account;
+`VendingMachine.mint`
+that credits the
+caller without
+taking TBTC v1.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Bank
+  `transferBalance`
+  moves the caller's
+  balance.
+  Allowance updates
+  are the owner.
+  `increaseBalance`
+  /
+  `increaseBalances`
+  /
+  `increaseBalanceAndCall`
+  are `onlyBridge`.
+  `decreaseBalance`
+  burns the caller.
+- VendingMachine
+  `mint` pulls TBTC
+  v1 from
+  `msg.sender` and
+  mints v2 to that
+  sender.
+  `receiveApproval`
+  is TBTC v1 only
+  and mints to
+  `from`.
+  `unmint` burns the
+  caller's v2 and
+  pays that caller
+  v1.
+  `withdrawFees` is
+  governance.
+
+Not submitted.
+Remaining Threshold
+listed leftover:
+other explorer
+addresses and
+`keep-network/tbtc-v2`
+typescript.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -26687,6 +26765,8 @@ Solidity is mux-staking,
 GitHub 404);
 Threshold tBTC BOB
 cross-chain leftover
+(`502cd39`) is logged
+Threshold Bank leftover
 (`502cd39`) is logged
 (remaining Threshold is
 explorer addresses +
