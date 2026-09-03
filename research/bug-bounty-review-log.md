@@ -41723,8 +41723,10 @@ Filecoin leftover remaining miner + account leftover
 (`d894a1a`) is logged;
 Filecoin leftover evm leftover (`d894a1a`) is logged;
 Filecoin leftover reward + power leftover (`d894a1a`)
+is logged;
+Filecoin leftover datacap + verifreg leftover (`d894a1a`)
 is logged (remaining listed is lotus / proofs / boost /
-other actors);
+FVM / filecoin.io);
 Hedera leftover remaining TokenMint leftover
 (`0d3d9a2`) is logged (remaining listed is
 mirror-node / cryptography / other modules / SDKs);
@@ -41732,7 +41734,9 @@ Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
 Sei leftover go-ethereum leftover (`bb451e2`) is logged;
 Sei leftover wasmd + sei-wasmd leftover (`2e256b5` / `8dd2534`)
-is logged (remaining listed is other modules / Primacy of Impact);
+is logged;
+Sei leftover sei-cosmos bank leftover (`62bafe8`) is logged
+(remaining listed is other modules / Primacy of Impact);
 Hedera leftover json-rpc-relay leftover (`2b51a98`)
 is logged (remaining listed is consensus-node /
 mirror-node / cryptography / SDKs / transaction-tool);
@@ -61929,3 +61933,35 @@ Result: no user-exploitable finding. Not submitted.
 Do not file signer-bound `MsgSend`, multi-input MultiSend, or keeper-internal `SendCoinsAndWei` as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: tendermint, IBC host (not in `sei-cosmos`; IBC precompile already retired), and Primacy of Impact.
+
+## 2026-09-03: Filecoin leftover datacap + verifreg leftover (`d894a1a`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Follow-on leftover after
+market / paych / miner / evm / reward+power leftovers. Official clone
+`/tmp/filecoin-actors` at `d894a1a`. Opened `actors/datacap/src/lib.rs`
+(mint / destroy / transfer / burn) and `actors/verifreg/src/lib.rs`
+(add_verifier / add_verified_client / claim_allocations). No mainnet
+writes. No exploit PoCs. Do not rematch earlier Filecoin actor leftovers.
+
+Checked for: stranger DataCap `mint` / `destroy`; `transfer` that moves
+another client's cap; `add_verified_client` that mints without verifier
+allowance; miner `claim_allocations` that steals another provider's
+allocation.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Datacap `mint` / `destroy` are governor-only. `transfer` sets
+  `from = caller` and allows only governor as `from` or `to`.
+  `transfer_from` allows only `to == governor` plus token allowance.
+  `burn` burns the caller. `burn_from` uses operator allowance.
+- Verifreg `add_verifier` / `remove_verifier` are root-key-only.
+  `add_verified_client` requires the caller to already be a verifier
+  with remaining cap, decrements that cap, then mints DataCap to the
+  named client (market as operator). `claim_allocations` is Miner-only
+  and claims the calling provider's matching allocations.
+
+Do not file governor-gated mint, verifier-capped client add, or
+miner-only claims as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: lotus,
+proofs / boost / graphsync / FVM / go-f3, and filecoin.io.

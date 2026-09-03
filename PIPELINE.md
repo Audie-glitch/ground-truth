@@ -10,7 +10,9 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~11:00 UTC;
-246 programs; no Sep 2026 launches; Filecoin leftover reward + power leftover is logged;
+246 programs; no Sep 2026 launches; Filecoin leftover datacap + verifreg leftover is logged;
+Sei leftover sei-cosmos bank leftover is logged;
+Filecoin leftover reward + power leftover is logged;
 Sei leftover wasmd + sei-wasmd leftover is logged;
 Filecoin leftover evm leftover is logged;
 Sei leftover go-ethereum leftover is logged;
