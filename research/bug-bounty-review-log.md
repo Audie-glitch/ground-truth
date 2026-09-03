@@ -30911,3 +30911,114 @@ typescript, Starkscan
 Cairo rows, and Sui /
 Solana explorer
 rows.
+
+## 2026-09-03: Balancer Foundation leftover V3 Vault (Sourcify)
+
+Immunefi program
+`Balancer Foundation`
+($1,000,000, `kyc: false`).
+V2 Vault + V3
+BatchRouter leftover
+already logged. This
+slice is the listed
+V3 Vault singleton
+`0xbA1333333333a1BA1108E8412f11850A5C319bA9`.
+Sourcify
+`exact_match`. Official
+clone
+`/tmp/balancer-v3-monorepo`
+at `449f7e0`. Blockscout
+extract
+`/tmp/bal-found/src/bA1333…`.
+No mainnet interaction.
+
+Files:
+`contracts/Vault.sol`,
+`contracts/VaultCommon.sol`,
+`contracts/token/ERC20MultiToken.sol`.
+
+Checked for: a
+stranger
+`sendTo` that pays
+the caller without
+credit; `settle`
+that credits unsent
+reserves as theft;
+`removeLiquidity`
+that burns another
+owner's BPT without
+allowance;
+`transfer` that
+moves another pool's
+BPT by calling the
+Vault directly.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `unlock` is
+  `transient` and
+  calls back
+  `msg.sender`.
+  Non-zero token
+  deltas revert
+  `BalanceNotSettled`.
+- `settle` credits
+  the unlocker from
+  the reserve
+  increase, capped
+  by `amountHint`.
+  `sendTo` takes
+  debt from that
+  same unlocker then
+  transfers.
+- `swap` /
+  `addLiquidity` /
+  `removeLiquidity` /
+  `erc4626BufferWrapOrUnwrap`
+  are
+  `onlyWhenUnlocked`.
+  Swap debts
+  `tokenIn` and
+  credits
+  `tokenOut` to the
+  unlocker.
+- Add liquidity
+  mints BPT to
+  `params.to`.
+  Remove spends
+  allowance
+  (`from`,
+  `msg.sender`) then
+  burns `params.from`.
+- Vault
+  `transfer` /
+  `transferFrom`
+  key balances by
+  `msg.sender` as
+  the pool token.
+  Only that pool
+  contract can move
+  its BPT.
+
+Do not file
+router-mediated
+user pulls, hook
+reentrancy that
+still settles, or
+query-mode balance
+increase as
+stranger theft.
+
+Not submitted.
+Remaining
+Foundation-listed:
+the other unopened
+routers / helpers
+after Vault +
+BatchRouter (e.g.
+later listed
+factory / fee /
+buffer rows).
