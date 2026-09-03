@@ -40637,6 +40637,107 @@ proofs /
 go-f3 /
 filecoin.io.
 
+## 2026-09-03: Filecoin leftover remaining lotus miner leftover (`7740217`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`lotus/tree/master/miner`
+after boost
+leftover.
+Official
+`filecoin-project/lotus`
+`7740217`.
+Extract
+`/tmp/lotus-miner.go`.
+No mainnet
+writes.
+
+Files:
+`miner/miner.go`.
+
+Checked for:
+a stranger
+`mine`
+that
+submits a
+block
+credited
+to another
+miner;
+`createBlock`
+that
+spends
+another
+worker's
+FIL.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `NewMiner`
+  binds a
+  concrete
+  miner
+  `address`
+  and
+  WinningPoSt
+  prover.
+- `mineOne`
+  asks
+  `IsRoundWinner`
+  for that
+  address,
+  then
+  `createBlock`
+  calls
+  `MinerCreateBlock`
+  on the
+  operator
+  node API
+  with the
+  same
+  address.
+- `mine`
+  submits
+  the
+  resulting
+  block via
+  `SyncSubmitBlock`.
+  Rewards
+  still
+  flow
+  through
+  the
+  already
+  leftover-
+  logged
+  builtin
+  reward
+  actor
+  (SYSTEM
+  only).
+
+Do not file
+operator-
+bound
+block
+mining as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+proofs /
+FVM /
+filecoin.io.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -40650,11 +40751,14 @@ leftover (`eedd4b3`) is logged. Hedera leftover remaining
 SDK-go leftover (`029d087`) is logged. Filecoin leftover
 remaining boost leftover (`240aa6e`) is logged. Filecoin
 leftover remaining go-f3 leftover (`5f2c984`) is logged.
+Filecoin leftover remaining lotus miner leftover
+(`7740217`) is logged.
 Remaining listed Hedera: hashed transaction-tool website.
-Remaining listed Filecoin: lotus / proofs / FVM /
-filecoin.io. Do not rematch Hedera consensus-node,
+Remaining listed Filecoin: proofs / FVM / filecoin.io.
+Do not rematch Hedera consensus-node,
 json-rpc-relay, cryptography, SDKs, or mirror-node.
-Do not rematch Filecoin builtin-actors, boost, or go-f3.
+Do not rematch Filecoin builtin-actors, boost, go-f3,
+or lotus miner.
 Do not loop `reffinance` 404s or mux-staking auth.
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -43180,6 +43284,12 @@ cryptography / SDKs / transaction-tool);
 Filecoin leftover remaining boost leftover
 (`240aa6e`) is logged (remaining listed is lotus /
 proofs / go-f3 / filecoin.io);
+Filecoin leftover remaining go-f3 leftover
+(`5f2c984`) is logged (remaining listed is lotus /
+proofs / FVM / filecoin.io);
+Filecoin leftover remaining lotus miner leftover
+(`7740217`) is logged (remaining listed is proofs /
+FVM / filecoin.io);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
 Sei leftover go-ethereum leftover (`bb451e2`) is logged;

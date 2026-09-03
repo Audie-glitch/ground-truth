@@ -33,6 +33,7 @@ Filecoin leftover remaining boost leftover is logged;
 Filecoin leftover remaining go-f3 leftover is logged;
 Hedera leftover remaining SDK-java leftover is logged;
 Hedera leftover remaining SDK-go leftover is logged;
+Filecoin leftover remaining lotus miner leftover is logged;
 Filecoin leftover builtin-actors market + paych leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 ZKsync OS leftover evm_interpreter leftover is logged;
@@ -1219,6 +1220,16 @@ boost leftover
 (`240aa6e`; KYC) is logged
 (remaining listed is lotus /
 proofs / go-f3 / filecoin.io).
+Filecoin leftover remaining
+go-f3 leftover
+(`5f2c984`; KYC) is logged
+(remaining listed is lotus /
+proofs / FVM / filecoin.io).
+Filecoin leftover remaining
+lotus miner leftover
+(`7740217`; KYC) is logged
+(remaining listed is proofs /
+FVM / filecoin.io).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2062,6 +2073,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Filecoin leftover remaining
   boost leftover
   (`240aa6e`; KYC),
+  Filecoin leftover remaining
+  go-f3 leftover
+  (`5f2c984`; KYC),
+  Filecoin leftover remaining
+  lotus miner leftover
+  (`7740217`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai
