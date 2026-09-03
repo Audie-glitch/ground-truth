@@ -13261,7 +13261,79 @@ Not submitted. Remaining
 Pancake listed Solidity:
 v3-core pool/factory
 and v3-periphery NPM
-(same `9868479` tree).
+(same `9868479` tree;
+logged below).
+
+## 2026-09-03: Pancake V3 core pool/factory + v3-periphery leftover (`9868479`)
+
+Immunefi program `pancakeswap`
+($1,000,000, `kyc: false`).
+MasterChef / LmPool + V2
+periphery leftover is already
+logged. Remaining listed
+Solidity on the same pin:
+v3-core pool / factory and
+v3-periphery (SwapRouter
+removed in `9868479`). Local
+clone `/tmp/pcs-v3` at
+`9868479`. No mainnet
+interaction. Infinity known
+issues 1291 / 1298 / 1493
+do not apply here.
+
+Files:
+`projects/v3-core/contracts/PancakeV3Pool.sol`,
+`PancakeV3Factory.sol`,
+`projects/v3-periphery/contracts/NonfungiblePositionManager.sol`,
+`base/PeripheryPayments.sol`.
+
+Checked for: stranger collect
+of an NFT; protocol-fee siphon
+via factory; leftover ETH /
+token sweep of user funds;
+LM attach that steals swap
+fees.
+
+Result: no
+user-exploitable
+critical. Not submitted.
+
+- Pool is Uniswap V3 plus
+  protocol fee
+  (`feeAmount * feeProtocol /
+  PROTOCOL_FEE_DENOMINATOR`)
+  and `lmPool.accumulateReward`
+  / `crossLmTick` on swap.
+  `setLmPool` /
+  `setFeeProtocol` /
+  `collectProtocol` are
+  `onlyFactoryOrFactoryOwner`.
+  `collectProtocol` leaves
+  1 wei in the slot.
+- Factory
+  `setFeeProtocol` /
+  `collectProtocol` are
+  `onlyOwner`. `setLmPool`
+  is `onlyOwnerOrLmPoolDeployer`.
+- NFT manager
+  `decreaseLiquidity` /
+  `collect` / `burn` use
+  `isAuthorizedForToken`.
+  `increaseLiquidity` is
+  unscoped (gift into any
+  position — self-loss, not
+  theft). Periphery
+  `unwrapWETH9` /
+  `sweepToken` /
+  `refundETH` are the usual
+  leftover-balance helpers;
+  `receive` is WETH-only.
+
+Not submitted. Listed
+Pancake GitHub leftover
+is exhausted (Infinity +
+MasterChef / LmPool + V2
++ v3-core + v3-periphery).
 
 ## Next candidates
 
@@ -13669,10 +13741,10 @@ universal-router
 Pancake V3 MasterChef /
 LmPool + V2 periphery
 (`9868479` / `d769a6d`)
-are logged (remaining
-Pancake is v3-core
-pool/factory and
-v3-periphery NPM);
+and v3-core pool/factory
++ v3-periphery (`9868479`)
+are logged (listed Pancake
+GitHub leftover exhausted);
 Mux3 core trade / pool /
 orderbook (`8674f2b`) is
 logged; Mux aggregator
@@ -13693,10 +13765,10 @@ explorer addresses +
 keep-network typescript);
 Pancake MasterChefV3 +
 LmPool + V2 periphery
+and v3-core / v3-periphery
 (`9868479` / `d769a6d`)
-is logged (remaining
-Pancake is V3 core /
-NPM fork);
+are logged (listed Pancake
+GitHub leftover exhausted);
 Obyte Coop AA
 (`d7d5e57`), Friends AA
 (`45019f9`),
@@ -13709,7 +13781,13 @@ governance (`530fb8b`)
 are logged (listed
 Counterstake leftover
 exhausted; `evm-v1.0` is
-the old pin);
+the old pin; remaining
+Obyte listed AAs:
+`city-aa`,
+`perpetual-aa`,
+`oswap-token-aa`,
+`token-registry-aa`,
+`obyte-cascading-donations`);
 Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase

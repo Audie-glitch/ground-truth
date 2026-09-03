@@ -4,26 +4,28 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~06:05 UTC. Dates verified against each
+Status as of 3 September 2026, ~06:20 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
-ZNS), Sherlock contests API (paginated; only Tare judging), and Immunefi
-unofficial mirror rechecked 3 Sep. KeeperHub #2105 is claimed by PR #2275.
-#2240 has a design comment from `edycutjong` and 0 implementation PRs
-(search hit PR #2277 is #2247) — do not implement before 6 Sep. Lombard
-EVM 15 Jul strategy leftover (Shard / BlocklistOracle / merkle
-validator / converters) is logged. Listed Silo V3 GitHub Solidity
-is exhausted. PancakeSwap Infinity leftover is logged. Pancake
-MasterChefV3 + LmPool + V2 periphery leftover is logged
-(remaining Pancake is V3 core/periphery fork). Mux3 core leftover is
-logged. Mux aggregator, degen pool, and protocol v1 core
-leftovers are logged (remaining Mux listed Solidity is
-mux-staking, GitHub 404 as of 3 Sep 2026). Threshold tBTC
-BOB cross-chain leftover is logged. Obyte Coop /
+ZNS), Sherlock contests API (paginated; only Tare judging as of this
+recheck), and Immunefi unofficial mirror rechecked 3 Sep. KeeperHub
+#2105 is claimed by PR #2275. #2240 has a design comment from
+`edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
+— do not implement before 6 Sep. Lombard EVM 15 Jul strategy leftover
+(Shard / BlocklistOracle / merkle validator / converters) is logged.
+Listed Silo V3 GitHub Solidity is exhausted. PancakeSwap Infinity,
+MasterChef / LmPool + V2 periphery, and v3-core pool/factory +
+v3-periphery leftovers are logged (listed Pancake GitHub leftover
+exhausted). Mux3 core leftover is logged. Mux aggregator, degen
+pool, and protocol v1 core leftovers are logged (remaining Mux
+listed Solidity is mux-staking, GitHub 404 as of 3 Sep 2026).
+Threshold tBTC BOB cross-chain leftover is logged. Obyte Coop /
 Friends / prediction-markets leftovers are logged. Counterstake
-EVM+AA claim path and assistants / factories / governance
-leftovers are logged (listed Counterstake leftover exhausted).
-Twyne vaults still Sourcify 404.
+EVM+AA claim path and assistants / factories / governance leftovers
+are logged (listed Counterstake leftover exhausted). Remaining
+Obyte listed AAs: city-aa, perpetual-aa, oswap-token-aa,
+token-registry-aa, cascading-donations. Twyne vaults still
+Sourcify 404.
 
 ## Opportunities, ranked by expected payout per unit of work
 
