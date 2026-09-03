@@ -1781,7 +1781,8 @@ Files: `src/facets/uniswap-v4/UniswapV4Facet.sol`,
 `src/facets/superstate/SuperstateFacet.sol`,
 `src/facets/merkl/MerklFacet.sol`,
 `src/facets/nfat-halo/NFATHaloFacet.sol`,
-`src/facets/nfat-prime/NFATPrimeFacet.sol`.
+`src/facets/nfat-prime/NFATPrimeFacet.sol`,
+`src/facets/weeth/WEETHModule.sol`.
 
 Checked for: a fabricated UniV4 `PoolKey` that bypasses
 slippage/rate limits; DualPool hook return values that
@@ -1789,7 +1790,8 @@ under-report spend; PSM3/Basin receiver other than the
 proxy; Centrifuge transfer to a caller-chosen recipient;
 Merkl `toggleOperator` for an unlisted operator; NFAT
 Halo issue that credits `gem` off-proxy; leftover
-Permit2 allowances.
+Permit2 allowances; WEETH claim sweeping the wrong
+recipient.
 
 Result: no user-exploitable finding.
 
@@ -1833,6 +1835,9 @@ Result: no user-exploitable finding.
   and clears allowance. Prime subscribe/withdraw/
   collect rate-limit actual `gem` deltas; `data` is
   allocator-chosen on a key-gated facility.
+- `WEETHModule.claimWithdrawal` is proxy-only,
+  requires a valid finalized request, wraps ETH, and
+  transfers WETH to the proxy.
 
 `diamond-pau` facet sources at `1b6743a` are exhausted.
 
@@ -1890,23 +1895,28 @@ the full `diamond-pau` facet tree at `1b6743a`, and
 Intuition MultiVault / AtomWallet / curves / emissions /
 registry / `TrustSwapAndBridgeRouter` (`bb34cc2`) are
 exhausted.
-Superteam API rechecked 02:50 UTC 3 Sep: 28 open listings.
-`AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
-execute. Mermail skill is built (`mermail-onchain-receipts/`);
-remaining work is the participant's PR, Mermail MCP, and
-X demo. T3N still needs Terminal 3 SSO. NectarFi is a
-creator campaign. the402.ai still paused. 1inch Fusion
-settlement / whitelist / PowerPod / KycNFT and FeeTaker
-are exhausted. Remaining OZ hooks: none of the
-money-moving general/fee/base files.
-Leather ($5k, wallet/web) is the next unread Immunefi
-program if we want a web2 target. Sherlock `/api/contests`
-has 301 historical items; the only non-FINISHED row as of
-02:46 UTC 3 Sep is contest `1234` in `SHERLOCK_JUDGING`
-(not open for reports). Hedera Harness #8 still `open`, 0
-comments, 0 HOL-Guard PRs. Rechecked 02:55 UTC 3 Sep:
-KeeperHub #2105 still `open` + `accepted`, 0 PRs;
-CreditPassport deployer still 0/0; CTC still 47 BUIDLs /
-203 hackers, “11 days left”. No KeeperHub implementation
-before the 6 Sep build window. No ETHOnline project code
-before 4 Sep 16:00 UTC.
+Superteam API rechecked 03:01 UTC 3 Sep: still 28 open
+listings. `AGENT_ALLOWED` is still only Steve Arena and
+ZNS — do not execute. Mermail skill is built
+(`mermail-onchain-receipts/`); remaining work is the
+participant's PR, Mermail MCP, and X demo. T3N still
+needs Terminal 3 SSO. NectarFi is a creator campaign.
+the402.ai still paused. 1inch Fusion settlement /
+whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
+Remaining OZ hooks: none of the money-moving
+general/fee/base files. Leather ($5k, KYC, wallet/web
+plus `leather-io/mono`) is the next unread Immunefi
+program if we want a web2 target. Origin Protocol’s
+1 Sep scope refresh is Etherscan-only (no GitHub asset).
+USDT0’s 1 Sep add is Stellar explorer, not a Solidity
+GitHub tree. Sherlock `https://audits.sherlock.xyz/api/contests`
+has 301 items; the only non-FINISHED row as of 03:01 UTC
+3 Sep is contest `1234` (Tare) in `SHERLOCK_JUDGING`.
+Hedera Harness #8 still `open`, 0 comments, 0 HOL-Guard
+PRs. Rechecked 03:00 UTC 3 Sep: KeeperHub #2105 still
+`open` + `accepted` + `confirmed`, 0 comments, 0 PRs;
+CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
+official CTC page still 47 BUIDLs, “11 days left,”
+deadline 13 Sep 2026 23:59 ET. No KeeperHub
+implementation before the 6 Sep build window. No
+ETHOnline project code before 4 Sep 16:00 UTC.
