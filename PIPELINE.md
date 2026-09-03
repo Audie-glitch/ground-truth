@@ -10,11 +10,13 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~10:55 UTC;
-246 programs; no Sep 2026 launches; Cosmos leftover solidity-ibc-eureka leftover is logged;
+246 programs; no Sep 2026 launches; Immunefi leftover ETH Splitter leftover is logged;
+Cosmos leftover solidity-ibc-eureka leftover is logged;
 1inch leftover infrastructure leftover is logged;
 Exodus leftover website leftover is logged;
 Ofza leftover website leftover is logged;
 EdgeX leftover website leftover is logged;
+Enzyme Onyx leftover ValuationHandler + trackers leftover is logged;
 Integral leftover TwapDelay + Pair + Relayer leftover is logged;
 Metronome leftover remaining CrossChainDispatcher + ProxyOFT leftover is logged;
 OpenZeppelin leftover remaining RWA + governance leftover is logged;

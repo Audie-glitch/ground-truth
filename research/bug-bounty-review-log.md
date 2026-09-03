@@ -40464,6 +40464,11 @@ Integral leftover TwapDelay + Pair + Relayer leftover (Sourcify)
 is logged (Ethereum listed leftover that Sourcify opens is
 exhausted; remaining listed is Arbitrum Delay / Pair /
 Relayer / Fee governor of the same types);
+Immunefi leftover ETH Splitter leftover (Sourcify) is logged
+(listed SC leftover exhausted; remaining listed is websites
++ Primacy of Impact);
+Enzyme Onyx leftover ValuationHandler + trackers leftover
+(`7b48d24`) is logged;
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub
@@ -59524,4 +59529,46 @@ listed:
 and the
 immunefi.com
 placeholder.
+
+## 2026-09-03: Immunefi leftover ETH Splitter leftover (Sourcify)
+
+Immunefi program `immunefi` ($50,000, `kyc: true`). Unique unused standing
+program (updated 2026-08-28). Two listed Ethereum contracts plus websites.
+Sourcify extracts `/tmp/integral-src/0x03fd3d61423e6d46dcc3917862fbc57653dc3eb0`
+(listed as Vault) and
+`/tmp/integral-src/0x323498d3fb02594ac3e0a11b2dea337893ecabbe` (Splitter).
+No mainnet writes. No exploit PoCs.
+
+Opened `src__Splitter.sol` on both addrs and `src__Withdrawable.sol` on the
+first.
+
+Checked for: stranger `payWhitehat` that spends another payer's tokens;
+native underpay that drains a victim; owner-bypass withdraw; fee-on-top
+that steals the whitehat slice.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Both `payWhitehat` paths pull ERC20 with `safeTransferFrom(msg.sender, …)`.
+  A stranger cannot spend another wallet's tokens without that wallet's
+  allowance to the splitter, and the spender is always the caller.
+- Native payouts send `feeAmount` then `nativeTokenAmt` from the contract
+  balance and refund only `msg.value` excess. There is no
+  `msg.value >= native + fee` check. Donated leftover ETH could be
+  forwarded to a caller-chosen `wh`. The first contract's
+  `withdrawERC20ETH` is `onlyOwner` over `Withdrawable`. The second has no
+  withdraw. Users do not deposit into these splitters; leftover ETH is
+  accidental / owner-sweepable, not in-scope user funds.
+- Stored `fee` (first) or caller-supplied `fee` capped by `maxFee` (second)
+  is paid on top of `payout[i].amount` / `nativeTokenAmt`. The whitehat
+  receives the full amount. `changeFeeRecipient` / `setFee` are owner-only.
+- `nonReentrant` wraps the payment. The whitehat `call` is gas-capped.
+
+Do not file permissionless `payWhitehat` of the caller's own tokens, a
+caller-chosen fee within `maxFee`, or draining donated ETH as stranger
+theft of user funds.
+
+Not submitted. Payment requires user KYC. Listed leftover that Sourcify
+opens for Immunefi smart contracts is exhausted at the opened-file level.
+Remaining listed: immunefi.com / bugs.immunefi.com / shieldmybags.immunefi.com
+websites and Primacy of Impact placeholders (out of this SC track).
 
