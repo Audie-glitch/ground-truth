@@ -24621,6 +24621,128 @@ Listed easy-track
 leftover factories
 are exhausted.
 
+## 2026-09-03: Lido aragon-apps Voting leftover (`e44f928`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Vault /
+Finance / Agent /
+TokenManager leftover
+is already logged on
+the same pin. This
+slice is Voting and
+DisputableVoting.
+Local clone
+`/tmp/lido-aragon` at
+`e44f928`. No mainnet
+interaction.
+
+Files:
+`apps/voting/contracts/Voting.sol`,
+`apps/voting-disputable/contracts/DisputableVoting.sol`.
+
+Checked for: a
+stranger `newVote`
+that binds an
+attacker script;
+`executeVote` before
+the vote closes or
+with a swapped
+script; a delegate
+that votes without
+assignment.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Voting `newVote`
+  /
+  `forward` are
+  `CREATE_VOTES_ROLE`.
+  `vote` uses
+  `balanceOfAt` at
+  `snapshotBlock =
+  block.number - 1`.
+  `executeVote` is
+  permissionless
+  after the vote is
+  Closed, support
+  and quorum pass
+  (`>` of
+  `PCT_BASE`), and
+  the stored script
+  runs via
+  `runScript`.
+- Support / quorum /
+  vote-time changes
+  are their roles.
+  `unsafelyChangeVoteTime`
+  is documented to
+  affect open votes.
+- `assignDelegate`
+  is self-only.
+  `attemptVoteForMultiple`
+  skips voters who
+  already voted
+  directly and
+  documents
+  front-run
+  undelegation.
+  Token
+  `balanceOfAt`
+  reentrancy is an
+  explicit LDO
+  trust assumption.
+- DisputableVoting
+  `newVote` is
+  `CREATE_VOTES_ROLE`.
+  It stores
+  `keccak256(script)`
+  only.
+  `executeVote`
+  requires
+  `_canExecute`
+  (ended, execution
+  delay finished,
+  accepted, not
+  paused /
+  cancelled) and
+  `keccak256(_executionScript)
+  == stored hash`.
+  `voteOnBehalfOf`
+  requires
+  `representatives[voter]
+  == msg.sender`
+  and skips
+  already-cast
+  votes.
+
+Do not file
+permissionless
+`executeVote` after
+pass, CREATE_VOTES
+privilege, documented
+delegate front-run,
+or the `>`
+threshold.
+
+Not submitted.
+Remaining
+aragon-apps:
+Agreement.
+Remaining
+in already-opened
+Lido trees:
+dual-governance
+TiebreakerSubCommittee
+/ wrappers; CSM
+MerkleGateFactory /
+ValidatorStrikes /
+HashConsensus /
+MetaRegistry.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -24969,6 +25091,10 @@ factories leftover
 (`3183d1f`) is logged
 (listed easy-track leftover
 factories exhausted).
+Lido aragon-apps Voting leftover
+(`e44f928`) is logged
+(remaining aragon-apps is
+Agreement).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -25341,7 +25467,11 @@ Lido easy-track leftover
 factories leftover
 (`3183d1f`) is logged
 (listed easy-track leftover
-factories exhausted);
+factories exhausted).
+Lido aragon-apps Voting leftover
+(`e44f928`) is logged
+(remaining aragon-apps is
+Agreement);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
 rETH2 / Oracles /
