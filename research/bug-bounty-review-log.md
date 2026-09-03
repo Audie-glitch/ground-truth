@@ -47713,3 +47713,146 @@ client, babylon
 node, and the
 website /
 toolkit rows.
+
+## 2026-09-03: Pyth leftover governance staking program (`42e0aa4`)
+
+Immunefi program
+`pythnetwork`
+($250,000, `kyc: true`).
+Listed remaining after
+Solana receiver +
+Sui (`64d5401`).
+Official sparse
+clone
+`/tmp/pyth-governance`
+`42e0aa4`. Opened
+`staking/programs/staking`.
+No mainnet writes.
+
+Files:
+`src/lib.rs`,
+`src/context.rs`,
+`src/utils/risk.rs`,
+`src/state/positions.rs`,
+`src/state/vesting.rs`.
+
+Checked for: a
+stranger
+`withdraw_stake`
+to an account
+they control;
+`accept_split`
+that moves
+another user's
+custody without
+`pda_authority`;
+`recover_account`
+/
+`transfer_account`
+of a staked
+account;
+`slash_account`
+callable by a
+non-pool
+authority.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `withdraw_stake`
+  requires
+  `owner`
+  signer and
+  `has_one =
+  owner` on
+  metadata.
+  Destination
+  token account
+  `owner` must
+  equal the
+  signer. Risk
+  check keeps
+  unvested +
+  locked
+  exposure.
+- `create_position`
+  /
+  `close_position`
+  /
+  `request_split`
+  are
+  owner-signed
+  and only
+  rewrite
+  position /
+  split-request
+  state. Tokens
+  stay in the
+  custody PDA.
+- `accept_split`
+  is
+  `pda_authority`
+  (`config.has_one
+  = pda_authority`)
+  and requires
+  `next_index ==
+  0` plus
+  matching
+  request amount
+  / recipient.
+  Tokens move
+  source custody
+  → new custody
+  owned by the
+  requested
+  recipient.
+- `recover_account`
+  is
+  `governance_authority`
+  and only
+  rewrites owner
+  from a token
+  account
+  pubkey to that
+  token
+  account's
+  `owner`.
+  Requires empty
+  positions.
+- `transfer_account`
+  is the same
+  authority +
+  empty-positions
+  gate.
+- `slash_account`
+  is
+  `pool_authority`
+  and transfers
+  slashed PYTH
+  to the
+  supplied
+  destination.
+
+Do not file
+owner self-
+withdraw,
+authority-
+approved split,
+or pool-authority
+slash as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Pyth
+governance
+staking leftover
+is exhausted at
+the opened-file
+level. Remaining
+listed: Lazer
+Solana / Sui /
+Cardano.
