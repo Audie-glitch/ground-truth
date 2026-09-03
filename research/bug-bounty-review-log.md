@@ -36213,9 +36213,12 @@ costaking + mint leftover
 (`132d050`; KYC) is logged;
 Babylon leftover node
 checkpointing + epoching leftover
+(`132d050`; KYC) is logged;
+Babylon leftover node
+btclightclient + btccheckpoint leftover
 (`132d050`; KYC) is logged
 (remaining listed is
-btclightclient, websites);
+websites);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -50428,3 +50431,176 @@ listed:
 btclightclient,
 and website /
 toolkit rows.
+
+## 2026-09-03: Babylon leftover node btclightclient + btccheckpoint leftover (`132d050`)
+
+Immunefi program
+`babylon-labs`
+($500,000, `kyc: true`).
+Node DLT leftovers
+through
+checkpointing +
+epoching already
+logged on
+`v4.4.0`
+`132d050`. This
+slice is
+`x/btclightclient`
+header insert /
+fork-by-work and
+`x/btccheckpoint`
+SPV submit /
+k-deep finalize.
+No chain writes
+from this VM.
+
+Files:
+`x/btclightclient/keeper/msg_server.go`,
+`x/btclightclient/types/msgs.go`,
+`x/btclightclient/types/btc_light_client.go`,
+`proto/babylon/btclightclient/v1/tx.proto`,
+`x/btccheckpoint/keeper/msg_server.go`,
+`x/btccheckpoint/types/msgs.go`,
+`x/btccheckpoint/types/btcutils.go`,
+`x/btccheckpoint/keeper/keeper.go`,
+`x/btccheckpoint/keeper/submissions.go`,
+`x/btccheckpoint/abci.go`,
+`proto/babylon/btccheckpoint/v1/tx.proto`.
+
+Checked for: a
+stranger header
+that rewrites
+the tip without
+PoW; an SPV
+proof that
+finalizes a
+fake epoch; a
+duplicate or
+ancestor-skip
+that jumps
+finality;
+permissionless
+timeout change.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `MsgInsertHeaders`
+  proto signer is
+  `signer`.
+  Default
+  allow-list is
+  empty
+  (`AllowAllReporters`).
+  Headers must
+  form a chain,
+  pass
+  `CheckBlockHeaderContext`
+  +
+  `CheckBlockHeaderSanity`
+  (difficulty /
+  PoW), and
+  either extend
+  the tip or
+  fork from a
+  known parent
+  with **more**
+  cumulative
+  work. A known
+  first header
+  cannot start
+  a fork.
+- `UpdateParams`
+  on both
+  modules is
+  authority-
+  gated.
+  `CheckpointFinalizationTimeout`
+  cannot change.
+- `InsertBTCSpvProof`
+  proto signer is
+  `submitter`.
+  `ParseTwoProofs`
+  requires two
+  txs, header
+  PoW, merkle
+  inclusion,
+  one OP_RETURN
+  each, matching
+  tag/version
+  parts, and
+  `ConnectParts`.
+  Header depth
+  comes from the
+  light client.
+  Duplicate keys
+  and already-
+  finalized
+  epochs revert.
+- `VerifyCheckpoint`
+  must accept
+  the local
+  sealed ckpt
+  (or a valid
+  quorum on the
+  same hash).
+  A conflicting
+  valid quorum
+  returns
+  success so the
+  halt flag
+  persists.
+- Epochs after
+  1 need an
+  ancestor
+  submission
+  still on the
+  main chain
+  that
+  `HappenedAfter`
+  accepts.
+- EndBlocker
+  `OnTipChange`
+  re-scores
+  submissions
+  by depth /
+  tx index.
+  Confirmed is
+  `BtcConfirmationDepth`;
+  finalized is
+  `CheckpointFinalizationTimeout`.
+  Lost headers
+  drop that
+  submission.
+
+Do not file
+permissionless
+valid-PoW
+headers (empty
+allow-list is
+intended), a
+real BTC SPV
+of a sealed
+ckpt, or
+k-deep
+finalization as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+babylon `v4.4.0`
+opens for
+btclightclient
+headers and
+btccheckpoint
+SPV / finalize
+is exhausted at
+the opened-file
+level. Remaining
+listed: website
+/ toolkit rows.
