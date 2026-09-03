@@ -10411,12 +10411,9 @@ finding. Not submitted.
 
 Remaining Sky leftover
 that this pass did not
-open: `diamond-pau`
-`PAUFactory.sol` (not
-in the earlier facet
-pass), `dss-flappers`
-`Kicker.sol`, and
-`sky-oapp-oft`.
+open: `sky-oapp-oft`
+after PAUFactory +
+Kicker logged below.
 Not submitted.
 
 ## 2026-09-03: Yearn Accountant leftover (Sourcify)
@@ -10609,13 +10606,16 @@ finding. Not submitted.
   inbound sBTC is
   keeper-only.
 
-Remaining StackingDAO:
-rewards-stx / commission
-/ signer-managers /
-strategy-v6 / native-pool
-if a later pass wants
-those admin/stacker
-contracts. Not submitted.
+Remaining StackingDAO
+was rewards-stx /
+commission / strategy-v6
+/ stakers; logged in the
+strategy + rewards pass
+below. Native-pool /
+signer-managers if a
+later pass wants those
+admin wrappers. Not
+submitted.
 
 ## 2026-09-03: Yearn 3.0.4 TokenizedStrategy + Vault V3 leftover (Sourcify)
 
@@ -10742,13 +10742,170 @@ impls are exhausted.
   already logged.
 
 Next leftover: Sky
-`PAUFactory` / `Kicker`
-/ `sky-oapp-oft`,
-TermMax leftover
-adapters, Twyne
+`sky-oapp-oft`, TermMax
+leftover adapters, Twyne
 Sourcify-404 vaults, or
-StackingDAO rewards /
-commission. Not
+StackingDAO native-pool
+/ signer-managers. Not
+submitted.
+
+## 2026-09-03: Sky PAUFactory + Kicker leftover (`fd5f09c` / `ed90ec2`)
+
+Immunefi program `sky`
+($10,000,000, `kyc:
+false`). Remaining
+listed Solidity after
+StarGuard /
+SubProxyMethods / PAU
+assembler /
+AdministeredAgent:
+`PAUFactory.sol` (6 Jul
+2026,
+sky-ecosystem/diamond-pau
+`dev` `fd5f09c`) and
+`Kicker.sol` (19 Nov
+2025, dss-flappers
+`ed90ec2`). Official
+raw GitHub. No mainnet
+interaction.
+
+Files:
+`src/PAUFactory.sol`,
+`src/Kicker.sol`.
+
+Checked for: factory
+`deploy*` that
+re-points a live
+controller / proxy /
+rate-limit to a
+stranger; permissionless
+`flap` that `suck`s
+beyond the surplus
+threshold or pays the
+caller.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- PAUFactory stores an
+  immutable `beacon`
+  (non-zero). Every
+  `deploy*` is a
+  `new` of a fresh
+  AccessControls /
+  Controller / ALMProxy
+  / ALMProxyFreezable /
+  RateLimits. It cannot
+  mutate an already-
+  deployed PAU graph.
+  Controller is wired
+  with caller-supplied
+  accessControls /
+  proxy / rateLimits
+  plus the factory
+  beacon.
+- Kicker `rely` /
+  `deny` / `file` are
+  `wards`. `flap` is
+  permissionless only
+  after
+  `vat.dai(vow) >=
+  vat.sin(vow) + kbump
+  + khump`. It
+  `vat.suck(vow, this,
+  kbump)` then
+  `splitter.kick(kbump,
+  0)`. The kicker
+  `hope`s the splitter
+  in the constructor.
+  No caller payout.
+
+Remaining Sky listed
+Solidity is
+`sky-oapp-oft`. Not
+submitted.
+
+## 2026-09-03: StackingDAO strategy-v6 + stakers + rewards leftover (Hiro 13 Aug 2026)
+
+Same Immunefi program
+`stackingdao` ($100,000,
+`kyc: false`). Remaining
+admin / stacker path
+after the cores: Hiro
+`strategy-v6`,
+`stx-staker-stacking-dao-v2`,
+`stbtc-staker-bond-1-v2`,
+`commission-sbtc-v1`,
+`rewards-stx-v2`. Source
+pulled read-only
+(`/tmp/stacking-dao`).
+No mainnet interaction.
+
+Checked for: strategy
+`perform-*` callable by
+anyone; staker that
+pulls reserve STX/sBTC
+without protocol auth;
+`return-*` that credits
+a stranger; commission
+skim that is not
+protocol-gated;
+permissionless
+`process-rewards` that
+folds new inbound STX
+to a non-reserve sink.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `strategy-v6`
+  `perform-*` require
+  `contract-caller ==
+  manager`. Bond /
+  recall / rollover /
+  stake / unstake also
+  require an approved
+  signer-manager.
+  `initialize` /
+  `set-manager` /
+  `set-approved-signer-manager`
+  are
+  `dao.check-is-protocol`.
+- STX / sBTC stakers
+  are protocol-gated.
+  They pull via reserve
+  `request-*-to-stack`
+  / `request-stx-for-staking`
+  (reserved-aware) and
+  return via
+  `return-*-from-stacking`.
+  PoX calls run
+  `as-contract`.
+- `commission-sbtc-v1
+  add-commission` pulls
+  from `tx-sender` and
+  is protocol-gated.
+  Default signer bps is
+  10000 (all to
+  `signer-payout-v1`).
+  `withdraw-treasury`
+  is protocol-gated.
+- `rewards-stx-v2
+  process-rewards` is
+  permissionless only
+  for already-queued
+  streaming STX to
+  `stx-reserve-v2`.
+  Folding new inbound
+  STX and `add-rewards`
+  are keeper-only.
+
+Remaining StackingDAO:
+native-pool +
+signer-managers /
+signer-payout if a
+later pass wants those
+wrappers. Not
 submitted.
 
 ## Next candidates
@@ -10919,11 +11076,14 @@ exhausted. StackingDAO
 plus stBTC token / reserve /
 data and STX reserve / data
 (Hiro, 13 Aug 2026 assets)
-are logged. Remaining
-StackingDAO is rewards /
-stakers / signer-managers /
-withdraw NFTs already
-reviewed with the cores.
+are logged. StackingDAO
+strategy-v6 + STX/sBTC
+stakers + commission +
+rewards-stx are logged.
+Remaining StackingDAO is
+native-pool /
+signer-managers /
+signer-payout.
 Next
 unreviewed Immunefi
 GitHub-or-recent trees:
@@ -10958,9 +11118,9 @@ DefaultPAUAssembler
 AdministeredAgent
 (`5e6b52f`) are logged.
 Remaining Sky leftover:
-`PAUFactory.sol`,
-`Kicker.sol`,
-`sky-oapp-oft`.
+`sky-oapp-oft` after
+`PAUFactory` + `Kicker`
+logged below.
 Yearn Accountant
 `0x5A74…DE69` (Sourcify)
 plus 3.0.4 Tokenized
@@ -11100,6 +11260,12 @@ Strategy + Vault V3
 leftover are logged
 (listed Yearn leftover
 impls exhausted);
+Sky PAUFactory + Kicker
+and StackingDAO
+strategy-v6 / stakers /
+commission / rewards-stx
+are logged; remaining
+Sky is `sky-oapp-oft`;
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
