@@ -34267,12 +34267,19 @@ Securitize / TraderJoe /
 Upshift / Velodrome; KYC)
 is logged (listed
 integrations-v3 leftover
-adapters exhausted;
-remaining listed is
-integrations helpers and
-permissionless factories /
+adapters exhausted).
+Gearbox leftover
+permissionless factories +
+instance leftover
+(`b1b5e5b` PoolFactory /
+CreditFactory /
 InstanceManager /
-PriceFeedStore / helpers);
+PriceFeedStore /
+MarketConfiguratorFactory;
+KYC) is logged (remaining
+listed is permissionless
+helpers and integrations
+helpers);
 Burrow leftover
 `contract.main.burrow.near`
 leftover (`0dbfa18`
@@ -45272,4 +45279,167 @@ permissionless
 factories /
 InstanceManager /
 PriceFeedStore /
+helpers.
+
+## 2026-09-03: Gearbox leftover permissionless factories + instance leftover (`b1b5e5b`)
+
+Immunefi program
+`gearbox` ($150,000,
+`kyc: true`). Official
+scope is
+`Gearbox-protocol/security`
+`bug-bounty/v3_1-scope.md`.
+Governor + configurator
+already logged. This slice
+is `permissionless`
+`b1b5e5b` factories and
+instance setup:
+AbstractFactory,
+PoolFactory,
+CreditFactory,
+InstanceManager,
+PriceFeedStore,
+MarketConfiguratorFactory.
+Clone `/tmp/gearbox-pl`.
+No mainnet writes.
+
+Files:
+`contracts/factories/AbstractFactory.sol`,
+`contracts/factories/PoolFactory.sol`,
+`contracts/factories/CreditFactory.sol`,
+`contracts/instance/InstanceManager.sol`,
+`contracts/instance/PriceFeedStore.sol`,
+`contracts/instance/MarketConfiguratorFactory.sol`.
+
+Checked for: a
+stranger
+`deployPool` /
+`deployCreditSuite`;
+an instance
+`activate` or
+address rewrite;
+a price-feed
+allow that
+injects a fake
+oracle; a
+configurator
+factory
+`shutdown` of
+someone else's
+market.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- AbstractFactory
+  `configure` /
+  `emergencyConfigure`
+  default-revert.
+  `_ensureCallerIsMarketConfigurator`
+  checks the
+  factory
+  registry.
+- PoolFactory
+  `deployPool` and
+  CreditFactory
+  `deployCreditSuite`
+  /
+  `configure` /
+  `emergencyConfigure`
+  are
+  `onlyMarketConfigurators`.
+  They return
+  Call arrays for
+  the
+  configurator to
+  execute.
+- InstanceManager
+  `activate` is
+  `onlyOwner`
+  (cross-chain
+  governance)
+  once.
+  Global
+  configure /
+  address set are
+  `onlyCrossChainGovernance`.
+  Local
+  configure is
+  `onlyOwner`.
+  Treasury
+  configure is
+  `onlyTreasury`.
+  Governance
+  transfer is
+  two-step.
+- PriceFeedStore
+  add / remove /
+  allow / forbid /
+  configure are
+  `onlyOwner`
+  (instance
+  manager proxy).
+  `updatePrices`
+  is public but
+  only for
+  registered
+  updatable feeds
+  and forwards
+  their own
+  signed
+  `updatePrice`
+  payload.
+- MarketConfiguratorFactory
+  `createMarketConfigurator`
+  is public
+  (permissionless
+  new curator,
+  not an
+  existing
+  market).
+  `shutdownMarketConfigurator`
+  is the
+  configurator's
+  own admin and
+  requires zero
+  live pools.
+  `addMarketConfigurator`
+  is
+  `onlyCrossChainGovernance`.
+
+Do not file
+permissionless
+new-curator
+deploys,
+instance-owner
+feed allowlists,
+or signed
+on-demand
+price updates
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`permissionless`
+opens for these
+factory /
+instance types
+is exhausted at
+the opened-file
+level. Remaining
+listed:
+permissionless
+helpers
+(Constant /
+Zero feed,
+DefaultIRM,
+ProxyCall,
+EIP712Mainnet);
+integrations
 helpers.
