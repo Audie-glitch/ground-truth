@@ -63232,3 +63232,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file library-only JNI wrappers or threshold-gated TSS verify as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `hiero-mirror-node` (sparse only), `hiero-sdk-js` / `hiero-sdk-java` / `hiero-sdk-go`, and the transaction-tool website leftover.
+
+## 2026-09-03: Hedera leftover TokenAssociate + TokenKYC leftover (`0d3d9a2`)
+
+Immunefi program `hedera` ($30,000, `kyc: true`). Follow-on leftover after TokenFreeze / TokenPause (`ea25157`). Official clone `/tmp/hiero-consensus` `0d3d9a2`. Opened `TokenAssociateToAccountHandler.java`, `TokenDissociateFromAccountHandler.java`, `TokenGrantKycToAccountHandler.java`, `TokenRevokeKycFromAccountHandler.java`. No mainnet writes. No exploit PoCs.
+
+Checked for: associate/dissociate that mutates another account without its key; KYC grant/revoke that flips a stranger without the KYC key; dissociate that drops a nonzero balance.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Associate / dissociate `preHandle` `requireKeyOrThrow` the **target account**. Associate `handle` creates token relations (zero balance) after association-limit checks. Dissociate rejects treasury, frozen, paused, nonzero fungible balances (`TRANSACTION_REQUIRES_ZERO_TOKEN_BALANCES`), and NFT ownership (`ACCOUNT_STILL_OWNS_NFTS`).
+- Grant KYC `preHandle` requires a non-empty **KYC key**. Revoke KYC requires the KYC key when present. `handle` only toggles `kycGranted` on the named account's token relation. No balances move.
+
+Do not file target-signed associate/dissociate or KYC-key grant/revoke as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `hiero-consensus-node` other handlers, `hiero-mirror-node`, `hiero-cryptography`, SDKs, and the hashed transaction-tool website leftover.
