@@ -67739,3 +67739,20 @@ Do not file a router-ramp-gated CCIP lock/mint as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: none on official Aave GitHub assets that still 200 (PriceOracleSentinel + OwnableFacilitator 404).
 
+
+## 2026-09-03: Aave leftover remaining UpgradeableGhoToken leftover (`23859bb`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after CCIP leftover. Official `aave-dao/gho-origin` `23859bb`. Opened listed `src/contracts/gho/UpgradeableGhoToken.sol`. Do not rematch non-upgradeable `GhoToken` leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `mint` without a facilitator bucket; `initialize` rewriting admin on a live proxy; `addFacilitator` without FACILITATOR_MANAGER_ROLE.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `initialize` is `initializer` and grants `DEFAULT_ADMIN_ROLE` once. Constructor only sets 18 decimals.
+- `mint` credits `account` only if `msg.sender`’s facilitator `bucketCapacity >= bucketLevel + amount`. An address never added has capacity 0. `burn` burns `msg.sender`’s GHO and decreases that facilitator’s level (underflow if level is 0).
+- `addFacilitator` / `removeFacilitator` are `onlyRole(FACILITATOR_MANAGER_ROLE)` (remove requires level 0). `setFacilitatorBucketCapacity` is `onlyRole(BUCKET_MANAGER_ROLE)`.
+
+Do not file a facilitator-bucket mint as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: protocol-v2 / upgradeability proxies. Official PriceOracleSentinel + OwnableFacilitator 404.
+
