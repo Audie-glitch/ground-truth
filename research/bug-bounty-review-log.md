@@ -958,12 +958,78 @@ Result: no new user-exploitable finding.
   1373). The public `tranches` tip does not contain the cited
   `6aee201` real-Junior cap. Not re-reported.
 
-Not submitted. Remaining Strata slice: TwoStepConfigManager and
-strategy cooldown adapters if still unreviewed.
+Not submitted.
+
+## 2026-09-03: Strata two-step config + cooldown silos (`2be97f9`)
+
+Same Immunefi program (`strata`). Local clone `/tmp/strata-contracts`.
+No mainnet interaction.
+
+Files: `contracts/tranches/TwoStepConfigManager.sol`,
+`contracts/tranches/base/cooldown/{ERC20Cooldown,UnstakeCooldown}.sol`,
+`contracts/tranches/strategies/saturn/SaturnStrategy.sol` (deposit /
+withdraw).
+
+Checked for: instant fee hike; stealing another user’s cooldown
+balance; unstake proxy reuse paying the wrong owner; Saturn
+withdraw using a Ceil `tokenAmount` instead of `baseAssets`.
+
+Result: no user-exploitable finding.
+
+- Exit-fee increases need `MIN_DELAY` (1 day) and a second role to
+  execute. Decreases apply immediately (user-friendly). Exit-mode
+  bounds are always delayed. Caps: fee ≤ 5% ppm, lock ≤ 30 days.
+- `ERC20Cooldown.transfer` is `COOLDOWN_WORKER_ROLE` and pulls from
+  the worker (the strategy). `finalize` pays the request owner.
+  Instant (`cooldownSeconds == 0`) sends straight to `to`.
+- `UnstakeCooldown` clones a per-user handler, pulls tokens into
+  that proxy, then `request()`. Reuse is same-block or slot-cap
+  on the same recipient. `finalize` returns the proxy to that
+  user’s pool. A failed `finalize()` leaves the request in place.
+- Saturn `withdrawInner` sizes shares with `previewWithdraw(baseAssets)`
+  and ignores `tokenAmount`. USDat deposits return post-fee
+  `convertToAssets(sharesReceived)`.
+
+Not submitted.
+
+## 2026-09-03: OpenZeppelin LimitOrderHook (`2ae32be`)
+
+Immunefi program `openzeppelin` ($25,000, `kyc: true`). Asset
+`OpenZeppelin/uniswap-hooks` added 9 Oct 2025; tip commit is the
+zero-amount claim-redemption guard. Local clone `/tmp/oz-uniswap-hooks`.
+No mainnet interaction.
+
+Files: `src/general/LimitOrderHook.sol`, `src/utils/CurrencySettler.sol`.
+
+Checked for: withdrawing another user’s filled order; cancelling
+after fill to remove already-gone liquidity and desync claims;
+placing into a filled order id; fee-checkpoint dilution when
+adding liquidity; native-token zero-value revert (the just-fixed
+path); principal pro-rata over-pay.
+
+Result: no new user-exploitable finding.
+
+- `placeOrder` / `cancelOrder` / `withdraw` all key off
+  `userInfo[msg.sender].liquidity`. A filled order’s map id is
+  reset to default so a new place at the same tick gets a new
+  id; the old filled order remains withdrawable.
+- Fees accrue per liquidity unit with a re-checkpoint that keeps
+  already-owed fees when the same owner adds more. Principal is
+  split pro-rata and subtracted; floor dust stays in the hook
+  (documented).
+- `_sendFromClaims` and `CurrencySettler` skip `amount == 0`,
+  which is the tip fix for tokens / native recipients that revert
+  on zero-value transfers. Cancel after fill tries to
+  `modifyLiquidity` on an empty position and reverts; the owner
+  still uses `withdraw`.
+
+Not submitted. Remaining OZ hooks slice: ReHypothecationHook /
+fee hooks if still unreviewed.
 
 ## Next candidates
 
-Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
-execute. the402.ai still paused. No KeeperHub implementation before the
-6 Sep build window. Skip Sky (legacy Maker) and Money on Chain
-(strict OOS + existing AI dump) unless a tiny new asset appears.
+Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do
+not execute. All other open listings are `HUMAN_ONLY`. the402.ai
+still paused. No KeeperHub implementation before the 6 Sep build
+window. Skip Sky (legacy Maker) and Money on Chain (strict OOS +
+existing AI dump).
