@@ -40759,15 +40759,17 @@ ZKsync OS leftover zk_ee + basic_system IO leftover
 (`9efc8bf`) is logged.
 Filecoin leftover remaining proofs-api leftover
 (`7637843`) is logged.
+Filecoin leftover remaining proofs-ffi leftover
+(`59f46f4`) is logged.
 Remaining listed Hedera: hashed transaction-tool website.
-Remaining listed Filecoin: rust-fil-proofs / ffi /
-filecoin.io.
+Remaining listed Filecoin: rust-fil-proofs /
+filecoin-ffi / filecoin.io.
 Remaining listed ZKsync OS: airbender CS / prover /
 verifier, `zkos-wrapper`.
 Do not rematch Hedera consensus-node,
 json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
-lotus miner, FVM, or proofs-api.
+lotus miner, FVM, proofs-api, or proofs-ffi.
 Do not rematch ZKsync bootloader, interpreter,
 storage_models, proof_running_system, or zk_ee.
 Do not loop `reffinance` 404s or mux-staking auth.
@@ -63790,3 +63792,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file approved lock/burn of the signer's tokens or claim-gated release to the VAA recipient as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / wormchain / cosmwasm / algorand / aptos / near, and Relayer Sourcify 404.
+
+## 2026-09-03: Filecoin leftover remaining proofs-ffi leftover (`59f46f4`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Listed remaining after proofs-api leftover. Official clone `/tmp/filecoin-proofs-ffi` at `59f46f4` (`deprecate project (#43)`). README marks the crate **deprecated** and points to `filecoin-project/filecoin-ffi`. Opened `src/api.rs`, `src/helpers.rs`, `src/types.rs`, `src/lib.rs`. Thin C FFI over `filecoin_proofs` / `storage_proofs`. Do not rematch builtin-actors, boost, go-f3, lotus miner, FVM, or proofs-api leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `verify_seal` / `verify_post` accepting a proof without the named `prover_id`; replica-map length mismatch; `is_valid` defaulting true on error.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `verify_seal` copies proof bytes, derives `PoRepProofPartitions` from `SINGLE_PARTITION_PROOF_LEN`, then forwards `comm_r`, `comm_d`, `prover_id`, `sector_id`, `ticket`, `seed`, and the proof into `filecoin_proofs::verify_seal`. `Ok(true)` sets `is_valid`; `Ok(false)` and decode errors leave it false.
+- `verify_post` requires equal `sector_ids` and flattened `comm_rs` lengths, splits proofs on `SINGLE_PARTITION_PROOF_LEN`, converts winners via `bytes_into_fr`, then forwards sector size, randomness, challenge count, proofs, the public-replica map, winners, and `prover_id` into `filecoin_proofs::verify_post`.
+- `VerifySealResponse` / `VerifyPoStResponse` default `is_valid = false`. `catch_panic_response` wraps every export. This crate does not move FIL.
+
+Do not file a deprecated FFI that forwards prover_id and commitments as stranger theft. Successor leftover (if unique) is `filecoin-ffi`, not another pass on this tree.
+
+Not submitted. Payment requires user KYC. Remaining listed: rust-fil-proofs / filecoin-ffi / filecoin.io.

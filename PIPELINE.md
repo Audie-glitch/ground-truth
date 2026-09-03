@@ -33,6 +33,8 @@ Filecoin leftover remaining boost leftover is logged;
 Filecoin leftover remaining go-f3 leftover is logged;
 Filecoin leftover remaining FVM leftover is logged;
 Filecoin leftover remaining proofs-api leftover is logged;
+Filecoin leftover remaining proofs-ffi leftover is logged;
+Wormhole leftover remaining Solana token-bridge leftover is logged;
 ZKsync OS leftover zk_ee + basic_system IO leftover is logged;
 Hedera leftover remaining SDK-java leftover is logged;
 Hedera leftover remaining SDK-go leftover is logged;
