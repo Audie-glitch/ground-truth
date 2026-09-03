@@ -1661,26 +1661,81 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Sky diamond-pau Aave / LayerZero / Pendle / UniV3 (`1b6743a`)
+
+Same Immunefi program and clone as the earlier diamond-pau
+core slice. No mainnet interaction.
+
+Files: `facets/aave/AaveFacet.sol`,
+`facets/aave-v4/AaveV4Facet.sol`,
+`facets/layer-zero/LayerZeroFacet.sol`,
+`facets/pendle/PendleFacet.sol`,
+`facets/uniswap-v3/UniswapV3Facet.sol`.
+
+Checked for: a malicious aToken/spoke that redirects the
+approve; LayerZero send to an unset or attacker recipient;
+Pendle redeem through an aggregator swap; UniV3 swap
+without a TWAP bound; first-depositor / deficit purchase
+on Aave v4.
+
+Result: no user-exploitable finding.
+
+- Aave v3 deposit requires admin `maxSlippage` and burns
+  `LIMIT_AAVE_DEPOSIT(underlying, pool, aToken)`. Pool and
+  underlying come from the aToken. Withdraw measures
+  underlying received and restores the deposit limit.
+  Allocator-only.
+- Aave v4 additionally requires
+  `hub.getAssetDeficitRay(assetId) <= maxDeficits` (default
+  0, so any deficit blocks until governance opts in).
+  Position change is read from `getUserSuppliedAssets`,
+  not the return tuple. Withdraw rate-limit key omits
+  hub/asset so a remapped reserve can still exit.
+- LayerZero recipient is admin-set per `dstEid`. In-file
+  note: keep the rate limit at zero until OFT integration
+  tests land. `minAmountLD` floors to
+  `decimalConversionRate`. Quote is a proxy `staticcall`.
+  `send` refunds fees to the proxy; leftover controller
+  ETH is swept. Approval cleared when `approvalRequired`.
+- Pendle redeem only on `isExpired` markets, with
+  `SwapType` none (no ext router). `minTokenOut` is
+  `pyAmountIn * 1e18 / pyIndexCurrent - 5`, plus the
+  allocator's `minAmountOut`. In-file: do not use
+  non-standard SYs without extra tests.
+- UniV3 swap requires TWAP seconds, a tick-delta cap, and
+  `minAmountOut`. Liquidity mint/increase goes to the
+  proxy NFT; remove checks ownership and slippage vs
+  admin `maxSlippage`. Aggregate rate limits assume
+  pegged stables (documented).
+
+Not submitted.
+
 ## Next candidates
 
-Sky PAS / SBEBeam, the full `dss-emergency-spells` tree, and
-diamond-pau core + CCTP/4626/7540/OTC/transfer/Ethena are
-exhausted. Remaining Sky: other `diamond-pau` facets (Aave,
-LayerZero, Pendle, Maple, farms, wraps). Remaining
-Intuition: `TrustSwapAndBridgeRouter` (Base, not in the v2
-repo). Superteam API rechecked 02:50 UTC 3 Sep: 28 open
-listings. `AGENT_ALLOWED` is still only Steve Arena and
-ZNS — do not execute. Mermail skill is built
-(`mermail-onchain-receipts/`); remaining work is the
+Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
+diamond-pau core + CCTP/4626/7540/OTC/transfer/Ethena +
+Aave/AaveV4/LayerZero/Pendle/UniV3, and Intuition MultiVault
+/ AtomWallet / curves / emissions / registry are exhausted.
+Remaining Sky `diamond-pau` facets: Maple, farms, wraps,
+UniV4, DualPool, PSM. Remaining Intuition:
+`TrustSwapAndBridgeRouter` (Base, not in the v2 repo).
+Superteam API rechecked 02:50 UTC 3 Sep: 28 open listings.
+`AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
+execute. Mermail skill is built (`mermail-onchain-receipts/`);
+remaining work is the
 participant's PR, Mermail MCP, and X demo. T3N still needs
 Terminal 3 SSO. NectarFi is a creator campaign. the402.ai
-still paused. 1inch Fusion settlement / whitelist / PowerPod
-/ KycNFT and FeeTaker are exhausted. Remaining OZ hooks:
-none of the money-moving general/fee/base files. Leather
-($5k, wallet/web) is the next unread Immunefi program if we
-want a web2 target. Sherlock `/api/contests` has 301
-historical items; the only non-FINISHED row as of 02:46 UTC
-3 Sep is contest `1234` in `SHERLOCK_JUDGING` (not open for
-reports). Hedera Harness #8 still `open`, 0 comments, 0
-HOL-Guard PRs. No KeeperHub implementation before the 6 Sep
-build window. No ETHOnline project code before 4 Sep 16:00 UTC.
+still paused. 1inch Fusion settlement / whitelist /
+PowerPod / KycNFT and FeeTaker are exhausted. Remaining OZ
+hooks: none of the money-moving general/fee/base files.
+Leather ($5k, wallet/web) is the next unread Immunefi
+program if we want a web2 target. Sherlock `/api/contests`
+has 301 historical items; the only non-FINISHED row as of
+02:46 UTC 3 Sep is contest `1234` in `SHERLOCK_JUDGING`
+(not open for reports). Hedera Harness #8 still `open`, 0
+comments, 0 HOL-Guard PRs. Rechecked 02:55 UTC 3 Sep:
+KeeperHub #2105 still `open` + `accepted`, 0 PRs;
+CreditPassport deployer still 0/0; CTC still 47 BUIDLs /
+203 hackers, “11 days left”. No KeeperHub implementation
+before the 6 Sep build window. No ETHOnline project code
+before 4 Sep 16:00 UTC.

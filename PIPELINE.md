@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, 02:52 UTC. Dates verified against each
+Status as of 3 September 2026, 02:56 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings and Immunefi unofficial
 mirror rechecked 3 Sep.
 
@@ -81,8 +81,8 @@ share the username.
   MCP, and an X demo tagging @Mermailapp; see `mermail-onchain-receipts/SUBMISSION.md`.
 - `research/bug-bounty-review-log.md`: Immunefi target selection method and
   time-boxed reviews through Sky PAS / SBEBeam, Intuition money paths,
-  and Sky diamond-pau core + CCTP/4626/7540/OTC/Ethena (no submittable
-  finding).
+  and Sky diamond-pau through Aave / LayerZero / Pendle / UniV3
+  (no submittable finding).
 
 ## Schedule
 

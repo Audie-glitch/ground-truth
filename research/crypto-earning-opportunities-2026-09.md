@@ -1,6 +1,6 @@
 # Verified crypto earning opportunities
 
-**Checked:** 3 September 2026 02:52 UTC (DoraHacks CTC + KeeperHub #2105 + Immunefi Sky diamond-pau slice)  
+**Checked:** 3 September 2026 02:56 UTC (DoraHacks CTC + KeeperHub #2105 + Sky diamond-pau Aave/LZ/Pendle/UniV3)  
 **Scope:** Legitimate, no-capital developer work that can pay crypto or stablecoins. Competitive prizes are not guaranteed income.
 
 ## Ranked opportunities
