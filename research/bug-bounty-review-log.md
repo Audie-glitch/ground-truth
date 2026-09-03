@@ -20277,6 +20277,141 @@ independently
 Sourcify-matched
 on these rows.
 
+## 2026-09-03: Ankr ETH pool + liquid tokens leftover (Sourcify)
+
+Immunefi program
+`ankr` ($500,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Ethereum
+Sourcify: ETH Pool
+`0x84db6eE82b7Cf3b47E8F19270abdE5718B936670`
+`AdminUpgradeabilityProxy`
+(`match`) impl
+`GlobalPool_R46`
+`0xEcce8778214Fd9fe37C141a00cFf19853Ef5Bc4A`
+(solc 0.6.11);
+aETHc
+`0xE95A203B1a91a908F9B9CE46459d101078c2c3cb`
+proxy + `AETH_R21`
+`0xE672E0E0101A7F58d728751E2a5e6Da5Ff1FDa64`;
+aETHb
+`0xd01ef7c0a5d8c432fc2d1a85c66cf2327362e5c6`
+proxy + `FETH_R20`
+`0x518d26405Ca06435227BB3E8de567a16fA8F8125`.
+BSC Sourcify:
+ankrBNB
+`0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827`
+`TransparentUpgradeableProxy`
+(`exact_match`) impl
+`aBNBc_R1`
+`0x2c00CE1a935FF8c9e78580533e2E17c36281c26E`.
+Extract `/tmp/ankr`.
+BNB Pool and
+BNBStakingConfig
+Sourcify 404. No
+mainnet interaction.
+
+Files:
+`GlobalPool_R46.sol`,
+`AETH_R21.sol`,
+`FETH_R20.sol`,
+`aBNBc_R1.sol`,
+`CertificateToken.sol`.
+
+Checked for: a
+stranger burn of
+another user’s
+aETH / aETHb;
+claim of another
+staker’s shares;
+unstake that queues
+more ETH than the
+burned shares;
+certificate mint
+without the pool.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `stakeAndClaimAethC`
+  / `B` mint aETH
+  shares to the pool
+  then credit
+  `_claimableShares
+  [msg.sender]`.
+  `claimAETH` /
+  `claimFETH` zero
+  that mapping for
+  `msg.sender` first.
+- `unstakeAETH`
+  burns
+  `msg.sender` via
+  pool-gated
+  `AETH.burn`.
+  `unstakeFETH`
+  `unlockSharesFor`
+  (pool/owner) then
+  burns the
+  unlocked aETH.
+  Queue amount uses
+  FETH
+  `sharesToBonds`,
+  which reads
+  `AETH.ratio()`.
+- `distributeRewards`
+  is
+  `onlyOperator`.
+  Failed or marked
+  claims stash ETH
+  for
+  `claimManually`,
+  which pays
+  `receiverAddress`.
+  `receive` is the
+  withdrawal pool
+  only.
+- `AETH.mint` /
+  `burn` are global
+  pool or BSC
+  bridge.
+  `updateRatio` is
+  operator and
+  cannot increase;
+  `repairRatio` is
+  owner.
+- `aBNBc` mint /
+  burn are the
+  liquid staking
+  pool or the
+  stored Binance
+  pool. Airdrop is
+  one-shot
+  governance.
+
+Do not file owner
+`updateClaimableShares`,
+operator fee on
+`distributeRewards`,
+owner `refundPool`,
+or operator
+`claimTokens` on
+AETH as theft.
+
+Not submitted.
+Listed leftover is
+the ETH pool +
+aETHc / aETHb +
+ankrBNB token
+paths. Remaining
+Ankr: BNB Pool
+`0x9e347Af3…E86E` and
+BNBStakingConfig
+Sourcify 404.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -20806,6 +20941,14 @@ exhausted; remaining is
 AMB / other tokenbridge
 trees if Immunefi lists
 them later);
+Ankr ETH pool + liquid
+tokens leftover (Sourcify
+`GlobalPool_R46` /
+`AETH_R21` / `FETH_R20` /
+`aBNBc_R1`) is logged
+(remaining Ankr is BNB
+Pool / BNBStakingConfig
+Sourcify 404);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
 dissolve / rewards /

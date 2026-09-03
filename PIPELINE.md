@@ -40,6 +40,11 @@ Gnosis Chain tokenbridge + Omnibridge leftover
 official money path) is logged (listed leftover
 exhausted; remaining is AMB / other tokenbridge
 trees if Immunefi lists them later).
+Ankr ETH pool + liquid tokens leftover
+(Sourcify `GlobalPool_R46` / `AETH_R21` /
+`FETH_R20` / `aBNBc_R1`) is logged
+(remaining Ankr is BNB Pool /
+BNBStakingConfig Sourcify 404).
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool
 v1.4 listed GitHub leftover is exhausted (deposit /
