@@ -23,11 +23,13 @@ Ethena leftover remaining USDeOFTAdapter leftover is logged;
 LayerZero leftover remaining ULN301 leftover is logged;
 LayerZero leftover remaining ExecutorFeeLib leftover is logged;
 LayerZero leftover remaining OApp OFT leftover is logged;
+LayerZero leftover remaining other-chain twins OmniCounter leftover is logged;
 Ether.fi leftover remaining Auction leftover is logged;
 Ether.fi leftover remaining bridge adapters leftover is logged;
 Ether.fi leftover remaining weETH-cross-chain leftover is logged;
 Ether.fi leftover remaining RoleRegistry TopUpSourceFactory leftover is logged;
 Ether.fi leftover remaining Scroll Cash modules leftover is logged;
+Ether.fi leftover remaining eETH impl leftover is logged;
 Jito leftover remaining jito-solana runtime_config leftover is logged;
 Jito leftover remaining jito-solana static_ids leftover is logged;
 Jito leftover remaining jito-solana read_optimized_dashmap leftover is logged;
@@ -922,8 +924,13 @@ LayerZero leftover remaining ULN301 leftover
 LayerZero leftover remaining ExecutorFeeLib leftover
 (`9c741e7` ExecutorFeeLib / PriceFeed; KYC) is logged.
 LayerZero leftover remaining OApp OFT leftover
-(`9c741e7` OApp / OFT / OFTAdapter; KYC) is logged
-(remaining listed is other-chain twins).
+(`9c741e7` OApp / OFT / OFTAdapter; KYC) is logged.
+LayerZero leftover remaining other-chain twins
+OmniCounter leftover
+(`9c741e7` Arb EndpointV2 / SendUln302 /
+ReceiveUln302 Sourcify + OmniCounter examples;
+KYC) is logged
+(remaining listed is Aptos / Solana / TON).
 Ethena leftover minting + staking leftover
 (Sourcify EthenaMinting / StakedUSDeV2 /
 LP staking / PSM; KYC) is logged.
@@ -959,8 +966,11 @@ Ether.fi leftover remaining Scroll Cash modules leftover
 (`1f502e1` Scroll DebtManager /
 EtherFiLiquidModule / LiquidUSDLiquifierModule /
 SettlementDispatcherCardOrder; Sourcify 534352;
+KYC) is logged.
+Ether.fi leftover remaining eETH impl leftover
+(`b4a0968` `EETH.sol`; Sourcify 404 on impl;
 KYC) is logged
-(remaining listed is eETH impl 404).
+(Ether.fi listed leftovers exhausted).
 Compound leftover Comet leftover
 (Sourcify cUSDCv3 / cWETHv3 / Rewards /
 Bulker; KYC) is logged (remaining listed
@@ -2656,6 +2666,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   LayerZero leftover remaining
   OApp OFT leftover
   (`9c741e7`; KYC),
+  LayerZero leftover remaining
+  other-chain twins OmniCounter leftover
+  (`9c741e7` Arb twins + examples; KYC),
   Ethena leftover minting +
   staking leftover
   (Sourcify; KYC),
@@ -2686,6 +2699,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Ether.fi leftover remaining
   Scroll Cash modules leftover
   (`1f502e1` Scroll 534352; Sourcify; KYC),
+  Ether.fi leftover remaining
+  eETH impl leftover
+  (`b4a0968` EETH.sol; KYC),
   Compound leftover Comet leftover
   (Sourcify; KYC),
   Maple leftover Pool leftover

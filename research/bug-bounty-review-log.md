@@ -47574,8 +47574,8 @@ Remaining listed Jito: unused official leftover that listed remaining-runtime tr
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted at leftover-heading level. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining SuperchainConfig leftover is logged. Optimism leftover remaining LegacyMessagePasser leftover is logged. Optimism leftover remaining L2ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Ethena leftover remaining USDtb leftover is logged. Ethena leftover remaining USDeOFTAdapter leftover is logged. Remaining listed is TON / other-chain OFT rows if still unused.
-Remaining listed LayerZero: unused official leftovers if still open. LayerZero leftover remaining ULN301 leftover is logged. LayerZero leftover remaining ExecutorFeeLib leftover is logged. LayerZero leftover remaining OApp OFT leftover is logged. Remaining listed is other-chain twins if still unused.
-Remaining listed Ether.fi: unused official leftovers if still open. Ether.fi leftover remaining Auction leftover is logged. Ether.fi leftover remaining bridge adapters leftover is logged. Ether.fi leftover remaining weETH-cross-chain leftover is logged. Ether.fi leftover remaining RoleRegistry TopUpSourceFactory leftover is logged. Ether.fi leftover remaining Scroll Cash modules leftover is logged. Remaining listed is eETH impl 404 if still unused.
+Remaining listed LayerZero: unused official leftovers if still open. LayerZero leftover remaining ULN301 leftover is logged. LayerZero leftover remaining ExecutorFeeLib leftover is logged. LayerZero leftover remaining OApp OFT leftover is logged. LayerZero leftover remaining other-chain twins OmniCounter leftover is logged. Remaining listed is Aptos / Solana / TON rows if still unused.
+Remaining listed Ether.fi: unused official leftovers if still open. Ether.fi leftover remaining Auction leftover is logged. Ether.fi leftover remaining bridge adapters leftover is logged. Ether.fi leftover remaining weETH-cross-chain leftover is logged. Ether.fi leftover remaining RoleRegistry TopUpSourceFactory leftover is logged. Ether.fi leftover remaining Scroll Cash modules leftover is logged. Ether.fi leftover remaining eETH impl leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -47713,10 +47713,13 @@ Do not rematch Ethena leftover remaining USDeOFTAdapter leftover.
 Do not rematch LayerZero leftover remaining ULN301 leftover.
 Do not rematch LayerZero leftover remaining ExecutorFeeLib leftover.
 Do not rematch LayerZero leftover remaining OApp OFT leftover.
+Do not rematch LayerZero leftover remaining other-chain twins OmniCounter leftover.
 Do not rematch Ether.fi leftover remaining Auction leftover.
 Do not rematch Ether.fi leftover remaining bridge adapters leftover.
 Do not rematch Ether.fi leftover remaining weETH-cross-chain leftover.
 Do not rematch Ether.fi leftover remaining RoleRegistry TopUpSourceFactory leftover.
+Do not rematch Ether.fi leftover remaining Scroll Cash modules leftover.
+Do not rematch Ether.fi leftover remaining eETH impl leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
 Do not rematch Arbitrum leftover remaining governance leftover.
@@ -74091,3 +74094,36 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a Safe-admin-signed Liquid deposit, a bridger-role CardOrder bridge, or a wallet-role LiquidUSD repay as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: eETH impl 404 if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Ether.fi leftover remaining eETH impl leftover (`b4a0968`)
+
+Immunefi program `etherfi` ($500,000, `kyc: true`). Official remaining unused leftover after Scroll Cash modules leftover. Listed eETH implementation `0xd1901dD36CBf4a81386d0162DF2707f7dDb60527` (UUPS impl behind eETH token proxy). Official `etherfi-protocol/smart-contracts` `b4a0968` (`b4a0968087b178bc346cdf6bee6c0597bf4c42c7`). Opened listed `src/core/EETH.sol` (prior attempts used wrong-case `eETH.sol`, which 404s). Sourcify **404** on impl `0xd1901dD36CBf4a81386d0162DF2707f7dDb60527` (chain 1). Official raw GitHub **200**. Local extract `/tmp/ef-smart-contracts/src/core/EETH.sol` (526 lines). Do not rematch LiquidityPool / WeETH / Liquifier leftover (pool-side mint/burn already logged), Scroll Cash modules leftover, Auction leftover, bridge adapters leftover, weETH-cross-chain leftover, or RoleRegistry TopUpSourceFactory leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: permissionless `mintShares` / `burnShares` that mints or burns a stranger's eETH balance; `transfer` / `transferFrom` that bypasses blacklist or share accounting; `permit` that approves spend for a non-owner; `recoverETH` / `recoverERC20` / `recoverERC721` callable by a random EOA; `_authorizeUpgrade` without timelock.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `mintShares` / `burnShares` require `msg.sender == address(liquidityPool)` (`onlyPoolContract` / explicit caller check), apply global mint/burn rate limits, and honor blacklist on the affected user. Transfers are not rate-limited (supply-neutral).
+- `_transfer` / `transferFrom` debit the named sender's shares via `liquidityPool.sharesForAmount`, with pause + blacklist on sender, recipient, and `msg.sender`.
+- `permit` binds to `owner` via EIP-712 nonce and ECDSA recovery; `_approve` only sets allowances for the owner.
+- Asset recovery and UUPS upgrade are `onlyOperatingTimelock` / `onlyUpgradeTimelock`.
+
+Do not file a liquidity-pool-only mint/burn or a permit signed by the owner as stranger theft.
+
+Not submitted. Payment requires user KYC. Ether.fi listed leftovers that official trees open are exhausted at leftover-heading level. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: LayerZero leftover remaining other-chain twins OmniCounter leftover (`9c741e7`)
+
+Immunefi program `layerzero` ($15,000,000, `kyc: true`). Official remaining unused leftover after OApp OFT leftover. Spot-checked listed EVM twins on Arbitrum (chain 42161, EID 30110) via official `LayerZero-Labs/lz-address-book`: EndpointV2 `0x1a44076050125825900e736c501f859c50fE728c`, SendUln302 `0x975bcD720be66659e3EB3C0e4F1866a3020E493A`, ReceiveUln302 `0x7B9E184e07a6EE1aC23eAe0fe8D6Be2f663f05e6` — Sourcify **match** on all three (same source family as leftover-logged ETH Endpoint slice). Opened example OApp stack `packages/layerzero-v2/evm/oapp/contracts/oapp/examples/{OmniCounter,OmniCounterAbstract,OmniCounterPreCrime}.sol` plus `precrime/PreCrime.sol`. Official `LayerZero-Labs/LayerZero-v2` `9c741e7` (`9c741e7f9790639537b1710a203bcdfd73b0b9ac`). Official raw GitHub **200**. Local extract `/tmp/lz-v2/` (15 / 285 / 102 / 211 lines). Do not rematch ETH Endpoint leftover, ULN301 leftover, ExecutorFeeLib leftover, or OApp OFT leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: Arbitrum twin `send` / `verify` / `lzReceive` paths that differ from ETH and let a stranger attribute or deliver another OApp's payload; OmniCounter `increment` that debits a stranger; `_lzReceive` that credits a forged peer; `withdraw` / `setAdmin` without admin; `lzCompose` callable outside the endpoint; PreCrime `_preCrime` bypass that lets inbound exceed outbound without admin `brokenIncrement`.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Arbitrum EndpointV2 / SendUln302 / ReceiveUln302 Sourcify to the same contracts reviewed on Ethereum (`EndpointV2.sol`, `SendUln302.sol`, `ReceiveUln302.sol` family). Cross-chain twins inherit leftover-logged endpoint gating: `send` attributes `msg.sender`, `verify` requires a valid receive library, `lzReceive` clears a verified payload hash before delivery, DVN threshold on commit.
+- `OmniCounterAbstract` extends leftover-logged `OApp`: `increment` / `batchIncrement` call `_lzSend` with `MessagingFee(msg.value, 0)` and refund to `msg.sender`; `_lzReceive` is peer-gated via `OAppReceiver` and only increments local counters / optional compose hooks. Admin `withdraw` / `setAdmin` / `brokenIncrement` are `onlyAdmin`. `lzCompose` requires `msg.sender == endpoint` and `_oApp == address(this)`.
+- `OmniCounterPreCrime` is a view-only simulator hook comparing inbound vs outbound counts; it does not custody user funds.
+
+Do not file a peer-gated OApp demo counter increment or an admin-only OmniCounter withdraw as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: Aptos / Solana / TON non-EVM rows if still unused. Next unused leftover is a different Immunefi program, not a rematch.
