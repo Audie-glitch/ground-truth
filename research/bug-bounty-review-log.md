@@ -35473,3 +35473,215 @@ Avax twins, and V2
 Oracle / Reader
 rows.
 
+## 2026-09-03: Celer leftover remaining cBridge deployments (Sourcify)
+
+Immunefi program
+`celer`
+($2,000,000, `kyc: true`).
+Follow-on to the
+ETH staking / SGN /
+cBridge leftover.
+Listed cBridge
+deployments on
+Arbitrum
+`0x1619DE6B6B20eD217a58d00f37B9d47C7663feca`,
+Polygon
+`0x88DCDC47D2f83a99CF0000FDF667A468bB958a78`,
+Avalanche
+`0xef3c714c9425a8F3697A9C969Dc1af30ba82e5d4`,
+Fantom
+`0x374B8a9f3eC5eB2D97ECA84Ea27aCa45aa1C57EF`,
+Optimism
+`0x9D39Fc627A6d9d9F8C831c16995b209548cc3401`,
+Boba
+`0x841ce48F9446C8E281D3F1444cB859b4A6D0738C`
+are Sourcify
+`exact_match`
+`contracts/Bridge.sol:Bridge`.
+BSC
+`0xdd90E5E87A2081Dcf0391920868eBc2FFB81a1aF`
+is Sourcify
+`match`
+`./contracts/Bridge.sol:Bridge`.
+Same Pool +
+Signers + delayed
+transfer tree as
+the Ethereum
+cBridge already
+reviewed. No
+mainnet writes.
+
+Checked for: a
+chain-specific
+fork that lets
+`send` / `relay` /
+`withdraw` pay
+the caller or
+skip `ssHash`
+quorum.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Each remaining
+  deployment
+  verifies as the
+  same Bridge /
+  Pool
+  implementation
+  already opened
+  on Ethereum.
+  `send` pulls
+  `msg.sender`.
+  `relay` /
+  `withdraw`
+  require current
+  signer quorum
+  and pay the
+  signed receiver.
+
+Do not file the
+same quorum-signed
+cBridge path as a
+new finding on
+another chain.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Celer
+cBridge leftover
+is exhausted.
+Remaining listed:
+cBridge web app
+only.
+
+## 2026-09-03: Pyth Network leftover EVM (official GitHub)
+
+Immunefi program
+`pythnetwork`
+($250,000, `kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Official
+clone
+`/tmp/pyth-crosschain`
+`4dd956e`.
+Opened listed EVM
+trees:
+`target_chains/ethereum/contracts/contracts/pyth`,
+`target_chains/ethereum/contracts/contracts/entropy`,
+`lazer/contracts/evm`.
+No mainnet writes.
+
+Files:
+`contracts/pyth/Pyth.sol`,
+`contracts/pyth/PythGovernance.sol`,
+`contracts/entropy/Entropy.sol`,
+`contracts/entropy/EntropyGovernance.sol`,
+`lazer/contracts/evm/src/PythLazer.sol`.
+
+Checked for: a
+stranger
+`updatePriceFeeds`
+that spends
+someone else's
+ETH; governance
+fee withdraw
+without a Wormhole
+VAA; Entropy
+`withdraw` of
+another
+provider's fees;
+`reveal` that
+redirects a
+request; Lazer
+`verifyUpdate`
+that keeps excess
+or lets a stranger
+upgrade.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Pyth
+  `updatePriceFeeds`
+  charges
+  `msg.value` only.
+  `withdrawFee` is
+  internal behind
+  `executeGovernanceInstruction`,
+  which verifies a
+  Wormhole VAA from
+  the governance
+  data source.
+- Entropy
+  `request*`
+  credits
+  provider + Pyth
+  accrued fees from
+  `msg.value`.
+  `requester` is
+  `msg.sender`.
+  `withdraw` pays
+  `msg.sender` from
+  that provider's
+  accrued fees.
+  `withdrawAsFeeManager`
+  requires
+  `feeManager ==
+  msg.sender`.
+  `setFeeManager`
+  is the provider.
+  Manual `reveal`
+  requires
+  `req.requester ==
+  msg.sender`.
+  Callback reveal
+  calls the
+  original
+  requester.
+  Admin
+  `withdrawFee` is
+  `_authoriseAdminAction`.
+- Lazer
+  `verifyUpdate`
+  refunds excess
+  to `msg.sender`
+  and keeps
+  `verification_fee`.
+  Trusted signers
+  and UUPS upgrade
+  are `onlyOwner`.
+
+Do not file
+Wormhole-governed
+fee withdraw,
+provider self-
+withdraw, or
+permissionless
+price-update
+fees paid by the
+caller as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Pyth EVM
+leftover is
+exhausted.
+Remaining listed:
+Solana / Sui
+crosschain,
+governance
+staking program,
+Lazer Solana /
+Sui / Cardano,
+and the staking
+website.
