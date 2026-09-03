@@ -17180,6 +17180,129 @@ unstake, crank
 `create_canonical_stake`
 / delinquent upgrade.
 
+## 2026-09-03: Stader Penalty / PoolSelector / PoolUtils / Config leftover (`9d4a921`)
+
+Immunefi program
+`staderforeth`
+($1,000,000, `kyc: false`).
+User path, oracle /
+factory / insurance /
+auction / socializing,
+and registries / vaults
+/ SD / pools on the
+same pin `9d4a921` are
+already logged. This
+slice is the last
+listed etherscan
+leftover:
+StaderConfig
+`0x4ABEF2263d5A5ED582FC9A9789a41D85b68d69DB`,
+Penalty
+`0x84645f1B80475992Df2C65c28bE6688d15dc6ED6`,
+PoolSelector
+`0x62e0b431990Ea128fe685E764FB04e7d604603B0`,
+PoolUtils
+`0xeDA89ed8F89D786D816F8E14CF8d2F90c6BF763f`.
+The last listed row is
+Primacy of Impact
+(`immunefi.com`). Local
+clone `/tmp/stader-ethx`.
+No mainnet interaction.
+
+Files:
+`Penalty.sol`,
+`PoolSelector.sol`,
+`PoolUtils.sol`,
+`StaderConfig.sol`.
+
+Checked for: a stranger
+zeroing another
+validator’s penalty
+before settle; reward
+share math that pays
+the operator the user
+leg; pool allocation
+that a stranger can
+redirect; config
+setters that are not
+role-gated.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Penalty
+  `updateTotalPenaltyAmount`
+  is permissionless
+  accounting from Rated
+  MEV strikes plus
+  oracle missed-
+  attestation counts
+  plus manager
+  `additionalPenaltyAmount`.
+  `markValidatorSettled`
+  requires
+  `msg.sender` to be
+  that validator’s
+  withdraw vault
+  (`getPubkeyForValidSender`)
+  and zeros that
+  pubkey’s total.
+  Additional / per-
+  strike / Rated
+  address updates are
+  manager-only.
+- PoolUtils
+  `processValidatorExitList`
+  is operator-role and
+  only emits
+  `ExitValidator`.
+  `processOperatorExit`
+  is SD utility pool
+  only and also only
+  emits.
+  `calculateRewardShare`
+  is view: user share
+  is remainder after
+  protocol fee on the
+  user-ETH fraction and
+  operator collateral +
+  operator fee.
+  `addNewPool` /
+  `updatePoolAddress`
+  are admin.
+- PoolSelector
+  `computePoolAllocationForDeposit`
+  is view.
+  `poolAllocationForExcessETHDeposit`
+  is SPM-only and
+  walks pools from
+  `poolIdArrayIndexForExcessDeposit`.
+  Weights update is
+  manager and must sum
+  to 10000.
+- StaderConfig
+  address / token /
+  implementation
+  setters are
+  `DEFAULT_ADMIN_ROLE`.
+  Amount / threshold
+  setters are MANAGER
+  or admin. Batch-size
+  is OPERATOR.
+
+Do not file
+permissionless penalty
+refresh or operator-
+role exit events as
+user theft.
+
+Not submitted. Listed
+Stader leftover is
+exhausted (remaining
+row is Primacy of
+Impact).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -17746,11 +17869,13 @@ Stader ETHx user deposit
 factory / insurance /
 auction / socializing
 plus registries / vaults
-/ SD / pools leftover is
-logged (remaining Stader
-is StaderConfig /
-Penalty / PoolSelector /
-PoolUtils);
+/ SD / pools plus Penalty
+/ PoolSelector /
+PoolUtils / Config
+leftover is logged
+(listed Stader leftover
+exhausted; remaining row
+is Primacy of Impact);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;

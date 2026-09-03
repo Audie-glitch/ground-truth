@@ -39,10 +39,9 @@ inactive + MorphoVault V2 + polygon / arbitrum). Hermetica hBTC
 vault leftover is logged (listed Clarity exhausted).
 CoW GPv2 leftover (`6ebbd81`) is logged (listed CoW
 GitHub leftover exhausted). Stader ETHx leftover
-(`9d4a921`) now includes user path, oracle / factory
-/ insurance / auction / socializing, and registries /
-vaults / SD / pools (remaining Stader is StaderConfig
-/ Penalty / PoolSelector / PoolUtils). ICHI oneToken
+(`9d4a921`) now includes Penalty / PoolSelector /
+PoolUtils / Config (listed Stader leftover exhausted;
+remaining row is Primacy of Impact). ICHI oneToken
 leftover (`4873873`) is logged. Twyne vaults still
 Sourcify 404.
 
