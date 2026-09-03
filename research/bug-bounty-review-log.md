@@ -33458,6 +33458,229 @@ other-chain NTT
 Sui);
 Relayer 404.
 
+## 2026-09-03: Metronome leftover ETH deposit + debt leftover (Sourcify)
+
+Immunefi program
+`metronome`
+($50,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+DepositToken
+`0x2A464773816CE3C827AcC772476Aa63fBe8F8C32`,
+DebtToken
+`0x6e452fD473A0D79A1214511aF0DDEbDb3d00aAde`,
+NativeTokenGateway
+`0x10DA15606f98a9c12D1f7e62d88e123D164E1Ce1`,
+Treasury
+`0xBB40D96aB45f13904737b6261fbfc48b1F245573`,
+SmartFarmingManager
+`0x5772Ad340EeE69123C8e87E152C0C9a0E021Cdb8`.
+Pool proxy impl
+`0x0078253265Ca73EB2e81D20920365995F63F7bf8`.
+MsUSD synth impl
+`0x206b88b20D9b2709153Ab596aDd007b21124eB26`.
+AMO impl
+`0x3B98566F90119b87205Ee64cb9F2dA37E7b3FefA`.
+Extract
+`/tmp/metro-deposit`,
+`/tmp/metro-debt`,
+`/tmp/metro-gateway`,
+`/tmp/metro-treasury`,
+`/tmp/metro-sfm`,
+`/tmp/metro-pool`,
+`/tmp/metro-synth`,
+`/tmp/metro-amo`.
+No mainnet
+writes.
+
+Files:
+`contracts/DepositToken.sol`,
+`contracts/DebtToken.sol`,
+`contracts/NativeTokenGateway.sol`,
+`contracts/Treasury.sol`,
+`contracts/SmartFarmingManager.sol`,
+`contracts/Pool.sol`,
+`contracts/SyntheticToken.sol`,
+`contracts/AMO.sol`.
+
+Checked for: a
+stranger
+`deposit` that
+pulls another
+account; a
+`withdraw` that
+burns another
+holder; a
+stranger
+`issue` /
+`flashIssue`
+that mints
+synth without
+collateral; a
+`repay` that
+burns another
+user's synth; a
+stranger
+`Treasury.pull`;
+a
+permissionless
+AMO mint.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `DepositToken.deposit`
+  pulls
+  `msg.sender`
+  and mints to
+  `onBehalfOf_`.
+  `withdraw`
+  burns
+  `msg.sender`.
+  `withdrawFrom`
+  /
+  `flashWithdraw`
+  are
+  SmartFarmingManager
+  only.
+- `DebtToken.issue`
+  checks
+  `debtPositionOf(msg.sender)`.
+  `flashIssue` /
+  `mint` are
+  SmartFarmingManager
+  only.
+  `repay` burns
+  synth from
+  `msg.sender`.
+- Gateway
+  `deposit`
+  wraps
+  `msg.value`
+  and deposits
+  for
+  `msg.sender`.
+  `withdraw`
+  pulls the
+  caller's
+  deposit
+  tokens.
+- `Treasury.pull`
+  is
+  `onlyIfDepositToken`.
+  `SyntheticToken.mint`
+  /
+  `burn` are
+  OFT / AMO /
+  Pool /
+  DebtToken
+  only.
+  `AMO.mintAndDeposit`
+  is
+  `onlyAuthorized`.
+- `Pool.liquidate`
+  requires an
+  unhealthy
+  position and
+  pays the
+  liquidator
+  the seized
+  bonus.
+
+Do not file
+liquidation of
+an unhealthy
+position or
+deposit-to-named
+receiver.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+OP / Base
+twins;
+CrossChainDispatcher;
+ProxyOFT;
+Quoter.
+
+## 2026-09-03: Glo Dollar leftover USDGLO leftover (Sourcify)
+
+Immunefi program
+`glodollar`
+($50,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+impl
+`0xF8Dbe4f52b7d4fe90CD360AA4f49B7A66783C56f`
+is
+`GloDollarV3`
+(same impl
+listed on
+Polygon).
+Extract
+`/tmp/glo-impl`.
+No mainnet
+writes.
+
+Files:
+`contracts/v3/USDGLO_V3.sol`.
+
+Checked for: a
+stranger
+`mint` /
+`burn`; a
+permissionless
+denylist or
+upgrade; a
+transfer that
+bypasses pause
+/ denylist.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `mint` is
+  `MINTER_ROLE`
+  and mints to
+  `to`.
+  `burn` is
+  `MINTER_ROLE`
+  and burns
+  `_msgSender`.
+  `denylist` /
+  `destroyDenylistedFunds`
+  are
+  `DENYLISTER_ROLE`.
+  Pause is
+  `PAUSER_ROLE`.
+  Upgrade is
+  `UPGRADER_ROLE`.
+
+Do not file
+role-gated
+stablecoin mint
+or denylist
+privilege.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens is
+exhausted at
+this money-path
+level.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -35182,6 +35405,19 @@ logged (remaining listed is
 circle-integration /
 other-chain NTT / Relayer
 404);
+Metronome leftover ETH
+deposit + debt leftover
+(Sourcify DepositToken /
+DebtToken / Gateway / Pool /
+Treasury / SFM / Synth / AMO;
+KYC) is logged (remaining
+listed is OP / Base twins /
+CrossChainDispatcher /
+ProxyOFT / Quoter);
+Glo Dollar leftover USDGLO
+leftover (Sourcify
+GloDollarV3; KYC) is logged
+(listed leftover exhausted);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

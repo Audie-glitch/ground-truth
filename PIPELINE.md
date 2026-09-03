@@ -98,7 +98,9 @@ Wormhole leftover remaining NTT leftover is logged;
 Kiln DeFi leftover Arbitrum + BSC vaults leftover is logged;
 Kiln DeFi leftover Polygon + Optimism + Base vaults leftover is logged;
 Kiln DeFi leftover newer Ethereum impls leftover is logged;
-Axelar leftover other-chain gateways + axlUSDC leftover is logged).
+Axelar leftover other-chain gateways + axlUSDC leftover is logged;
+Metronome leftover ETH deposit + debt leftover is logged;
+Glo Dollar leftover USDGLO leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -631,6 +633,19 @@ logged (remaining listed is
 circle-integration /
 other-chain NTT / Relayer
 404).
+Metronome leftover ETH
+deposit + debt leftover
+(Sourcify DepositToken /
+DebtToken / Gateway / Pool /
+Treasury / SFM / Synth / AMO;
+KYC) is logged (remaining
+listed is OP / Base twins /
+CrossChainDispatcher /
+ProxyOFT / Quoter).
+Glo Dollar leftover USDGLO
+leftover (Sourcify
+GloDollarV3; KYC) is logged
+(listed leftover exhausted).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1269,6 +1284,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Wormhole leftover remaining
   NTT leftover (`250d810`;
   KYC),
+  Metronome leftover ETH
+  deposit + debt leftover
+  (Sourcify; KYC),
+  Glo Dollar leftover USDGLO
+  leftover (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover
