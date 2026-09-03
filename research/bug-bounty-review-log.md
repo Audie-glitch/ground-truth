@@ -33716,8 +33716,16 @@ oracles-v3 leftover
 Bounded / Composite /
 Curve / ERC4626 / wstETH /
 Pendle / Pyth / Redstone;
-KYC) is logged (remaining
-listed is integrations-v3 /
+KYC) is logged.
+Gearbox leftover
+integrations-v3 adapter +
+zapper leftover (`39e70f0`
+AbstractAdapter / Uniswap
+V2+V3 / Curve base /
+ERC4626 / ZapperBase; KYC)
+is logged (remaining listed
+is other integrations
+adapters / helpers /
 bots-v3 / permissionless /
 periphery-v3);
 Burrow leftover
@@ -43245,3 +43253,180 @@ rarities /
 committee
 helpers) can be
 a later pass.
+
+## 2026-09-03: Gearbox leftover integrations-v3 adapter + zapper leftover (`39e70f0`)
+
+Immunefi program
+`gearbox` ($150,000,
+`kyc: true`). Official
+scope is
+`Gearbox-protocol/security`
+`bug-bounty/v3_1-scope.md`.
+This slice is
+`integrations-v3` `39e70f0`
+(`main`) money-path core:
+`AbstractAdapter`, Uniswap
+V2 / V3, Curve V1 base,
+ERC-4626 vault adapter,
+and zapper bases /
+underlying / deposit /
+farming traits. Clone
+`/tmp/gearbox-int`.
+No mainnet writes.
+
+Files:
+`contracts/adapters/AbstractAdapter.sol`,
+`contracts/adapters/uniswap/UniswapV2.sol`,
+`contracts/adapters/uniswap/UniswapV3.sol`,
+`contracts/adapters/curve/CurveV1_Base.sol`,
+`contracts/adapters/erc4626/ERC4626Adapter.sol`,
+`contracts/zappers/ZapperBase.sol`,
+`contracts/zappers/ERC20ZapperBase.sol`,
+`contracts/zappers/ETHZapperBase.sol`,
+`contracts/zappers/traits/UnderlyingTrait.sol`,
+`contracts/zappers/traits/DepositTrait.sol`,
+`contracts/zappers/traits/FarmingTrait.sol`.
+
+Checked for: a
+stranger adapter
+call that swaps
+or vaults a
+victim credit
+account; a swap
+that honors a
+caller-chosen
+recipient or an
+unallowlisted
+path; an ERC-4626
+`receiver` /
+`owner` override;
+a zapper deposit
+or redeem that
+pulls another
+user's tokens.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `AbstractAdapter`
+  `creditFacadeOnly`
+  binds
+  `msg.sender` to
+  the connected
+  facade.
+  `_creditAccount`
+  is the manager's
+  active account.
+  `_execute` /
+  `_executeSwapSafeApprove`
+  go through the
+  manager; max
+  approval is
+  reset to `1`.
+  Tokens must
+  already be
+  collateral
+  (`_getMaskOrRevert`).
+- Uniswap V2 / V3
+  ignore the
+  caller
+  `recipient` /
+  `to` and force
+  the credit
+  account.
+  Paths must be
+  at most 3 hops
+  through
+  configurator-
+  allowed pools
+  whose tokens
+  are collateral.
+- Curve V1 base
+  `exchange` /
+  `exchange_diff`
+  are
+  `creditFacadeOnly`.
+  Coin and LP
+  tokens are
+  collateral-
+  checked in the
+  constructor.
+- ERC-4626
+  `deposit` /
+  `mint` /
+  `withdraw` /
+  `redeem` ignore
+  `receiver` /
+  `owner` and
+  always use the
+  active credit
+  account.
+- Zapper
+  `deposit` /
+  `redeem` pull
+  `msg.sender`
+  (or `msg.value`
+  for ETH).
+  Pool redeem
+  burns `owner =
+  msg.sender`
+  when
+  `tokenOut` is
+  the pool.
+  Permits are
+  from
+  `msg.sender`.
+  Farming trait
+  `transferFrom`s
+  farm tokens
+  from that same
+  owner.
+  Receiver is a
+  gift, not a
+  pull of a
+  victim.
+
+Do not file
+configurator pool
+allowlists,
+caller-chosen
+zapper
+`receiver`, or
+facade-gated
+adapter use on
+the caller's own
+account as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`integrations-v3`
+opens for this
+adapter + zapper
+core is
+exhausted at the
+opened-file
+level. Remaining
+listed: other
+integrations
+adapters
+(Balancer,
+Camelot, Convex,
+Fluid, Infinifi,
+Lido, Mellow,
+Midas, Pendle,
+Securitize, Sky,
+TraderJoe,
+Uniswap V4,
+Upshift,
+Velodrome) and
+helpers; bots-v3;
+permissionless;
+periphery-v3
+emergency / kyc /
+migration.
