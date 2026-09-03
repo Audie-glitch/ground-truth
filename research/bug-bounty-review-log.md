@@ -24866,6 +24866,118 @@ dual-governance
 leftover is
 exhausted.
 
+## 2026-09-03: Lido CSM leftover modules leftover (`2824e21`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). CSM
+bond and gates
+leftovers are already
+logged on the same
+pin. This slice is
+MerkleGateFactory,
+ValidatorStrikes,
+HashConsensus, and
+MetaRegistry. Local
+clone `/tmp/lido-csm`
+at `2824e21`. No
+mainnet interaction.
+
+Files:
+`src/MerkleGateFactory.sol`,
+`src/abstract/MerkleGate.sol`,
+`src/ValidatorStrikes.sol`,
+`src/lib/base-oracle/HashConsensus.sol`,
+`src/MetaRegistry.sol`.
+
+Checked for: a
+stranger factory
+that hijacks an
+existing gate;
+`processBadPerformanceProof`
+that ejects without
+a valid Merkle
+leaf; HashConsensus
+`submitReport` from
+a non-member.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `MerkleGateFactory.create`
+  is permissionless
+  and deploys a new
+  `OssifiableProxy`
+  with the caller-
+  supplied `admin`,
+  then
+  `initialize`s it.
+  It cannot write
+  an already-
+  deployed gate.
+  `MerkleGate._consume`
+  requires
+  `hashLeaf(msg.sender)`
+  and marks that
+  address consumed.
+- `ValidatorStrikes.processOracleReport`
+  is oracle-only.
+  `processBadPerformanceProof`
+  is
+  permissionless
+  but requires a
+  multiproof against
+  `treeRoot`,
+  strikes ≥ the
+  curve threshold,
+  and even
+  `msg.value` that
+  is forwarded to
+  `ejectBadPerformer`.
+- HashConsensus
+  `submitReport`
+  resolves the
+  caller via
+  `_getMemberIndex`
+  (non-members
+  revert). Quorum
+  must be
+  `> totalMembers /
+  2`. Member /
+  quorum / processor
+  changes are
+  roles.
+- MetaRegistry
+  group / curve-
+  weight writes are
+  roles.
+  `setOperatorMetadataAsOwner`
+  is the NO owner
+  only.
+  `refreshOperatorWeight`
+  only recomputes
+  cache for an
+  already-grouped
+  operator.
+
+Do not file
+permissionless new
+MerkleGate deploy,
+oracle-set strike
+trees, committee
+HashConsensus, or
+role privilege.
+
+Not submitted.
+Remaining
+aragon-apps:
+Agreement.
+Listed CSM leftover
+modules are
+exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -25221,6 +25333,10 @@ Agreement).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
+exhausted).
+Lido CSM leftover modules leftover
+(`2824e21`) is logged
+(listed CSM leftover modules
 exhausted).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
@@ -25602,6 +25718,10 @@ Agreement).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
+exhausted).
+Lido CSM leftover modules leftover
+(`2824e21`) is logged
+(listed CSM leftover modules
 exhausted);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /

@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~07:25 UTC. Dates verified against each
+Status as of 3 September 2026, ~07:30 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
@@ -112,9 +112,10 @@ easy-track leftover factories leftover
 (`3183d1f`) is logged. Lido aragon-apps
 Voting leftover (`e44f928`) is logged.
 Lido dual-governance Tiebreaker leftover
-(`ba9dfc9`) is logged (remaining opened
-Lido trees are Agreement and leftover
-CSM modules).
+(`ba9dfc9`) is logged. Lido CSM leftover
+modules leftover (`2824e21`) is logged
+(remaining opened Lido tree is
+Agreement).
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis
