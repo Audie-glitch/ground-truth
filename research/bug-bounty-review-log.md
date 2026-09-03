@@ -39902,3 +39902,111 @@ minter, VELO,
 VotingEscrow,
 sink stack, and
 reward factories.
+
+## 2026-09-03: Velodrome leftover Voter + VotingEscrow (`b3065d8`)
+
+Immunefi program
+`velodromefinance`
+($100,000, `kyc: true`).
+Router + Pool
+leftover already
+logged. This slice
+is listed Voter
+`0x41C914ee0c7E1A5edCD0295623e6dC557B5aBf3C`
+and VotingEscrow
+`0xFAf8FD17D9840595845582fCB047DF13f006787d`.
+Same official
+clone
+`/tmp/velo-contracts`
+`b3065d8`. Optimism
+Sourcify `match`
+on Voter from the
+prior pass. No
+mainnet writes.
+
+Files:
+`contracts/Voter.sol`,
+`contracts/VotingEscrow.sol`.
+
+Checked for: a
+stranger `vote` /
+`reset` on
+someone else's
+veNFT;
+`withdraw` that
+pays the caller
+without owning
+the lock;
+`merge` that burns
+a victim NFT;
+`depositManaged`
+without approval.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Voter `vote` /
+  `reset` /
+  `poke` /
+  `depositManaged`
+  /
+  `withdrawManaged`
+  require
+  `ve.isApprovedOrOwner(_msgSender(),
+  tokenId)`.
+- `createLock`
+  mints to
+  `_msgSender()`
+  and pulls that
+  sender's VELO.
+  `increaseAmount`
+  /
+  `increaseUnlockTime`
+  /
+  `withdraw` /
+  `merge` require
+  approved-or-
+  owner on each
+  tokenId.
+  `withdraw` burns
+  the NFT and
+  pays `sender`.
+- `depositFor` on
+  a managed NFT
+  is distributor-
+  only. On a
+  normal NFT it
+  is a donation
+  into that lock.
+- `withdrawManaged`
+  on the escrow
+  is `voter`
+  only.
+
+Do not file
+permissionless
+`depositFor`
+donation into an
+existing lock, or
+approved-operator
+vote / withdraw,
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Velodrome
+Voter +
+VotingEscrow
+leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed: gauges,
+distributor,
+minter, VELO,
+sink stack, and
+reward factories.
