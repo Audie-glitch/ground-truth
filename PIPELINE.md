@@ -21,6 +21,7 @@ Ethena leftover remaining StakedENA leftover is logged;
 Ethena leftover remaining USDtb leftover is logged;
 Ethena leftover remaining USDeOFTAdapter leftover is logged;
 Ethena leftover remaining StakedUSDeOFTAdapter + ENAOFTAdapter leftover is logged;
+Ethena leftover remaining other-chain OFT twins leftover is logged;
 LayerZero leftover remaining ULN301 leftover is logged;
 LayerZero leftover remaining ExecutorFeeLib leftover is logged;
 LayerZero leftover remaining OApp OFT leftover is logged;
