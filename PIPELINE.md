@@ -84,8 +84,9 @@ Aevo deposit leftover (Sourcify Arb
 logged (remaining Aevo is the ETH
 ChugSplash implementation).
 Lido core submit / withdrawal leftover
-(`2da0f48`) is logged (remaining Lido is
-StakingRouter / CSM / dual-governance /
+(`2da0f48`) is logged. Lido StakingRouter
+leftover (`2da0f48`) is logged (remaining
+Lido is CSM / dual-governance /
 easy-track / L2 / circuit-breaker /
 oracle / 0.8.25 vaults).
 1inch cross-chain-swap leftover

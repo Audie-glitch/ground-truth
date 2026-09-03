@@ -21490,6 +21490,106 @@ oracle / 0.8.25 vaults
 and the other listed
 repos.
 
+## 2026-09-03: Lido StakingRouter leftover (`2da0f48`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Submit /
+withdrawal leftover
+already logged on the
+same pin. This slice
+is `StakingRouter` +
+`BeaconChainDepositor`.
+Local sparse clone
+`/tmp/lido-core` at
+`2da0f48`. No mainnet
+interaction.
+
+Files:
+`contracts/0.8.25/sr/StakingRouter.sol`,
+`SRLib.sol`,
+`SRStorage.sol`,
+`SRUtils.sol`,
+`lib/BeaconChainDepositor.sol`.
+
+Checked for: a
+stranger `deposit`
+that pulls buffered
+ETH to an attacker
+key; `topUp` that
+sends ETH off the
+official deposit
+contract;
+`receiveDepositableEther`
+callable by anyone;
+module add that
+redirects withdrawal
+credentials.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `receiveDepositableEther`
+  is Lido only
+  (`_checkAppAuth`).
+- `deposit` is
+  DepositSecurityModule
+  only. It asks the
+  active module for
+  keys, caps count by
+  allocation and
+  `maxDepositsPerBlock`,
+  updates last-deposit
+  state, pulls ETH
+  from Lido, and
+  `makeBeaconChainDeposits32ETH`
+  to the official
+  deposit contract
+  with stored
+  withdrawal
+  credentials.
+  Post-balance must
+  match pre-balance.
+- `topUp` is
+  TopUpGateway only,
+  type-0x02 modules,
+  allocations must be
+  gwei-aligned and
+  ≤ limits, then
+  `makeBeaconChainTopUp`.
+- `addStakingModule` /
+  `updateStakingModule`
+  / fee batch /
+  max top-up are
+  `STAKING_MODULE_MANAGE_ROLE`
+  (share updates are
+  `STAKING_MODULE_SHARE_MANAGE_ROLE`).
+- `setWithdrawalCredentials`
+  is
+  `MANAGE_WITHDRAWAL_CREDENTIALS_ROLE`
+  and requires a
+  non-zero address
+  plus a valid WC
+  type. Reward /
+  exit reports are
+  their report roles.
+
+Do not file DSM /
+TopUpGateway
+privilege as a
+stranger drain.
+
+Not submitted.
+Remaining Lido listed
+GitHub: CSM /
+dual-governance /
+easy-track / L2 /
+circuit-breaker /
+oracle / 0.8.25 vaults
+and the other listed
+repos.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -22102,10 +22202,11 @@ Aevo deposit leftover
 ChugSplash implementation);
 Lido core submit /
 withdrawal leftover
+(`2da0f48`) is logged.
+Lido StakingRouter leftover
 (`2da0f48`) is logged
 (remaining Lido is
-StakingRouter / CSM /
-dual-governance /
+CSM / dual-governance /
 easy-track / L2 /
 circuit-breaker /
 oracle / 0.8.25 vaults);
