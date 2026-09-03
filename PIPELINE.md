@@ -36,7 +36,8 @@ USDT0 leftover
 is logged; Ondo Finance leftover is logged;
 Hyperlane leftover is logged; Veda leftover
 is logged; Immutable leftover is logged;
-Stargate leftover is logged).
+Stargate leftover is logged;
+LayerZero leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -435,6 +436,12 @@ Stargate leftover ETH pools leftover
 USDT / TokenMessaging / Staking; KYC)
 is logged (remaining listed is METIS /
 mETH twins / other FeeLib / other-chain).
+LayerZero leftover ETH Endpoint leftover
+(Sourcify EndpointV2 / SendUln302 /
+ReceiveUln302 / DVN / Endpoint V1; KYC)
+is logged (remaining listed is
+FPValidator / ULN301 / OApp examples /
+other chains).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1019,6 +1026,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Stargate leftover ETH
   pools leftover (Sourcify;
   KYC),
+  LayerZero leftover ETH
+  Endpoint leftover
+  (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover

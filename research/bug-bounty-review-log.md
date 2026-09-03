@@ -30553,6 +30553,154 @@ rows, and
 other-chain
 deployments.
 
+## 2026-09-03: LayerZero leftover ETH Endpoint leftover (Sourcify)
+
+Immunefi program
+`layerzero`
+($15,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+`match`
+EndpointV2
+`0x1a44076050125825900e736c501f859c50fE728c`,
+SendUln302
+`0xbB2Ea70C9E858123480642Cf96acbcCE1372dCe1`,
+ReceiveUln302
+`0xc02Ab410f0734EFa3F14628780e6e695156024C2`,
+DVN
+`0x589dEDbD617e0CBcB916A9223F4d1300c294236b`,
+UltraLightNodeV2
+`0x4D73AdB72bC3DD368966edD0f0b2148401A178E2`
+and `exact_match`
+Endpoint V1
+`0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675`.
+Extract
+`/tmp/lz-epv2`
+/ `/tmp/lz-senduln`
+/ `/tmp/lz-recvuln`
+/ `/tmp/lz-dvn`
+/ `/tmp/lz-epv1`
+/ `/tmp/lz-ulnv2`.
+No mainnet
+interaction.
+
+Files:
+`contracts/EndpointV2.sol`,
+`contracts/Endpoint.sol`,
+`contracts/uln/uln302/ReceiveUln302.sol`,
+`contracts/uln/ReceiveUlnBase.sol`,
+`contracts/uln/dvn/DVN.sol`.
+
+Checked for: a
+stranger `send`
+that attributes
+another OApp;
+`verify` that
+inserts a
+payload without
+the receive
+library;
+`lzReceive` that
+delivers an
+unverified
+payload; DVN
+`execute` without
+admin +
+signatures.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- EndpointV2
+  `send` builds
+  the packet with
+  `sender =
+  msg.sender` and
+  pays native /
+  LZ token fees
+  from the
+  caller.
+  `verify` requires
+  `isValidReceiveLibrary`
+  for
+  `msg.sender`.
+- `lzReceive` is
+  permissionless
+  after
+  `_clearPayload`
+  matches the
+  stored hash and
+  then calls the
+  named
+  `_receiver`.
+  `clear` is
+  `_assertAuthorized`
+  (OApp or
+  delegate).
+- ReceiveUln302
+  `verify`
+  records
+  `msg.sender` as
+  a DVN.
+  `commitVerification`
+  requires the
+  configured DVN
+  threshold then
+  `endpoint.verify`.
+- DVN `execute`
+  is
+  `ADMIN_ROLE`
+  plus unused
+  hash and
+  threshold
+  signatures.
+  `assignJob` is
+  `MESSAGE_LIB_ROLE`.
+- Endpoint V1
+  `send` uses
+  `msg.sender` as
+  the UA.
+  `receivePayload`
+  requires the
+  configured
+  receive library
+  and sequential
+  nonce.
+
+Do not file
+permissionless
+`lzReceive` of a
+verified
+payload, ULN
+`verify` that
+only records the
+caller as a DVN,
+or admin DVN
+`execute` as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH endpoint /
+ULN / DVN types
+is exhausted.
+Remaining listed:
+FPValidator /
+SendULN301 /
+ReceiveULN301,
+OApp / OFT
+examples, Aptos
+/ Solana / TON
+rows.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -32005,6 +32153,15 @@ TokenMessaging / Staking;
 KYC) is logged (remaining
 listed is METIS / mETH twins
 / other FeeLib / other-chain);
+LayerZero leftover ETH
+Endpoint leftover (Sourcify
+EndpointV2 / SendUln302 /
+ReceiveUln302 / DVN /
+Endpoint V1; KYC) is logged
+(remaining listed is
+FPValidator / ULN301 /
+OApp examples / other
+chains);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
