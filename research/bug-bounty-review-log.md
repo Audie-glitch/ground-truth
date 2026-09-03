@@ -72412,3 +72412,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a replay status cache as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank.rs` / `bank_forks`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Chainlink leftover remaining CCIP Sui leftover (`c365ae0`)
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after CCIP Solana leftover. Official `smartcontractkit/chainlink-sui` `c365ae0` (`c365ae00c332b14a68db1138aefe315b47c77bd6`). Opened listed `contracts/ccip/ccip_offramp/sources/offramp.move`, `ccip_onramp/sources/onramp.move`, `ccip_router/sources/router.move`, `ccip_token_pools/lock_release_token_pool/sources/{lock_release_token_pool,token_pool}.move`, `ccip_token_pools/burn_mint_token_pool/sources/burn_mint_token_pool.move`. Extract `/tmp/ccip-sui/`. Do not rematch CCIP Solana leftover or CCIP EVM leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `release_or_mint` that pays the caller; `withdraw_liquidity` without a rebalancer cap; `init_execute` that mints from an uncommitted merkle root.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Lockrelease `release_or_mint` reads dest data from offramp `ReceiverParams`, validates dest token / remote pool / RMN curse / inbound rate limit, then splits the reserve to `token_receiver`. Completion takes this module's `TypeProof`. `lock_or_burn` joins the sender's `Coin` after allowlist / curse / outbound rate-limit checks.
+- `withdraw_liquidity` / `provide_liquidity` require `RebalancerCap` matching `state.rebalancer_cap_id`. Owner / MCMS paths are cap-gated.
+- Offramp `commit` / `init_execute` go through OCR3 `transmit`. `pre_execute_single_report` requires a merkle root already committed (manual path waits the enable window), dest-chain match, untouched sequence, and dest-transfer cap. Router `set_on_ramps` is owner/MCMS. Onramp `ccip_send` is the sender-initiated path.
+
+Do not file a Sui pool release as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink CCIP Aptos / chainlink-evm / OCR / core node / websites if still unused.
