@@ -59854,3 +59854,217 @@ opens for Immunefi smart contracts is exhausted at the opened-file level.
 Remaining listed: immunefi.com / bugs.immunefi.com / shieldmybags.immunefi.com
 websites and Primacy of Impact placeholders (out of this SC track).
 
+
+## 2026-09-03: Lombard leftover BARD token + TokenDistributor leftover (`f79d6f6`)
+
+Immunefi program
+`lombard-finance`
+($250,000, `kyc: true`).
+Listed remaining
+GitHub asset
+`Liquid-Bitcoin/BARD`
+`contracts/BARD/BARD.sol`
+after SVM + EVM
+strategy shard
+leftovers.
+Official clone
+`/tmp/lombard-bard`
+`f79d6f6`.
+Opened
+`contracts/BARD/BARD.sol`,
+`TokenDistributor.sol`,
+`IBARD.sol`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+`mint` of
+BARD;
+distributor
+claim that
+pays
+`msg.sender`
+instead of
+the
+merkelized
+account;
+`claimWithProof`
+that
+redirects
+without the
+approver
+signature;
+`claimAndStake`
+that deposits
+shares to the
+caller;
+owner
+`withdraw`
+before
+`CLAIM_END`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `BARD.mint`
+  is
+  `onlyOwner`,
+  once per
+  `365 days`,
+  and capped
+  at `10%` of
+  `totalSupply`.
+  Constructor
+  mints
+  `1e9 * 1e18`
+  to the
+  treasury
+  and starts
+  the mint
+  clock.
+  `renounceOwnership`
+  reverts.
+  Transfers
+  go through
+  standard
+  `ERC20Votes`
+  `_update`.
+
+- `TokenDistributor.claim`
+  verifies
+  merkle leaf
+  `keccak(account,
+  amount,
+  type=1)`
+  and
+  `safeTransfer`s
+  to
+  `_account`,
+  not
+  `msg.sender`.
+  One claim
+  per
+  address.
+  A stranger
+  can
+  force-claim
+  to the
+  merkelized
+  account
+  (blocks
+  later
+  `claimAndStake`
+  for that
+  leaf).
+  That is
+  destination
+  griefing,
+  not theft.
+
+- `claimWithProof`
+  uses leaf
+  `keccak(bytes32
+  account,
+  amount,
+  type=2)`
+  plus an
+  ECDSA over
+  `keccak(account,
+  amount,
+  dstAddress)`
+  that must
+  recover the
+  owner-set
+  `approver`.
+  Tokens go
+  to
+  `_dstAddress`.
+
+- `claimAndStake`
+  requires
+  `msg.sender
+  ==
+  _account`.
+  Remainder
+  is paid to
+  that
+  account;
+  `vault.deposit`
+  mints 4626
+  shares to
+  `_account`.
+  Proof
+  variant
+  requires
+  `msg.sender
+  ==
+  _dstAddress`
+  and
+  deposits
+  to that
+  destination.
+
+- `withdraw`
+  is
+  `onlyOwner`
+  after
+  `CLAIM_END`.
+  Vault /
+  approver /
+  pauser
+  writes are
+  owner (or
+  pauser for
+  `pause`).
+
+Do not file
+owner mint
+within the
+annual cap,
+approver-
+signed
+redirects,
+permissionless
+claim-to-self
+of a valid
+leaf, or
+owner
+withdraw
+after the
+claim window
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub opens
+for Lombard
+`BARD.sol` +
+same-repo
+`TokenDistributor`
+is exhausted
+at the
+opened-file
+level.
+Remaining
+listed:
+Lombard EVM
+StakeAndBake /
+LBTC /
+Bridge /
+Bascule /
+Mailbox (if
+not already
+opened),
+Sui move
+packages,
+and Starknet
+cairo
+packages.
+
