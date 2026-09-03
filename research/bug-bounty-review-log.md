@@ -41961,3 +41961,199 @@ client, babylon
 node, and the
 website /
 toolkit rows.
+
+## 2026-09-03: Decentraland leftover names and vesting factories
+
+Immunefi program
+`decentraland`
+($500,000, `kyc: true`).
+MANA / LAND /
+ESTATE leftover
+already logged.
+This slice is
+listed name
+registrar /
+controller and
+ETH vesting
+factories.
+Sourcify `match`
+flattens:
+`DCLRegistrar`
+`0x2A187453064356c898cAe034EAed119E1663ACb8`
+(`/tmp/dcl-src/names/…/DCLRegistrar.sol`),
+`DCLController`
+`0x6843291BD86857D97F0D269e698939fb10D60772`
+(`/tmp/dcl-src/names/…/DCLController.sol`),
+`TokenVesting`
+`0x42F32e19365D8045661A006408Cc6d1064039FbF`,
+`BatchVestings`
+`0xC57185366bcda81CDE363380e2099758712038d0`,
+`MinimalProxyFactory`
+`0xE357273545C152f07afE2c38257B7b653FD3f6d0`.
+Official
+`avatars-contract`
+raw
+`DCLController.sol`
+/
+`DCLControllerV2.sol`
+compared for
+context. V2
+`0xBe92B49a…deC56c`
+is Sourcify
+`exact_match`
+but **not** in
+the unofficial
+assets dump.
+No mainnet writes.
+
+Files:
+`DCLRegistrar.sol`,
+`DCLController.sol`,
+`TokenVesting.sol`,
+`BatchVestings.sol`,
+`MinimalProxyFactory.sol`.
+
+Checked for: a
+stranger
+`register` of a
+taken name; a
+name minted
+without paying
+MANA; controller
+reentrancy that
+mints two names
+for one burn;
+`reclaim` that
+moves a name the
+caller does not
+own; vesting
+`release` /
+`revoke` by a
+non-beneficiary
+/ non-owner;
+CREATE2 init
+front-run that
+steals another
+user's vest.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Registrar
+  `register` is
+  `onlyController`
+  and
+  `isMigrated`.
+  Availability
+  requires ENS
+  owner `== 0`
+  and
+  `!_exists`.
+  `_register`
+  uses OZ
+  `_mint` (no
+  `onERC721Received`).
+  `reclaim(tokenId, owner)`
+  requires
+  `_isApprovedOrOwner`.
+  `reclaim(tokenId)`
+  is
+  `onlyController`
+  and sets ENS
+  to
+  `ownerOf`.
+  `migrateNames`
+  is `onlyOwner`
+  +
+  `isNotMigrated`.
+- Controller V1
+  charges
+  `PRICE` (100
+  MANA) from
+  `msg.sender`
+  via
+  `transferFrom`
+  then
+  `burn`.
+  Beneficiary
+  may differ
+  from payer
+  (gift).
+  Name charset
+  is 2–15
+  `[A-Za-z0-9]`.
+  Payment is
+  after mint;
+  there is no
+  receiver hook
+  to reenter.
+- TokenVesting
+  `initialize`
+  is once.
+  `release` /
+  `releaseTo` /
+  `changeBeneficiary`
+  are
+  `onlyBeneficiary`.
+  `revoke` is
+  `onlyOwner`
+  and
+  `revocable`.
+  `releaseForeignToken`
+  cannot move
+  the vesting
+  token.
+- BatchVestings
+  only loops
+  `createVesting`.
+  Factory salt
+  is
+  `keccak256(salt, msg.sender)`
+  then
+  CREATE2 +
+  optional init
+  in the same
+  call.
+
+Do not file
+gift
+registration to
+a chosen
+beneficiary,
+owner-gated
+controller add /
+domain transfer /
+migrate, owner
+revoke of a
+revocable vest,
+or V2
+`transferFrom`
+unchecked-return
+(not listed;
+MANA reverts on
+failure), as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed
+Decentraland
+names + ETH
+vesting leftover
+is exhausted at
+the opened-contract
+level. Remaining
+listed:
+Collections
+V1/V2
+(`ERC721Collection`
+`0xc04528…5CDd` /
+`0xeCf073…01b1`
+and related
+factory rows)
+and Polygon
+MANA /
+collections.
