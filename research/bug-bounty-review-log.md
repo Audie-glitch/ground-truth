@@ -36207,10 +36207,12 @@ incentive leftover
 (`132d050`; KYC) is logged;
 Babylon leftover node
 finality leftover
+(`132d050`; KYC) is logged;
+Babylon leftover node
+costaking + mint leftover
 (`132d050`; KYC) is logged
 (remaining listed is
-checkpointing / epoching /
-costaking / mint,
+checkpointing / epoching,
 btclightclient, websites);
 Wormhole leftover ETH core +
 TokenBridge leftover
@@ -49926,3 +49928,154 @@ hub/spoke
 rewards, and
 the Algorand
 docs path.
+
+## 2026-09-03: Babylon leftover node costaking + mint leftover (`132d050`)
+
+Immunefi program
+`babylon-labs`
+($500,000, `kyc: true`).
+Node btcstaking +
+incentive +
+finality leftovers
+already logged on
+`v4.4.0`
+`132d050`. This
+slice is
+`x/costaking`
+params / fee-collector
+split / costaker
+gauges and
+`x/mint` block
+provision.
+No chain writes
+from this VM.
+
+Files:
+`x/costaking/keeper/msg_server.go`,
+`x/costaking/keeper/intercept_fee_collector.go`,
+`x/costaking/keeper/hooks_incentive.go`,
+`x/costaking/keeper/reward_tracker.go`,
+`x/costaking/keeper/score.go`,
+`x/costaking/abci.go`,
+`x/mint/abci.go`,
+`x/mint/keeper/keeper.go`,
+`x/mint/module.go`.
+
+Checked for:
+stranger mint of
+BABY; a
+fee-collector
+intercept that
+pays the caller;
+costaker withdraw
+of another
+address's pool;
+permissionless
+score rewrite.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Costaking's only
+  Msg is
+  `UpdateParams`.
+  `authority` must
+  match the keeper
+  authority. A
+  `ScoreRatioBtcByBaby`
+  change rewrites
+  scores via
+  `UpdateAllCostakersScore`
+  (gov-only).
+- `HandleCoinsInFeeCollector`
+  is BeginBlock.
+  Portions come
+  from params
+  (`ValidatorsPortion`
+  +
+  `CostakingPortion`).
+  Transfers are
+  module-to-module
+  (fee collector →
+  distribution /
+  costaking).
+- Validator
+  direct rewards
+  pass a
+  **temporary**
+  `Commission.Rate
+  = 1.0` copy into
+  `AllocateTokensToValidator`.
+  That copy is
+  not persisted.
+- `BeforeRewardWithdraw`
+  runs only for
+  `COSTAKER` and
+  **that**
+  address.
+  `costakerWithdrawRewards`
+  increments the
+  period and
+  `CalculateCostakerRewardsAndSendToGauge`
+  for that
+  costaker only.
+  Payout still
+  goes through the
+  already-reviewed
+  incentive proto
+  signer.
+- Staking hooks
+  update
+  `ActiveBaby`
+  for the hooked
+  `delAddr` only.
+- Mint has no
+  user Msg
+  (`RegisterInterfaces`
+  is empty;
+  `GetTxCmd` is
+  nil).
+  `BeginBlocker`
+  mints the block
+  provision to
+  the mint module
+  then
+  `SendCoinsToFeeCollector`.
+  Queries only
+  cover inflation
+  / annual
+  provisions /
+  genesis time.
+
+Do not file
+gov-gated score
+rewrite, module
+fee-collector
+splits, or
+intended block
+mint as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+babylon `v4.4.0`
+opens for
+costaking params
+/ fee-collector
+split / gauges
+and mint
+provision is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+checkpointing /
+epoching,
+btclightclient,
+and website /
+toolkit rows.
