@@ -66824,3 +66824,20 @@ Do not file an admin-gated treasury stream as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: L2Encoder / PriceOracleSentinel / stk / StakeToken / GHO remaining (FixedFee / flash minter / Gsm4626) / governance.
 
+
+## 2026-09-03: Aave leftover remaining L2Encoder leftover (`cff15de`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after Collector leftover. Official `aave-dao/aave-v3-origin` `cff15de`. Opened listed `src/contracts/helpers/L2Encoder.sol`. Do not rematch Pool / Oracle / ACL / rewards / Collector leftovers. Other-agent view helpers / WrappedTokenGateway leftovers are separate files. No mainnet writes. No exploit PoCs.
+
+Checked for: encoder writing Pool state or moving tokens; compact `type(uint256).max` withdraw/repay packing a truncated amount that L2Pool would treat as a partial pull.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Every `encode*` function is `view`. The only stored value is immutable `POOL`. Calls only `POOL.getReserveData(asset)` to read `id`.
+- Amounts use OZ `SafeCast` to `uint128` (revert on overflow). `type(uint256).max` withdraw / repay / liquidation debt maps to `type(uint128).max` for the L2Pool compact convention. Permit `deadline` is `uint32`; `interestRateMode` is `uint8`.
+- Supply / borrow / repay encodings omit `onBehalfOf` / `to` because L2Pool uses `msg.sender`. This helper does not call the Pool.
+
+Do not file a calldata-packing view helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: PriceOracleSentinel / stk / StakeToken / GHO remaining (FixedFee / flash minter / Gsm4626) / governance.
+
