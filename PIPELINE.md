@@ -86,16 +86,20 @@ Ordered by urgency. Each is a few minutes.
    If any of these fail, tell me which events to drop.
 2. A payout wallet address you control, EVM-compatible, for stablecoin/USDC
    payouts. Address only. Never the seed phrase or private key.
-3. A fresh testnet-only deployer key. Generate a new key (`cast wallet new`,
-   or any wallet), never one holding real funds. Add its private key as the
-   Cloud Agent secret `TESTNET_DEPLOYER_PRIVATE_KEY` (Cursor Dashboard, Cloud
-   Agents, Secrets). Then fund its address:
+3. Testnet gas for the CreditPassport deployer (a few minutes, unblocks the
+   BUIDL CTC entry). I generated a testnet-only deployer key that lives
+   outside the repository on the agent VM; its address is in the chat. Fund
+   that address (never send real assets to it):
    - Creditcoin CC3 testnet: join the [Creditcoin Discord](https://discord.gg/creditcoin),
-     channel `token-faucet`, run `/faucet address:0xYourDeployer`. 100 tCTC per 24h.
-     Do this on two consecutive days if possible; testnet proof submissions are
-     gas-heavy.
+     channel `token-faucet`, run `/faucet address:0x<deployer>`. 100 tCTC per
+     24h; one round covers deployment (~0.005) and the demo's proof submissions.
    - Sepolia ETH: [Google Cloud faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
-     or any Sepolia faucet, ~0.5 ETH is plenty.
+     (0.05 per day, Google account) or any other Sepolia faucet; deployment
+     costs ~0.002.
+   `creditpassport/scripts/wait-for-funds.sh` is polling both balances and
+   deploys automatically when they arrive. Alternative if you prefer to hold
+   the key: generate your own (`cast wallet new`), store it as the Cloud Agent
+   secret `TESTNET_DEPLOYER_PRIVATE_KEY`, fund it the same way, and tell me.
    Optional: `SEPOLIA_RPC_URL` (Infura/Alchemy key) as a secret; public RPCs
    work but rate-limit.
 4. Registrations:

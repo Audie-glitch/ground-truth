@@ -14,7 +14,10 @@ solc_version = "0.8.30"
 optimizer = true
 optimizer_runs = 200
 via_ir = true
-evm_version = "shanghai"
+# London rather than Shanghai: Creditcoin's RPC returns blocks without `mixHash`, and forge's
+# post-Merge fork simulation refuses such headers (`prevrandao` not set). Pre-Merge bytecode
+# (no PUSH0) deploys and simulates everywhere.
+evm_version = "london"
 fs_permissions = [
     { access = "read-write", path = "deployments" },
     { access = "read", path = "test/fixtures" },

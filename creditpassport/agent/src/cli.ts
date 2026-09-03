@@ -55,6 +55,18 @@ function has(args: string[], name: string): boolean {
   return args.includes(`--${name}`);
 }
 
+/** Commands that need no deployment still construct contract handles; give them harmless addresses. */
+function withPlaceholders(cfg: ReturnType<typeof loadConfig>): ReturnType<typeof loadConfig> {
+  const placeholder = "0x0000000000000000000000000000000000000001";
+  return {
+    ...cfg,
+    creditPassport: cfg.creditPassport || placeholder,
+    paymentRail: cfg.paymentRail || placeholder,
+    railToken: cfg.railToken || placeholder,
+    settlementToken: cfg.settlementToken || placeholder,
+  };
+}
+
 async function main(): Promise<void> {
   const [command, ...args] = process.argv.slice(2);
   const cfg = loadConfig();
@@ -105,7 +117,7 @@ async function main(): Promise<void> {
     }
 
     case "chains": {
-      const chains = connect({ ...cfg, creditPassport: cfg.creditPassport || "0x0000000000000000000000000000000000000001", paymentRail: cfg.paymentRail || "0x0000000000000000000000000000000000000001", settlementToken: cfg.settlementToken || "0x0000000000000000000000000000000000000001" });
+      const chains = connect(withPlaceholders(cfg));
       const proofs = new ProofService(cfg, chains.attestation);
       for (const c of await proofs.supportedChains()) {
         const latest = await proofs.info.getLatestAttestedHeightAndHash(c.chainKey);
@@ -116,13 +128,7 @@ async function main(): Promise<void> {
     }
 
     case "verify": {
-      const placeholder = "0x0000000000000000000000000000000000000001";
-      const chains = connect({
-        ...cfg,
-        creditPassport: cfg.creditPassport || placeholder,
-        paymentRail: cfg.paymentRail || placeholder,
-        settlementToken: cfg.settlementToken || placeholder,
-      });
+      const chains = connect(withPlaceholders(cfg));
       const proofs = new ProofService(cfg, chains.attestation);
       const attested = await proofs.latestAttestedHeight();
       let txHash = args[0];
@@ -163,13 +169,7 @@ async function main(): Promise<void> {
     }
 
     case "livecheck": {
-      const placeholder = "0x0000000000000000000000000000000000000001";
-      const chains = connect({
-        ...cfg,
-        creditPassport: cfg.creditPassport || placeholder,
-        paymentRail: cfg.paymentRail || placeholder,
-        settlementToken: cfg.settlementToken || placeholder,
-      });
+      const chains = connect(withPlaceholders(cfg));
       const proofs = new ProofService(cfg, chains.attestation);
       const attested = await proofs.latestAttestedHeight();
       const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";

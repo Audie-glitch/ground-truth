@@ -6,23 +6,33 @@ human account or identity; everything else is scripted here.
 Deadline: **September 13, 2026, 23:59 ET**. Event page:
 https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail
 
-## 1. Deploy to testnets (agent does this once the key exists)
+## 1. Deploy to testnets (agent does this once the deployer is funded)
 
-Prerequisite (**you**): a fresh testnet-only key stored as the Cloud Agent
-secret `TESTNET_DEPLOYER_PRIVATE_KEY`, funded with ~0.3 Sepolia ETH and
-100+ test CTC (Creditcoin Discord, `token-faucet`, `/faucet address:0x…`,
-100 per 24h; two days of faucet is comfortable, proof submissions cost more gas
-than ordinary transactions).
+Prerequisite (**you**): testnet gas for the deployer. Two ways, either works:
+
+- **Fund the deployer I generated.** A testnet-only key lives outside the
+  repository on the agent VM; its address is in the chat. Send it Sepolia ETH
+  (any faucet; the [Google Cloud faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
+  gives 0.05 per day, deployment costs ~0.002) and test CTC (Creditcoin
+  Discord, channel `token-faucet`, `/faucet address:0x…`, 100 per 24h). Never
+  send real assets to it. `scripts/wait-for-funds.sh` is polling both balances
+  and runs the deployment the minute both arrive.
+- **Or use your own key.** Generate a fresh testnet-only key, store it as the
+  Cloud Agent secret `TESTNET_DEPLOYER_PRIVATE_KEY`, fund it the same way, and
+  tell me; I run `scripts/deploy-testnet.sh` with it.
+
+Budget: deployment is ~0.002 Sepolia ETH and ~0.005 tCTC; each proof
+submission on Creditcoin costs more than an ordinary transaction, so 0.05
+Sepolia ETH and one faucet round (100 tCTC) cover the whole demo.
 
 ```bash
-cd creditpassport/contracts
-export SEPOLIA_RPC_URL=${SEPOLIA_RPC_URL:-https://ethereum-sepolia-rpc.publicnode.com}
-export CREDITCOIN_RPC_URL=https://rpc.cc3-testnet.creditcoin.network
-forge script script/DeploySource.s.sol   --rpc-url sepolia            --private-key $TESTNET_DEPLOYER_PRIVATE_KEY --broadcast
-forge script script/DeployPassport.s.sol --rpc-url creditcoin_testnet --private-key $TESTNET_DEPLOYER_PRIVATE_KEY --broadcast
-node scripts/export-abi.mjs
-git add deployments && git commit -m "Record testnet deployment addresses"
+cd creditpassport
+scripts/deploy-testnet.sh        # Sepolia rail + token, then CC3 passport; idempotent per side; exports ABIs
+git add contracts/deployments && git commit -m "Record testnet deployment addresses"
 ```
+
+`contracts/foundry.toml` pins `evm_version = "london"`: Creditcoin's RPC omits
+`mixHash`, and forge's post-Merge fork simulation rejects such headers.
 
 Then the live loop, which is also the demo recording:
 
@@ -125,7 +135,7 @@ permitted to participate.
 
 ## Checklist
 
-- [ ] `TESTNET_DEPLOYER_PRIVATE_KEY` secret set and funded (Sepolia ETH, test CTC)
+- [ ] Deployer funded (Sepolia ETH, test CTC): the generated address from the chat, or your own key as `TESTNET_DEPLOYER_PRIVATE_KEY`
 - [ ] Deployed to Sepolia and CC3 testnet; addresses committed
 - [ ] Live proof loop run at least twice (one on-time, one late payment)
 - [ ] README and deck updated with addresses; deck re-rendered
