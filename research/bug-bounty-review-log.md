@@ -11809,11 +11809,78 @@ Result: no user-exploitable finding.
 - `callOnBehalfOfSilo` is `OnlyHookReceiver`.
   Hook `delegatecall` is hook-admin trust.
 
-Not submitted. Remaining Silo listed Solidity:
-`SiloConfig` / factory, router, leverage, kink
-IRM, incentives, hooks (V1/V2/V3; V3
-`liquidationCall` reverts `NotSupported`), share
-tokens.
+Not submitted. Remaining Silo listed Solidity
+is logged below.
+
+## 2026-09-03: Silo Finance V3 config / router / leverage / hooks leftover (`31b98b3`)
+
+Same Immunefi program `silofinance-v2`. Remaining
+listed Solidity after vaults + Actions:
+`SiloConfig`, `SiloFactory`, `SiloRouterV2` +
+implementation, `LeverageRouter` +
+`LeverageUsingSiloFlashloanWithGeneralSwap`,
+`PartialLiquidation` / `PartialLiquidationExecLib`,
+`SiloHookV1`/`V2`/`V3`, `ShareDebtToken`, plus a
+skim of `DynamicKinkModel` and
+`SiloIncentivesControllerCompatible`. Local clone
+`/tmp/silo-v3` at `31b98b3`. No mainnet interaction.
+
+Checked for: `setOtherSiloAsCollateralSilo` from a
+non-silo; debt transfer that skips recipient
+solvency; router `delegatecall` that spends a
+stranger's leftover; leverage swap that keeps
+flash-loaned tokens; liquidation that seizes
+shares of a solvent user; V3 hook that still
+liquidates.
+
+Result: no user-exploitable finding.
+
+- Config is immutable except
+  `borrowerCollateralSilo`. Only a silo can
+  `_setSiloAsCollateralSilo`. `onDebtTransfer` is
+  `OnlyDebtShareToken`, forbids a second-silo
+  debt, and copies the sender's collateral silo
+  only when the recipient has none.
+  `ShareDebtToken` transfers need a receive
+  allowance and require the recipient solvent
+  after (`transferWithChecks`).
+- Factory clones + initializes both silos and
+  share tokens, mints the fee NFT to `_deployer`.
+  Fee caps are owner-set (max 50% DAO / 15%
+  deployer / 30% liquidation).
+- Router `multicall` is `nonReentrant` + pause and
+  `delegatecall`s the implementation. Deposit /
+  withdraw / borrow / repay always use
+  `msg.sender` as owner. Leftover on the router
+  is the caller's to sweep (`transferAll`); next
+  user can take it (documented).
+- Per-user leverage clone, `onlyRouter`. Open:
+  flash debt → swap → deposit to borrower →
+  borrow debt+fee to repay flash. Close: flash
+  maxRepay → repayShares → redeem → swap must
+  cover flash+fee; leftover goes to borrower.
+  `GeneralSwapModule` is a separate contract;
+  leverage transfers sell tokens in, never
+  approves the module. User calldata that pays
+  elsewhere yields `amountOut == 0` and reverts.
+  `onFlashLoan` requires
+  `msg.sender == _txFlashloanTarget`.
+- Partial liquidation accrues, sizes via
+  `liquidationPreview` (reverts `UserIsSolvent`),
+  pulls debt from the caller, forwards share
+  tokens with checks off, then `repay`. Empty
+  collateral after seize reverts
+  `NoCollateralToLiquidate`. V1/V2 `beforeAction`
+  reverts; V3 `liquidationCall` is
+  `NotSupported` (defaulting path is V2).
+- IRM implementation is initializer-locked;
+  `RCUR_CAP` is 1000% APR. Incentives gauge
+  kill is owner-only.
+
+Listed Silo V3 GitHub Solidity leftover is
+exhausted. Next leftover: Twyne Sourcify-404
+vaults, or a new unreviewed Immunefi program.
+Not submitted.
 
 ## Next candidates
 
@@ -12202,14 +12269,15 @@ logged;
 Enzyme Onyx
 `CreWorkflowConsumer`
 (`7b48d24`) is logged;
-Silo Finance V3 vaults
-and core Actions
+Silo Finance V3 vaults,
+core Actions, and
+config / router /
+leverage / hooks
 (`silofinance-v2`,
 `31b98b3`) are logged
-(remaining Silo is
-SiloConfig / factory /
-router / leverage / IRM
-/ hooks / share tokens);
+(listed Silo GitHub
+Solidity leftover
+exhausted);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
