@@ -42642,6 +42642,10 @@ is logged.
 Wormhole leftover remaining Relayer leftover is logged.
 Filecoin leftover remaining lotus mpool leftover (`7740217`)
 is logged.
+Filecoin leftover remaining lotus wallet leftover (`7740217`)
+is logged.
+Aave leftover remaining StableDebtToken leftover (`782f519`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
 
@@ -42665,6 +42669,7 @@ Do not rematch Filecoin neptune leftover.
 Do not rematch Filecoin neptune-triton leftover.
 Do not rematch Filecoin lotus paych leftover.
 Do not rematch Filecoin lotus mpool leftover.
+Do not rematch Filecoin lotus wallet leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
@@ -66135,3 +66140,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a Pool-gated non-transferable debt token as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: PoolConfigurator / ACL / oracles / periphery / rewards / GHO instances.
+
+## 2026-09-03: Filecoin leftover remaining lotus wallet leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus mpool leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/wallet`. Opened `wallet.go`, `key/key.go`, `multi.go`, and `remotewallet/remote.go`. Local / multi-backend keystore only. Does not move FIL. Do not rematch lotus miner / paych / mpool leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `WalletSign` signing for an address not in the keystore; `NewKey` binding a secp/BLS/delegated address to a different pubkey; `MultiWallet` routing a sign to a backend that does not `WalletHas` the signer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `LocalWallet.WalletSign` `findKey`s `wallet-{addr}` (then the testnet-prefix alias) and `sigs.Sign`s only that key. Missing key is `ErrKeyInfoNotFound`. `NewKey` derives the address from `sigs.ToPublic` (secp / BLS / delegated FIP-0055).
+- `MultiWallet.WalletSign` / `WalletExport` pick the first backend that `WalletHas` the address. Remote is a JSON-RPC wrapper with the configured auth header. Ledger keys are not exported.
+- This crate does not broadcast messages. Mpool leftover already requires `VerifyMsgSig`.
+
+Do not file a keystore that signs only keys it holds as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
