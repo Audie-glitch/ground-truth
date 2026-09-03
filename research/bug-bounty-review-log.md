@@ -43974,6 +43974,8 @@ Aave leftover remaining protocol-v2 AaveOracle leftover (`ce53c4a`)
 is logged.
 Filecoin leftover remaining lotus beacon leftover (`7740217`)
 is logged.
+Filecoin leftover remaining lotus net leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
 Remaining listed Aave: v2 GenericLogic / ValidationLogic / ReserveLogic / IR strategy.
@@ -44007,6 +44009,7 @@ Do not rematch Filecoin lotus vm leftover.
 Do not rematch Filecoin lotus events leftover.
 Do not rematch Filecoin lotus genesis leftover.
 Do not rematch Filecoin lotus beacon leftover.
+Do not rematch Filecoin lotus net leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Aave protocol-v2 Configurator leftover.
 Do not rematch Aave protocol-v2 AToken leftover.
@@ -68077,5 +68080,21 @@ Result: no user-exploitable finding. Not submitted.
 - `MockBeacon` is a local test helper (blake2b of the round). It is not wired as the mainnet schedule.
 
 Do not file a pubkey-verified drand entry as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Filecoin leftover remaining lotus net leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus beacon leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `node/impl/net`. Opened `net.go`, `conngater.go`, `protect.go`, and `rcmgr.go`. Local libp2p admin RPC. Do not rematch lotus node leftover or lotus sync leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `NetConnect` / `NetBlockAdd` moving FIL; `NetSetLimit` rewriting chain state; a stranger calling these without leftover-logged JWT admin.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `NetConnect` / `NetDisconnect` / `NetFindPeer` only touch `Host` / DHT. `NetPeers` / `NetPeerInfo` / bandwidth / ping are reads of the swarm.
+- `NetBlockAdd` / `NetBlockRemove` update `ConnGater` and close matching conns. `NetProtectAdd` tags the connmgr. `NetSetLimit` sets an rcmgr `BaseLimit` on a named scope. None of these sign messages or change actor balances.
+- Write methods are admin-gated at the leftover-logged JSON-RPC JWT layer (`AuthNew` / `APISecret`).
+
+Do not file a libp2p admin helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
