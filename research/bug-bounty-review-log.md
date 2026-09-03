@@ -28381,6 +28381,111 @@ exhausted (all five
 listed addresses plus
 the two proxy impls).
 
+## 2026-09-03: boost-lido leftover (Sourcify)
+
+Immunefi program
+`boost-lido` ($100,000,
+`kyc: false`). Unique
+no-KYC listed Ethereum
+slice (Mellow DVV /
+DVstETH). Sourcify
+`exact_match` vault
+proxy
+`0x5E362eb2c0706Bd1d134689eC75176018385430B`
+→ impl `DVV`
+`0x0000007563180c9066693110667e2232962d93a1`
+plus listed
+VaultConfigurator /
+ERC20TvlModule /
+StakingModule /
+oracles / Initializer /
+SimpleDVTStakingStrategy
+/ ManagedValidator.
+Extract `/tmp/boost-lido`.
+No mainnet interaction.
+
+Files:
+`DVV_000000/src/vaults/DVV.sol`,
+`DVV_000000/src/vaults/ERC4626Vault.sol`,
+`DVV_000000/src/vaults/MellowVaultCompat.sol`,
+`Initializer_969A0c/src/Vault.sol`,
+`StakingModule_D570E1/src/modules/obol/StakingModule.sol`,
+`SimpleDVTStakingStrategy_078b1C/src/strategies/SimpleDVTStakingStrategy.sol`,
+`ManagedValidator_A1b3a3/src/validators/ManagedValidator.sol`.
+
+Checked for: a stranger
+ERC-4626 `deposit` that
+mints without pulling
+the caller; `withdraw` /
+`redeem` that burns
+another owner without
+allowance; Mellow
+`registerWithdrawal`
+that locks another
+user's LP.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- DVV ERC-4626
+  `deposit` / `mint`
+  pull `msg.sender` and
+  mint to `receiver`.
+  `withdraw` / `redeem`
+  burn `owner` (caller
+  or approved) and pay
+  `receiver`. Pause /
+  whitelist / limit
+  only shrink
+  `maxDeposit`.
+- `DVV.submit` is a
+  permissionless poke
+  that wraps vault WETH
+  into wstETH.
+  `migrate` /
+  `migrateApproval` are
+  public storage-slot
+  pokes.
+- Bundled Mellow
+  `Vault.deposit` pulls
+  `msg.sender` and mints
+  LP to `to`.
+  `registerWithdrawal`
+  locks that sender's
+  LP. `processWithdrawals`
+  is operator and pays
+  `request.to`.
+- StakingModule
+  `convert` /
+  `convertAndDeposit`
+  are `onlyDelegateCall`.
+  Strategy
+  `processWithdrawals`
+  is operator.
+  `convertAndDeposit`
+  still goes through
+  `vault.delegateCall`
+  (operator + validator
+  on the Mellow vault).
+
+Do not file
+permissionless
+`submit` / `migrate`,
+operator withdrawal
+processing, admin
+pause / whitelist, or
+ERC-4626 first-deposit
+inflation as theft.
+
+Not submitted.
+Listed leftover that
+Sourcify opens is
+exhausted (all twelve
+listed addresses plus
+the DVV impl).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -29516,6 +29621,13 @@ DeGate leftover (Sourcify
 ETH Timelock /
 DepositContract /
 ExchangeV3 / MultiSig)
+is logged (listed leftover
+that Sourcify opens is
+exhausted);
+boost-lido leftover
+(Sourcify ETH DVV /
+StakingModule /
+SimpleDVTStakingStrategy)
 is logged (listed leftover
 that Sourcify opens is
 exhausted);

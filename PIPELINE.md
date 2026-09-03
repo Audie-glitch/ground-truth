@@ -211,7 +211,11 @@ DeGate leftover (Sourcify ETH Timelock /
 DepositContract / ExchangeV3 / MultiSig)
 is logged (listed leftover that Sourcify
 opens is exhausted).
-Beefy Finance leftover (Sourcify Polygon)
+boost-lido leftover (Sourcify ETH DVV /
+StakingModule / SimpleDVTStakingStrategy)
+is logged (listed leftover that Sourcify
+opens is exhausted).
+Beefy Finance leftover (Sourcify Polygon))
 `BeefyVaultV6` + common chef / DFYN /
 Curve / BIFI-maxi strategies) is logged.
 Beefy leftover remaining Polygon vaults
@@ -640,6 +644,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   ExchangeV3 / MultiSig; listed
   leftover that Sourcify opens
   is exhausted),
+  boost-lido leftover (Sourcify
+  ETH DVV / StakingModule /
+  SimpleDVTStakingStrategy;
+  listed leftover that Sourcify
+  opens is exhausted),
   and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
