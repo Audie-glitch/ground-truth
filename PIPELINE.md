@@ -10,7 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana vote_sender leftover is logged;
+246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana installed_scheduler leftover is logged;
+Jito leftover remaining jito-solana vote_sender leftover is logged;
 Jito leftover remaining jito-solana loader_utils leftover is logged;
 Jito leftover remaining jito-solana sysvar_account leftover is logged;
 Jito leftover remaining jito-solana leader_schedule leftover is logged;
@@ -1830,13 +1831,15 @@ jito-solana loader_utils leftover
 (`d0e3a47`; KYC) is logged.
 Jito leftover remaining
 jito-solana vote_sender leftover
+(`d0e3a47`; KYC) is logged.
+Jito leftover remaining
+jito-solana installed_scheduler leftover
 (`d0e3a47`; KYC) is logged
 (remaining listed is unused
 remaining-runtime slices
 `static_ids` /
 `runtime_config` /
-`read_optimized_dashmap` /
-`installed_scheduler_pool`
+`read_optimized_dashmap`
 if still unused).
 Optimism leftover remaining
 PolicyEngineStaking leftover

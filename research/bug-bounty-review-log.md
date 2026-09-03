@@ -47578,7 +47578,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`static_ids` / `runtime_config` / `read_optimized_dashmap` / `installed_scheduler_pool`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_client leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana prioritization_fee leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana commitment leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana slot_params leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana genesis_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana alpenglow_epoch_type leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana leader_schedule leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana sysvar_account leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana loader_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana vote_sender leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`static_ids` / `runtime_config` / `read_optimized_dashmap`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_client leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana prioritization_fee leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana commitment leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana slot_params leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana genesis_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana alpenglow_epoch_type leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana leader_schedule leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana sysvar_account leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana loader_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana vote_sender leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana installed_scheduler leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed Arbitrum: websites if still unused. Official Arbitrum leftover that listed trees open is exhausted except unused official leftovers if still open. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged.
@@ -47680,6 +47680,7 @@ Do not rematch Jito jito-solana leader_schedule leftover.
 Do not rematch Jito jito-solana sysvar_account leftover.
 Do not rematch Jito jito-solana loader_utils leftover.
 Do not rematch Jito jito-solana vote_sender leftover.
+Do not rematch Jito jito-solana installed_scheduler leftover.
 Do not rematch Chainlink leftover remaining CCIP Sui leftover.
 Do not rematch Chainlink leftover remaining CCIP Solana leftover.
 Do not rematch Jito jito-solana snapshot_package leftover.
@@ -50527,8 +50528,10 @@ Jito leftover remaining jito-solana sysvar_account leftover
 Jito leftover remaining jito-solana loader_utils leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana vote_sender leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana installed_scheduler leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-static_ids / runtime_config / read_optimized_dashmap / installed_scheduler_pool if still unused);
+static_ids / runtime_config / read_optimized_dashmap if still unused);
 Optimism leftover remaining op-node deposits + withdrawals leftover
 (`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
@@ -73690,3 +73693,24 @@ Do not rematch leftover-logged vote leftover, vote_reward leftover, or banking_s
 **No finding.** Type-only IPC. Downstream pay is leftover-logged vote_reward leftover after leftover-logged vote leftover verifies. Out of Immunefi leftover remaining for this slice.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`static_ids` / `runtime_config` / `read_optimized_dashmap` / `installed_scheduler_pool`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Jito leftover remaining jito-solana installed_scheduler leftover (`d0e3a47`)
+
+Immunefi leftover **remaining jito-solana installed_scheduler leftover** (`https://github.com/jito-foundation/jito-solana`). Official raw `GET https://raw.githubusercontent.com/jito-foundation/jito-solana/d0e3a47/runtime/src/installed_scheduler_pool.rs` **200**. Pin `d0e3a47`. Local extract `/tmp/jito-solana-static/installed_scheduler_pool.rs` (900 lines). **Static review / local clone only. No live-contract testing. No exploit PoCs.**
+
+Do not rematch leftover-logged scheduler leftover, banking_stage leftover, transaction_execution leftover, or bank_forks leftover. This file is the runtime glue (`InstalledScheduler` / `BankWithScheduler`) that lends a pooled scheduler for Replay/Banking. Actual parallel execution lives in `solana-unified-scheduler-pool` (dependent crate). It does not move lamports.
+
+### What I actually read
+
+- `InstalledSchedulerPool::take_scheduler` / `take_resumed_scheduler` lend a boxed scheduler for a `SchedulingContext` (one `Arc<Bank>`). Preallocation context has no bank and panics if used normally. `register_timeout_listener` is opaque; stale listeners are cleaned later. `uninstalled_from_bank_forks` is pool teardown.
+- `InstalledScheduler::schedule_execution` is non-blocking. `Err(SchedulerAborted)` means a **previously** scheduled bad tx aborted the block, not that this schedule itself paid anyone. After abort the scheduler is disposed, not repooled. `recover_error_after_abort` requires `&mut self` and is idempotent across the read/write lock gap.
+- `wait_for_termination` blocks until scheduled txs finish, then uninstalls. Empty schedule returns `Ok(())`. Must run before leftover-logged `Bank::freeze`. `pause_for_recent_blockhash` keeps the scheduler and holds `ResultWithTimings`. `unpause_after_taken` is block-production only (panics on verification).
+- `SchedulerStatus`: Unavailable (consumed / disabled) / Active / Stale (timeout returned the scheduler to the pool). Stale → Active re-takes via `take_resumed_scheduler`. Timeout listener `wait_for_termination(false)` then `return_to_pool` to bound thread creation under forky load.
+- `BankWithScheduler` wraps `Arc<Bank>` + `RwLock<SchedulerStatus>`. Constructor asserts the scheduler’s bank is the same `Arc`. `schedule_transaction_executions` feeds leftover-logged `ReplayTransaction`s into the active scheduler. Drop / prune path waits then discards a leftover error. `Deref` to `Arc<Bank>`.
+- Tests: mocks only. The transfer fixture is scheduled into a mock, not executed here.
+
+### Verdict
+
+**No finding.** Scheduling glue. Commit/pay is leftover-logged transaction_execution leftover / fee_distribution leftover after leftover-logged banking_stage leftover. Out of Immunefi leftover remaining for this slice.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`static_ids` / `runtime_config` / `read_optimized_dashmap`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
