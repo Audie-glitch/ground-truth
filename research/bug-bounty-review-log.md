@@ -20934,6 +20934,113 @@ LiquidityBuffer
 (not a listed
 row).
 
+## 2026-09-03: 1inch cross-chain-swap leftover (`ada243b`)
+
+Immunefi program
+`1inch-SmartContracts`
+($500,000, `kyc:
+true`). token-plugins
++ farming leftover is
+already logged. This
+slice is
+`cross-chain-swap`.
+Local clone
+`/tmp/1inch-ccs` at
+`ada243b`. No mainnet
+interaction.
+
+Files:
+`contracts/EscrowSrc.sol`,
+`EscrowDst.sol`,
+`BaseEscrow.sol`,
+`Escrow.sol`,
+`BaseEscrowFactory.sol`,
+`MerkleStorageInvalidator.sol`,
+`libraries/ImmutablesLib.sol`.
+
+Checked for: a
+stranger withdraw
+with a wrong secret
+or patched
+immutables; cancel
+before the
+cancellation
+window; `createDstEscrow`
+that underpays;
+Merkle leaf reuse
+on a multi-fill
+order.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Src / dst
+  `withdraw` is
+  taker-only in the
+  private window,
+  then
+  `onlyValidSecret`
+  (`keccak256` of
+  the 32-byte
+  secret) and
+  `onlyValidImmutables`
+  (CREATE2 of the
+  immutables hash
+  must be
+  `address(this)`).
+  Public withdraw /
+  cancel require an
+  access-token
+  balance and still
+  pay the taker /
+  maker as
+  designed.
+- Src cancel after
+  `SrcCancellation`
+  returns tokens to
+  the maker. Dst
+  cancel after
+  `DstCancellation`
+  returns tokens to
+  the taker (they
+  funded dst).
+  `rescueFunds` is
+  taker-only after
+  `RESCUE_DELAY`.
+- Factory src
+  deploy is LOP
+  `postInteraction`.
+  The clone must
+  already hold the
+  safety deposit
+  and maker tokens.
+  `createDstEscrow`
+  requires
+  `msg.value` equal
+  to deposit (+
+  amount if native)
+  and dst cancel
+  not after src
+  cancel, then
+  `transferFrom`
+  the caller.
+- Merkle
+  invalidator is
+  `onlyLOP` and
+  stores
+  `idx + 1` plus
+  the proven leaf.
+
+Not submitted.
+Remaining 1inch
+SmartContracts trees
+are
+`solana-crosschain-protocol`
+and `solana-fusion`.
+
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -21235,10 +21342,12 @@ Manic $1k bug bounty is `HUMAN_ONLY`.
 the402.ai still paused. 1inch Fusion settlement /
 whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
 1inch token-plugins + farming leftover
-(`9b6de97` / `b1fca09`) is logged
+(`9b6de97` / `b1fca09`) is logged;
+1inch cross-chain-swap leftover
+(`ada243b`) is logged
 (remaining 1inch SmartContracts
-trees are `cross-chain-swap`,
-`solana-crosschain-protocol`,
+trees are
+`solana-crosschain-protocol`
 and `solana-fusion`).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
