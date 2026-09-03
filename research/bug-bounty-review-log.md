@@ -10617,6 +10617,140 @@ if a later pass wants
 those admin/stacker
 contracts. Not submitted.
 
+## 2026-09-03: Yearn 3.0.4 TokenizedStrategy + Vault V3 leftover (Sourcify)
+
+Immunefi program
+`yearnfinance` ($200,000,
+`kyc: false`). Remaining
+listed impls after
+Factory 3.0.4 + V3.1.0 +
+Accountant: 3.0.4
+Tokenized Strategy
+`0xD377919FA87120584B21279a491F82D5265A139c`
+(Sourcify match,
+`TokenizedStrategy`,
+solc 0.8.18, verified
+2024-11-01,
+`API_VERSION` 3.0.4) and
+3.0.4 Vault V3
+`0xd8063123BBA3B480569244AE66BFE72B6c84b00d`
+(Sourcify match,
+`YearnV3Vault`, Vyper
+0.3.7, verified
+2025-01-14). Extract
+`/tmp/yearn-304/{strat304,vault304}`.
+These are implementation
+singletons used via
+clones; no
+state-changing txs.
+
+Files: flattened
+`TokenizedStrategy.sol`
+(`initialize`,
+`deposit` / `mint` /
+`withdraw` / `redeem`,
+`_deposit` / `_withdraw`,
+`report`, `tend`),
+`YearnV3Vault.vy`
+(`initialize`,
+`_deposit` / `_redeem`,
+`process_report`,
+`_total_assets`).
+
+Checked for: first-depositor
+1-wei inflation plus a
+raw donation (3.0.4 has
+no `MINIMUM_SUPPLY`);
+deposit that credits a
+stranger or the vault;
+redeem that pays
+`msg.sender` instead of
+`receiver`; keeper-less
+`report` that unlocks
+profit immediately;
+`process_report(self)`
+by a non-role.
+
+Result: no user-exploitable
+finding. Not submitted.
+Listed Yearn leftover
+impls are exhausted.
+
+- Strategy `totalAssets`
+  is a stored counter,
+  not `balanceOf`. Empty
+  supply mints 1:1;
+  `totalSupply > 0` and
+  `totalAssets == 0`
+  mints 0. Donations
+  sit idle until a
+  keeper `report` /
+  `harvestAndReport`;
+  profit is locked as
+  shares to the
+  strategy and unlocked
+  over
+  `profitMaxUnlockTime`
+  (default 10 days).
+  `_deposit` pulls
+  `msg.sender`, then
+  `deployFunds` on the
+  full loose balance,
+  then `totalAssets +=
+  assets` (deposited
+  amount only), then
+  mints to `receiver`.
+  Cannot deposit to
+  `address(this)`.
+  `_withdraw` burns
+  `owner` (allowance if
+  sender ≠ owner) and
+  pays `receiver`.
+  `report` / `tend` are
+  `onlyKeepers`.
+  Performance fee ≤
+  50%. `initialize` is
+  one-shot (`asset ==
+  0`).
+- Vault
+  `_total_assets` is
+  `total_idle +
+  total_debt`. Empty
+  supply is 1:1;
+  `total_assets == 0`
+  with supply > 0
+  mints 0. `_deposit`
+  pulls `msg.sender`,
+  increments idle,
+  mints to `recipient`.
+  `_max_deposit` is 0
+  for `address(0)` and
+  `self`. `_redeem`
+  burns `owner` and
+  pays `receiver`.
+  Losses from the
+  withdraw queue are
+  capped by `max_loss`.
+  `process_report` is
+  `REPORTING_MANAGER`.
+  Impl `__init__` sets
+  `asset = self` so the
+  singleton cannot be
+  initialized. Factory
+  3.0.4 `create2` +
+  `initialize` is
+  already logged.
+
+Next leftover: Sky
+`PAUFactory` / `Kicker`
+/ `sky-oapp-oft`,
+TermMax leftover
+adapters, Twyne
+Sourcify-404 vaults, or
+StackingDAO rewards /
+commission. Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -10829,12 +10963,13 @@ Remaining Sky leftover:
 `sky-oapp-oft`.
 Yearn Accountant
 `0x5A74…DE69` (Sourcify)
-is logged. Remaining
-Yearn listed leftover:
-3.0.4 Tokenized
+plus 3.0.4 Tokenized
 Strategy `0xD377…139c`
 and 3.0.4 Vault V3
-`0xd806…00d`. 
+`0xd806…00d` (Sourcify)
+are logged. Listed
+Yearn leftover impls
+are exhausted. 
 Twyne June-2026 Aave V3
 operators (Sourcify) are logged;
 remaining Twyne vaults /
@@ -10867,12 +11002,13 @@ impl `0x8e8e…6f69` and
 `0x770D…812F` (Sourcify)
 plus Accountant
 `0x5A74…DE69` (Sourcify)
-are logged. Remaining
-Yearn listed leftover:
-3.0.4 Tokenized
+plus 3.0.4 Tokenized
 Strategy `0xD377…139c`
 and 3.0.4 Vault V3
-`0xd806…00d`.
+`0xd806…00d` (Sourcify)
+are logged. Listed
+Yearn leftover impls
+are exhausted.
 Balancer V3
 Router + CompositeLiquidityRouter
 + ProtocolFeeController +
@@ -10931,7 +11067,7 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-~05:05 UTC 3 Sep: KeeperHub #2105 still `open` +
+~05:15 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 1 comment and
 PR #2275 (`tenk-earn`, `staging`, mergeable) — do not
 duplicate; #2240 still `open` + `accepted`, 1
@@ -10940,7 +11076,7 @@ implement or claim;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 Hedera Harness #8 still `open`, 0 comments;
 CreditPassport deployer still 0 Sepolia ETH
-(publicnode / Tenderly /
+(publicnode /
 `ethereum-sepolia-rpc.publicnode.com`)
 / 0 tCTC
 (`rpc.cc3-testnet.creditcoin.network`);
@@ -10957,9 +11093,13 @@ logged (Sourcify still
 404; official tree);
 Sky StarGuard +
 SubProxyMethods + PAU
-assembler, and Yearn
-Accountant leftover are
-logged;
+assembler, Yearn
+Accountant leftover, and
+Yearn 3.0.4 Tokenized
+Strategy + Vault V3
+leftover are logged
+(listed Yearn leftover
+impls exhausted);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
