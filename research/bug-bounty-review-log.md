@@ -72055,3 +72055,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a stake-weighted clock helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`snapshot_*` / `bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Optimism leftover remaining op-reth leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining listed after op-node sequencing leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `rust/op-reth/crates/payload/src/{builder,payload,validator,lib,traits,config}.rs` and `rust/op-reth/crates/rpc/src/{engine,sequencer,miner}.rs`. Extract `/tmp/op-reth/`. Do not rematch op-node engine leftover or sequencing leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `engine_newPayload` that inserts a stranger envelope as canonical without JWT; a builder that mints deposits from the txpool; a sequencer RPC helper that pays a caller.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `OpEngineApi` documents a JWT auth layer and wraps `EngineApi`. `newPayloadV2/V3/V4` convert into `OpExecData` and call the metered inner. This is consensus-to-execution, not a public user entry.
+- `ensure_well_formed_payload` requires `try_into_checked_block` (claimed hash match), then Shanghai / Cancun sidecar / Prague field gates.
+- `OpPayloadBuilder` executes sequencer transactions from payload attributes only. `no_tx_pool` skips the pool. Pool inclusion rejects EIP-4844 and deposit txs. Invalid sequencer txs are skipped; blob sequencer txs abort the build.
+- `SequencerClient` forwards `eth_sendRawTransaction` / Conditional to a configured sequencer URL. `OpMinerExtApi` only mutates operator DA/gas config.
+- These crates do not send L1 transactions or mutate user balances.
+
+Do not file an engine-API or payload builder as stranger theft of L2 ETH.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining `op-reth` (consensus / txpool) / websites if still unused.
