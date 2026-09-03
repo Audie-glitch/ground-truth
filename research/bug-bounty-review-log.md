@@ -71098,3 +71098,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a signed-proposal storage FSM or interval-gated retrieval voucher as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches (`go-state-types` / `go-paramfetch` / `go-commp-utils` if still unused).
+
+## 2026-09-03: Filecoin leftover remaining go-state-types leftover (`a31d84b45e42`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after go-fil-markets leftover (avoid lotus collision). Official `filecoin-project/go-state-types` `a31d84b45e42` (`a31d84b45e428ee898175f3e422415bb685d6d1b`). Opened listed `big/int.go`, `crypto/signature.go`, `manifest/manifest.go`, `builtin/v19/market/{deal,methods,policy}.go`, `builtin/v19/paych/{paych_types,methods}.go`, and `builtin/v19/miner/monies.go`. Do not rematch builtin-actors leftover or lotus types leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `big.Int` CBOR that decodes a stranger amount as larger than serialized; `DealProposal.ClientBalanceRequirement` that understates escrow; `SignedVoucher.SigningBytes` that includes the signature so a mutated amount still verifies; `InitialPledgeForPower` that under-pledges so a stranger sector is undercollateralized.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `big.Int` wraps `math/big`. Nil is treated as 0. CBOR is a byte-string with a 0/1 sign prefix and `BigIntMaxSerializedLen` 128. `Div` is Go integer division (truncates toward zero). This crate does not move FIL.
+- `crypto.Signature` is Type+Data only. CBOR rejects unknown types and empty / overlong payloads. There is no verify helper here.
+- `ClientDealProposal` is a `DealProposal` plus `ClientSignature`. `ClientBalanceRequirement` is `ClientCollateral + StoragePricePerEpoch * Duration`. Market `Methods` and paych `Methods` are ABI metadata maps (`AddBalance` / `WithdrawBalance` / `PublishStorageDeals` / `UpdateChannelState` / `Settle` / `Collect`); execution lives in leftover-logged builtin-actors.
+- `SignedVoucher.SigningBytes` copies the voucher, zeros `Signature`, then CBOR-encodes. Amount, lane, nonce, and channel address are in the signed payload.
+- `InitialPledgeForPower` and `PledgePenaltyForTermination` are FIP-0081 / FIP-0098 formulas over smoothed reward and circulating supply, capped at `InitialPledgeMaxPerByte * qaPower`. A stranger cannot invoke them without a miner actor message.
+
+Do not file a types-and-formula crate as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches (`go-paramfetch` / `go-commp-utils` if still unused).
