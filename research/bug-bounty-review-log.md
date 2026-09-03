@@ -21371,6 +21371,125 @@ is not
 independently
 Sourcify-matched.
 
+## 2026-09-03: Lido core submit / withdrawal leftover (`2da0f48`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Listed
+tree
+`lidofinance/core`
+was not previously
+logged (earlier “Lido”
+mentions are DeFi
+Saver / Origin
+integrations). Local
+sparse clone
+`/tmp/lido-core` at
+`2da0f48` (“Merge pull
+request #1936”). No
+mainnet interaction.
+
+Files:
+`contracts/0.4.24/Lido.sol`,
+`StETH.sol`,
+`0.6.12/WstETH.sol`,
+`0.8.9/WithdrawalQueue.sol`,
+`WithdrawalQueueBase.sol`,
+`WithdrawalQueueERC721.sol`,
+`WithdrawalVault.sol`,
+`Accounting.sol`.
+
+Checked for: a
+stranger `submit` that
+mints stETH without
+`msg.value`;
+`mintShares` callable
+by a non-accounting
+address; withdrawal
+`claim` that pays a
+request the caller
+does not own;
+`finalize` without
+`FINALIZE_ROLE`;
+oracle report applied
+by a non-oracle.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `submit` / `_submit`
+  require non-zero
+  `msg.value`, mint
+  shares to
+  `msg.sender`, and
+  increase the buffer.
+- `mintShares` is
+  accounting.
+  `burnShares` is
+  burner and burns
+  `msg.sender`.
+  `mintExternalShares`
+  is VaultHub and
+  capped by the
+  external-ratio
+  limit.
+  `receiveELRewards` /
+  `receiveWithdrawals`
+  are the EL rewards
+  vault and withdrawal
+  vault.
+  `withdrawDepositableEther`
+  is StakingRouter.
+- WithdrawalQueue
+  `requestWithdrawals`
+  `transferFrom`s
+  `msg.sender`.
+  `_claim` requires
+  `request.owner ==
+  msg.sender` after
+  finalization.
+  `finalize` is
+  `FINALIZE_ROLE`.
+  `onOracleReport` is
+  `ORACLE_ROLE`.
+- WstETH `wrap`
+  `transferFrom`s the
+  caller then mints
+  share-equivalent
+  wstETH. `unwrap`
+  burns the caller
+  then pays
+  `getPooledEthByShares`.
+- WithdrawalVault
+  `withdrawWithdrawals`
+  is Lido-only.
+  Permissionless
+  `recoverERC20` sends
+  to treasury, not the
+  caller.
+- Accounting
+  `handleOracleReport`
+  is
+  `accountingOracle`.
+
+Do not file
+permissionless
+treasury recover or
+the known 1–2 wei
+withdrawal rounding
+dust as a finding.
+
+Not submitted.
+Remaining Lido listed
+GitHub: StakingRouter /
+CSM / dual-governance /
+easy-track / L2 /
+circuit-breaker /
+oracle / 0.8.25 vaults
+and the other listed
+repos.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -21981,6 +22100,15 @@ Aevo deposit leftover
 `L1ChugSplashProxy`) is logged
 (remaining Aevo is the ETH
 ChugSplash implementation);
+Lido core submit /
+withdrawal leftover
+(`2da0f48`) is logged
+(remaining Lido is
+StakingRouter / CSM /
+dual-governance /
+easy-track / L2 /
+circuit-breaker /
+oracle / 0.8.25 vaults);
 Beets stS
 (`877087b`) + token
 leftover is logged
