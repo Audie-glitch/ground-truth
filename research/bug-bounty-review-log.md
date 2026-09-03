@@ -1356,17 +1356,112 @@ already cover this tree.
 
 Not submitted.
 
+## 2026-09-03: Sky PAS + SBEBeam (commit `947e71c` / `beam`)
+
+Immunefi program `sky` ($10,000,000, `kyc: false`). Newest GitHub
+scope added 1 Sep 2026 at
+`sky-ecosystem/pas@947e71cd5dbaaf9c5b3840dd1b23e8e99d9a564d`
+(`BeamState`, `Configurator`, `PASMom`, `timelock/Timelock`,
+`timelock/Bytes32LinkedList`) plus `dss-flappers` `beam`
+`SBEBeam.sol` (in-scope 17 Aug). Local clones `/tmp/reviews/pas`
+and `/tmp/reviews/dss-flappers`. No mainnet interaction.
+
+Files read in full.
+
+Checked for: an unauthorized party collapsing an unlimited
+rate-limit key; hop / maxChange overflow wrapping a cap
+increase; timelock self-call or executor bypass; linked-list
+pointer corruption on add/remove; SBEBeam bounds that let a
+facilitator halt or under/over-burn surplus.
+
+Result: no user-exploitable finding.
+
+- `Configurator.setRateLimit` locks a key as unlimited only
+  when BeamState default is `(max, 0)` **or** the live key is
+  already `(max, 0)` **and** default is `(0, 0)`. If the live
+  key is unlimited **and** a finite default exists, the
+  `maxAmount <= current.maxAmount` clause is always true, so
+  an authorized cBeam can drop unlimited → a tiny finite cap
+  in one call with no hop. BeamState already documents that
+  once cBeams are paired they can interfere and that this is
+  assumed monitored. Trusted-role / known assumption.
+- Hop applies only to increases. Decreases are always
+  allowed. `maxChange` must be 0 or ≥ WAD. Multiplication
+  `current.maxAmount * maxChange / WAD` is skipped when
+  current is `type(uint256).max` by the unlimited-lock
+  branch or by the `<= current.maxAmount` alternative.
+- Timelock: `schedule` / `execute` singles revert; batch
+  rejects `targets[i] == address(this)`;
+  `DEFAULT_ADMIN_ROLE` is revoked from the timelock itself;
+  `EXECUTOR_ROLE` is `address(0)` (anyone after delay);
+  pause/cancel/admin-immediate-delay match the in-file
+  notes. `Bytes32LinkedList` rejects `bytes32(0)` and
+  duplicates; remove updates first/last and both neighbors.
+- `PASMom.setOwner(0)` permanently bricks `onlyOwner`.
+  `auth` still works through a leftover `authority`. Admin
+  footgun, not a user extract.
+- `SBEBeam.set` matches its notes: `kbump ≤ maxKbump` and
+  `% RAY == 0`, `burn ≤ WAD`, `minHop ≤ hop ≤ 5 years`,
+  `kbump / hop ≤ maxRate`, `tau` cooldown. A facilitator
+  (`buds`) can stall the burn stream by lowering throughput;
+  governance can revive. Documented.
+
+Not submitted.
+
+## 2026-09-03: Intuition AtomWallet + OffsetProgressive + utilization (`94bddae`)
+
+Same program and commit as the MultiVault deposit/redeem
+slice. Local clone `/tmp/reviews/intuition-v2`. No mainnet
+interaction. Covers the slices that slice left open.
+
+Files: `src/protocol/wallet/AtomWallet.sol`,
+`src/protocol/curves/OffsetProgressiveCurve.sol`,
+`src/protocol/emissions/TrustBonding.sol` (ratio math only).
+
+Checked for: 77-byte validity-window replay; unclaimed wallet
+owner spoof; remaining `square` underflow on the offset
+curve; utilization delta that inflates veTRUST rewards;
+create-cost vs progressive mint if default curve is switched.
+
+Result: no user-exploitable finding.
+
+- AtomWallet 77-byte signatures hash
+  `userOpHash ‖ validUntil ‖ validAfter` (the v1.0.2 bind).
+  Other lengths are malformed (fail, zero window) or plain
+  65-byte ECDSA (no expiry). Unclaimed `owner()` is always
+  `multiVault.getAtomWarden()`.
+- `OffsetProgressiveCurve._convertToAssets` uses
+  `PCMath.square` (not `squareUp`) on both edges, matching
+  the hardening note. Slope must be even and non-zero.
+- Utilization is `int256`. A negative epoch delta returns
+  the configured lower bound (min 25% personal / 40%
+  system). It does not mint extra rewards. Skip the known
+  VotingEscrow `_supply_at` underflow (PR #126).
+- If an admin later pointed `defaultCurveId` at
+  `OffsetProgressiveCurve`, create cost would still charge
+  `minShare` wei while vault totals credited the larger
+  `previewMint`. `onlyRole(DEFAULT_ADMIN_ROLE)` footgun,
+  not a user path.
+
+Not submitted.
+
 ## Next candidates
 
-sBTC in-scope slices from this clone are exhausted. Superteam
-`AGENT_ALLOWED` is still only Steve Arena and ZNS — do not execute.
-All other open Superteam listings are `HUMAN_ONLY` (Mermail skill is
-a later $500 slot). the402.ai still paused. Skip Sky and Money on
-Chain. 1inch Fusion settlement / whitelist / PowerPod / KycNFT and
-FeeTaker / AmountGetterWithFee are exhausted. Remaining OZ hooks:
-none of the money-moving general/fee/base files. Next Intuition
-slices: ProgressiveCurve / OffsetProgressiveCurve convert math,
-then TrustBonding emissions (skip the known VotingEscrow
-underflow). Sherlock `/api/contests` returned no live items as of
-01:28 UTC 3 Sep 2026. No KeeperHub implementation before the 6 Sep
-build window. No ETHOnline project code before 4 Sep 16:00 UTC.
+Sky PAS / SBEBeam, Intuition MultiVault deposit/redeem, and
+Intuition AtomWallet / OffsetProgressive / utilization
+ratios are exhausted at these commits. Remaining Sky slices
+(`diamond-pau` facets, `dss-emergency-spells`) are large and
+older. Remaining Intuition: `ProgressiveCurve` convert math
+and emissions mint/bridge (not the known VotingEscrow
+underflow). Superteam `AGENT_ALLOWED` is still only Steve
+Arena and ZNS — do not execute. All other open Superteam
+listings are `HUMAN_ONLY`. the402.ai still paused. 1inch
+Fusion settlement / whitelist / PowerPod / KycNFT and
+FeeTaker are exhausted. Remaining OZ hooks: none of the
+money-moving general/fee/base files.
+Sherlock `/api/contests` has 301 historical items; the only
+non-FINISHED row as of 02:46 UTC 3 Sep is contest `1234`
+in `SHERLOCK_JUDGING` (not open for reports).
+Hedera Harness #8 still `open`, 0 comments, 0 HOL-Guard
+PRs. No KeeperHub implementation before the 6 Sep build
+window. No ETHOnline project code before 4 Sep 16:00 UTC.

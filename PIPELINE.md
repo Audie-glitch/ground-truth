@@ -4,8 +4,8 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, 02:36 UTC. Dates verified against each
-organizer's own page on 2 Sep; Immunefi unofficial mirror rechecked 3 Sep.
+Status as of 3 September 2026, 02:46 UTC. Dates verified against each
+organizer's own page on 2–3 Sep; Immunefi unofficial mirror rechecked 3 Sep.
 
 ## Opportunities, ranked by expected payout per unit of work
 
@@ -14,7 +14,7 @@ organizer's own page on 2 Sep; Immunefi unofficial mirror rechecked 3 Sep.
 | 1 | [KeeperHub Agent Economy hackathon](https://dorahacks.io/hackathon/agent-economy/detail), Best KeeperHub Feature bounty | $500 x 2 winners | Stablecoins | Build Sep 6-18, submit by Sep 18 12:00 CEST | Niche: needs a mergeable PR into a 2,700-file TypeScript codebase. Maintainers opened `accepted` + `help wanted` feature issues on Sep 2 | Implement issue [#2240](https://github.com/keeperhub/keeperhub/issues/2240) (state-threshold trigger, "ranked first for unlock per unit of cost"). Design proposal first, code from Sep 6. |
 | 2 | [ETHOnline 2026](https://ethglobal.com/events/ethonline2026), Uniswap Foundation "Best Uniswap Stack Contribution" | $1,000 x 3 | USDC (ETHGlobal standard) | Sep 4-16 | Open-source contribution track; typically undersubscribed relative to app tracks | Improvement or tooling PR against an official Uniswap repo, plus `FEEDBACK.md` and the feedback form. |
 | 3 | ETHOnline 2026, Hedera "Open Source, Improve the Hedera Harness" | $1,000 x 2 | USDC | Sep 4-16 | PR to [hedera-dev/hedera-harness](https://github.com/hedera-dev/hedera-harness); "open PR, not merged is fine" | Service-coverage or local-dev-mode PR with tests and a before/after demo. |
-| 4 | [BUIDL CTC 2026 Fall](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) (Creditcoin / Attestcoin Protocol) | $10,000 / $3,000 / $2,000 | USD-denominated; payout asset not stated (ask in Discord `#buidl-ctc-qna`) | Open now, deadline Sep 13 23:59 ET | 46 submissions so far; most hackathon entries are shallow. Depth of Attestcoin integration is a core scoring criterion | Build now. Project: CreditPassport (see below). |
+| 4 | [BUIDL CTC 2026 Fall](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) (Creditcoin / Attestcoin Protocol) | $10,000 / $3,000 / $2,000 | USD-denominated; payout asset not stated (ask in Discord `#buidl-ctc-qna`) | Open now, deadline Sep 13 23:59 ET | 47 BUIDLs / 203 hackers as of 02:45 UTC 3 Sep; official page still says “11 days left”. Depth of Attestcoin integration is a core scoring criterion | Build now. Project: CreditPassport (see below). |
 | 5 | ETHOnline 2026, Arc (Circle) agentic and DeFi bounties | $1,667 x 3 tracks, plus $3,500 mainnet-readiness | USDC | Sep 4-16 | Requires frontend + backend + architecture diagram + video | Stretch: only if the KeeperHub work can be pointed at Arc (KeeperHub issue #2230 adds Arc testnet). |
 | 6 | KeeperHub main track, Best Integration into a Live Project | $2,000 / $1,200 / $800 | Stablecoins | Sep 6-18 | Needs a KeeperHub account, a funded testnet wallet, and a real third-party project on the other side | Plan: `plugin-keeperhub` for elizaOS (KeeperHub as the execution layer for Eliza agents: dry run, idempotent execute, status, balances). See `keeperhub/main-track-plan.md`. Needs your KeeperHub API key by Sep 9. |
 | 7 | [3rd-Web-Hack](https://3rd-web-hack.devpost.com/) (Devpost) | $500 / $200 / $50 | USDT | Deadline Sep 27 | 86 participants, tiny pool, low bar | Rules require a project "original and developed for the hackathon," so no re-entry of CreditPassport. **Built 3 Sep: SignLens** (`signlens/`), a pre-signature inspector for wallet requests; MVP, 23 tests, README, presentation. Needs your Devpost registration and a demo video upload; see `signlens/SUBMISSION.md`. |
@@ -74,8 +74,8 @@ share the username.
 - `/earn` on the Ground Truth app: dated open/closed windows for every live path.
 - `signlens/`: the 3rd-Web-Hack entry, working with live on-chain checks; demo video recorded.
 - `research/bug-bounty-review-log.md`: Immunefi target selection method and
-  time-boxed reviews of Enzyme Onyx, GMTrade, 1inch Aqua, sBTC, and Horizen
-  ZenStaker/RewardAccumulator (no submittable finding on any of them).
+  time-boxed reviews through Sky PAS / SBEBeam and Intuition MultiVault +
+  AtomWallet (no submittable finding on any of them).
 
 ## Schedule
 

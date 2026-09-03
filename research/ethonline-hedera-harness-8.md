@@ -3,12 +3,12 @@
 Read-only prep. No harness source until the ETHOnline window is open
 (4 Sep 2026 16:00 UTC). Open PR is enough for the Hedera OSS bounty.
 
-**Rechecked:** 3 September 2026 02:41 UTC
+**Rechecked:** 3 September 2026 02:46 UTC
 
 | Fact | Evidence |
 | --- | --- |
 | Issue | https://github.com/hedera-dev/hedera-harness/issues/8 — `open`, authored by maintainer `kantorcodes` on 2026-08-13, 0 comments |
-| Competing PR | No linked PR on the issue. Do not start a PR before 4 Sep. |
+| Competing PR | GitHub search `HOL Guard type:pr` = **0**. The earlier `2105`-style numeric search is a false positive (any PR mentioning “8”). Do not start a PR before 4 Sep. |
 | Bounty | Hedera “Open Source, Improve the Hedera Harness” — $1,000 × 2; open PR counts |
 
 ## What to build (from the issue, mapped onto the repo)
