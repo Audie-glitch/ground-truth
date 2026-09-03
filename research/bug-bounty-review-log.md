@@ -17251,6 +17251,161 @@ MorphoVault V2 +
 polygon / arbitrum
 trees.
 
+## 2026-09-03: Harvest inactive / MorphoVault V2 leftover (`0364901`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Prior
+Harvest slices on pin
+`0364901` are already
+logged. This slice is
+the inactive-vault
+ERC4626 parking
+strategy, Morpho vault
+V2 (including
+`morpho/v2`), the Morpho
+reward pre-pay helper,
+and the leftover
+mainnet extras on the
+same tree (sDAI,
+StakeDAO lend, cvxCRV).
+Local clone
+`/tmp/harvest-strategy`.
+No mainnet interaction.
+
+Files:
+`contracts/strategies/inactive/InactiveVaultERC4626Strategy.sol`,
+`InactiveVaultERC4626StrategyMainnet_USDC.sol`,
+`morpho/MorphoVaultStrategyV2.sol`,
+`morpho/v2/MorphoVaultV2Strategy.sol`,
+`base/RewardPrePayMorpho.sol`,
+`sky/SavingsDaiStrategy.sol`,
+`stakeDao/StakeDAOLendStrategy.sol`,
+`convex/ConvexStrategyCvxCRV.sol`.
+
+Checked for: a stranger
+redeeming the parked
+4626 / Morpho / sDAI
+shares; withdraw that
+pays the vault more
+than idle plus supplied
+minus reserved fee;
+permissionless
+`morphoClaim` that
+forwards arbitrary
+calls; salvage of
+receipt tokens by a
+third party.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Inactive
+  `IERC4626.asset()`
+  must match
+  `underlying`. The
+  whole 4626 increase
+  is fee (depositors
+  keep a flat share
+  price). A dip nets
+  against unpaid fee
+  so a later recovery
+  cannot mint fee from
+  principal. User
+  `_redeem` uses 4626
+  `withdraw` and
+  reverts if short.
+  Fee redeem uses
+  `maxWithdraw`.
+  `invested` is idle +
+  stored − pending
+  fee. Withdraw /
+  hard-work are
+  `restricted`.
+  Salvage refuses
+  underlying / fToken.
+- Morpho V2 /
+  `MorphoVaultV2Strategy`
+  require Morpho
+  `asset()` =
+  `underlying`.
+  `currentSupplied` is
+  `convertToAssets` of
+  this strategy’s
+  shares. Fee is a
+  slice of
+  `current − stored`.
+  `withdrawToVault`
+  transfers the
+  requested amount
+  (reverts if short).
+  Reward swaps use
+  `minOut = 1` (known
+  Harvest keeper
+  sandwich). Streaming
+  only delays sale;
+  it does not move
+  principal.
+- `morphoClaim` is an
+  arbitrary call to
+  `distr` that then
+  forwards the MORPHO
+  delta to
+  `morphoPrePay`.
+  Callers are
+  `morphoPrePay` or
+  governance.
+  `RewardPrePayMorhpo`
+  wraps that behind
+  `onlyHardWorkerOrGovernance`
+  and only adjusts
+  its own earned /
+  claimed ledger. Not
+  a third-party drain.
+- sDAI requires
+  `IERC4626.asset()` =
+  `underlying`. Same
+  stored / pending-fee
+  4626 pattern.
+  Withdraw is
+  `restricted`.
+- StakeDAO lend
+  requires the lending
+  vault `asset()` =
+  `underlying` and the
+  StakeDAO vault
+  `asset()` = lending
+  vault LP. Unwrap
+  previews the LP
+  amount, withdraws
+  that + 1 from the
+  stake vault, then
+  4626-withdraws
+  underlying.
+  Restricted; `minOut
+  = 1` on reward
+  swaps.
+- cvxCRV requires the
+  Convex reward pool
+  `stakingToken` =
+  `underlying`.
+  Partial unwrap +
+  transfer of the
+  requested amount
+  reverts if short.
+  CRV is either
+  Curve-swapped to
+  cvxCRV with
+  `min = crvIn` or
+  deposited via
+  `crvDeposit`.
+
+Not submitted. Remaining
+Harvest is the polygon
+(`f24a06a`) and
+arbitrum trees.
+
 ## 2026-09-03: Marinade crank / withdraw-stake leftover (`b8fe3f8`)
 
 Immunefi program
@@ -18114,10 +18269,12 @@ and Penpie / Notional /
 StakeDAO / Yel leftover
 and ZeroLend /
 CompoundV3 / Idle
+leftover and inactive /
+MorphoVault V2 / sDAI /
+StakeDAO lend / cvxCRV
 leftover are logged
 (remaining Harvest is
-inactive + MorphoVault
-V2 + polygon /
+polygon `f24a06a` /
 arbitrum);
 ICHI oneToken leftover
 (`4873873`) is logged;

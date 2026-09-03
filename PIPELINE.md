@@ -33,9 +33,11 @@ leftover is logged (yvUSD / Woofy still Sourcify 404).
 Benqi Dual Oracle leftover is logged. Harvest vault /
 controller leftover (`0364901`) and 4626 / Dolomite
 lend leftover and Convex / Aura / Aave fold leftover
-are logged (remaining Harvest is Penpie / Notional /
-StakeDAO / Yel / ZeroLend / CompoundV3 / Idle /
-inactive + MorphoVault V2 + polygon / arbitrum). Hermetica hBTC
+are logged; Penpie / Notional / StakeDAO / Yel,
+ZeroLend / CompoundV3 / Idle, and inactive /
+MorphoVault V2 / sDAI / StakeDAO lend / cvxCRV
+leftovers are logged (remaining Harvest is polygon
+`f24a06a` / arbitrum). Hermetica hBTC
 vault leftover is logged (listed Clarity exhausted).
 CoW GPv2 leftover (`6ebbd81`) is logged (listed CoW
 GitHub leftover exhausted). Stader ETHx leftover
