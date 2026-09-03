@@ -4,13 +4,14 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~13:10 UTC. Dates verified against each
+Status as of 3 September 2026, ~13:20 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:24 UTC;
-246 programs; no Sep 2026 launches; Aave leftover remaining CCIP GHO leftover is logged;
+246 programs; no Sep 2026 launches; Aave leftover remaining protocol-v2 LendingPool leftover is logged;
+Aave leftover remaining CCIP GHO leftover is logged;
 Aave leftover remaining L2Pool leftover is logged;
 Aave leftover remaining VotingStrategy leftover is logged;
 Filecoin leftover remaining lotus events leftover is logged;
@@ -1517,6 +1518,11 @@ CCIP GHO leftover
 (`d5c6ced`; KYC) is logged
 (remaining listed is
 protocol-v2).
+Aave leftover remaining
+protocol-v2 LendingPool leftover
+(`ce53c4a`; KYC) is logged
+(remaining listed is
+v2 configurator / oracle / tokens).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2458,6 +2464,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Aave leftover remaining
   CCIP GHO leftover
   (`d5c6ced`; KYC),
+  Aave leftover remaining
+  protocol-v2 LendingPool leftover
+  (`ce53c4a`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai

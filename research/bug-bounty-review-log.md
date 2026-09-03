@@ -43675,6 +43675,120 @@ Remaining listed:
 CCIP GHO pools /
 protocol-v2.
 
+## 2026-09-03: Aave leftover remaining protocol-v2 LendingPool leftover (`ce53c4a`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after CCIP GHO
+leftover.
+Official
+`aave/protocol-v2`
+`ce53c4a`.
+Extract
+`/tmp/aave-v2-lp.sol`.
+Do not rematch
+v3 Pool leftover.
+Do not rematch
+StableDebtToken leftover.
+No mainnet
+writes.
+
+Files:
+`contracts/protocol/lendingpool/LendingPool.sol`.
+
+Checked for:
+a
+`withdraw`
+that
+burns
+another
+user's
+aTokens
+without
+allowance;
+a
+`flashLoan`
+that
+skips
+repay;
+`finalizeTransfer`
+from
+a
+non-aToken.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `deposit`
+  `safeTransferFrom`s
+  `msg.sender`
+  and
+  mints
+  aTokens
+  to
+  `onBehalfOf`.
+- `withdraw`
+  burns
+  `msg.sender`'s
+  aTokens
+  and
+  sends
+  underlying
+  to
+  `to`.
+- `flashLoan`
+  requires
+  `executeOperation`
+  success
+  then
+  pulls
+  amount
+  +
+  premium
+  (or
+  opens
+  debt
+  for
+  `onBehalfOf`
+  in
+  a
+  borrow
+  mode).
+- `finalizeTransfer`
+  requires
+  `msg.sender`
+  equal
+  the
+  reserve
+  aToken.
+  Config
+  /
+  pause
+  are
+  `onlyLendingPoolConfigurator`.
+
+Do not file
+a
+standard
+v2
+pool
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+v2 configurator /
+oracle /
+tokens.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43838,9 +43952,11 @@ Aave leftover remaining L2Pool leftover (`cff15de`)
 is logged.
 Aave leftover remaining CCIP GHO leftover (`d5c6ced`)
 is logged.
+Aave leftover remaining protocol-v2 LendingPool leftover (`ce53c4a`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: protocol-v2.
+Remaining listed Aave: v2 configurator / oracle / tokens.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43891,6 +44007,7 @@ Do not rematch Aave governance voting leftover.
 Do not rematch Aave VotingStrategy leftover.
 Do not rematch Aave L2Pool leftover.
 Do not rematch Aave CCIP GHO leftover.
+Do not rematch Aave protocol-v2 LendingPool leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -46536,6 +46653,9 @@ CCIP GHO pools / protocol-v2);
 Aave leftover remaining CCIP GHO leftover
 (`d5c6ced`) is logged (remaining listed is
 protocol-v2);
+Aave leftover remaining protocol-v2 LendingPool leftover
+(`ce53c4a`) is logged (remaining listed is
+v2 configurator / oracle / tokens);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
