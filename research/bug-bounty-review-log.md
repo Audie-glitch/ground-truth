@@ -4848,6 +4848,58 @@ BalancerV3, Curve, Dodo, EulerSwap,
 PancakeInfinity, …) and Relay /
 NucleusTeller. Not submitted.
 
+## 2026-09-03: 0x Settler UniV4 + Relay + SETTLER_SWAP (`1df9087`)
+
+Same Immunefi program `0x` ($1,000,000, `kyc: true`).
+Same clone `/tmp/reviews/0x-settler` at `1df9087`.
+No mainnet interaction. Stargate / LayerZero /
+CCIP / Mayan / DeBridge already logged in
+the leftover above.
+
+Files: `src/core/{UniswapV4,Relay}.sol`,
+`src/bridge/BridgeSettlerBase.sol`
+(`SETTLER_SWAP`, Relay),
+`src/chains/Mainnet/{Common,TakerSubmitted,
+MetaTxn}.sol` (UniV4 / UniV4 VIP).
+
+Checked for: a UniV4 hook that spends a
+payer the taker did not authorize; Relay
+that hits Permit2 or AllowanceHolder;
+SETTLER_SWAP to a counterfeit Settler.
+
+Result: no user-exploitable finding.
+
+- UniV4 unlocks via `_setOperatorAndCall`.
+  Payer `address(this)` transfers from
+  Settler; payer `0` uses Permit2 /
+  AllowanceHolder packed into the VIP.
+  Fills (pool key, hooks, hook data, ppm)
+  are in the submitted / signed action.
+  Global buy token is `take`n to
+  `recipient` against `minBuyAmount`;
+  leftover credit on other notes is swept
+  to Settler. Incomplete fill refunds sell
+  credit. Zero sell reverts.
+- Relay transfers this execution’s full
+  ERC20 / ETH balance to the action’s
+  `to`. Native path is a raw call with
+  `requestId` graffiti; ERC20 path is
+  `transfer`. Neither selector clashes
+  with Permit2 / AllowanceHolder.
+- `SETTLER_SWAP` requires the target to
+  be the current or previous Deployer
+  NFT owner of the taker-submitted
+  tokenId. Comment notes MEV can force
+  the inner swap to its slippage limit;
+  that is in-execution leftover, not
+  another user’s custody.
+
+Remaining 0x: other DEX mixins
+(Maverick, BalancerV3, Bebop, EulerSwap,
+Dodo, Curve, PancakeInfinity, Renegade,
+Ekubo, Hanji, NucleusTeller). Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -4902,11 +4954,13 @@ logged. DeFi Saver V3 leftover folders are
 exhausted. 0x Settler execute / Permit2 /
 RFQ / UniV3 / AllowanceHolder / BridgeSettler
 plus UniV2 / Velodrome / Across /
-POSITIVE_SLIPPAGE (`1df9087`) are logged;
-remaining 0x is other DEX mixins (UniV4,
-BalancerV3, Curve, Dodo, EulerSwap,
-PancakeInfinity, …) and Relay /
-NucleusTeller. Extra Finance LYF LendingPool +
+POSITIVE_SLIPPAGE, Stargate / LayerZero /
+CCIP / Mayan / DeBridge, and UniV4 /
+Relay / SETTLER_SWAP (`1df9087`) are
+logged; remaining 0x is other DEX mixins
+(Maverick, BalancerV3, Bebop, EulerSwap,
+Dodo, Curve, PancakeInfinity, Renegade,
+Ekubo, Hanji, NucleusTeller). Extra Finance LYF LendingPool +
 VeloPositionManager + RewardDistributor
 (Sourcify, 2024-08 verified) are logged;
 remaining Extra Finance is vault logic
