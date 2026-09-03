@@ -44263,6 +44263,400 @@ v3 VariableDebtToken /
 GhoOracle
 404.
 
+## 2026-09-03: Aave leftover remaining v3 VariableDebtToken leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after
+WrappedTokenGatewayV2
+leftover.
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-v3/VariableDebtToken.sol`.
+Do not rematch
+v2 debt tokens leftover
+or
+v3 StableDebtToken leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/protocol/tokenization/VariableDebtToken.sol`.
+
+Checked for:
+stranger
+`mint`
+of
+debt
+onto
+`onBehalfOf`
+without
+borrow
+allowance;
+ERC20
+`transfer`
+of
+debt;
+`burn`
+without
+the
+Pool.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `mint`
+  /
+  `burn`
+  are
+  `onlyPool`.
+  If
+  `user != onBehalfOf`,
+  `_decreaseBorrowAllowance`
+  spends
+  the
+  actual
+  debt
+  increase
+  (capped
+  at
+  current
+  allowance).
+- `transfer`
+  /
+  `transferFrom`
+  /
+  `approve`
+  revert
+  `OperationNotSupported`.
+  `balanceOf`
+  /
+  `totalSupply`
+  are
+  view
+  scaled
+  by
+  the
+  variable
+  debt
+  index.
+
+Do not file
+a
+credit-delegation-gated
+v3
+debt
+mint
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+FixedPriceStrategy /
+v2 Collector impl /
+GhoOracle.
+
+## 2026-09-03: Aave leftover remaining FixedPriceStrategy leftover (`23859bb`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after v3
+VariableDebtToken
+leftover.
+Official
+`aave-dao/gho-origin`
+`23859bb`.
+Extract
+`/tmp/aave-v3/{FixedPriceStrategy,FixedPriceStrategy4626}.sol`.
+Do not rematch
+GSM
+/
+Gsm4626
+leftovers.
+No mainnet
+writes.
+
+Files:
+`src/contracts/facilitators/gsm/priceStrategy/FixedPriceStrategy.sol`,
+`FixedPriceStrategy4626.sol`.
+
+Checked for:
+a
+setter
+that
+rewrites
+`PRICE_RATIO`;
+`getAssetPriceInGho`
+that
+mints
+GHO.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Both
+  strategies
+  are
+  view
+  `mulDiv`
+  of
+  an
+  immutable
+  `PRICE_RATIO`
+  (constructor
+  requires
+  `> 0`).
+- 4626
+  converts
+  shares
+  to
+  assets
+  via
+  `previewMint`
+  /
+  `convertToAssets`
+  then
+  applies
+  the
+  same
+  ratio.
+  These
+  contracts
+  do
+  not
+  move
+  tokens.
+
+Do not file
+a
+fixed-ratio
+quote
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+v2 Collector impl /
+GhoOracle.
+
+## 2026-09-03: Aave leftover remaining v2 Collector impl leftover (Sourcify)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+etherscan
+`0x464C71f6c2F760DdA6093dCB91C24c39e5d6e18c`
+(EIP-1967
+proxy)
+impl
+`0x83b7Ce402A0E756E901C4A9d1cAfa27cA9572afC`.
+Sourcify
+exact
+`CollectorWithCustomImpl.sol`.
+Do not rematch
+Collector leftover
+(`308489d`).
+No mainnet
+writes.
+
+Files:
+Sourcify
+`src/CollectorWithCustomImpl.sol`,
+`lib/.../treasury/Collector.sol`.
+
+Checked for:
+stranger
+`transfer`
+/
+`approve`
+without
+`FUNDS_ADMIN`;
+`withdrawFromStream`
+above
+the
+recipient
+balance;
+`initialize`
+rewriting
+live
+admin
+slots
+after
+init.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `approve`
+  /
+  `transfer`
+  /
+  `createStream`
+  are
+  `onlyFundsAdmin`.
+  `withdrawFromStream`
+  /
+  `cancelStream`
+  are
+  `onlyAdminOrRecipient`
+  and
+  pay
+  only
+  `stream.recipient`
+  up
+  to
+  streamed
+  balance.
+- Custom
+  `initialize`
+  zeros
+  deprecated
+  slots
+  then
+  grants
+  `DEFAULT_ADMIN_ROLE`
+  to
+  `admin`.
+  It
+  is
+  `initializer`
+  (one
+  shot).
+
+Do not file
+a
+funds-admin
+treasury
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+GhoOracle.
+
+## 2026-09-03: Aave leftover remaining GhoOracle leftover (`23859bb`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed URL
+path
+`.../oracle/GhoOracle.so`
+404s
+on
+`gho-origin`
+`23859bb`
+and
+`main`.
+Official
+file
+is
+`src/contracts/misc/GhoOracle.sol`.
+Extract
+`/tmp/aave-v3/GhoOracle.sol`.
+Do not rematch
+v2
+/
+v3
+AaveOracle
+leftovers.
+No mainnet
+writes.
+
+Files:
+`src/contracts/misc/GhoOracle.sol`.
+
+Checked for:
+a
+setter
+that
+moves
+GHO
+off
+1
+USD;
+`latestAnswer`
+returning
+0.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `GHO_PRICE`
+  is
+  `1e8`
+  constant.
+  `latestAnswer`
+  /
+  `decimals`
+  are
+  `pure`.
+  There
+  is
+  no
+  setter
+  and
+  no
+  token
+  movement.
+
+Do not file
+a
+hardcoded
+1
+USD
+feed
+as
+stranger
+theft.
+Do not loop
+the
+listed
+`.so`
+404.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+v3 logic libraries
+(BorrowLogic /
+SupplyLogic /
+LiquidationLogic /
+FlashLoanLogic
+and
+siblings)
+/
+primacy.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -44488,9 +44882,17 @@ Jito leftover remaining jito-solana bundle_stage leftover (`d0e3a47`)
 is logged.
 Filecoin leftover remaining lotus types leftover (`7740217`)
 is logged.
+Aave leftover remaining v3 VariableDebtToken leftover (`cff15de`)
+is logged.
+Aave leftover remaining FixedPriceStrategy leftover (`23859bb`)
+is logged.
+Aave leftover remaining v2 Collector impl leftover (Sourcify)
+is logged.
+Aave leftover remaining GhoOracle leftover (`23859bb`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner (lib).
-Remaining listed Aave: v2 Collector impl / FixedPriceStrategy / v3 VariableDebtToken / GhoOracle 404.
+Remaining listed Aave: v3 logic libraries / primacy.
 Remaining listed Jito: `jito-solana` other crates (if still unused).
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -44526,6 +44928,8 @@ Do not rematch Filecoin lotus net leftover.
 Do not rematch Filecoin lotus messagesigner leftover.
 Do not rematch Filecoin lotus exchange leftover.
 Do not rematch Filecoin lotus index leftover.
+Do not rematch Filecoin lotus actors leftover.
+Do not rematch Filecoin lotus types leftover.
 Do not rematch Jito mev-programs tip leftover.
 Do not rematch Aave protocol-v2 math libs leftover.
 Do not rematch Aave protocol-v2 upgradeability leftover (`ce53c4a`).
@@ -44534,6 +44938,13 @@ Do not rematch Aave EmissionManager leftover.
 Do not rematch Aave GhoReserve leftover.
 Do not rematch Aave Lending Rate Oracle leftover.
 Do not rematch Aave WrappedTokenGatewayV2 leftover.
+Do not rematch Aave v3 VariableDebtToken leftover.
+Do not rematch Aave FixedPriceStrategy leftover.
+Do not rematch Aave v2 Collector impl leftover.
+Do not rematch Aave GhoOracle leftover.
+Do not rematch Jito jito-solana tip_manager leftover.
+Do not rematch Jito jito-solana bundle_stage leftover.
+Do not rematch Jito priority-fee-distribution leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Aave protocol-v2 Configurator leftover.
 Do not rematch Aave protocol-v2 AToken leftover.
@@ -47223,6 +47634,14 @@ Aave leftover remaining Lending Rate Oracle leftover
 (Sourcify) is logged;
 Aave leftover remaining WrappedTokenGatewayV2 leftover
 (Sourcify) is logged;
+Aave leftover remaining v3 VariableDebtToken leftover
+(`cff15de`) is logged;
+Aave leftover remaining FixedPriceStrategy leftover
+(`23859bb`) is logged;
+Aave leftover remaining v2 Collector impl leftover
+(Sourcify) is logged;
+Aave leftover remaining GhoOracle leftover
+(`23859bb`) is logged;
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);

@@ -10,7 +10,11 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:50 UTC;
-246 programs; no Sep 2026 launches; Filecoin leftover remaining lotus types leftover is logged;
+246 programs; no Sep 2026 launches; Aave leftover remaining GhoOracle leftover is logged;
+Aave leftover remaining v2 Collector impl leftover is logged;
+Aave leftover remaining FixedPriceStrategy leftover is logged;
+Aave leftover remaining v3 VariableDebtToken leftover is logged;
+Filecoin leftover remaining lotus types leftover is logged;
 Jito leftover remaining jito-solana bundle_stage leftover is logged;
 Filecoin leftover remaining lotus actors leftover is logged;
 Jito leftover remaining jito-solana tip_manager leftover is logged;
@@ -1569,6 +1573,20 @@ WrappedTokenGatewayV2 leftover
 (Sourcify; KYC) is logged
 (remaining listed is
 v2 Collector impl / FixedPrice / v3 VariableDebt).
+Aave leftover remaining
+v3 VariableDebtToken leftover
+(`cff15de`; KYC) is logged.
+Aave leftover remaining
+FixedPriceStrategy leftover
+(`23859bb`; KYC) is logged.
+Aave leftover remaining
+v2 Collector impl leftover
+(Sourcify; KYC) is logged.
+Aave leftover remaining
+GhoOracle leftover
+(`23859bb`; KYC) is logged
+(remaining listed is
+v3 logic libraries / primacy).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2528,6 +2546,18 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Aave leftover remaining
   WrappedTokenGatewayV2 leftover
   (Sourcify; KYC),
+  Aave leftover remaining
+  v3 VariableDebtToken leftover
+  (`cff15de`; KYC),
+  Aave leftover remaining
+  FixedPriceStrategy leftover
+  (`23859bb`; KYC),
+  Aave leftover remaining
+  v2 Collector impl leftover
+  (Sourcify; KYC),
+  Aave leftover remaining
+  GhoOracle leftover
+  (`23859bb`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai
