@@ -18310,6 +18310,100 @@ timelock (Sourcify
 (proxy `exact_match`),
 staking proxies.
 
+## 2026-09-03: Benqi token-sale distributor leftover (`e0cfd24`)
+
+Immunefi program
+`benqi`
+($500,000, `kyc: false`).
+QI token leftover is
+already logged. This
+slice is
+QiTokenSaleDistributorProxy
+`0x77533A0b34cd9Aa135EBE795dc40666Ca295C16D`.
+Avalanche Sourcify
+`exact_match` (solc
+0.6.12, verified
+2024-08-08). Official
+tree
+`token_sale/` at
+`e0cfd24`. No mainnet
+interaction.
+
+Files:
+`token_sale/QiTokenSaleDistributor.sol`,
+`QiTokenSaleDistributorProxy.sol`,
+`QiTokenSaleDistributorStorage.sol`.
+
+Checked for: a
+stranger claiming
+another recipient’s
+vested QI; claim that
+pays more than vested
+minus already claimed;
+proxy implementation
+swap without admin.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `claim` is
+  `nonReentrant` and
+  only walks
+  `msg.sender` rounds.
+  It adds the newly
+  claimable amount to
+  `claimedTokens` then
+  `transfer`s QI to
+  `msg.sender`.
+- Vesting uses
+  constant
+  `vestingScheduleEpoch`
+  and monthly
+  `releasePeriodLength`.
+  Claimable is
+  vested-to-date minus
+  claimed. Admin
+  `setPurchasedTokensByUser`
+  pre-marks the
+  initial-release
+  slice as claimed
+  (bookkeeping, not a
+  stranger path).
+- `setPurchasedTokensByUser`
+  /
+  `resetPurchasedTokensByUser`
+  are
+  `adminOrDataAdminOnly`.
+  `withdrawQi` and
+  `setQiContractAddress`
+  are `adminOnly`.
+- Proxy
+  `setPendingImplementation`
+  is admin;
+  `acceptPendingImplementation`
+  is the pending
+  implementation.
+
+Do not file admin
+`withdrawQi` or
+data-admin allocation
+as a user finding.
+
+Not submitted.
+Remaining Benqi
+listed: isolated
+unitroller (Sourcify
+404), gauges / sAVAX /
+veQI (proxy-only),
+Ignite / MultiReward /
+JumpRateModel / Pause
+Guardian / sAVAX
+timelock / JLP staking
+(Sourcify 404), PGL
+staking proxy
+(`match`).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -18842,7 +18936,10 @@ qiUSDC / Maximillion,
 Sourcify `match` +
 `e0cfd24`) is logged.
 Benqi QI token leftover
-is logged
+is logged. Benqi token-
+sale leftover
+(`exact_match` +
+`e0cfd24`) is logged
 (remaining Benqi is
 isolated unitroller
 Sourcify 404 / gauges /
@@ -18850,10 +18947,9 @@ sAVAX / veQI proxy-only
 / Ignite / MultiReward /
 JumpRateModel / Pause
 Guardian / sAVAX
-timelock Sourcify 404 /
-token sale
-`exact_match` / staking
-proxies);
+timelock / JLP staking
+Sourcify 404 / PGL
+staking proxy `match`);
 Harvest vault / controller
 leftover (`0364901`) and
 4626 / Dolomite lend
