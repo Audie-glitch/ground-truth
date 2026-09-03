@@ -64490,3 +64490,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a commitment CID codec as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner.
+
+## 2026-09-03: ZKsync OS leftover remaining airbender CS leftover (`6ec4ea7`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Official remaining listed after airbender verifier leftover. Official clone `/tmp/zksync-airbender` `6ec4ea7` (sparse `cs`). Opened `cs/src/cs/circuit.rs`, `cs/src/constraint.rs`, and `machine/machine_configurations/full_isa_no_exceptions/basic_state_transition.rs`. Do not rematch verifier, zkos-wrapper, bootloader, evm_interpreter, storage_models, proof_running_system, or zk_ee leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: a constraint API that drops degree so an invalid opcode becomes satisfiable; shuffle-RAM write/read collapsing to a no-op; `invalid_opcode` not constrained.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Constraint` / `Term` keep a normalized polynomial of degree ≤ 2 (`TERM_INNER_CAPACITY` 4 for intermediate products). `normalize` sorts monomials so like terms merge. `Circuit::add_constraint*` is the only path that records a constraint.
+- `base_isa_state_transition` (trusted-code / no-exceptions configs) decodes the ROM opcode, then `add_constraint_allow_explicit_linear_prevent_optimizations(invalid_opcode)` so an invalid opcode is unsatisfiable. `ASSUME_TRUSTED_CODE == false` is `unimplemented!()`. Shuffle-RAM queries carry distinct read/write variables and a local timestamp.
+- This crate describes the RISC-V AIR. It does not move ETH.
+
+Do not file a degree-capped constraint algebra or an unsatisfiable invalid-opcode flag as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: airbender prover / verifier_generator / field, and `zksync_os` program (thin `run_proving` wrapper).
