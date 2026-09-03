@@ -19,7 +19,8 @@ leftover is logged; GMX leftover V2
 GlvRouter leftover is logged; GMX leftover
 V2 Shift leftover is logged; GMX leftover V2
 Oracle + V1 Order Book leftover is logged;
-Celer leftover is logged; Kiln
+Celer leftover is logged; Pyth EVM leftover is
+logged; Axelar leftover is logged; Kiln
 On-Chain v1 leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
