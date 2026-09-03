@@ -76,6 +76,9 @@ UnstakeRequestsManager / Oracle /
 ReturnsAggregator) is logged (remaining
 mETH is L2 token + Pauser impl Sourcify
 404 and unlisted LiquidityBuffer).
+eBTC Boost leftover (`c9b95ac`, listed
+`release-0.7` files) is logged (listed
+eBTC Boost GitHub leftover exhausted).
 Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
 leftover is logged (yvUSD / Woofy still Sourcify 404).

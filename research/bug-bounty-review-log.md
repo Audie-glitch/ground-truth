@@ -21040,6 +21040,129 @@ are
 `solana-crosschain-protocol`
 and `solana-fusion`.
 
+## 2026-09-03: eBTC Boost leftover (`c9b95ac`)
+
+Immunefi program
+`ebtc-boost`
+($200,000, `kyc: false`).
+Listed GitHub files on
+`ebtc-protocol/ebtc`
+`release-0.7`. Local
+clone `/tmp/ebtc` at
+`c9b95ac` (“Merge pull
+request #796”). No
+mainnet interaction.
+
+Files:
+`ActivePool.sol`,
+`BorrowerOperations.sol`,
+`CdpManager.sol`,
+`LiquidationLibrary.sol`,
+`CollSurplusPool.sol`,
+`EBTCToken.sol`,
+`Governor.sol`,
+`PriceFeed.sol`,
+`SortedCdps.sol`,
+`EbtcFeed.sol`,
+`ChainlinkAdapter.sol`,
+`FixedAdapter.sol`.
+
+Checked for: a
+stranger `openCdpFor`
+that mints eBTC
+without the victim’s
+approval; `withdrawColl`
+from someone else’s
+CDP; `liquidate` of a
+healthy CDP in normal
+mode; ActivePool
+flashloan that skips
+repay; surplus claim
+that sends another
+account’s stETH to
+the caller.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- BorrowerOperations
+  `openCdp` / adjust /
+  `closeCdp` require
+  the borrower or a
+  position manager
+  they approved.
+  Collateral
+  `transferFrom`s
+  `msg.sender`. Debt
+  mints to
+  `msg.sender`. Close
+  burns the caller’s
+  eBTC then sends
+  coll + liquidator
+  reward shares to
+  `msg.sender`.
+- ActivePool
+  coll / debt moves
+  are Borrower
+  Operations or
+  CdpManager.
+  Flashloan is
+  stETH only, requires
+  callback success,
+  `transferFrom` of
+  principal + fee,
+  and post-balance /
+  share / rate
+  invariants.
+  `sweepToken` is
+  `requiresAuth` and
+  cannot sweep
+  collateral.
+- CollSurplusPool
+  `claimSurplusCollShares`
+  is Borrower
+  Operations only and
+  pays `_account`.
+  `increaseTotalSurplusCollShares`
+  is ActivePool.
+- EBTCToken `mint` /
+  `burn` are Borrower
+  Operations,
+  CdpManager, or
+  authority.
+- Liquidation needs
+  ICR < MCR, or
+  recovery mode after
+  the grace period.
+  Redemption burns
+  the caller’s eBTC
+  and walks the
+  lowest ICR ≥ MCR.
+- SortedCdps `insert`
+  is Borrower
+  Operations or
+  CdpManager.
+- EbtcFeed falls
+  back to
+  `lastGoodPrice`
+  when both oracles
+  return 0. PriceFeed
+  can return
+  `INVALID_PRICE`.
+  ChainlinkAdapter
+  requires
+  `answer > 0`.
+  Do not file last-
+  good-price or
+  governor
+  `requiresAuth`
+  as a stranger drain.
+
+Not submitted.
+Listed eBTC Boost
+GitHub leftover is
+exhausted.
 
 ## Next candidates
 
@@ -21640,6 +21763,12 @@ is logged (remaining mETH is
 L2 token + Pauser impl
 Sourcify 404 and unlisted
 LiquidityBuffer);
+eBTC Boost leftover
+(`c9b95ac`, listed
+`release-0.7` files)
+is logged (listed eBTC
+Boost GitHub leftover
+exhausted);
 Beets stS
 (`877087b`) + token
 leftover is logged
