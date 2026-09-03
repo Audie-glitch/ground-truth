@@ -63699,3 +63699,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file library-only recover/verify, address-parameter storage traits, or host-registered oracles as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `zk_ee` implementations, `zksync_os` program, `proof_running_system`, airbender CS / prover / verifier, and `zkos-wrapper` circuits.
+
+## 2026-09-03: ZKsync OS leftover proof_running_system leftover (`9efc8bf`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Official remaining listed after storage_models / crypto / oracles leftover. Official clone `/tmp/zksync-os` at listed commit `9efc8bf70ae77d1d4df67eff5c60c8a8cfc21268`. Sparse `proof_running_system`. Do not rematch evm_interpreter, bootloader, or storage/crypto leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `run_proving` minting or transferring without the bootloader debit path; CSR oracle rewriting query results as a stranger; DummyCSRImpl supplying attacker balances.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `run_proving` only inits the heap allocator and `CsrBasedIOOracle`, then `ProvingBootloader::run_prepared`. L2 EOA recover / fee debit / L1 treasury mint stay in the already leftover-logged bootloader. Failures abort (`Tried to prove a failing batch`).
+- `CsrBasedIOOracle::raw_query` writes the query id + payload to the host CSR and reads a length-prefixed reply. `DummyCSRImpl` returns 0. After the batch it disconnects (`DISCONNECT_ORACLE_QUERY_ID`) before arbitrary CSR access.
+- Result keeper / tracer / validator are nops. This crate does not hold user funds.
+
+Do not file the proving harness wrapper or CSR proxy as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `zk_ee` implementations, airbender CS / prover / verifier, and `zkos-wrapper` circuits.
