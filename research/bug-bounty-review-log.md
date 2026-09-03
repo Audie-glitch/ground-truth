@@ -42410,6 +42410,138 @@ Remaining listed:
 lotus non-miner.
 
 
+## 2026-09-03: Filecoin leftover remaining lotus mpool leftover (`7740217`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+lotus
+non-miner
+after lotus
+paych leftover.
+Official
+`filecoin-project/lotus`
+`7740217`.
+Extract
+`/tmp/lotus-paych`
+(`node/impl/full/mpool.go`,
+`chain/messagepool/messagepool.go`).
+Do not rematch
+lotus miner leftover.
+Do not rematch
+lotus paych leftover.
+No mainnet
+writes.
+
+Files:
+`node/impl/full/mpool.go`,
+`chain/messagepool/messagepool.go`.
+
+Checked for:
+an
+`MpoolPush`
+that
+accepts
+an
+unsigned
+or
+wrong-signer
+message;
+an
+`MpoolPushMessage`
+that
+signs
+as
+a
+key
+this
+node
+does
+not
+hold.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `checkMessage`
+  size-
+  caps,
+  checks
+  inclusion,
+  rejects
+  `To == Undef`
+  and
+  value
+  over
+  total
+  FIL,
+  then
+  `VerifyMsgSig`
+  via
+  `consensus.AuthenticateMessage`
+  against
+  `From`.
+- `addTs`
+  requires
+  nonce
+  `>=`
+  state
+  nonce,
+  a
+  valid
+  sender
+  actor,
+  and
+  enough
+  balance
+  including
+  pending.
+- `MpoolPushMessage`
+  forces
+  nonce
+  0,
+  estimates
+  gas,
+  and
+  `SignMessage`s
+  the
+  local
+  wallet
+  key
+  for
+  `From`.
+  This
+  pool
+  queues
+  signed
+  messages.
+  It
+  does
+  not
+  debit
+  FIL
+  by
+  itself.
+
+Do not file
+a signature-
+checked
+mpool as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining lotus
+non-miner.
+
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -42508,6 +42640,8 @@ is logged.
 Filecoin leftover remaining lotus paych leftover (`7740217`)
 is logged.
 Wormhole leftover remaining Relayer leftover is logged.
+Filecoin leftover remaining lotus mpool leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
 
@@ -42530,6 +42664,7 @@ Do not rematch Filecoin merkletree leftover.
 Do not rematch Filecoin neptune leftover.
 Do not rematch Filecoin neptune-triton leftover.
 Do not rematch Filecoin lotus paych leftover.
+Do not rematch Filecoin lotus mpool leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
@@ -45137,6 +45272,9 @@ lotus non-miner / neptune-triton);
 Filecoin leftover remaining neptune-triton leftover
 (`9f2c2f4`) is logged (remaining listed is
 lotus non-miner);
+Filecoin leftover remaining lotus mpool leftover
+(`7740217`) is logged (remaining listed is
+remaining lotus non-miner);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);

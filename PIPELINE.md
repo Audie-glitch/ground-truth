@@ -4,13 +4,14 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~12:50 UTC. Dates verified against each
+Status as of 3 September 2026, ~13:05 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~11:00 UTC;
-246 programs; no Sep 2026 launches; Filecoin leftover remaining merkletree leftover is logged;
+246 programs; no Sep 2026 launches; Filecoin leftover remaining lotus mpool leftover is logged;
+Filecoin leftover remaining merkletree leftover is logged;
 Filecoin leftover remaining lotus paych leftover is logged;
 Filecoin leftover remaining neptune leftover is logged;
 Filecoin leftover remaining neptune-triton leftover is logged;
@@ -91,6 +92,7 @@ Filecoin leftover remaining cbor-gen leftover is logged;
 Filecoin leftover remaining merkletree leftover is logged;
 Filecoin leftover remaining neptune leftover is logged;
 Filecoin leftover remaining neptune-triton leftover is logged;
+Filecoin leftover remaining lotus mpool leftover is logged;
 Filecoin leftover builtin-actors market + paych leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 ZKsync OS leftover evm_interpreter leftover is logged;
@@ -1414,6 +1416,12 @@ neptune-triton leftover
 (`9f2c2f4`; KYC) is logged
 (remaining listed is
 lotus non-miner).
+Filecoin leftover remaining
+lotus mpool leftover
+(`7740217`; KYC) is logged
+(remaining listed is
+remaining lotus
+non-miner).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2316,6 +2324,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Filecoin leftover remaining
   neptune-triton leftover
   (`9f2c2f4`; KYC),
+  Filecoin leftover remaining
+  lotus mpool leftover
+  (`7740217`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai
