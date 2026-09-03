@@ -1081,11 +1081,68 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: OpenZeppelin fee + sandwich/JIT hooks (`2ae32be`)
+
+Same Immunefi program (`openzeppelin`). Local clone
+`/tmp/oz-uniswap-hooks`. No mainnet interaction.
+
+Files: `src/fee/{BaseDynamicAfterFee,BaseHookFee}.sol`,
+`src/general/{AntiSandwichHook,LiquidityPenaltyHook}.sol`.
+
+Checked for: taking more than the unspecified surplus; leftover
+transient target across swaps; sandwich hook applying a target
+on the unprotected direction; JIT penalty taking fees from the
+wrong position or donating to the attacker.
+
+Result: no new user-exploitable finding.
+
+- `BaseDynamicAfterFee` stores the target in transient storage
+  and clears it in `afterSwap`. Surplus vs target is taken as
+  6909 claims on the unspecified currency only. Exact-in fees
+  reduce output; exact-out fees increase input.
+- `BaseHookFee` charges a subclass percent of the unspecified
+  amount, capped at 100%, and skips a zero unspecified delta.
+- `AntiSandwichHook` applies the beginning-of-block target only
+  on `!zeroForOne` (documented). `zeroForOne` returns
+  `applyTarget=false`. Tick walks can OOG on large moves
+  (documented).
+- `LiquidityPenaltyHook` keys withheld fees by
+  `(poolId, positionKey)` including `sender`. Penalty is linear
+  in blocks since last add and is donated to in-range LPs.
+  Multi-account redirect is documented and rarely profitable.
+  `CurrencySettler` skips zero takes.
+
+Not submitted.
+
+## 2026-09-03: TruFin validator add/remove and rebalance (`ce5d88b`)
+
+Same Immunefi program (`trufin`). Local clone `/tmp/trufin-solana`.
+No mainnet interaction.
+
+Files: `programs/staker/src/instructions/{validators.rs,initialize.rs}`.
+
+Checked for: a random signer increasing/decreasing validator
+stake; adding a validator without paying the reserve; init
+front-run after deploy.
+
+Result: no user-exploitable finding.
+
+- `AddValidator` / `RemoveValidator` require `access.owner`.
+  Add transfers rent + min stake from the owner into the
+  reserve, then CPI `AddValidatorToPool` on the official
+  stake-pool program, signed by the `staker` PDA.
+- Increase/decrease require a `stake_manager` PDA seeded with
+  `signer`. CPI uses instruction indexes 19/20 on the official
+  program. The live program’s one-time init front-run is
+  documented as already closed.
+
+Not submitted.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do
 not execute. All other open listings are `HUMAN_ONLY`. the402.ai
 still paused. No KeeperHub implementation before the 6 Sep build
-window. Skip Sky (legacy Maker) and Money on Chain (strict OOS +
-existing AI dump). Remaining OZ hooks: fee hooks. Remaining
-TruFin: validator stake increase/decrease if unreviewed.
+window. Skip Sky (legacy Maker) and Money on Chain. Remaining OZ
+hooks: BaseCustomCurve / BaseAsyncSwap. Remaining TruFin: none
+in the public staker crate.
