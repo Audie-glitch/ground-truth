@@ -22289,6 +22289,330 @@ listed GitHub:
 `aragon-apps`, and
 0.8.25 vaults.
 
+## 2026-09-03: Lido 0.8.25 vault leftover (`2da0f48`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Submit /
+withdrawal and
+StakingRouter leftovers
+are already logged on
+the same pin. L2 /
+circuit-breaker /
+vesting / stonks are
+logged on other trees.
+This slice is the
+stVault money path in
+`lidofinance/core`
+`contracts/0.8.25/vaults`.
+Local sparse clone
+`/tmp/lido-core` at
+`2da0f48`. No mainnet
+interaction.
+
+Files:
+`StakingVault.sol`,
+`VaultHub.sol`,
+`VaultFactory.sol`,
+`OperatorGrid.sol`,
+`LazyOracle.sol`,
+`PinnedBeaconProxy.sol`,
+`dashboard/{Dashboard,Permissions,NodeOperatorFee}.sol`,
+`predeposit_guarantee/PredepositGuarantee.sol`,
+`ValidatorConsolidationRequests.sol`.
+
+Checked for: a
+stranger `mintShares`
+against another vault;
+`withdraw` of locked
+collateral after a
+stale or crafted
+report; factory
+connect of a tampered
+proxy; PDG
+compensation that
+pays the caller;
+permissionless
+`forceRebalance` /
+`settleLidoFees` that
+sends ETH off-treasury;
+unguaranteed deposit
+as a stranger.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `StakingVault`
+  `fund` / `withdraw`
+  / pause / ossify /
+  `collectERC20` /
+  `setDepositor` /
+  `triggerValidatorWithdrawals`
+  are `onlyOwner`.
+  Beacon deposits /
+  `stage` / `unstage`
+  are `onlyDepositor`
+  (PDG on factory
+  vaults). WC is
+  `0x02 | address(this)`.
+  `receive()` is a
+  permissionless
+  donation. `ejectValidators`
+  is node-operator
+  EIP-7002 full exit;
+  ETH returns to the
+  vault WC; only the
+  fee surplus is
+  refunded.
+  `collectERC20`
+  blocks the EIP-7528
+  ETH sentinel.
+  `depositFromStaged`
+  ignores the pause
+  when
+  `_additionalAmount
+  == 0` so a proved
+  31 ETH activation
+  can finish after
+  Hub pauses deposits
+  for obligations.
+- `VaultFactory`
+  deploys a
+  `PinnedBeaconProxy`,
+  marks
+  `deployedByThisFactory`,
+  sets Dashboard as
+  vault owner and PDG
+  as depositor, then
+  either connects
+  (needs
+  `CONNECT_DEPOSIT`)
+  or leaves the vault
+  disconnected.
+  Optional roles are
+  granted while the
+  factory still holds
+  admin / NOM; that
+  is the creator’s
+  own vault.
+- `VaultHub.connectVault`
+  is permissionless
+  but requires a
+  factory-deployed
+  vault, `msg.sender
+  == vault.owner()`,
+  Hub as pending
+  owner, not
+  ossified, PDG as
+  depositor, staged
+  ETH matching
+  `pendingActivations
+  * 31 ETH`, and
+  `availableBalance
+  >= 1 ETH`. Limits
+  come from
+  `OperatorGrid.vaultTierInfo`
+  (default tier
+  until a dual-
+  confirmed change).
+- `mintShares` is
+  connection owner +
+  fresh report +
+  share limit +
+  lockable value
+  (TV minus
+  unsettled fees) +
+  `OperatorGrid.onMintedShares`
+  (jail / tier /
+  group caps), then
+  `LIDO.mintExternalShares`.
+  `withdraw` caps at
+  unlocked ETH minus
+  redemption shares
+  minus unsettled
+  Lido fees.
+  `burnShares` /
+  `transferAndBurnShares`
+  decrease liability
+  and burn from Hub.
+  `fund` updates
+  `inOutDelta`.
+- `applyVaultReport`
+  is LazyOracle only.
+  `maxLiabilityShares`
+  is not lowered when
+  shares were minted
+  after the refslot,
+  which blocks the
+  mint → apply-old-
+  report → unlock →
+  withdraw loop.
+  Disconnect
+  completes on a
+  later report only
+  if liability and
+  slashing reserve
+  are zero; otherwise
+  it aborts.
+- `forceRebalance`
+  is permissionless
+  and only burns
+  obligation shares
+  by pulling vault
+  ETH to Hub and
+  `rebalanceExternalEtherToInternal`.
+  `settleLidoFees`
+  is permissionless
+  and pays treasury.
+  `socializeBadDebt`
+  / `internalizeBadDebt`
+  are
+  `BAD_DEBT_MASTER_ROLE`;
+  socialize is
+  same-operator and
+  capacity-capped.
+  `updateConnection`
+  is OperatorGrid
+  only.
+  `decreaseInternalizedBadDebt`
+  is Accounting only.
+- `LazyOracle.updateReportData`
+  is AccountingOracle
+  only.
+  `updateVaultData`
+  is permissionless
+  but Merkle-proved
+  against that root,
+  rejects a non-
+  newer timestamp,
+  caps fee growth,
+  forbids fee
+  decrease, and
+  quarantines TV
+  jumps above
+  `maxRewardRatioBP`.
+- `OperatorGrid`
+  group / tier /
+  jail / fee writes
+  are `REGISTRY_ROLE`.
+  `changeTier` /
+  `syncTier` /
+  `updateVaultShareLimit`
+  need owner + node-
+  operator
+  confirmations.
+  `onMintedShares` /
+  `onBurnedShares` /
+  `resetVaultTier`
+  are VaultHub only.
+- `PredepositGuarantee.predeposit`
+  is the NO
+  depositor: BLS-
+  verifies the 1 ETH
+  deposit, locks the
+  same amount of
+  guarantor
+  collateral, and
+  stages 31 ETH.
+  `proveWCAndActivate`
+  / `activateValidator`
+  / `proveInvalidValidatorWC`
+  are permissionless.
+  Invalid-WC proof
+  pays the vault
+  from locked
+  guarantee and
+  unstages 31 ETH;
+  it does not pay
+  the caller.
+  `topUpExistingValidators`
+  is depositor-only
+  and uses vault WC.
+- Dashboard
+  fund / withdraw /
+  mint / burn /
+  rebalance /
+  disconnect /
+  configuration are
+  role-gated
+  (`FUND` / `WITHDRAW`
+  / `MINT` / `BURN`
+  / `REBALANCE` /
+  `VOLUNTARY_DISCONNECT`
+  / `VAULT_CONFIGURATION`).
+  `unguaranteedDepositToBeaconChain`
+  needs
+  `ALLOW_DEPOSIT_AND_PROVE`
+  plus
+  `NODE_OPERATOR_UNGUARANTEED_DEPOSIT_ROLE`
+  and is documented
+  as frontrunnable
+  trusted-operator
+  flow. `disburseFee`
+  and
+  `recoverFeeLeftover`
+  are permissionless
+  pulls to
+  `feeRecipient`.
+  `ValidatorConsolidationRequests`
+  only encodes
+  EIP-7251 calls; it
+  does not hold
+  vault ETH.
+
+Do not file
+`depositFromStaged`
+pause bypass on a
+zero additional
+amount (intended
+activation);
+unguaranteed-deposit
+frontrun (documented
+trust + role);
+permissionless
+`forceRebalance` /
+`settleLidoFees` /
+`disburseFee` /
+`recoverFeeLeftover`
+(they pay Hub /
+treasury /
+`feeRecipient`);
+node-operator
+`ejectValidators`
+(ETH returns to the
+vault); LazyOracle
+quarantine as a
+stranger under-
+report (it caps
+mintable value);
+`CONNECT_DEPOSIT`
+lock; or
+`BAD_DEBT_MASTER` /
+`VAULT_MASTER` /
+`VALIDATOR_EXIT` /
+`REGISTRY_ROLE`
+privilege as a
+stranger drain.
+
+Not submitted.
+Remaining Lido listed
+GitHub:
+`aave-delivery-infrastructure`,
+`governance-crosschain-bridges`,
+`mev-boost-relay-allowed-list`,
+`community-staking-module`,
+`easy-track`,
+`dual-governance`,
+`aragon-apps`.
+Oracle / keys-api /
+validator-ejector /
+council-daemon /
+oz-merkle-tree /
+onchain-mon are
+ops or web.
+
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -22931,12 +23255,13 @@ vesting-escrow + stonks
 leftover is logged.
 Lido `lido-l2-with-steth`
 leftover (`4fec842`) is
-logged (remaining Lido
-is CSM /
-dual-governance /
+logged.
+Lido 0.8.25 vault leftover
+(`2da0f48`) is logged
+(remaining Lido is
+CSM / dual-governance /
 easy-track /
-governance bridges /
-oracle / 0.8.25 vaults);
+governance bridges);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
 rETH2 / Oracles /
