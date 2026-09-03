@@ -61304,3 +61304,19 @@ Not submitted. Payment requires user KYC. Remaining listed: `zk_ee`,
 `zksync_os` program, `storage_models`, `crypto`, `oracles`,
 `proof_running_system`, airbender CS / prover / verifier, and
 `zkos-wrapper` circuits.
+
+## 2026-09-03: Sei leftover sei-js leftover (`66deb15`)
+
+Immunefi program `sei` ($500,000, `kyc: true`). Follow-on leftover after `sei-chain` evm/bank/tokenfactory (`156664f`). Official clone `/tmp/sei-js` `66deb15`. Opened `packages/precompiles/src/precompiles/{bank,staking}.ts`, `packages/precompiles/src/ethers/bankPrecompile.ts`, `packages/sei-global-wallet/src/lib/wallet.ts`, `packages/mcp-server/src/core/wallet/providers/private-key.ts`, `packages/mcp-server/src/core/services/transfer.ts`. No mainnet writes. No exploit PoCs.
+
+Checked for: a Bank `send` helper that silently substitutes a victim `fromAddress`; a staking wrapper that delegates another account; MCP transfer that spends a key it does not hold; wallet glue that signs without the connected signer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Bank / staking packages export frozen v6.6.1 precompile ABIs and the documented addresses (`0x…1001`, `0x…1005`). `getBankPrecompileEthersV6Contract` is a factory over the caller-supplied `ContractRunner`. It does not rewrite `from` / `to`. On-chain `send` remains pointer-gated (already logged on `sei-chain`).
+- `sei-global-wallet` is a Dynamic-hosted client (`createGlobalWalletClient`). No local spend path.
+- MCP `PrivateKeyWalletProvider.signTransaction` throws `NOT_IMPLEMENTED`. `getWalletClient` builds a viem client from `PRIVATE_KEY` (operator env). `transfer.ts` `sendTransaction` / ERC20 / ERC721 / ERC1155 writes use `walletClient.account.address` as `from`. A stranger cannot redirect that key without the env secret.
+
+Do not file ABI constants, operator-held MCP keys, or pointer-gated Bank `send` as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `go-ethereum`, other `sei-chain` modules / precompiles (`oracle`, `epoch`, IBC / gov / wasm), `sei-cosmos` / `sei-wasmd` / tendermint, and Primacy of Impact.
