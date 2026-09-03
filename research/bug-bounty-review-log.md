@@ -41271,6 +41271,10 @@ other modules);
 Hedera leftover json-rpc-relay leftover (`2b51a98`)
 is logged (remaining listed is consensus-node /
 mirror-node / cryptography / SDKs / transaction-tool);
+ZKsync OS leftover evm_interpreter leftover (`9efc8bf`)
+is logged (remaining listed is zk_ee / zksync_os /
+storage_models / crypto / oracles /
+proof_running_system / airbender / zkos-wrapper);
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub
@@ -61262,3 +61266,41 @@ Not submitted. Payment requires user KYC. Remaining listed:
 `hiero-consensus-node`, `hiero-mirror-node`, `hiero-cryptography`,
 `hiero-sdk-go` / `hiero-sdk-js` / `hiero-sdk-java`, and the hashed
 transaction-tool website leftover.
+
+## 2026-09-03: ZKsync OS leftover evm_interpreter leftover (`9efc8bf`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Follow-on leftover after
+bootloader + system hooks leftover (`30d118a`). Official clone `/tmp/zksync-os`
+at listed `9efc8bf70ae77d1d4df67eff5c60c8a8cfc21268`. Opened
+`evm_interpreter/src/instructions/host.rs` (CALL / CREATE / SELFDESTRUCT),
+`evm_interpreter/src/interpreter.rs` (`EVMCallRequest` → `ExternalCallRequest`),
+and `evm_interpreter/src/ee_trait_impl.rs` frame start. No mainnet writes.
+No exploit PoCs.
+
+Checked for: CALL / CALLCODE that debit a third-party address; CREATE that
+pulls another account's ETH; SELFDESTRUCT that drains a victim; static CALL
+with value.
+
+Result: no user-exploitable finding. Not submitted.
+
+- CALL / CALLCODE take `value` from the current frame's stack. STATICCALL
+  forces `value = 0`. DELEGATECALL reuses `self.call_value`. Static CALL
+  with nonzero value errors `CallNotAllowedInsideStatic`.
+- The interpreter yields `ExternalCallRequest` with `caller: self.address`
+  (the executing contract) and `nominal_token_value: call_value`. It does
+  not pick an arbitrary from-address.
+- CREATE / CREATE2 pass stack `value` to the constructor request with the
+  same `caller: self.address`. Static CREATE is rejected.
+- SELFDESTRUCT calls `mark_for_deconstruction(..., &self.address,
+  &beneficiary)`. Only the executing contract is marked. Static frames
+  reject state change.
+
+Do not file interpreter CALL value from the executing contract, constructor
+value from the deployer frame, or SELFDESTRUCT of `self.address` as
+stranger theft. OS transfer of that caller→callee value was leftover-logged
+with the bootloader / system hooks leftover.
+
+Not submitted. Payment requires user KYC. Remaining listed: `zk_ee`,
+`zksync_os` program, `storage_models`, `crypto`, `oracles`,
+`proof_running_system`, airbender CS / prover / verifier, and
+`zkos-wrapper` circuits.
