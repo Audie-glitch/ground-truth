@@ -43362,6 +43362,93 @@ StakeToken /
 OwnableFacilitator /
 governance.
 
+## 2026-09-03: Aave leftover remaining GHO DirectFacilitator leftover (`23859bb`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+OwnableFacilitator
+after Gsm4626
+leftover.
+Official
+`aave-dao/gho-origin`
+`23859bb`.
+Extract
+`/tmp/gho-direct.sol`.
+Do not rematch
+GHO token leftover.
+Do not rematch
+Gsm4626 leftover.
+Do not rematch
+FlashMinter leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/facilitators/gsm/GhoDirectFacilitator.sol`.
+
+Checked for:
+a
+stranger
+`mint`
+of
+GHO
+without
+`MINTER_ROLE`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Constructor
+  grants
+  `DEFAULT_ADMIN_ROLE`,
+  `MINTER_ROLE`,
+  and
+  `BURNER_ROLE`
+  to
+  a
+  nonzero
+  `admin`.
+- `mint`
+  is
+  `onlyRole(MINTER_ROLE)`
+  and
+  forwards
+  to
+  leftover-
+  logged
+  `GhoToken.mint`
+  (facilitator
+  bucket).
+- `burn`
+  is
+  `onlyRole(BURNER_ROLE)`
+  and
+  burns
+  `msg.sender`'s
+  GHO.
+
+Do not file
+a
+role-gated
+direct
+facilitator
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+stk /
+StakeToken /
+governance.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43503,9 +43590,11 @@ Aave leftover remaining Gsm4626 leftover (`23859bb`)
 is logged.
 Filecoin leftover remaining lotus store leftover (`7740217`)
 is logged.
+Aave leftover remaining GHO DirectFacilitator leftover (`23859bb`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: stk / StakeToken / OwnableFacilitator / governance.
+Remaining listed Aave: stk / StakeToken / governance.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43545,6 +43634,7 @@ Do not rematch Aave IR strategy leftover.
 Do not rematch Aave GHO FixedFeeStrategy leftover.
 Do not rematch Aave GHO FlashMinter leftover.
 Do not rematch Aave Gsm4626 leftover.
+Do not rematch Aave GHO DirectFacilitator leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -46175,6 +46265,9 @@ GHO remaining / stk / governance);
 Aave leftover remaining Gsm4626 leftover
 (`23859bb`) is logged (remaining listed is
 stk / StakeToken / OwnableFacilitator / governance);
+Aave leftover remaining GHO DirectFacilitator leftover
+(`23859bb`) is logged (remaining listed is
+stk / StakeToken / governance);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
