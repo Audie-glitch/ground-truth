@@ -5467,6 +5467,82 @@ DEX / teller mixins are exhausted.
 Remaining 0x: none of the mixin trees.
 Not submitted.
 
+## 2026-09-03: Enzyme Blue Bebop / ThreeOneThird / SharesSplitter (`da3b870` + Sourcify)
+
+Immunefi program `enzymefinance` ($200,000,
+`kyc: false`). Gated-redemption wrapper +
+share-price throttle already logged.
+This slice is the leftover etherscan
+adapters / splitter. No mainnet
+interaction.
+
+Files: GH `/tmp/reviews/enzyme-protocol`
+`da3b870`
+`contracts/release/extensions/integration-manager/integrations/adapters/BebopBlendAdapter.sol`,
+`contracts/persistent/shares-splitter/{SharesSplitterFactory,SharesSplitterLib,TreasurySplitterMixin}.sol`,
+`contracts/persistent/global-config/GlobalConfigLib.sol`
+(`isValidRedeemSharesCall`);
+Sourcify exact-match Base
+`0x5a1c0E89133C4Cd844A8B345370565f1368A79A8`
+(`/tmp/reviews/enzyme-tot`)
+`ThreeOneThirdAdapter.sol` +
+`ThreeOneThirdActionsMixin.sol`
+(added to Immunefi 25 May 2026).
+BebopBlendAdapter etherscan add is
+17 Dec 2025; SharesSplitterFactory is
+2022 (same tree).
+
+Checked for: Bebop that sends maker
+proceeds off-vault or spends past the
+IM transfer; ThreeOneThird batch that
+nets spend/incoming so a later hop
+is unpaid; splitter redeem that
+cashes another user’s unclaimed
+shares.
+
+Result: no user-exploitable finding.
+
+- Bebop `action` is
+  `onlyIntegrationManager`.
+  `parseAssetsForAction` requires
+  `receiver == vault` and
+  `isAllowedMaker` (list id 0 is
+  documented as any maker). IM
+  `Transfer`s `taker_amount` to the
+  adapter, then checks the vault’s
+  maker-token delta against
+  `minIncomingAssetAmount`.
+- ThreeOneThird `takeOrder` has no
+  `onlyIntegrationManager`; it can
+  only spend tokens already on the
+  adapter (donation / leftover). IM
+  still `Transfer`s net spend assets
+  and requires the vault incoming
+  delta. `parseAssets` nets
+  from/to per asset, applies
+  `ceilDiv(minToReceiveBeforeFees *
+  (10000 - fee) / 10000)`, then
+  leftover spend/incoming are
+  pushed back to the vault.
+- SharesSplitter `init` is
+  factory-only once. Splits must
+  sum to 100% with unique users.
+  `redeemShares` claims only
+  `msg.sender`’s share, then
+  `isValidRedeemSharesCall` requires
+  the vault accessor and a V4
+  redeem selector, and the encoded
+  shares amount must equal the
+  claimed amount. Recipient is
+  intentionally unchecked
+  (`0x…aaaa`).
+
+Remaining Enzyme Blue leftover
+etherscan adapters: none of Bebop /
+ThreeOneThird / SharesSplitter.
+Extra Finance vault / veToken still
+not on Sourcify. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -5540,16 +5616,16 @@ Set Protocol V2 (all five in-scope
 addresses) is logged. Lista DAO Moolah
 + PublicLiquidator (`ce72699`, newest
 2026-05-29 assets) is logged.
-Next unreviewed Immunefi
+Enzyme Blue BebopBlend / ThreeOneThird /
+SharesSplitter (`da3b870` + Sourcify) are
+logged. Next unreviewed Immunefi
 GitHub-or-recent trees: Extra Finance
 vault logic, Lista leftover
 lisUSD/clipper/strategy, Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
-`restaking_*` at `db90840` are exhausted),
-Enzyme Blue adapters added as etherscan
-addresses after Apr 2026 (Bebop / ThreeOneThird /
-SharesSplitter). Superteam API rechecked ~04:10 UTC
+`restaking_*` at `db90840` are exhausted).
+Superteam API rechecked ~04:10 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
