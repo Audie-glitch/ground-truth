@@ -73077,3 +73077,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a finalization-cert wrapper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank.rs` money-path subset / `bank/fee_distribution`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Chainlink leftover remaining chainlink-evm operatorforwarder leftover (`b274ca1`)
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after automation-cre leftover. Official `smartcontractkit/chainlink-evm` `b274ca1` (`b274ca1ca00559ad434ca8f43026b16a6a196242`). Opened listed `contracts/src/v0.8/operatorforwarder/{Operator,AuthorizedForwarder,AuthorizedReceiver,LinkTokenReceiver,OperatorFactory}.sol`. Extract `/tmp/cl-op/`. Do not rematch payments leftover or automation-cre leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `onTokenTransfer` that spoofs a stranger's payment; `fulfillOracleRequest` that releases escrow to the caller; `cancelOracleRequest` that refunds a non-requester; `withdraw` that drains escrowed LINK.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `onTokenTransfer` requires `msg.sender == LINK` and only `oracleRequest` / `operatorRequest`. Assembly overwrites the first two payload words with the real LINK sender and amount before `delegatecall`, so payment and requester cannot be spoofed. `requestId = keccak256(sender, nonce)` must be unused. Commitment is `bytes31(keccak256(payment, callbackAddress, callbackFunctionId, expiration))`; escrow increments by `payment`.
+- `fulfillOracleRequest` / `fulfillOracleRequest2` are `validateAuthorizedSender` and require the same params hash plus a live commitment. Escrow is decremented and the commitment deleted before the untrusted callback. Payment stays on the operator until `withdraw` (`onlyOwner` + `_fundsAvailable`, which excludes escrow).
+- `cancelOracleRequest` requires `msg.sender` to be the committed callback, `expiration <= now` (5 minutes), then refunds `payment` to `msg.sender` and drops escrow. `cancelOracleRequestByRequester` rebuilds `requestId` from `msg.sender` + nonce.
+- `AuthorizedForwarder.forward` / `multiForward` are authorized-sender only and cannot target LINK. `ownerForward` / `ownerTransferAndCall` are owner-only. `distributeFunds` only sends `msg.value` to the listed receivers. Factory deploys with `msg.sender` as owner.
+
+Do not file an authorized-node fulfill or expired requester cancel as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink llo-feeds / OCR / core node / websites if still unused.
