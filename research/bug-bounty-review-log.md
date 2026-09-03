@@ -47578,7 +47578,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`commitment` / `slot_params` / `genesis_utils`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_client leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana prioritization_fee leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`slot_params` / `genesis_utils`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_client leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana prioritization_fee leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana commitment leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed Arbitrum: websites if still unused. Official Arbitrum leftover that listed trees open is exhausted except unused official leftovers if still open. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged.
@@ -47672,6 +47672,7 @@ Do not rematch Jito jito-solana bank money-path leftover.
 Do not rematch Jito jito-solana account_saver leftover.
 Do not rematch Jito jito-solana bank_client leftover.
 Do not rematch Jito jito-solana prioritization_fee leftover.
+Do not rematch Jito jito-solana commitment leftover.
 Do not rematch Chainlink leftover remaining CCIP Sui leftover.
 Do not rematch Chainlink leftover remaining CCIP Solana leftover.
 Do not rematch Jito jito-solana snapshot_package leftover.
@@ -50503,8 +50504,10 @@ Jito leftover remaining jito-solana account_saver leftover
 Jito leftover remaining jito-solana bank_client leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana prioritization_fee leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana commitment leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-commitment / slot_params / genesis_utils if still unused);
+slot_params / genesis_utils if still unused);
 Optimism leftover remaining op-node deposits + withdrawals leftover
 (`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
@@ -73416,3 +73419,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a priority-fee estimate cache as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`commitment` / `slot_params` / `genesis_utils`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Jito leftover remaining jito-solana commitment leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after prioritization_fee leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/commitment.rs`. Do not rematch bank_forks leftover, stakes leftover, or epoch_stakes leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `increase_confirmation_stake` that wraps so a low-stake slot looks supermajority; `get_lockout_count` that treats a stranger slot as confirmed; `slot_with_commitment` that returns an unrooted slot as `Finalized`.
+
+Result: no user-exploitable finding. Not submitted.
+
+- RPC commitment cache, not a stranger IX. It does not move lamports. `BlockCommitment` is a `[u64; MAX_LOCKOUT_HISTORY+1]` of already-aggregated vote stake. `increase_*_stake` adds into that array. Overflow would undercount confirmation, not credit anyone.
+- `get_lockout_count` walks confirmation levels high-to-low and returns the lowest level whose cumulative stake is `> VOTE_THRESHOLD_SIZE` (2/3) of `total_stake`. Missing slot → `None`. Tests: 45/50 stake at depth 2 → confirmation 2; 25/50 → 0.
+- `slot_with_commitment`: Processed = current bank slot; Confirmed = `highest_confirmed_slot`; Finalized = `highest_super_majority_root`. Setters are local cache writes. `highest_slot_with_confirmation_count` walks `root..slot` descending and falls back to root.
+- `CommitmentSlots` is a four-field snapshot. No credit path.
+
+Do not file a commitment-level cache as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`slot_params` / `genesis_utils`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
