@@ -39011,11 +39011,14 @@ pool + position leftover
 (`8674f2b`) is logged;
 MUX leftover mux-protocol
 core + orderbook leftover
-(`0f70a70`) is logged
-(remaining listed is
-mux-aggregator-protocol /
-mux-degen-protocol /
-mux-staking);
+(`0f70a70`) is logged;
+MUX leftover mux-degen
+orderbook + pool leftover
+(`c5bfe81`) is logged;
+MUX leftover mux-aggregator
+proxyFactory + gmxV2 leftover
+is logged (remaining listed
+is mux-staking);
 Linea leftover TokenBridge +
 rollup + yield leftover
 (`a83412e` / `a9a43aa` /
@@ -39023,6 +39026,13 @@ main; KYC) is logged
 (remaining listed is the
 immunefi.com scope
 placeholder);
+Exactly leftover Market +
+DebtManager leftover
+(Sourcify; KYC) is logged
+(remaining listed is Sourcify
+404 impls / ExaPlugin /
+ProposalManager / Webauthn /
+IssuerChecker);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -57520,3 +57530,226 @@ BeaconDeposit
 / BGT
 redeem.
 
+
+## 2026-09-03: Exactly leftover Market + DebtManager leftover (Sourcify)
+
+Immunefi program
+`exactly`
+($25,000, `kyc: true`).
+Unique unused
+standing program.
+Optimism
+Sourcify
+`match` on
+listed
+addresses.
+Market /
+Auditor /
+Rewards /
+DebtManager /
+MarketETHRouter
+sources from
+impl extracts
+(RewardsController
+`0x0399…a95f7f`,
+Auditor
+`0x3f55…3c46`,
+DebtManager
+`0xa7bf…e16e2`,
+MarketETHRouter
+`0x8849…056C`).
+EscrowedEXA
+`0x2d55…1E280`.
+Refunder
+`0xd5f8…dd228`.
+Official clone
+`/tmp/exactly-protocol`
+`4b5fec7`
+matches those
+periphery
+files.
+No mainnet
+writes.
+No exploit
+PoCs.
+
+Opened
+`contracts/Market.sol`,
+`Auditor.sol`,
+`RewardsController.sol`,
+`periphery/DebtManager.sol`,
+`MarketETHRouter.sol`,
+`periphery/EscrowedEXA.sol`,
+`src/Refunder.sol`.
+
+Checked for: a
+stranger
+`borrow` /
+`withdrawAtMaturity`
+that spends
+another
+account
+without
+allowance;
+`seize` that
+pays a
+non-liquidator;
+DebtManager
+leverage that
+deposits to
+the caller;
+ETH router
+withdraw that
+unwraps
+another
+account's
+WETH;
+rewards
+claim of
+another
+account
+without a
+keeper.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Market
+  `borrow` /
+  `borrowAtMaturity`
+  /
+  `withdrawAtMaturity`
+  call
+  `spendAllowance`
+  when
+  `msg.sender
+  != owner`.
+  Floating
+  `withdraw`
+  /
+  `redeem`
+  are ERC-4626
+  with
+  shortfall
+  checks.
+  `depositAtMaturity`
+  pulls
+  `msg.sender`
+  and
+  credits
+  `receiver`.
+  `repay` /
+  `refund`
+  pull the
+  caller.
+- `liquidate`
+  requires
+  auditor
+  shortfall,
+  pulls the
+  liquidator,
+  and
+  `seize`
+  only from
+  a listed
+  market
+  (`checkSeize`).
+  `clearBadDebt`
+  is
+  auditor-only.
+- DebtManager
+  `leverage`
+  /
+  `deleverage`
+  are
+  `msgSender`
+  and
+  operate
+  `_msgSender`
+  positions.
+  Flash-loan
+  receive
+  is the
+  Balancer
+  vault.
+- MarketETHRouter
+  wraps
+  `msg.value`
+  and
+  deposits /
+  borrows /
+  withdraws
+  for
+  `msg.sender`.
+  `receive`
+  is WETH
+  only.
+- Rewards
+  `claim` /
+  `claimAll`
+  use
+  `claimSender`
+  (`msg.sender`
+  or
+  permit).
+  `claimOnBehalfOf`
+  is
+  keeper-only.
+  Refunder
+  `refund`
+  is
+  keeper +
+  issuer
+  signature
+  and
+  deposits
+  to the
+  named
+  account.
+
+Do not file
+allowance-gated
+borrow /
+withdraw,
+liquidator
+seize after
+repay, or
+keeper /
+issuer
+card refunds
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for
+Exactly Market /
+Auditor /
+DebtManager /
+ETH router /
+rewards /
+Refunder is
+exhausted at
+the
+opened-file
+level.
+Remaining
+listed:
+Sourcify-404
+proxy impls
+(`0x6E1B…3Cff`,
+`0xCEed…52b`
+and unnamed
+impls),
+ExaPlugin /
+ProposalManager /
+WebauthnOwnerPlugin /
+IssuerChecker,
+and the
+immunefi.com
+placeholder.
