@@ -68034,3 +68034,19 @@ Do not file a credit-delegation-gated debt mint as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: v2 AaveOracle.
 
+
+## 2026-09-03: Aave leftover remaining protocol-v2 AaveOracle leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after v2 debt-token leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `contracts/misc/AaveOracle.sol`. Do not rematch v3 AaveOracle leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `setAssetSources` pointing an asset at a fake aggregator; `getAssetPrice` returning 0 so a healthy position liquidates.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `setAssetSources` / `setFallbackOracle` are `onlyOwner`. Constructor sets immutable `BASE_CURRENCY` / `BASE_CURRENCY_UNIT`.
+- `getAssetPrice` returns `BASE_CURRENCY_UNIT` for the base asset. A configured Chainlink source is used only if `latestAnswer() > 0`; otherwise (or if the source is `address(0)`) it forwards to the fallback oracle. This contract does not move tokens.
+
+Do not file an owner-gated v2 source update as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: v2 GenericLogic / ValidationLogic / ReserveLogic / IR strategy (if still unused). Official PriceOracleSentinel + OwnableFacilitator 404.
+
