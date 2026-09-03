@@ -137,7 +137,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   ERC20-LP providers, MasterVault +
   yield strategies, leftover OFT /
   distributors (`28a3c02` + `fa5dfa5`),
-  and Extra Finance Aave-fork leftover,
+  CDP ResilientOracle + listed pips
+  (`3e120da`), Extra Finance Aave-fork
+  leftover, Hashflow factory / pool /
+  router, Yearn stYFI July leftover,
   and Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

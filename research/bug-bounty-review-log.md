@@ -6644,6 +6644,218 @@ POI remains. Not submitted.
   then burns the receipt.
 - `harvest` is anyone-calls
   into `wombatStaking`.
+## 2026-09-03: Lista leftover CDP oracles (`3e120da`)
+
+Same Immunefi program `listadao`
+($1,000,000, `kyc: false`). This
+is the in-scope CDP oracle tree
+in [lista-dao/lista-dao-contracts](https://github.com/lista-dao/lista-dao-contracts)
+at `3e120da`, not the already-logged
+`lista-new-contracts` LisAster /
+wNLP / Atlas / sUSDS feeds at
+`fa5dfa5`. Official HTML / unofficial
+mirror (3 Sep) lists eight oracle
+rows: ResilientOracle
+`0xf3af…c750` plus the STONE /
+solvBTC / BBTC / SolvBTC.BBN /
+USDF / asUSDF / USD1 pips.
+Read-only BSC `eth_call` only;
+no state-changing txs.
+
+Files: `contracts/oracle/
+ResilientOracle.sol`,
+`BoundValidator.sol`,
+`HelioOracle.sol`,
+`PythOracle.sol`,
+`API3Oracle.sol`,
+listed pip wrappers
+(`StoneOracle`, `SolvBtcOracle`,
+`BBtcOracle`, `SolvBTCBBNOracle`,
+`xSolvBtcOracle`, `UsdfOracle`,
+`AsUsdfOracle`, `Usd1Oracle`,
+`SlisBnbOracle`, `BnbOracle`,
+`WeEthOracle`, `asBnbOracle`,
+`sUsdxOracle`), and
+`contracts/oracle/priceFeeds/*`
+(`Stone`, `SlisBnb`, `AsBnb`,
+`StableUsdt`, `StableAsUsdf`,
+`sUSDX`, `sUSDXLiquidation`,
+`USDXLiquidation`, `yUSD`,
+`yUSDFixed`, `sUSD1`, `sUSDe`,
+`xSolvBtc`, `uniBTC`, `mXRP`,
+`wsrUSD`, `wstUSR`, `wNLPUSDT`,
+`PufEth`, `WBETH`, `WstETH`,
+`lisUSD`).
+
+Checked for: a raw AggregatorV3
+main with pivot disabled so a
+negative `answer` wraps through
+`uint256(answer)` into a huge
+CDP price; `setTokenConfigs`
+without `onlyOwner`; wrapper
+`peek` that returns
+`(huge, true)` on a failed
+inner price; composite feeds
+that skip positivity or
+staleness; `convertToAssets` /
+`convertSnBnbToBnb` donation
+inflation.
+
+Result: no user-exploitable
+finding on the eight listed
+oracle addresses. Not
+submitted.
+
+- `getPriceFromOracle` casts
+  `int256 answer` to `uint256`
+  with no `answer > 0` check
+  (Venus’s original feed does
+  check). If pivot is disabled,
+  `_getMainOraclePrice` returns
+  `(mainPrice, true)` with no
+  BoundValidator. A negative
+  aggregator answer would wrap.
+  `setTokenConfigs` has no
+  modifier but calls
+  `setTokenConfig`, which is
+  `onlyOwner`.
+- Live `getTokenConfig` on
+  ResilientOracle (BSC block
+  ~119660895): solvBTC / USDT /
+  USDF / USD1 / WBNB / ETH /
+  BTC / USDe have pivot +
+  fallback enabled. USDX /
+  STONE / slisBNB / asUSDF /
+  BBTC / xSolvBBN / sUSDX /
+  yUSD / XRP are main-only
+  (`enabled [1,0,0]`).
+- Those main-only mains are
+  Lista composites (or WINkLink
+  BBTC/BBUSD), not raw
+  Chainlink — except XRP
+  `0x93a6…4fda` (“XRP / USD”).
+  Sampled Chainlink
+  aggregators (XRP, solvBTC,
+  USDT, ETH) have `minAnswer
+  = 1`, so the wrap cannot
+  fire on those feeds. XRP /
+  yUSD / sUSDX are not on the
+  57-asset Immunefi table.
+  BBTC’s WINkLink pair has no
+  `minAnswer`; BBtcOracle
+  still treats `price <= 0`
+  as `(0, false)`. Do not
+  file the wrap without a
+  listed asset whose **main**
+  is a raw feed that can
+  return `answer < 0` **and**
+  pivot off.
+- In-scope pip proxies
+  (EIP-1967) all `peek()`
+  successfully: STONE
+  impl holds STONE +
+  ResilientOracle; solvBTC /
+  BBTC impls hold their
+  token + ResilientOracle;
+  USDF / asUSDF / USD1 impls
+  hold the matching token.
+  Live SolvBTC.BBN pip equals
+  the solvBTC pip
+  ($77,585.27), not the
+  xSolvBtcPriceFeed USD print
+  ($77,613.60). Source
+  `SolvBTCBBNOracle` would
+  double-count if both peeks
+  were USD 8-dec; that path
+  is not what the live pip
+  returns.
+- Wrapper `peek()` mostly
+  returns `has=true`.
+  `ResilientOracle.peek`
+  **reverts** on invalid, so
+  Interaction /
+  `collateralPrice` never
+  sees a silent stale-false.
+  `SolvBtcOracle` /
+  `BBtcOracle` extra-check
+  `price <= 0`. `WeEthOracle`
+  rejects `price1 < 0 ||
+  price2 < 0` and 6h / 300s
+  staleness.
+- Composite
+  `latestRoundData` mocks
+  `updatedAt = block.timestamp`,
+  so outer ResilientOracle
+  staleness on the wrapper
+  never fires. Nested
+  `latestRoundData` still
+  enforces its own window
+  (Stone/ETH 24h+300s,
+  sUSD1 24h+300s, xSolv /
+  PufETH / wstETH 6h+300s,
+  uniBTC / wsrUSD / wstUSR
+  24h+300s). `mXRPPriceFeed`
+  ignores `updatedAt` and
+  clamps the ratio to
+  `[1.0, 1.5]` 8-dec; mXRP
+  is not on the Immunefi
+  table.
+- `HelioOracle` is
+  owner-set. Trusted.
+  `yUSDFixedPriceFeed` is
+  hardcoded `112400000`
+  (1.124e8) and is the live
+  yUSD main; not listed.
+  `sUSDXLiquidationPriceFeed`
+  / `USDXLiquidationPriceFeed`
+  are documented emergency
+  feeds; manager
+  `0x8d38…B0c6` sets the
+  rate. `lisUSDPriceFeed`
+  is fixed `1e8`.
+- `StableUsdtPriceFeed`
+  clamps USDT to
+  `[0.98, 1.02]` 8-dec
+  (protocol risk on a
+  deeper depeg, by design).
+- `sUSDXPriceFeed` /
+  `yUSDPriceFeed` use
+  ERC-4626 `convertToAssets
+  (1e18)`. `SlisBnbPriceFeed`
+  uses `convertSnBnbToBnb`
+  over `amountToDelegate +
+  totalDelegated`, not the
+  contract’s BNB balance, so
+  a raw BNB donation does
+  not inflate the rate.
+- `PythOracle` uses
+  `getPriceUnsafe`; freshness
+  is only
+  `timeDeltaTolerance` if
+  that adapter is a
+  ResilientOracle source.
+  `API3Oracle` divides the
+  18-dec dAPI by `1e10` to
+  8-dec.
+- `BoundValidator` rejects
+  `reportedPrice == 0` /
+  `anchorPrice == 0`; ratios
+  are 18-dec.
+- Copy-paste notes, not
+  filed: `asBnbOracle`
+  constant `AsBNB_TOKEN_ADDR`
+  is the slisBNB address
+  (underprices asBNB if used
+  as a pip; protocol-safe).
+  `sUsdxOracle.peek` reads
+  USDT, not sUSDX.
+
+Lista CDP oracle + new-contracts
+oracle + VeLista lock / airdrop
+slices are now logged. Listed
+Extra Finance and Hashflow
+Solidity are exhausted. Not
+submitted.
 
 ## Next candidates
 
@@ -6733,7 +6945,8 @@ Finance Aave-fork leftover (ACL /
 config / aToken / debt), and
 `lista-new-contracts` RWA / slisXAUE /
 LisAster / leftover distributors
-(`fa5dfa5`) are logged.
+(`fa5dfa5`) plus CDP ResilientOracle
++ listed pips (`3e120da`) are logged.
 Enzyme Blue BebopBlend / ThreeOneThird /
 SharesSplitter (`da3b870` + Sourcify) are
 logged. Extra Finance EXTRA token
@@ -6753,16 +6966,17 @@ Sourcify 404). Yearn stYFI
 July leftover (`69e262e`) is
 logged; remaining Yearn stYFI is
 Feb 2026 core if wanted. Remaining
-Lista leftover slices (oracles /
-VeLista lock / airdrop) are logged.
+Lista leftover slices (new-contracts
+oracles / VeLista lock / airdrop /
+CDP ResilientOracle + pips at
+`3e120da`) are logged.
 Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted).
-Superteam API rechecked ~04:40 UTC
+Superteam API rechecked ~04:16 UTC
 3 Sep: still 28 open listings
-(earn.superteam.fun 308, api host
-unresolved from this VM).
+(`earn.superteam.fun/api/listings?status=open`).
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the
@@ -6798,11 +7012,17 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-~04:40 UTC 3 Sep: KeeperHub #2105 still `open` +
+~04:16 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
+Hedera Harness #8 still `open`, 0 comments;
 CreditPassport deployer still 0 Sepolia ETH
-(Tenderly) / 0 tCTC;
+(publicnode) / 0 tCTC
+(`rpc.cc3-testnet.creditcoin.network`);
+Sherlock page 1 still only contest `1234` (Tare)
+in `SHERLOCK_JUDGING`; Code4rena still 24
+`Completed` + 1 `Reporting` (Rujira, window
+ended 16 Jan 2026);
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub
