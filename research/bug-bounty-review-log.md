@@ -5941,6 +5941,107 @@ Aave-fork ACL / config /
 aToken / EXTRA set. Not
 submitted.
 
+## 2026-09-03: Lista leftover strategy / OFT / distributors / providers (`3e120da` + `28a3c02` + `fa5dfa5`)
+
+Same Immunefi program `listadao` ($1,000,000,
+`kyc: false`). PSM / LisUSD / clip-join /
+slisBNB already logged. Official trees
+`lista-dao-contracts` `3e120da`,
+`lista-token` `28a3c02`,
+`lista-new-contracts` `fa5dfa5`.
+Immunefi HTML (rechecked 04:03 UTC 3 Sep)
+lists snBNBStrategy / Ceros / stkBNB /
+bnbYieldConverter, ListaOFTAdapter
+`0x837C…E7B3`, VenusAdapter(USDT),
+SlisBNBProvider / ERC20TokenProvider,
+Borrow / Collateral / Stake
+distributors, VeListaRevenueDistributor,
+VeListaInterestRebater, and
+LendingRewardsDistributor. No mainnet
+interaction.
+
+Files: `contracts/strategy/{BaseStrategy,
+SnBnbYieldConverterStrategy}.sol`,
+`contracts/old/strategy/CerosYieldConverterStrategy.sol`,
+`contracts/psm/VenusAdapter.sol`,
+`contracts/ceros/{ClisToken,provider/BaseTokenProvider,provider/SlisBNBProvider}.sol`,
+`contracts/{Interaction,libraries/AuctionProxy}.sol`,
+`lista-token/contracts/oft/ListaOFTAdapter.sol`,
+`lista-token/contracts/dao/{CommonListaDistributor,BorrowListaDistributor,CollateralListaDistributor,StakeLisUSDListaDistributor,VeListaRevenueDistributor}.sol`,
+`lista-new-contracts/src/{LendingRewardsDistributor,VeListaInterestRebater}.sol`.
+
+Checked for: a permissionless strategy
+withdraw that pays a stranger; Venus
+harvest that drains principal; provider
+`release` of another user’s token;
+`daoBurn` that leaves LP spendable
+after bark; OFT credit while paused;
+distributor claim of another user’s
+integral; merkle claim that pays the
+caller.
+
+Result: no user-exploitable finding.
+
+- SnBnb / Ceros strategies:
+  `deposit` / `withdraw` are
+  `onlyVault`. Harvest is
+  `onlyStrategist`. FIFO unstake
+  pays the recorded recipient;
+  failed 5k-gas sends go to
+  `manualWithdrawAmount[recipient]`.
+  Yield is `snBNB balance -
+  snBnbToUnstake -
+  convert(bnbDepositBalance)` and
+  underflows rather than over-harvest.
+- VenusAdapter is
+  `onlyVaultManager`. Public
+  `harvest` sends interest above
+  `netDepositAmount` to
+  `feeReceiver`. Withdraw cannot
+  exceed `netDepositAmount`.
+- BaseTokenProvider `provide` /
+  `release` are `msg.sender`.
+  `liquidation` / `daoBurn` are
+  `PROXY`. After `dog.bark`,
+  `dao.locked` is 0 so `daoBurn`’s
+  `_syncLp` burns leftover LP even
+  though it ignores `_amount`.
+  SlisBNBProvider mints a reserve
+  cut to `lpReserveAddress`;
+  `releaseFor` is migrator-only.
+  `withdrawLeftover` pays
+  `dao.free` of `msg.sender`.
+- ClisToken mint/burn is
+  `onlyMinter`; token is
+  non-transferable.
+- ListaOFTAdapter is LayerZero
+  `OFTAdapter` plus pause and
+  per-dest transfer limits. `_debit`
+  / `_credit` are `whenNotPaused`.
+- CommonListaDistributor snapshots
+  are `MANAGER` (Interaction).
+  `claimReward` pays `msg.sender`
+  via the vault; `vaultClaimReward`
+  is `VAULT`. VeListaRevenueDistributor
+  `distribute` is `BOT` and splits
+  to receiver + `dEaD`.
+- LendingRewardsDistributor and
+  VeListaInterestRebater merkle
+  leaves encode `chainid, account,
+  totalAmount`. Anyone may submit
+  a proof; tokens go to `_account`.
+  Pending root waits ≥6h (default
+  1 day). `emergencyWithdraw` is
+  `MANAGER`.
+
+Remaining Lista: price-feed oracles,
+Pancake V3 / BNB vault provider
+wrappers if they are not the same
+BaseTokenProvider path, and
+`lista-new-contracts` RWA / slisXAUE /
+LisAster (not in the Immunefi HTML).
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -6022,22 +6123,22 @@ addresses) is logged. Lista DAO Moolah
 LisUSD / clip-join / slisBNB
 (`3e120da` + `67e524c`), Moolah vault
 + Credit/Lending brokers, SlisBNB /
-BNB / ERC20-LP providers, and
-MasterVault + yield strategies
-are logged. Enzyme Blue BebopBlend /
-ThreeOneThird / SharesSplitter
-(`da3b870` + Sourcify) are
+BNB / ERC20-LP providers, MasterVault
++ yield strategies, and leftover
+OFT / distributors / providers
+(`28a3c02` + `fa5dfa5`) are logged.
+Enzyme Blue BebopBlend / ThreeOneThird /
+SharesSplitter (`da3b870` + Sourcify) are
 logged. Next unreviewed Immunefi
 GitHub-or-recent trees: Extra Finance
 Aave-fork leftover (ACL / config /
 aToken / EXTRA). Remaining Lista is
-OFT / distributors /
-`lista-new-contracts`
-(`fa5dfa5`). Jito `jito-solana` /
+oracles / `lista-new-contracts` RWA /
+slisXAUE / LisAster. Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted).
-Superteam API rechecked ~04:10 UTC
+Superteam API rechecked ~04:03 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
