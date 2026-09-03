@@ -18170,6 +18170,159 @@ split / list-realloc
 details if a later
 tree adds them.
 
+## 2026-09-03: Marinade create-canonical / realloc leftover (`b8fe3f8`)
+
+Immunefi program
+`marinade` ($250,000,
+`kyc: false`). Admin /
+validator / update
+leftover on pin
+`b8fe3f8` is already
+logged. This slice is
+the remaining crank
+split and list realloc.
+Local clone
+`/tmp/marinade-lsp`.
+No mainnet interaction.
+
+Files:
+`instructions/crank/create_canonical_stake.rs`,
+`admin/realloc_stake_list.rs`,
+`admin/realloc_validator_list.rs`.
+
+Checked for: a crank
+that splits listed
+stake to a caller-
+chosen account; leftover
+SOL on the canonical
+PDA going to the
+caller; realloc that
+shrinks a list and
+deletes records.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `create_canonical_stake`
+  is permissionless
+  but the destination
+  must be the PDA
+  `find_canonical_stake_address(state,
+  validator)`. Source
+  must be listed,
+  delegated, not
+  deactivating, and
+  `last_update_delegated_lamports`
+  must equal the live
+  delegation. The
+  vote must match the
+  validator index.
+  Extra lamports on
+  the canonical system
+  account go to
+  `operational_sol_account`
+  (`has_one`). Split
+  is signed by the
+  deposit PDA and
+  moves the whole
+  source (stake +
+  rent) onto that
+  PDA. The list then
+  adds the canonical
+  account and removes
+  the source. No SOL
+  leaves to the
+  caller.
+- `realloc_stake_list`
+  / `realloc_validator_list`
+  require
+  `admin_authority`.
+  Capacity cannot
+  shrink below the
+  current count.
+
+Not submitted. Listed
+Marinade GitHub leftover
+is exhausted.
+
+## 2026-09-03: Instadapp DSA leftover (`fef062a`)
+
+Immunefi program
+`instadapp` ($500,000,
+`kyc: false`). Listed
+smart-contract trees
+are `dsa-contracts`,
+`avocado-contracts-public`,
+`fluid-contracts-public`,
+and `inst-governance`.
+This slice is DSA.
+Local clone
+`/tmp/instadapp-dsa` at
+`fef062a`
+(`Merge pull request #87
+from Instadapp/security/harden-ci-pull-request-target`).
+No mainnet interaction.
+
+Files:
+`contracts/registry/index.sol`,
+`v2/accounts/module1/Implementation_m1.sol`,
+`v2/accounts/default/implementation_default.sol`,
+`v2/proxy/accountProxy.sol`,
+`v2/registry/implementations.sol`,
+`v2/registry/connectors.sol`.
+
+Checked for: a stranger
+`cast` on another
+user’s DSA; adding a
+malicious implementation
+or connector; `enable`
+that grants a stranger
+auth.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `cast` requires
+  `_auth[msg.sender]`
+  or `msg.sender ==
+  instaIndex`. Spells
+  `delegatecall` only
+  connectors returned
+  by
+  `isConnectors`
+  (name → address
+  must be registered
+  and non-zero).
+- `enable` is
+  `self` or
+  `instaIndex`.
+  `disable` /
+  `toggleBeta` are
+  `self` only.
+- Implementations
+  add / remove /
+  default are
+  `instaIndex.master`.
+  Connectors add /
+  update / remove are
+  chief or master.
+- `build` clones the
+  versioned account
+  module, `list.init`s
+  it, and
+  `enable`s the
+  requested owner.
+  `buildWithCast` only
+  casts on the new
+  account.
+
+Not submitted. Remaining
+Instadapp is Avocado,
+Fluid, and
+`inst-governance`.
+
 ## 2026-09-03: Stader Penalty / PoolSelector / PoolUtils / Config leftover (`9d4a921`)
 
 Immunefi program
@@ -19566,10 +19719,16 @@ withdraw-stake leftover
 and admin / validator /
 update leftover
 (`b8fe3f8`) are logged
-(listed Marinade leftover
-exhausted aside from
-`create_canonical_stake`
-split details);
+and create-canonical /
+realloc leftover
+(`b8fe3f8`) are logged
+(listed Marinade GitHub
+leftover exhausted);
+Instadapp DSA leftover
+(`fef062a`) is logged
+(remaining Instadapp is
+Avocado / Fluid /
+`inst-governance`);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
 dissolve / rewards /

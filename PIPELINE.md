@@ -20,8 +20,11 @@ leftover (`244e124`) are logged (listed Raydium GitHub leftover
 exhausted). Marinade liquid-staking leftover (`b8fe3f8`) is
 logged. Marinade crank / withdraw-stake leftover and
 admin / validator / update leftover are logged
-(listed Marinade leftover exhausted aside from
-`create_canonical_stake` split details).
+and create-canonical / realloc leftover are logged
+(listed Marinade GitHub leftover exhausted).
+Instadapp DSA leftover (`fef062a`) is logged
+(remaining Instadapp is Avocado / Fluid /
+`inst-governance`).
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool
 v1.4 listed GitHub leftover is exhausted (deposit /
