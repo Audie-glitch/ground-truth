@@ -1838,14 +1838,58 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Intuition TrustSwapAndBridgeRouter (`bb34cc2`)
+
+Immunefi program `intuition` (in-scope Base asset
+`0xE485D9a5Dc39774b7A80864B625969Cf9d93E5D7`). Source is
+not in `intuition-contracts-v2`; local clone
+`/tmp/intuition-periphery` (`0xIntuition/intuition-contracts-v2-periphery`
+`bb34cc2`). Repo README lists Base
+`0xA1EC6f95A88Bfc7A8Fd35f1296b64ebaf91C93fb`. Reviewed
+this tree only. No mainnet interaction.
+
+Files: `contracts/TrustSwapAndBridgeRouter.sol`.
+
+Checked for: a path that does not end in TRUST but still
+bridges; swap output sent to the caller; bridge fee quoted
+on `minTrustOut` while a larger `amountOut` is sent;
+ETH-path refund of another user's leftover; missing
+`receive` so Slipstream `refundETH` DoS (known S-324);
+leftover allowance used against a later user.
+
+Result: no user-exploitable finding.
+
+- ETH and ERC20 swaps require the packed path to start
+  with WETH/`tokenIn` and end with TRUST. Each hop must
+  exist in the Slipstream CL factory. `tokenIn` cannot be
+  TRUST. Swap `recipient` is this router; Metalayer
+  recipient is the caller-chosen dest. `nonReentrant`.
+- `exactInput` enforces `amountOutMinimum: minTrustOut`.
+  Bridge fee is quoted on `minTrustOut` (ETH/ERC20) or
+  the exact `trustAmount` (direct bridge). If the hub
+  fee scales with amount and `amountOut > minTrustOut`,
+  `transferRemote` reverts. Successful txs send the
+  received TRUST.
+- ERC20/direct-bridge refund `msg.value - fee` to
+  `msg.sender`. ETH swap spends `msg.value - fee` as
+  WETH in; Slipstream `refundETH` dust stays on this
+  router (`receive()`). Tests document that leftover
+  (S-324 was a SwapRouter contamination DoS, now
+  accepted via `receive`). No sweep; dust is not an
+  extract.
+- Allowances use `safeIncreaseAllowance` to the
+  immutable official router/hub. No third-party
+  spender.
+
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
 the full `diamond-pau` facet tree at `1b6743a`, and
-Intuition MultiVault /
-AtomWallet / curves / emissions / registry are exhausted.
-Remaining Intuition:
-`TrustSwapAndBridgeRouter` (Base, not in the v2 repo).
+Intuition MultiVault / AtomWallet / curves / emissions /
+registry / `TrustSwapAndBridgeRouter` (`bb34cc2`) are
+exhausted.
 Superteam API rechecked 02:50 UTC 3 Sep: 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. Mermail skill is built (`mermail-onchain-receipts/`);
