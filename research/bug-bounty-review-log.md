@@ -466,11 +466,45 @@ Result: no user-exploitable finding.
   WETH raises `checkBalance` immediately and gifts existing vault
   holders; it does not let a later minter extract others’ funds.
 
-Not submitted. Beacon-proof library and vault rebase interaction were
-not fully read.
+Not submitted. Vault rebase interaction was not fully read.
+
+## 2026-09-03: Origin BeaconProofsLib (origin-dollar)
+
+Same Immunefi program. Reviewed the SSZ/EIP-4788 proof library that
+`CompoundingStakingStrategy` uses to set `lastVerifiedEthBalance`.
+Local clone `/tmp/origin-dollar`. No mainnet interaction.
+
+Files: `contracts/beacon/{BeaconProofsLib,BeaconProofs,Merkle,Endian,BeaconRoots}.sol`.
+
+Checked for: forged validator-balance proofs; wrong-leaf extraction from
+the packed 4-balance chunk; gindex overflow; short proofs treated as
+roots; withdrawal-credential swap on `verifyValidator`; pending-deposit
+list mixin-length bypass.
+
+Result: no user-exploitable finding.
+
+- Inclusion proofs are index-based SHA-256 (not sorted keccak). Each
+  verifier pins an exact proof length (9 / 28 / 37 / 39 / 40 / 53
+  witnesses) and a zero block-root reject. `concatGenIndices` places
+  `uint40` validator indexes and `uint32` deposit indexes inside the
+  reserved height so they cannot collide with the parent gindex bits.
+- `verifyValidator` takes the first sibling as withdrawal credentials
+  and requires it to match the caller-supplied value; substituting a
+  sibling breaks the beacon block root.
+- `balanceAtIndex` left-shifts the packed leaf by `(index % 4) * 64`
+  then byte-swaps the top 64 bits, which is the SSZ little-endian
+  layout for four `uint64` balances.
+- Pending-deposit indexes are capped at `2^27` to account for the SSZ
+  list length mixin. `merkleizePendingDeposit` is an 8-leaf tree
+  (pubkey, credentials, amount, signature root, slot, three zeros)
+  matching Electra `PendingDeposit`.
+- Roots come from the EIP-4788 oracle (`BeaconRoots.parentBlockRoot`);
+  a missed slot reverts rather than returning a stale root.
+
+Not submitted.
 
 ## Next candidates
 
-sBTC `wsts` (KYC) or Origin `BeaconProofsLib`. Superteam `AGENT_ALLOWED`
-is still only Steve Arena and ZNS — do not execute. the402.ai still
-paused. No KeeperHub implementation before the 6 Sep build window.
+sBTC `wsts` (KYC). Superteam `AGENT_ALLOWED` is still only Steve Arena
+and ZNS — do not execute. the402.ai still paused. No KeeperHub
+implementation before the 6 Sep build window.
