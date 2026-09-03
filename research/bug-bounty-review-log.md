@@ -20783,6 +20783,157 @@ Not submitted.
 Listed Flux leftover
 is exhausted.
 
+## 2026-09-03: Mantle mETH staking leftover (Sourcify)
+
+Immunefi program
+`mETH` ($500,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Ethereum
+Sourcify proxies +
+impls: Staking
+`0xe3cBd06D7dadB3F4e6557bAb7EdD924CD1489E8f`
+impl
+`0x01a360392c74b5b8bF4973F438FF3983507a06a2`
+(`exact_match`
+`Staking`); mETH
+token impl
+`0x052F52748109BAE13D6319A463D64B6a2A613e52`
+(`exact_match`
+`METH`); Unstake
+Requests Manager
+impl
+`0x5A7b3CDe8aC8d780AF4797BF1517464aC54Ca033`;
+Oracle
+`0x7a6c874db238D7FdC84516cD940E97032271af69`;
+OracleQuorumManager
+`0x54c23E0D89DA943165c969d1AbDb65f0D64174b4`;
+ReturnsAggregator
+`0xf2Bc410fAd9Fc3140c4CDED7C6E5Bd56AC292c93`;
+CL/EL ReturnsReceiver
+impls. Extract
+`/tmp/meth`. Mantle L2
+mETH Sourcify 404.
+Pauser impl Sourcify
+404. No mainnet
+interaction.
+
+Files:
+`Staking.sol`,
+`METH.sol`,
+`UnstakeRequestsManager.sol`,
+`Oracle.sol`,
+`OracleQuorumManager.sol`,
+`ReturnsAggregator.sol`,
+`ReturnsReceiver.sol`.
+
+Checked for: a
+stranger mint of
+mETH; claim of
+another user’s
+unstake; first-stake
+donation that
+steals the next
+depositor; oracle
+record anyone can
+push.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `stake` mints
+  after
+  `ethToMETH`.
+  Bootstrap uses
+  `mETH.totalSupply
+  == 0` (not
+  `totalControlled`)
+  so a donation to
+  a returns
+  receiver cannot
+  inflate the first
+  mint. Later rate
+  is
+  `mulDiv` floor.
+- `METH.mint` is
+  the staking
+  contract.
+  `burn` is the
+  unstake manager
+  and burns
+  `msg.sender`
+  (the manager’s
+  locked mETH).
+  `forceMint` /
+  `forceBurn` are
+  roles.
+- `unstakeRequest`
+  pulls mETH from
+  `msg.sender` into
+  the manager.
+  `claim` is
+  staking-only and
+  requires
+  `requester ==
+  request.requester`,
+  finality, and
+  allocated fill,
+  then burns and
+  `sendValue`s to
+  the requester.
+- `allocateETH` /
+  `initiateValidators`
+  / `topUp` are
+  roles.
+  `receiveReturns`
+  is the
+  aggregator.
+  `receive()`
+  reverts.
+- Oracle
+  `receiveRecord`
+  is
+  `oracleUpdater`
+  only. Quorum
+  `receiveRecord`
+  is
+  `SERVICE_ORACLE_REPORTER`.
+  Aggregator
+  `processReturns`
+  is the oracle.
+  Receiver
+  `transfer` is
+  `WITHDRAWER_ROLE`.
+
+Do not file
+manager
+`setExchangeAdjustmentRate`,
+role
+`forceMint`,
+initiator BLS
+trust, or a
+donation that
+improves the rate
+for existing
+stakers.
+
+Not submitted.
+Listed leftover is
+the L1 staking +
+token + unstake +
+oracle + returns
+path. Remaining
+mETH: L2 token
+Sourcify 404,
+Pauser impl
+Sourcify 404,
+LiquidityBuffer
+(not a listed
+row).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -21372,6 +21523,14 @@ implementation leftover
 (Sourcify `exact_match`)
 is logged (listed Flux
 leftover exhausted);
+Mantle mETH staking leftover
+(Sourcify `Staking` / `METH` /
+UnstakeRequestsManager /
+Oracle / ReturnsAggregator)
+is logged (remaining mETH is
+L2 token + Pauser impl
+Sourcify 404 and unlisted
+LiquidityBuffer);
 Beets stS
 (`877087b`) + token
 leftover is logged

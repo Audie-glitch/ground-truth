@@ -50,6 +50,8 @@ UTIX crowdsale leftover (Sourcify
 `MintedTokenCappedCrowdsaleExtv1`)
 is logged (listed leftover
 exhausted).
+1inch token-plugins + farming leftover
+(`9b6de97` / `b1fca09`) is logged.
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool
 v1.4 listed GitHub leftover is exhausted (deposit /
@@ -68,7 +70,13 @@ delegator / OndoPriceOracleV2) is logged.
 Flux Comptroller / KYC cToken / Governor
 Bravo implementation leftover (Sourcify
 `exact_match`) is logged (listed Flux
-leftover exhausted). Beets stS + token leftover
+leftover exhausted). Mantle mETH staking
+leftover (Sourcify `Staking` / `METH` /
+UnstakeRequestsManager / Oracle /
+ReturnsAggregator) is logged (remaining
+mETH is L2 token + Pauser impl Sourcify
+404 and unlisted LiquidityBuffer).
+Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
 leftover is logged (yvUSD / Woofy still Sourcify 404).
 Benqi Dual Oracle leftover is logged. Benqi core
