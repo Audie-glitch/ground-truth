@@ -10,7 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana bank_client leftover is logged;
+246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana prioritization_fee leftover is logged;
+Jito leftover remaining jito-solana bank_client leftover is logged;
 Jito leftover remaining jito-solana account_saver leftover is logged;
 Jito leftover remaining jito-solana bank money-path leftover is logged;
 Jito leftover remaining jito-solana fee_distribution leftover is logged;
@@ -1794,10 +1795,15 @@ jito-solana account_saver leftover
 (`d0e3a47`; KYC) is logged.
 Jito leftover remaining
 jito-solana bank_client leftover
+(`d0e3a47`; KYC) is logged.
+Jito leftover remaining
+jito-solana prioritization_fee leftover
 (`d0e3a47`; KYC) is logged
 (remaining listed is unused
 remaining-runtime slices
-`prioritization_fee`
+`commitment` /
+`slot_params` /
+`genesis_utils`
 if still unused).
 Optimism leftover remaining
 PolicyEngineStaking leftover
