@@ -24135,17 +24135,10 @@ Not submitted.
 Remaining Lido
 listed GitHub:
 aave-delivery
-adapters leftover.
+adapters leftover
+is now logged.
 mev-boost-relay-allowed-list
 is logged.
-Remaining
-aave-delivery:
-CCIP / LayerZero /
-Wormhole / Polygon
-/ HyperLane /
-zkEVM / Scroll /
-Metis / Gnosis /
-CBase adapters.
 
 ## 2026-09-03: Lido mev-boost-relay leftover (`47211c6`)
 
@@ -24214,13 +24207,9 @@ Listed Lido GitHub
 repos in this pass
 are opened.
 Remaining
-aave-delivery:
-CCIP / LayerZero /
-Wormhole / Polygon
-/ HyperLane /
-zkEVM / Scroll /
-Metis / Gnosis /
-CBase adapters.
+aave-delivery
+adapters leftover
+is logged.
 Remaining
 in already-opened
 trees: aragon-apps
@@ -24237,6 +24226,135 @@ MetaRegistry;
 easy-track NO /
 MEV-relay / vault-hub
 / OperatorGrid / CSM
+settle factories.
+
+## 2026-09-03: Lido aave-delivery adapters leftover (`27e7d4e`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Core
+CCC / executor /
+Op / Arb / SameChain
+are already logged.
+This slice is the
+remaining
+`aave-delivery-infrastructure`
+adapters. Local
+clone
+`/tmp/lidofinance-aave-delivery`
+at `27e7d4e`. No
+mainnet interaction.
+
+Files:
+`src/contracts/adapters/ccip/CCIPAdapter.sol`,
+`src/contracts/adapters/layerZero/LayerZeroAdapter.sol`,
+`src/contracts/adapters/wormhole/WormholeAdapter.sol`,
+`src/contracts/adapters/polygon/PolygonAdapterBase.sol`,
+`src/contracts/adapters/hyperLane/HyperLaneAdapter.sol`,
+`src/contracts/adapters/zkEVM/ZkEVMAdapter.sol`,
+`src/contracts/adapters/scroll/ScrollAdapter.sol`,
+`src/contracts/adapters/metis/MetisAdapter.sol`,
+`src/contracts/adapters/gnosisChain/GnosisChainAdapter.sol`,
+`src/contracts/adapters/cBase/CBaseAdapter.sol`,
+`src/contracts/adapters/BaseAdapter.sol`.
+
+Checked for: a
+stranger receive
+that registers a
+payload without
+the official
+messenger or a
+trusted remote.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Every receive
+  path is the
+  official
+  messenger /
+  router /
+  mailbox /
+  relayer /
+  tunnel /
+  bridge only,
+  then requires
+  `_trustedRemotes[origin]
+  == src && src
+  != 0` before
+  `_registerReceivedMessage`.
+- CCIP
+  `ccipReceive`
+  is `onlyRouter`.
+  LZ `lzReceive`
+  is
+  `onlyLZEndpoint`
+  and
+  `allowInitializePath`.
+  Wormhole
+  `receiveWormholeMessages`
+  is `onlyRelayer`.
+  HyperLane
+  `handle` is
+  `onlyMailbox`.
+  zkEVM
+  `onMessageReceived`
+  is
+  `onlyZkEVMBridge`.
+  Polygon
+  `processMessage`
+  is `onlyFxTunnel`.
+  Gnosis
+  `receiveMessage`
+  requires
+  `msg.sender ==
+  BRIDGE` and
+  uses
+  `messageSender()`
+  /
+  `messageSourceChainId()`.
+- Scroll / Metis
+  / CBase inherit
+  OpAdapter
+  `ovmReceive`
+  (`onlyOVM` +
+  `xDomainMessageSender
+  == trusted
+  remote`). They
+  only override
+  destination
+  chain and
+  `forwardMessage`.
+- `_registerReceivedMessage`
+  forbids
+  delegatecall
+  via `_selfAddress`.
+
+Not submitted.
+Listed
+aave-delivery
+adapter leftover
+is exhausted.
+Remaining
+in already-opened
+Lido trees:
+aragon-apps
+Voting /
+DisputableVoting /
+Agreement;
+dual-governance
+TiebreakerSubCommittee
+/ wrappers; CSM
+MerkleGateFactory /
+ValidatorStrikes /
+HashConsensus /
+MetaRegistry;
+easy-track NO /
+MEV-relay /
+vault-hub /
+OperatorGrid / CSM
 settle factories.
 
 ## Next candidates
@@ -24576,10 +24694,12 @@ Lido aragon-apps leftover
 Lido aave-delivery-infrastructure
 leftover (`27e7d4e`) is logged.
 Lido mev-boost-relay leftover
-(`47211c6`) is logged
-(remaining Lido listed
-GitHub is aave-delivery
-adapters).
+(`47211c6`) is logged.
+Lido aave-delivery adapters
+leftover (`27e7d4e`) is
+logged (listed Lido
+aave-delivery leftover
+exhausted).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -24938,10 +25058,12 @@ Lido aragon-apps leftover
 Lido aave-delivery-infrastructure
 leftover (`27e7d4e`) is logged.
 Lido mev-boost-relay leftover
-(`47211c6`) is logged
-(remaining Lido listed
-GitHub is aave-delivery
-adapters);
+(`47211c6`) is logged.
+Lido aave-delivery adapters
+leftover (`27e7d4e`) is
+logged (listed Lido
+aave-delivery leftover
+exhausted);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
 rETH2 / Oracles /
