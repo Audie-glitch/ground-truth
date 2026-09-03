@@ -39880,6 +39880,418 @@ and the
 transaction-tool
 website leftover.
 
+## 2026-09-03: Hedera leftover remaining File leftover (`0d3d9a2`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+after
+TokenFeeSchedule
+leftover.
+Official
+`hiero-ledger/hiero-consensus-node`
+`0d3d9a2`.
+CDN extract
+`/tmp/hedera-other/file`
+`FileCreateHandler`
+/
+`FileAppendHandler`
+/
+`FileUpdateHandler`
+/
+`FileDeleteHandler`
+/
+`FileServiceUtils`.
+No mainnet
+writes.
+
+Files:
+`handlers/FileCreateHandler.java`,
+`handlers/FileAppendHandler.java`,
+`handlers/FileUpdateHandler.java`,
+`handlers/FileDeleteHandler.java`,
+`utils/FileServiceUtils.java`.
+
+Checked for:
+a stranger
+`FileAppend`
+that
+rewrites
+another
+file;
+`FileDelete`
+without a
+file key;
+system-file
+append
+without a
+waiver.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `FileCreate`
+  `validateAndAddRequiredKeys`
+  requires
+  every key
+  in the
+  new key
+  list.
+- `FileAppend`
+  /
+  `FileUpdate`
+  require
+  the
+  existing
+  file keys
+  unless a
+  privileged
+  waiver
+  applies.
+  Software-
+  update
+  file
+  numbers
+  take a
+  separate
+  upgrade
+  path.
+- `FileDelete`
+  wraps
+  the file
+  key list
+  as a
+  threshold-1
+  key
+  (`validateAndAddRequiredKeysForDelete`).
+  Handle
+  rejects
+  a file
+  with no
+  keys
+  (`UNAUTHORIZED`).
+
+Do not file
+file-key
+append /
+update /
+delete as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-mirror-node`,
+`hiero-cryptography`,
+other consensus
+modules
+(contract /
+schedule /
+consensus
+if a
+narrow
+money path
+isolates),
+SDKs,
+and the
+transaction-tool
+website leftover.
+
+## 2026-09-03: Hedera leftover remaining Schedule leftover (`0d3d9a2`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+after File
+leftover.
+Official
+`hiero-ledger/hiero-consensus-node`
+`0d3d9a2`.
+CDN extract
+`/tmp/hedera-other/schedule`
+and
+`/tmp/hedera-other/consensus`.
+No mainnet
+writes.
+
+Files:
+`handlers/ScheduleCreateHandler.java`,
+`handlers/ScheduleSignHandler.java`,
+`handlers/ScheduleDeleteHandler.java`,
+`handlers/ConsensusCreateTopicHandler.java`,
+`handlers/ConsensusSubmitMessageHandler.java`,
+`handlers/ConsensusDeleteTopicHandler.java`.
+
+Checked for:
+a stranger
+`ScheduleSign`
+that
+executes
+without
+required
+keys;
+`ScheduleDelete`
+of an
+immutable
+schedule;
+`ConsensusSubmitMessage`
+without
+the submit
+key.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `ScheduleCreate`
+  requires
+  the admin
+  key when
+  present.
+  Scheduled
+  payer /
+  non-payer
+  keys are
+  optional
+  on
+  create
+  and must
+  still
+  satisfy
+  `getRequiredKeys`
+  before
+  execute.
+- `ScheduleSign`
+  collects
+  optional
+  keys and
+  only
+  executes
+  when
+  `tryToExecuteSchedule`
+  sees
+  every
+  required
+  key.
+- `ScheduleDelete`
+  requires
+  an admin
+  key
+  (`SCHEDULE_IS_IMMUTABLE`
+  otherwise)
+  and
+  verifies
+  it in
+  handle.
+- `ConsensusCreateTopic`
+  requires
+  the admin
+  key and
+  auto-renew
+  account
+  when
+  present.
+  `ConsensusSubmitMessage`
+  requires
+  the
+  submit
+  key when
+  present.
+  `ConsensusDeleteTopic`
+  requires
+  the admin
+  key.
+
+Do not file
+key-
+threshold
+schedule
+execute,
+admin-gated
+schedule
+delete,
+or submit-
+key
+topic
+message
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-mirror-node`,
+`hiero-cryptography`,
+other consensus
+modules
+(contract
+if a
+narrow
+money path
+isolates),
+SDKs,
+and the
+transaction-tool
+website leftover.
+
+## 2026-09-03: Hedera leftover remaining Contract leftover (`0d3d9a2`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+after Schedule
+leftover.
+ContractCall
+is already
+leftover-logged.
+Official
+`hiero-ledger/hiero-consensus-node`
+`0d3d9a2`.
+CDN extract
+`/tmp/hedera-other/contract`.
+No mainnet
+writes.
+
+Files:
+`handlers/ContractCreateHandler.java`,
+`handlers/ContractUpdateHandler.java`,
+`handlers/ContractDeleteHandler.java`,
+`handlers/EthereumTransactionHandler.java`.
+
+Checked for:
+a stranger
+`ContractDelete`
+that
+sweeps
+another
+contract;
+`ContractUpdate`
+of an
+immutable
+contract;
+`EthereumTransaction`
+that
+spends
+from an
+unrelated
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `ContractCreate`
+  requires
+  the admin
+  key unless
+  it is a
+  contract-
+  ID key,
+  plus the
+  auto-renew
+  account
+  when
+  present.
+- `ContractUpdate`
+  requires
+  the
+  target
+  contract
+  key when
+  admin
+  signature
+  is
+  required,
+  rejects
+  a
+  contract-
+  ID admin
+  (`MODIFYING_IMMUTABLE_CONTRACT`),
+  and
+  requires
+  a new
+  crypto
+  admin
+  key /
+  auto-renew
+  account
+  when
+  set.
+- `ContractDelete`
+  requires
+  a non-
+  contract
+  admin
+  key and
+  `requireKeyIfReceiverSigRequired`
+  on the
+  obtainer.
+  Handle
+  `deleteAndTransfer`s
+  to the
+  recorded
+  obtainer.
+- `EthereumTransaction`
+  recovers
+  the ECDSA
+  sender
+  and, for
+  a
+  finalized
+  account,
+  checks
+  the
+  stored
+  admin key
+  matches
+  that
+  pubkey.
+  Value to
+  the burn
+  address
+  is
+  rejected.
+
+Do not file
+admin-gated
+contract
+create /
+update /
+delete or
+ECDSA-
+scoped
+ethereum
+tx as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-mirror-node`,
+`hiero-cryptography`,
+other consensus
+modules,
+SDKs,
+and the
+transaction-tool
+website leftover.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -42377,6 +42789,16 @@ Hedera leftover remaining TokenFeeSchedule leftover
 mirror-node / cryptography / other modules / SDKs;
 listed token-service handler leftover that this
 extract opens is exhausted);
+Hedera leftover remaining File leftover
+(`0d3d9a2`) is logged (remaining listed is
+mirror-node / cryptography / contract /
+schedule / consensus / SDKs);
+Hedera leftover remaining Schedule leftover
+(`0d3d9a2`) is logged (remaining listed is
+mirror-node / cryptography / contract / SDKs);
+Hedera leftover remaining Contract leftover
+(`0d3d9a2`) is logged (remaining listed is
+mirror-node / cryptography / other modules / SDKs);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
 Sei leftover go-ethereum leftover (`bb451e2`) is logged;
