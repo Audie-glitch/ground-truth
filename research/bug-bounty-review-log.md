@@ -45786,6 +45786,106 @@ Remaining listed:
 check_transactions
 (if still unused).
 
+## 2026-09-03: Jito leftover remaining jito-solana check_transactions leftover (`d0e3a47`)
+
+Immunefi program
+`jito`
+($250,000,
+`kyc: true`).
+Official
+`jito-foundation/jito-solana`
+`d0e3a47`.
+Extract
+`/tmp/jito-solana/runtime/src/bank/check_transactions.rs`.
+Do not rematch
+partitioned
+epoch rewards
+/
+runtime fee leftovers.
+No mainnet
+writes.
+
+Files:
+`runtime/src/bank/check_transactions.rs`.
+
+Checked for:
+age check
+that skips
+fee
+payment;
+nonce
+advance
+that a
+stranger
+can force;
+status
+cache
+bypass
+that
+replays a
+settled
+tx.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Validator
+  bank
+  helper,
+  not a
+  stranger
+  IX.
+- Age +
+  compute-
+  budget
+  limits
+  then
+  status
+  cache.
+  v1 txs
+  are
+  feature-
+  gated.
+- Fee
+  details
+  are
+  computed
+  here.
+  Lamport
+  debit is
+  leftover-
+  logged
+  runtime
+  fee.
+- Nonce
+  age
+  uses
+  durable
+  nonce
+  vs
+  blockhash
+  queue.
+
+Do not file
+a bank
+tx-age
+check as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+unused official
+leftover that
+listed trees
+open is
+exhausted on
+this pin.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -46063,6 +46163,10 @@ Jito leftover remaining jito-solana remaining runtime leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana partitioned epoch rewards leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana check_transactions leftover (`d0e3a47`)
+is logged.
+Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -46082,9 +46186,9 @@ is logged.
 Rootstock leftover remaining rsk-powhsm leftover (`82a12d44efec`)
 is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Remaining go-* if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` check_transactions if still unused.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -46156,6 +46260,8 @@ Do not rematch Jito jito-solana zk-elgamal-proof leftover.
 Do not rematch Jito jito-solana vote_reward leftover.
 Do not rematch Jito jito-solana remaining runtime leftover.
 Do not rematch Jito jito-solana partitioned epoch rewards leftover.
+Do not rematch Jito jito-solana check_transactions leftover.
+Do not rematch Filecoin go-jsonrpc leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -48911,7 +49017,11 @@ Jito leftover remaining jito-solana vote_reward leftover
 Jito leftover remaining jito-solana remaining runtime leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana partitioned epoch rewards leftover
-(`d0e3a47`) is logged (remaining listed is check_transactions);
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana check_transactions leftover
+(`d0e3a47`) is logged (remaining listed is exhausted on this pin);
+Filecoin leftover remaining go-jsonrpc leftover
+(`059363558429`) is logged;
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover
