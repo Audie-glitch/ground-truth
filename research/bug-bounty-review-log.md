@@ -33032,6 +33032,141 @@ Remaining listed:
 RPC / gateway /
 websocket.
 
+## 2026-09-03: Starknet Staking leftover L1 mint + cairo staking leftover (`7a7add2` / `@staking/contracts-v1.0.1-dev.854`)
+
+Immunefi program
+`starknet-staking`
+($100,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official tag
+`@staking/contracts-v1.0.1-dev.854`.
+Repo HEAD
+`7a7add2`.
+Extract
+`/tmp/sns-l1`,
+`/tmp/sns-cairo`.
+No mainnet
+writes.
+
+Files:
+`workspace/apps/staking/L1/starkware/solidity/stake/RewardSupplier.sol`,
+`workspace/apps/staking/L1/starkware/solidity/stake/MintManager.sol`,
+`workspace/apps/staking/L1/starkware/solidity/stake/PeriodMintLimit.sol`,
+`workspace/apps/staking/L1/starkware/solidity/stake/RewardSupplierStorage.sol`,
+`workspace/apps/staking/contracts/src/staking/staking.cairo`,
+`workspace/apps/staking/contracts/src/pool/pool.cairo`,
+`workspace/apps/staking/contracts/src/reward_supplier/reward_supplier.cairo`.
+
+Checked for: a
+stranger L1
+`mintRequest`
+that mints to
+the caller; a
+`tick` that
+deposits minted
+STRK to an
+arbitrary L2;
+a cairo `stake`
+that pulls
+another
+account; a
+stranger
+`claim_rewards`
+or
+`unstake_action`
+that pays the
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- L1
+  `mintRequest`
+  requires a
+  registered
+  minter plus
+  allowance and
+  mints to the
+  requester.
+  Allowance
+  setters are
+  token-admin /
+  governor /
+  security
+  roles.
+- L1 `tick` is
+  permissionless
+  after L2→L1
+  mint-request
+  messages, then
+  deposits to
+  the configured
+  `mintDestination`.
+- Cairo `stake`
+  /
+  `increase_stake`
+  pull
+  `get_caller_address`.
+  `claim_rewards`
+  is staker or
+  reward-address
+  gated and
+  pays
+  `reward_address`.
+  `unstake_action`
+  is
+  permissionless
+  after the
+  wait window
+  and returns
+  STRK to
+  `staker_address`.
+- Pool
+  `enter_delegation_pool`
+  pulls the
+  caller.
+  `exit_delegation_pool_action`
+  is
+  permissionless
+  after the
+  wait window
+  and pays
+  `pool_member`.
+  L2
+  `RewardSupplier.claim_rewards`
+  is
+  staking-contract
+  only.
+
+Do not file
+permissionless
+`tick` of
+attested L2
+mint requests
+or
+permissionless
+unstake after
+the recorded
+wait window.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that the tagged
+tree opens is
+exhausted at
+this money-path
+level.
+Remaining listed:
+minting_curve
+config;
+utils.cairo.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -34727,6 +34862,13 @@ ResolvedDelegateProxy; KYC)
 is logged (remaining listed
 is RPC / gateway /
 websocket);
+Starknet Staking leftover L1
+mint + cairo staking leftover
+(`7a7add2` /
+`@staking/contracts-v1.0.1-dev.854`;
+KYC) is logged (remaining
+listed is minting_curve
+config; utils.cairo);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
