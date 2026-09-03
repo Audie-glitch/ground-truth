@@ -4,13 +4,13 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~08:28 UTC. Dates verified against each
+Status as of 3 September 2026, ~08:32 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:28 UTC;
-246 programs; no Sep 2026 launches; Derive leftover matching
-+ cash leftover is logged). KeeperHub
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:32 UTC;
+246 programs; no Sep 2026 launches; Derive leftover auction
++ security leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -235,12 +235,18 @@ Aera leftover (Sourcify Base
 MultiDepositorVault / Provisioner; KYC)
 is logged (listed leftover exhausted at
 the opened-contract level).
+SSV Network leftover (Sourcify Network /
+Views; KYC) is logged (listed leftover
+exhausted at the opened-contract level).
 Derive leftover matching + cash leftover
 (`f6c20f4` / `96796a6` Deposit /
 Withdrawal / Transfer / Trade / Matching
-+ CashAsset) is logged (remaining listed
-is DutchAuction / SecurityModule /
-managers / assets / feeds).
++ CashAsset) is logged.
+Derive leftover auction + security leftover
+(`96796a6` DutchAuction / SecurityModule)
+is logged (remaining listed is
+StandardManager / PMRM / Option / Perp /
+BaseAsset / feeds).
 zerolend-boost leftover (`60d255a`
 locker / omnichain staking /
 VestedZeroNFT / AirdropRewarder /
@@ -716,9 +722,15 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Aera leftover (Sourcify Base
   MultiDepositorVault /
   Provisioner; KYC),
+  SSV Network leftover
+  (Sourcify Network / Views;
+  KYC),
   Derive leftover matching +
   cash leftover (`f6c20f4` /
-  `96796a6`),
+  `96796a6`) plus auction +
+  security leftover
+  (`96796a6` DutchAuction /
+  SecurityModule),
   zerolend-boost leftover
   (`60d255a` locker /
   omnichain staking /

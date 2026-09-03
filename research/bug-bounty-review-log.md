@@ -30101,16 +30101,25 @@ Provisioner; KYC) is logged
 (listed leftover exhausted
 at the opened-contract
 level);
+SSV Network leftover
+(Sourcify Network / Views;
+KYC) is logged (listed
+leftover exhausted at the
+opened-contract level);
 Derive leftover matching +
 cash leftover (`f6c20f4` /
 `96796a6` Deposit /
 Withdrawal / Transfer /
 Trade / Matching +
-CashAsset) is logged
+CashAsset) is logged.
+Derive leftover auction +
+security leftover
+(`96796a6` DutchAuction /
+SecurityModule) is logged
 (remaining listed is
-DutchAuction /
-SecurityModule / managers /
-assets / feeds);
+StandardManager / PMRM /
+Option / Perp / BaseAsset /
+feeds);
 zerolend-boost leftover
 (`60d255a` locker /
 omnichain staking /
@@ -33483,3 +33492,116 @@ leftover is
 exhausted at the
 opened-contract
 level.
+
+## 2026-09-03: Derive leftover auction + security leftover (`96796a6`)
+
+Immunefi program
+`derive`
+($50,000, `kyc: false`).
+Matching + cash leftover
+is already logged.
+This slice is listed
+`DutchAuction` and
+`SecurityModule`.
+Official clone
+`/tmp/derive-v2-core`
+at `96796a6`.
+No mainnet interaction.
+
+Files:
+`src/liquidation/DutchAuction.sol`,
+`src/SecurityModule.sol`.
+
+Checked for: a
+stranger `bid` that
+uses another account
+as bidder; solvent
+bid that pulls cash
+from the liquidated
+account to the
+caller; insolvent
+payout that pays
+`msg.sender`;
+`requestPayout` by
+a non-whitelisted
+module; ownerless
+`withdraw` from the
+security module.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `startAuction`
+  requires a
+  whitelisted manager
+  and
+  maintenanceMargin
+  < 0. Solvent start
+  may pay a
+  liquidation fee
+  to the security
+  module account.
+- `bid` requires
+  `ownerOf(bidderId)
+  == msg.sender`,
+  same manager, and
+  a live auction
+  that cannot yet
+  terminate.
+  Solvent bids pay
+  `cashFromBidder`
+  into the
+  liquidated account
+  via `executeBid`
+  and reserve that
+  cash. Insolvent
+  bids request SM
+  payout to
+  `bidderId`; a
+  shortfall calls
+  `cash.socializeLoss`
+  to that bidder.
+- `terminateAuction`
+  is permissionless
+  once MM/BM is
+  restored.
+  `convertToInsolventAuction`
+  requires the
+  solvent bid price
+  <= 0 and MM < 0.
+- SecurityModule
+  `withdraw` /
+  `recoverERC20` are
+  owner.
+  `donate` pulls
+  `msg.sender`.
+  `requestPayout`
+  is
+  `onlyWhitelistedModule`
+  and transfers cash
+  to `targetAccount`.
+  `payCashInsolvency`
+  donates the SM
+  cash balance.
+
+Do not file
+permissionless
+undercollateralized
+liquidation,
+security-module
+socialize-loss
+print, or owner
+whitelist / withdraw
+as stranger theft.
+
+Not submitted.
+Listed leftover is
+DutchAuction +
+SecurityModule.
+Remaining listed:
+StandardManager /
+PMRM / Option /
+Perp / BaseAsset /
+feeds.
