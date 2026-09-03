@@ -36020,3 +36020,148 @@ same-type Reader
 utils already in
 the Reader
 compilation.
+
+## 2026-09-03: Kiln DeFi leftover ETH vault core (Sourcify)
+
+Immunefi program
+`kiln-defi`
+($500,000, `kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Ethereum
+Sourcify `match`
+Vault
+`0x1d7f221965e68475d44d1a8357f3211799b55e24`,
+VaultUpgradeableBeacon
+`0x15f7f910e5a8c86e609fd11c58f7342d86d3a25c`,
+ConnectorRegistry
+`0xEEEBc7537717a39b747015FEaE221C1F069daE0b`,
+VaultFactory
+`0xA59a98872393BE8410C42f8EED13821fa85A32a1`,
+AaveV3Connector
+`0x0D97Fa6C8F668E98C1ED9f6bB9Ec6d245d11DF41`,
+CompoundV3Connector
+`0xF259CF58d4ddc9E3C8AbEA3EEBA5710db3F71045`,
+MarketRegistry
+`0x08f80358Ce68363Ec06304cE667F1727246C852D`,
+SDAIConnector
+`0xb569824646a31fc950abe23B150d020c38B59D26`.
+Bitcoin.com Spark
+DAI vault
+`0xF4918Ef824a242602E0d3e5DB07fFd4DaC4ad3Ea`
+is Sourcify
+`match`
+VaultBeaconProxy
+impl
+`0x0193BA8d74e8c7F51522a25F89C405691406eF20`.
+No official public
+kiln-defi clone
+found. Extract
+`/tmp/kiln-defi`.
+No mainnet writes.
+
+Files:
+`src/Vault.sol`,
+`src/VaultFactory.sol`,
+`src/ConnectorRegistry.sol`,
+`src/connectors/AaveV3Connector.sol`,
+`src/connectors/CompoundV3Connector.sol`,
+`src/connectors/SDAIConnector.sol`,
+`src/abstracts/FeeDispatcher.sol`.
+
+Checked for: a
+stranger deposit
+that mints shares
+to the caller for
+someone else's
+assets; withdraw
+that skips
+allowance; factory
+create that
+hijacks an
+existing vault;
+connector
+`deposit` /
+`withdraw` that
+moves a vault's
+Aave / Compound /
+sDAI position
+when called
+directly; fee
+dispatch that
+pays `msg.sender`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Vault
+  `deposit` /
+  `mint` pull
+  `_msgSender()`
+  and mint to
+  `receiver`.
+  `withdraw` /
+  `redeem` spend
+  allowance when
+  `caller !=
+  owner` and pay
+  `receiver`.
+  Connector
+  interactions
+  are
+  `functionDelegateCall`
+  so Aave /
+  Compound / sDAI
+  positions sit
+  on the vault.
+- Factory
+  `createVault`
+  is
+  `onlyRole(DEPLOYER_ROLE)`
+  CREATE2 of a
+  new beacon
+  proxy.
+- Registry add /
+  update / remove
+  are
+  `CONNECTOR_MANAGER`.
+- Connectors
+  supply / withdraw
+  to
+  `address(this)`.
+  Direct calls
+  cannot move a
+  vault's
+  delegated
+  position.
+- `dispatchFees`
+  pays stored
+  recipients.
+  `collectPerformanceFees`
+  is
+  `FEE_MANAGER`.
+
+Do not file
+role-gated vault
+deploy, fee
+manager collect,
+or ERC4626
+self-deposit as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Kiln DeFi
+ETH core leftover
+is exhausted.
+Remaining listed:
+BSC / Arbitrum /
+other-chain vault
+impls, factories,
+connectors, and
+additional live
+vault instances.
