@@ -13335,6 +13335,100 @@ is exhausted (Infinity +
 MasterChef / LmPool + V2
 + v3-core + v3-periphery).
 
+## 2026-09-03: Obyte City AA leftover (`4a0a53f`)
+
+Immunefi program `obyte`
+($50,000, `kyc: false`).
+19 Aug 2025 leftover
+`byteball/city-aa`
+(Autonomous Agent for
+Obyte City). Local clone
+`/tmp/obyte-city-aa` at
+`4a0a53f` (“renounce
+replicator”). Custom OOS:
+fund-loss under $1,000;
+attacker expense ≥ 50% of
+damage. No mainnet
+interaction.
+
+Files: `city.oscript`,
+`city-lib.oscript`,
+`governance.oscript`,
+`random.oscript`.
+
+Checked for: leave that
+refunds a stranger’s plot;
+p2p buy that underpays
+the seller; build that
+self-matches after a
+transfer; followup that
+credits a third party;
+replicator drain after
+renounce; governance
+`commit` before the
+challenge window.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Buy requires attestation
+  and exact
+  `plot_price * (1+buy_fee)`.
+  `buy_from_balance` spends
+  the caller’s followup
+  `balance_`. Mayor plots
+  are amount-0 and become
+  mayor houses.
+- Leave / sell / transfer /
+  rent / edit are
+  owner-gated. P2P buy
+  pays `sale_price - fee`
+  to the old owner.
+  Transfer after matching
+  is refused (later plot
+  any transfer; earlier
+  plot if after plot2.ts).
+  Rental expansion after
+  plot2.ts is refused.
+- Build is a two-sided
+  10-minute handshake.
+  Reward mints four new
+  plots of
+  `min(plot1, plot2)`
+  (designed inflation;
+  houses cannot be left).
+- Followup is the same
+  handshake; reward is
+  frozen at first request
+  (`followup_reward_share *
+  house1.amount`) and
+  credited to both house
+  owners’ internal
+  balances.
+- Replicator
+  (`GAFNBCPR…`) can copy
+  vars and restore
+  outputs until
+  `renounce`. After
+  `$constants.renounced`,
+  `$is_replicator_request`
+  is false.
+- Governance names are a
+  fixed list; `commit`
+  needs a 3-day challenge.
+  New city needs 75% of
+  `total_land`. Randomness
+  allocation is
+  `randomness_aa`-only.
+
+Not submitted. Remaining
+Obyte listed AAs:
+`perpetual-aa`,
+`oswap-token-aa`,
+`token-registry-aa`,
+`obyte-cascading-donations`.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -13781,10 +13875,10 @@ governance (`530fb8b`)
 are logged (listed
 Counterstake leftover
 exhausted; `evm-v1.0` is
-the old pin; remaining
-Obyte listed AAs:
-`city-aa`,
-`perpetual-aa`,
+the old pin; City AA
+(`4a0a53f`) is logged;
+remaining Obyte listed
+AAs: `perpetual-aa`,
 `oswap-token-aa`,
 `token-registry-aa`,
 `obyte-cascading-donations`);
