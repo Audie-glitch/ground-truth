@@ -47574,7 +47574,7 @@ Remaining listed Jito: unused official leftover that listed remaining-runtime tr
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted at leftover-heading level. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining SuperchainConfig leftover is logged. Optimism leftover remaining LegacyMessagePasser leftover is logged. Optimism leftover remaining L2ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Ethena leftover remaining USDtb leftover is logged. Remaining listed is other OFT adapters / TON / other-chain rows if still unused.
-Remaining listed LayerZero: unused official leftovers if still open. LayerZero leftover remaining ULN301 leftover is logged. Remaining listed is ExecutorFeeLib / PriceFeed / OApp examples / other-chain if still unused.
+Remaining listed LayerZero: unused official leftovers if still open. LayerZero leftover remaining ULN301 leftover is logged. LayerZero leftover remaining ExecutorFeeLib leftover is logged. Remaining listed is OApp examples / other-chain if still unused.
 Remaining listed Ether.fi: unused official leftovers if still open. Ether.fi leftover remaining Auction leftover is logged. Remaining listed is OFT / bridge adapters / other-chain weETH if still unused.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
@@ -47710,6 +47710,7 @@ Do not rematch Optimism leftover remaining L2ProxyAdmin leftover.
 Do not rematch Ethena leftover remaining StakedENA leftover.
 Do not rematch Ethena leftover remaining USDtb leftover.
 Do not rematch LayerZero leftover remaining ULN301 leftover.
+Do not rematch LayerZero leftover remaining ExecutorFeeLib leftover.
 Do not rematch Ether.fi leftover remaining Auction leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
@@ -73968,3 +73969,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a bidder-only refund or a committee-quorum report as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: OFT / bridge adapters / other-chain weETH if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: LayerZero leftover remaining ExecutorFeeLib leftover (`9c741e7`)
+
+Immunefi program `layerzero` ($15,000,000, `kyc: true`). Official remaining unused leftover after ULN301 leftover. Official `LayerZero-Labs/LayerZero-v2` `9c741e7` (`9c741e7f9790639537b1710a203bcdfd73b0b9ac`). Opened listed `packages/layerzero-v2/evm/messagelib/contracts/{ExecutorFeeLib,PriceFeed}.sol`. Official raw GitHub **200**. Local extract `/tmp/lz-uln301/` (241 / 304 lines). Do not rematch ULN301 leftover or ETH Endpoint leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `getFeeOnSend` that pulls ETH from a stranger; `withdrawToken` / `withdrawFee` callable by a random EOA; `setPrice` that lets an unprivileged updater inflate quotes and steal send fees.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ExecutorFeeLib` is a view quote helper. Both `getFee` / `getFeeOnSend` overloads only decode options and call `PriceFeed.estimateFeeByEid`. `withdrawToken` is `onlyOwner` (native if token is `address(0)`).
+- `PriceFeed.getFee` is `pure` and returns 0; `estimateFeeOnSend` therefore never requires `msg.value`. Price / model-type writes are `onlyOwner` or `onlyPriceUpdater`. `withdrawFee` is `onlyOwner`.
+- Neither contract custody user OFT balances. Send-path fee collection remains on leftover-logged Endpoint / ULN send libraries.
+
+Do not file an owner-gated fee-lib withdraw or a view quote as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: OApp examples / other-chain twins if still unused. Next unused leftover is a different Immunefi program, not a rematch.
