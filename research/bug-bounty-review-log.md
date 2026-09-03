@@ -66193,3 +66193,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a worker-VRF + message-root + signature-bound block validator as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Aave leftover remaining GHO GSM leftover (`23859bb`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after GHO token leftover. Official `aave-dao/gho-origin` `23859bb`. Opened listed `Gsm.sol`, `GhoReserve.sol`, and `FixedPriceStrategy.sol`. Do not rematch GhoToken leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `buyAsset` paying less GHO than the fixed ratio; `sellAsset` drawing GHO without a reserve limit; `GhoReserve.use` by a non-entity.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `buyAsset` / `sellAsset` are `notFrozen` / `notSeized`. Buy `transferFrom`s the originator's GHO, `restore`s gross to the reserve, and sends underlying only if `_currentExposure` covers it. Sell pulls underlying, `use`s gross GHO, and respects `_exposureCap`.
+- Quotes use `FixedPriceStrategy` WAD ratio. Buy rounds GHO cost up, then asset down; sell rounds GHO down, then asset up. Fees accrue separately and are not rescuable as GHO inventory.
+- `GhoReserve.use` requires `limit >= used + amount` for `msg.sender` (unregistered limit is 0). `addEntity` / `setLimit` / `transfer` are role-gated. `rescueTokens` / `seize` / freeze / fee updates are role-gated.
+
+Do not file a capped fixed-ratio GSM swap as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: PoolConfigurator / ACL / oracles / periphery / rewards.
