@@ -13070,6 +13070,121 @@ Mux listed Solidity:
 (GitHub 404 as of 3 Sep
 2026; cannot open).
 
+## 2026-09-03: Threshold tBTC BOB cross-chain leftover (`502cd39`)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+Unique GitHub leftover
+added 24 Oct 2025:
+`threshold-network/tbtc-v2`
+`cross-chain/bob/contracts`.
+Local clone `/tmp/tbtc-v2`
+at `502cd39`. Do not
+refile known issues 1308
+(rebate timestamp), 1494
+(closeable wallets),
+1320 (relayer
+reimbursement), 1496
+(cross-chain redemption
+timeout), 1426 (Sui
+minter cap), 1410
+(TOB-TBTCACEXT-30).
+No mainnet interaction.
+
+Files:
+`TokenPoolUpgradeable.sol`,
+`BurnFromMintTokenPoolUpgradeable.sol`,
+`LockReleaseTokenPoolUpgradeable.sol`,
+`canonical/L2TBTC.sol`,
+`OptimismMintableUpgradableTBTC.sol`,
+`libraries/RateLimiter.sol`,
+`Timelock.sol`.
+
+Checked for: permissionless
+mint on L2; CCIP
+`releaseOrMint` that
+skips the source-pool
+check; lock that does
+not require an onRamp;
+decimal scale that mints
+more than burned;
+legacy OP-bridge burn
+of CCIP-minted supply;
+rebalancer drain by a
+stranger.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Pool `lockOrBurn` /
+  `releaseOrMint` require
+  the CCIP router onRamp
+  / offRamp for that
+  chain, a configured
+  remote pool, and an
+  uncursed RMN. Inbound
+  / outbound token-
+  bucket rate limits
+  apply when enabled.
+- Burn-mint burns from
+  the pool after the
+  ramp has already
+  transferred in.
+  Lock-release only
+  emits `Locked` (same
+  CCIP pattern) and
+  releases from tracked
+  pool balance.
+- `_calculateLocalAmount`
+  rounds down when the
+  dest has fewer
+  decimals and reverts
+  on overflow. Empty
+  `sourcePoolData` falls
+  back to local decimals
+  (documented
+  backwards-compat).
+- `L2TBTC.mint` is
+  owner-listed minters
+  only. Guardians pause
+  mint/burn. `recover*`
+  is owner.
+- OP-mintable v2
+  `legacyCapRemaining`
+  starts at
+  `totalSupply`. Bridge
+  mints increase it;
+  other minters do not.
+  While the cap is > 0,
+  only `BRIDGE` can
+  `burnFrom` / legacy
+  `burn(from, amount)`,
+  so the OP bridge
+  cannot burn
+  CCIP-minted tokens.
+- Lock-release
+  `withdrawLiquidity` is
+  the owner-set
+  rebalancer. Timelock
+  is OZ
+  `TimelockController`
+  with admin `address(0)`.
+
+Not submitted. Remaining
+Threshold listed assets
+are explorer addresses
+plus
+`keep-network/tbtc-v2`
+`typescript` (not a
+Solidity money path).
+Next leftover: Pancake
+`pancake-v3-contracts` /
+`pancake-swap-periphery`,
+or Twyne Sourcify-404
+vaults.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -13486,8 +13601,14 @@ Mux degen pool
 protocol v1 core
 (`0f70a70`) are logged
 (remaining Mux listed
-Solidity is
-mux-staking);
+Solidity is mux-staking,
+GitHub 404);
+Threshold tBTC BOB
+cross-chain leftover
+(`502cd39`) is logged
+(remaining Threshold is
+explorer addresses +
+keep-network typescript);
 Obyte Coop AA
 (`d7d5e57`), Friends AA
 (`45019f9`),
