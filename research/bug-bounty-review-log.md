@@ -10059,7 +10059,8 @@ vault. Olympus CDEPO is
 the official DEPOS
 module and is logged
 below. Next leftover:
-StackingDAO cores,
+StackingDAO rewards /
+stakers / signers,
 TermMax adapters, Twyne
 Sourcify-404 vaults, Sky
 `PAUFactory` / `Kicker` /
@@ -10195,10 +10196,12 @@ finding. Not submitted.
 
 Listed Zest Clarity is
 exhausted. Next leftover
-is StackingDAO cores
-(separate Immunefi
-program), not a second
-Zest pass. Not submitted.
+is StackingDAO rewards /
+stakers / signers after
+the core deposit path
+logged below, not a
+second Zest pass. Not
+submitted.
 
 ## 2026-09-03: Olympus DEPOS / CDEPO (`3f918a0`)
 
@@ -10503,6 +10506,117 @@ impls (Factory 3.0.4
 is already logged).
 Not submitted.
 
+## 2026-09-03: StackingDAO cores + stBTC/STX reserve leftover (Hiro 13 Aug 2026)
+
+Immunefi program
+`stackingdao` ($100,000,
+`kyc: false`, Primacy of
+Impact on Critical/High).
+Newest listed money path
+(13 Aug 2026): Hiro
+`SP4SZE…VDPBG`
+`stacking-dao-core-stbtc-v1`,
+`stacking-dao-core-stx-v2`,
+`stacking-dao-core-ststxbtc-v2`,
+plus `stbtc-token`,
+`stbtc-reserve`,
+`data-stbtc-v1`,
+`stx-reserve-v2`,
+`data-stx-v2`,
+`withdraw-data-stbtc`,
+`stbtc-withdraw-nft`.
+Official repo
+`StackingDAO/stackingdao-smart-contracts`
+updated the same day.
+Source pulled read-only
+from Hiro
+(`/tmp/stacking-dao`).
+No mainnet interaction.
+
+Checked for: first-depositor
+inflation; share mint
+without a pull; idle
+withdraw that spends
+reserved backing; NFT
+withdraw that pays a
+non-owner or a missing
+ticket; ratio excluding
+pending/escrow shares
+incorrectly; stSTX vs
+stSTXbtc reserve mix-up;
+permissionless
+`process-rewards`
+skimming new deposits.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- stBTC / stSTX deposit
+  computes shares from
+  the pre-pull ratio
+  (`get-*-up` rounds
+  against the depositor),
+  then pulls the full
+  asset and mints. First
+  deposit seeds 1000 dead
+  shares on the core.
+- `init-withdraw` escrows
+  shares on the core,
+  records the NFT ticket,
+  and increments the
+  reserved counter (does
+  not require idle cash).
+  `withdraw` is NFT-owner
+  + unlock-height gated,
+  deletes the ticket,
+  pays the stored user
+  amount, then burns
+  escrowed shares.
+  Missing tickets default
+  to a zero payout.
+- `withdraw-idle` burns
+  the caller's shares and
+  pays only
+  `idle - reserved`.
+  Idle fee stays in the
+  pool (stBTC/stSTX) or
+  goes to treasury
+  (stSTXbtc).
+- Ratio uses
+  `total - reserved`
+  over `supply - pending
+  (stBTC) / escrowed
+  cores (stSTX)`.
+  stSTXbtc is 1:1 and
+  earmarked via
+  `stx-for-ststxbtc-idle`;
+  STX reserve pay/stack
+  paths keep that bucket
+  out of stSTX idle.
+- Token mint/burn and
+  reserve moves are
+  `dao.check-is-protocol
+  (contract-caller)`.
+  NFT mint/burn too.
+- `rewards-pox5-v1
+  process-rewards` is
+  called on deposit.
+  The permissionless
+  branch only streams
+  already-queued sBTC
+  into reserves.
+  Commission on new
+  inbound sBTC is
+  keeper-only.
+
+Remaining StackingDAO:
+rewards-stx / commission
+/ signer-managers /
+strategy-v6 / native-pool
+if a later pass wants
+those admin/stacker
+contracts. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -10664,7 +10778,19 @@ strategy vault / engine /
 ops / state (`f2fce52`)
 are logged. Listed Zest
 Clarity leftover is
-exhausted. Next
+exhausted. StackingDAO
+`stacking-dao-core-stbtc-v1`
++ `stacking-dao-core-stx-v2`
++ `stacking-dao-core-ststxbtc-v2`
+plus stBTC token / reserve /
+data and STX reserve / data
+(Hiro, 13 Aug 2026 assets)
+are logged. Remaining
+StackingDAO is rewards /
+stakers / signer-managers /
+withdraw NFTs already
+reviewed with the cores.
+Next
 unreviewed Immunefi
 GitHub-or-recent trees:
 Olympus V1Migrator + Cooler
