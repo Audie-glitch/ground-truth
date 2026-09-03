@@ -49788,3 +49788,141 @@ historic proxy
 if a public
 source drop
 opens.
+
+## 2026-09-03: Folks leftover live Avalanche hub addrs + remaining oracle nodes (`7f631fe`)
+
+Immunefi program
+`folksfinance`
+($200,000, `kyc: true`).
+Listed remaining after
+hub pools + adapters
+(`46284`). Official
+clone `/tmp/folks-xchain`
+`7f631fe`. Live
+Avalanche hub
+addresses from
+`Folks-Finance/xchain-js-sdk`
+`src/chains/evm/hub/constants/chain.ts`.
+Sourcify is 404 on
+all of them.
+Routescan verified
+(compiler `0.8.23`)
+and every Folks
+file hashes match
+the clone. Extract
+`/tmp/folks-live-src`.
+No mainnet writes.
+
+Files:
+`Hub.sol` live
+`0xb39c03297E87032fF69f4D42A6698e4c4A934449`
+(hash `b6db7e5116087d89`),
+`LoanManager.sol`
+`0xF4c542518320F09943C35Db6773b2f9FeB2F847e`
+(`6743d0a77af37912`),
+`OracleManager.sol`
+`0x7218Bd1050D41A9ECfc517abdd294FB8116aEe81`
+(`fd96b9ad83c7b0bc`),
+`NodeManager.sol`
+`0x802063A23E78D0f5D158feaAc605028Ee490b03b`
+(`299407a7b899a234`),
+`HubCircleTokenPool.sol`
+USDC
+`0x88f15e36308ED060d8543DA8E2a5dA0810Efded2`
+(`8973bf60c10d87c7`),
+plus unused oracle
+nodes
+`ChainlinkNode.sol`,
+`PythNode.sol`,
+`ReducerNode.sol`,
+`StalenessCircuitBreakerNode.sol`,
+`ExternalNode.sol`,
+`ConstantNode.sol`,
+`PriceDeviationCircuitBreakerNode.sol`,
+`VaultAssetToSharesNode.sol`.
+
+Checked for: a
+live-address fork
+that drops
+`HUB_ROLE` /
+`isUserLoanOwner`;
+`OracleManager.setNodeId`
+without
+`MANAGER_ROLE`;
+an oracle node
+that moves tokens.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Live Hub /
+  LoanManager /
+  HubCircleTokenPool
+  sources are
+  byte-identical
+  to the already
+  opened clone.
+  Same role and
+  ownership gates.
+- `OracleManager`
+  `setNodeId` /
+  `setNodeManager`
+  are
+  `MANAGER_ROLE`.
+  `processPriceFeed`
+  is view.
+- `NodeManager.registerNode`
+  is
+  permissionless
+  but only stores
+  a price graph.
+  All remaining
+  node types are
+  view: they
+  read Chainlink /
+  Pyth / parents /
+  ERC-4626 and
+  return a price.
+  No coins move.
+  Immunefi
+  already
+  excludes
+  third-party
+  oracle data
+  without a
+  contract bug.
+
+Do not file
+hash-matched
+hub role gates,
+manager-gated
+oracle wiring,
+or view-only
+price nodes as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Folks
+live Avalanche
+hub addrs and
+remaining oracle
+node types are
+exhausted at the
+opened-file /
+bytecode-match
+level. Sourcify
+Exact Match is
+still absent.
+Remaining
+listed: spoke
+live addrs on
+other chains if
+they diverge,
+hub/spoke
+rewards, and
+the Algorand
+docs path.
