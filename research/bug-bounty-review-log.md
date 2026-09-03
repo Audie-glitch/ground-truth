@@ -64437,3 +64437,19 @@ Do not file a secp256k1 recover-and-compare helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner.
 >>>>>>> d25b66d (Log Filecoin leftover remaining go-crypto review.)
+
+## 2026-09-03: Wormhole leftover remaining Algorand Aptos Near leftover (`c58827e`)
+
+Immunefi program `wormhole` ($1,000,000, `kyc: true`). Official remaining listed after node leftover. Official clone `/tmp/wormhole` `c58827e` (sparse `algorand`, `aptos/token_bridge`, `near/contracts/token-bridge`). Opened Algorand `token_bridge.py` `sendTransfer` / `completeTransfer` / `checkForDuplicate`, Aptos `transfer_tokens.move` / `complete_transfer.move` / `complete_transfer_with_payload.move` / `vaa.move`, Near `lib.rs` `send_transfer_near` / `submit_vaa` / `vaa_transfer` / `ft_on_transfer`. No mainnet writes. No exploit PoCs.
+
+Checked for: complete paying a stranger; initiate locking another wallet's coins; payload redeem by a non-recipient; replay.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Algorand `sendTransfer` requires the prior group Payment/AssetTransfer from `Txn.sender` into the custody account, `fee <= amount`. `completeTransfer` requires the previous group txn to be core `verifyVAA` by the same sender, a registered emitter (or self on chain 8), dest chain 8, and `checkForDuplicate` (version 1 + emitter/sequence bit). Amount (minus fee) is inner-sent to the VAA destination; fee to `Txn.sender`. Payload3 requires the next group app call to be the destination app.
+- Aptos `transfer_tokens_entry` `coin::withdraw`s the signer. Wrapped burns; native deposits to `@token_bridge`. `complete_transfer` `parse_verify_and_replay_protect`s (known emitter + consumed hash), requires `to_chain` this chain and matching `CoinType` origin, then mints/withdraws to the VAA `to` and fee to `fee_recipient`. Payload complete additionally requires `recipient == emitter_cap` address.
+- Near `send_transfer_near` locks `attached_deposit - message_fee` from the predecessor. `submit_vaa` calls core `verify_vaa` then archives `dups[hash]`. `vaa_transfer` requires a registered emitter, `recipient_chain == NEAR`, a registered recipient hash, payload3 `predecessor == recipient`, and pays that account (`namount - nfee`).
+
+Do not file signer-approved lock/burn or claim-gated release to the VAA recipient as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: Relayer Sourcify 404.
