@@ -24743,6 +24743,129 @@ ValidatorStrikes /
 HashConsensus /
 MetaRegistry.
 
+## 2026-09-03: Lido dual-governance Tiebreaker leftover (`ba9dfc9`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Escrow
+/ submit / timelock
+and committees
+leftovers are already
+logged on the same
+pin. This slice is
+TiebreakerSubCommittee,
+the Tiebreaker
+library, and Dual
+Governance
+tiebreaker wrappers.
+Local clone
+`/tmp/lido-dg` at
+`ba9dfc9`. No mainnet
+interaction.
+
+Files:
+`contracts/committees/TiebreakerSubCommittee.sol`,
+`contracts/libraries/Tiebreaker.sol`,
+`contracts/DualGovernance.sol`
+(tiebreaker wrappers).
+
+Checked for: a
+stranger
+`scheduleProposal`
+or
+`sealableResume`
+that unpauses or
+schedules without
+committee quorum
+or outside a tie.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- SubCommittee
+  `scheduleProposal`
+  /
+  `sealableResume`
+  are member-only
+  HashConsensus
+  votes. Execute
+  is
+  permissionless
+  after the hash
+  is scheduled
+  (`_markUsed`).
+  Constructor
+  timelock is
+  zero. Execute
+  calls Core
+  `scheduleProposal`
+  /
+  `sealableResume`
+  so the
+  subcommittee
+  contract votes
+  as a Core
+  member, not
+  Dual Governance
+  itself.
+- Core then
+  executes to Dual
+  Governance
+  `tiebreakerScheduleProposal`
+  /
+  `tiebreakerResumeSealable`,
+  which require
+  `msg.sender ==
+  tiebreakerCommittee`
+  and
+  `checkTie`
+  (not Normal /
+  VetoCooldown,
+  and either the
+  activation
+  timeout has
+  passed or Rage
+  Quit plus a
+  long-paused /
+  faulty sealable
+  blocker).
+- Setup
+  (`setTiebreakerCommittee`,
+  blockers,
+  timeout) is
+  admin-executor
+  only on Dual
+  Governance.
+
+Do not file
+committee-member
+votes, permissionless
+execute after
+quorum, or
+tiebreaker action
+only in the
+documented
+deadlock.
+
+Not submitted.
+Remaining
+aragon-apps:
+Agreement.
+Remaining
+in already-opened
+Lido trees:
+CSM
+MerkleGateFactory /
+ValidatorStrikes /
+HashConsensus /
+MetaRegistry.
+Listed
+dual-governance
+leftover is
+exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -25095,6 +25218,10 @@ Lido aragon-apps Voting leftover
 (`e44f928`) is logged
 (remaining aragon-apps is
 Agreement).
+Lido dual-governance Tiebreaker leftover
+(`ba9dfc9`) is logged
+(listed dual-governance leftover
+exhausted).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -25471,7 +25598,11 @@ factories exhausted).
 Lido aragon-apps Voting leftover
 (`e44f928`) is logged
 (remaining aragon-apps is
-Agreement);
+Agreement).
+Lido dual-governance Tiebreaker leftover
+(`ba9dfc9`) is logged
+(listed dual-governance leftover
+exhausted);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
 rETH2 / Oracles /

@@ -110,10 +110,11 @@ is logged. Lido aave-delivery adapters
 leftover (`27e7d4e`) is logged. Lido
 easy-track leftover factories leftover
 (`3183d1f`) is logged. Lido aragon-apps
-Voting leftover (`e44f928`) is logged
-(remaining opened Lido trees are
-Agreement, Tiebreaker wrappers, and
-leftover CSM modules).
+Voting leftover (`e44f928`) is logged.
+Lido dual-governance Tiebreaker leftover
+(`ba9dfc9`) is logged (remaining opened
+Lido trees are Agreement and leftover
+CSM modules).
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis
