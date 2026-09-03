@@ -13877,7 +13877,96 @@ Orderly listed GitHub:
 Ledger / Operator /
 Fee / Market managers
 and `evm-cross-chain`
-`contracts/`.
+`contracts/` (Ledger
+withdraw logged below).
+
+## 2026-09-03: Orderly Ledger withdraw leftover (`462e129`)
+
+Immunefi program
+`orderlynetwork`
+($100,000, `kyc: false`).
+Vault leftover is already
+logged. This slice is
+Ledger withdraw + deposit
+notify on the same pin
+`462e129`. Local clone
+`/tmp/orderly-evm`. No
+mainnet interaction.
+
+Files: `Ledger.sol`,
+`LedgerImplA.sol`
+(`executeWithdrawAction`,
+`accountWithDrawFinish`,
+`accountWithdrawFail`,
+`accountDeposit`),
+`VaultManager.sol`
+freeze helpers,
+`library/Signature.sol`,
+`library/typesHelper/AccountTypeHelper.sol`.
+
+Checked for: operator
+withdraw without a valid
+user sig; finish that
+credits a stranger;
+unfreeze that inflates
+balance; deposit that
+registers a hijacked
+userAddress.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `executeWithdrawAction`
+  is `onlyOperatorManager`.
+  Requires allowed broker
+  / chain token, accountId
+  matching sender (or
+  strategy-vault id),
+  increasing nonce, ledger
+  balance minus escrow,
+  vault chain balance,
+  EIP-712 sig from
+  `sender` (domain
+  `Orderly`/`1`,
+  `verifyingContract` is
+  the Ledger via
+  delegatecall), fee ≤
+  max, receiver ≠ 0.
+  Bad nonce / sig /
+  escrow emit fail and
+  return. Then freezes
+  `tokenAmount` on the
+  account and
+  `tokenAmount - fee` on
+  the vault and CCs the
+  vault.
+- Finish is
+  `onlyCrossChainManager`.
+  Clears the nonce freeze
+  (must match exactly)
+  and credits the
+  withdraw-fee collector.
+  Fail (`onlyOwner`)
+  unfreezes the same
+  amounts.
+- `accountDeposit` is
+  `onlyCrossChainManager`.
+  First deposit registers
+  `userAddress` /
+  `brokerHash` from the
+  CC payload (CC trust).
+- VaultManager freeze /
+  add / sub are
+  `onlyLedger`.
+
+Not submitted. Remaining
+Orderly listed GitHub:
+Operator / Fee / Market
+managers, LedgerImpl B/C/D
+trade / Sol withdraw
+paths, and
+`evm-cross-chain`.
 
 ## Next candidates
 
@@ -14342,12 +14431,12 @@ are logged (listed
 MtPelerin GitHub
 Solidity leftover
 exhausted);
-Orderly Vault
-(`462e129`) is logged
-(remaining Orderly is
-Ledger / Operator /
-Fee / Market and
-`evm-cross-chain`);
+Orderly Vault and Ledger
+withdraw (`462e129`) are
+logged (remaining Orderly
+is Operator / Fee /
+Market, LedgerImpl B/C/D,
+and `evm-cross-chain`);
 Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase

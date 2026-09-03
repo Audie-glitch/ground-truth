@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~06:50 UTC. Dates verified against each
+Status as of 3 September 2026, ~07:00 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
@@ -12,9 +12,10 @@ recheck), and Immunefi unofficial mirror rechecked 3 Sep. KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
-is exhausted. MtPelerin bridge-v2 leftover is logged. Orderly Vault
-leftover is logged (remaining Orderly is Ledger / Operator / Fee /
-Market and evm-cross-chain). Twyne vaults still Sourcify 404.
+is exhausted. MtPelerin bridge-v2 leftover is logged. Orderly Vault and Ledger withdraw leftovers are logged
+(remaining Orderly is Operator / Fee / Market, LedgerImpl
+B/C/D, and evm-cross-chain). Twyne vaults still Sourcify
+404.
 
 ## Opportunities, ranked by expected payout per unit of work
 
