@@ -39247,6 +39247,279 @@ and the
 transaction-tool
 website leftover.
 
+## 2026-09-03: Hedera leftover remaining CryptoApproveAllowance leftover (`0d3d9a2`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+after TokenMint
+leftover.
+Official
+`hiero-ledger/hiero-consensus-node`
+`0d3d9a2`.
+Extract
+`/tmp/hedera-consensus`
+`CryptoApproveAllowanceHandler`
+/
+`TokenAccountWipeHandler`
+/
+`TokenAssociateToAccountHandler`
+/
+`TokenDissociateFromAccountHandler`
+/
+`CryptoCreateHandler`.
+No mainnet
+writes.
+
+Files:
+`handlers/CryptoApproveAllowanceHandler.java`,
+`handlers/TokenAccountWipeHandler.java`,
+`handlers/TokenAssociateToAccountHandler.java`,
+`handlers/TokenDissociateFromAccountHandler.java`,
+`handlers/CryptoCreateHandler.java`.
+
+Checked for:
+a stranger
+`CryptoApproveAllowance`
+that grants
+another
+account's
+allowance;
+`TokenWipe`
+without the
+wipe key;
+`TokenAssociate`
+that binds
+another
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `CryptoApproveAllowance`
+  `preHandle`
+  `requireKeyOrThrow`
+  the
+  allowance
+  owner when
+  owner !=
+  payer
+  (crypto +
+  token).
+  NFT
+  `approvedForAll`
+  requires
+  the owner;
+  otherwise
+  the
+  delegating
+  spender or
+  owner.
+- `TokenAccountWipe`
+  `requireKey`
+  the wipe
+  key when
+  present.
+  Handle
+  rejects
+  an empty
+  wipe key
+  (`TOKEN_HAS_NO_WIPE_KEY`).
+- `TokenAssociate`
+  and
+  `TokenDissociate`
+  `requireKeyOrThrow`
+  the
+  target
+  account.
+- `CryptoCreate`
+  requires
+  the alias
+  key or
+  hollow
+  EVM
+  signature
+  when the
+  alias is
+  not the
+  payer /
+  account
+  key.
+  `receiverSigRequired`
+  requires
+  the new
+  account
+  key.
+
+Do not file
+owner-signed
+allowance
+grant,
+wipe-key
+wipe,
+target-
+signed
+associate,
+or alias-
+proven
+create as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-mirror-node`,
+`hiero-cryptography`,
+other consensus
+modules, SDKs,
+and the
+transaction-tool
+website leftover.
+
+## 2026-09-03: Hedera leftover remaining TokenCreate leftover (`0d3d9a2`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+after
+CryptoApproveAllowance
+leftover.
+Official
+`hiero-ledger/hiero-consensus-node`
+`0d3d9a2`.
+Extract
+`/tmp/hedera-consensus`
+`TokenCreateHandler`
+/
+`CryptoUpdateHandler`
+/
+`CryptoDeleteAllowanceHandler`
+/
+`TokenFreezeAccountHandler`.
+No mainnet
+writes.
+
+Files:
+`handlers/TokenCreateHandler.java`,
+`handlers/CryptoUpdateHandler.java`,
+`handlers/CryptoDeleteAllowanceHandler.java`,
+`handlers/TokenFreezeAccountHandler.java`.
+
+Checked for:
+a stranger
+`TokenCreate`
+that binds
+another
+treasury;
+`CryptoUpdate`
+that
+replaces
+another
+account
+key;
+`TokenFreeze`
+without
+the freeze
+key.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `TokenCreate`
+  `preHandle`
+  `requireKeyOrThrow`
+  the
+  treasury
+  and
+  auto-renew
+  account
+  when
+  present,
+  plus the
+  admin key
+  and custom
+  fee
+  collectors
+  that
+  require
+  a
+  signature.
+  Initial
+  supply
+  mints to
+  the signed
+  treasury.
+- `CryptoUpdate`
+  requires
+  the target
+  account
+  key unless
+  a system
+  waiver
+  applies,
+  and the
+  new key
+  when
+  rotating.
+- `CryptoDeleteAllowance`
+  requires
+  the NFT
+  owner
+  unless the
+  payer is
+  the owner
+  or already
+  `approvedForAll`.
+- `TokenFreeze`
+  `requireKey`
+  the freeze
+  key;
+  handle
+  rejects
+  an empty
+  freeze
+  key.
+
+Do not file
+treasury-
+signed
+token
+create,
+target-
+signed
+account
+update,
+owner-
+signed
+allowance
+delete, or
+freeze-key
+freeze as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-mirror-node`,
+`hiero-cryptography`,
+other consensus
+modules, SDKs,
+and the
+transaction-tool
+website leftover.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -41728,6 +42001,12 @@ Filecoin leftover datacap + verifreg leftover (`d894a1a`)
 is logged (remaining listed is lotus / proofs / boost /
 FVM / filecoin.io);
 Hedera leftover remaining TokenMint leftover
+(`0d3d9a2`) is logged (remaining listed is
+mirror-node / cryptography / other modules / SDKs);
+Hedera leftover remaining CryptoApproveAllowance leftover
+(`0d3d9a2`) is logged (remaining listed is
+mirror-node / cryptography / other modules / SDKs);
+Hedera leftover remaining TokenCreate leftover
 (`0d3d9a2`) is logged (remaining listed is
 mirror-node / cryptography / other modules / SDKs);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)

@@ -18,6 +18,8 @@ Filecoin leftover evm leftover is logged;
 Sei leftover go-ethereum leftover is logged;
 Filecoin leftover remaining miner + account leftover is logged;
 Hedera leftover remaining TokenMint leftover is logged;
+Hedera leftover remaining CryptoApproveAllowance leftover is logged;
+Hedera leftover remaining TokenCreate leftover is logged;
 Filecoin leftover builtin-actors market + paych leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 ZKsync OS leftover evm_interpreter leftover is logged;
@@ -1129,6 +1131,18 @@ TokenMint leftover
 (remaining listed is
 mirror-node / cryptography /
 other modules / SDKs).
+Hedera leftover remaining
+CryptoApproveAllowance leftover
+(`0d3d9a2`; KYC) is logged
+(remaining listed is
+mirror-node / cryptography /
+other modules / SDKs).
+Hedera leftover remaining
+TokenCreate leftover
+(`0d3d9a2`; KYC) is logged
+(remaining listed is
+mirror-node / cryptography /
+other modules / SDKs).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -1935,6 +1949,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`d894a1a`; KYC),
   Hedera leftover remaining
   TokenMint leftover
+  (`0d3d9a2`; KYC),
+  Hedera leftover remaining
+  CryptoApproveAllowance leftover
+  (`0d3d9a2`; KYC),
+  Hedera leftover remaining
+  TokenCreate leftover
   (`0d3d9a2`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
