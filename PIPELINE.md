@@ -179,6 +179,11 @@ Curve / BIFI-maxi strategies) is logged
 Orca leftover (`3b47341` / `05fe66b` xORCA
 + Whirlpools) is logged (listed leftover
 exhausted).
+Threshold Bank leftover (`502cd39`) is
+logged.
+Arkadiko leftover (Hiro vaults / tokens /
+liq-pool) is logged (remaining listed is
+the website).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /

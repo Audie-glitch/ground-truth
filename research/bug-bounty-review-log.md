@@ -26202,6 +26202,109 @@ addresses and
 `keep-network/tbtc-v2`
 typescript.
 
+## 2026-09-03: Arkadiko leftover (Hiro)
+
+Immunefi program
+`Arkadiko` ($100,000,
+`kyc: false`). Unique
+no-KYC listed slice.
+12 listed Clarity
+contracts on
+`SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR`
+Hiro-open. Extract
+`/tmp/arkadiko`. Official
+clone `/tmp/arkadiko-dao`
+at `62095e8`. No mainnet
+interaction.
+
+Files:
+`arkadiko-vaults-operations-v1-3.clar`,
+`arkadiko-vaults-manager-v1-2.clar`,
+`arkadiko-vaults-pool-active-v1-1.clar`,
+`arkadiko-vaults-pool-liq-v1-2.clar`,
+`arkadiko-vaults-data-v1-1.clar`,
+`arkadiko-vaults-sorted-v1-1.clar`,
+`usda-token.clar`,
+`wstx-token.clar`.
+
+Checked for: stranger
+`open-vault` that mints
+USDA against another
+account's collateral;
+`close-vault` that
+withdraws another
+owner's collateral;
+`liquidate-vault` that
+pays leftover to the
+caller; pool-active
+`withdraw` without
+operations / manager.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `open-vault` /
+  `update-vault` /
+  `close-vault` bind
+  `owner` to
+  `tx-sender`.
+  Collateral deposit
+  / USDA mint and
+  burn go to that
+  sender.
+- pool-active
+  `deposit` /
+  `withdraw` require
+  operations,
+  manager, or DAO
+  owner.
+  `set-vault` /
+  sorted insert
+  remove are the
+  same callers.
+- `liquidate-vault`
+  only when CR is
+  invalid. Leftover
+  collateral returns
+  to the vault
+  owner. Liquidation
+  collateral goes to
+  the liq pool.
+- `redeem-vault` is
+  the first sorted
+  vault. Redeemer
+  burns their USDA
+  and receives
+  collateral minus
+  fee.
+- USDA
+  `mint-for-dao` is
+  the DAO. wstx
+  wrap / unwrap
+  move `tx-sender`.
+  Liq-pool stake /
+  unstake credit
+  `tx-sender`.
+
+Do not file DAO
+owner privilege,
+permissionless
+liquidation of
+undercollateralized
+vaults, or first-
+vault redemption as
+a stranger drain.
+
+Not submitted.
+Listed leftover is
+the Hiro-open
+vaults / tokens /
+liq-pool slice.
+Remaining listed:
+the website only.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -26645,6 +26748,11 @@ Orca leftover (`3b47341` /
 `05fe66b` xORCA + Whirlpools) is
 logged (listed leftover
 exhausted).
+Threshold Bank leftover
+(`502cd39`) is logged.
+Arkadiko leftover (Hiro vaults /
+tokens / liq-pool) is logged
+(remaining listed is the website).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -27106,6 +27214,11 @@ Orca leftover (`3b47341` /
 Whirlpools) is logged
 (listed leftover
 exhausted);
+Arkadiko leftover (Hiro
+vaults / tokens /
+liq-pool) is logged
+(remaining listed is the
+website);
 Beets stS
 (`877087b`) + token
 leftover is logged
