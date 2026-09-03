@@ -4438,6 +4438,68 @@ pass: `renzo`, `sky`, `pendle`, `yearn`,
 utils (`CreateSub` / `UpdateSub` /
 `ToggleSub` / wrap-ETH). Not submitted.
 
+## 2026-09-03: DeFi Saver Renzo / Sky / Pendle / Yearn / Uni (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction.
+
+Files: `contracts/actions/renzo/RenzoStake.sol`,
+`sky/{SkyStake,SkyUnstake,SkyClaimRewards,
+SkyStakingEngineOpen,SkyStakingEngineStake,
+SkyStakingEngineUnstake,SkyStakingEngineClaimRewards,
+SkyStakingEngineSelectFarm}.sol`,
+`pendle/PendleTokenRedeem.sol`,
+`yearn/{YearnSupply,YearnWithdraw}.sol`,
+`uniswap/{UniswapClaim,v2/UniSupply,v2/UniWithdraw,
+v3/UniMintV3,v3/UniSupplyV3,v3/UniWithdrawV3,
+v3/UniCollectV3,v3/UniCreatePoolV3}.sol`.
+
+Checked for: Yearn withdraw of a fake yVault
+that `withdrawTokens` a requested underlying
+amount; Sky unstake that sends wallet tokens
+after a no-op `withdraw`; Pendle redeem that
+transfers PT to a hostile YT; Uni V3
+decrease/collect of an NFT the wallet does
+not own.
+
+Result: no user-exploitable finding.
+
+- Renzo stake is hardcoded manager + ezETH
+  and sends only the received-balance
+  delta.
+- Sky stake/unstake take a caller-chosen
+  `stakingContract`. Stake approves and
+  `stake`s. Unstake calls `withdraw` then
+  `withdrawTokens(stakingToken, amount)` —
+  a no-op fake farm drains existing wallet
+  tokens of that asset. Owner-or-bot.
+  Staking-engine `free` / `lock` send
+  through the engine to `to` / urn index
+  for `address(this)`.
+- Pendle redeem requires
+  `market.isExpired()`, pulls PT, transfers
+  it to `readTokens().yt`, then
+  `redeemPY` + SY `redeem` with
+  `minAmountOut`. A hostile market that
+  names an attacker YT is owner-or-bot.
+- Yearn supply uses hardcoded
+  `yearnRegistry.latestVault(token)`.
+  Withdraw takes a caller-chosen yToken,
+  pulls shares, `vault.withdraw`, and
+  sends the underlying-balance delta.
+  A fake vault that does not pay sends
+  zero, not a requested amount.
+- Uni V2 factory/router and Uni V3
+  position manager are hardcoded. V3
+  decrease/collect require the wallet to
+  own `tokenId`. V2 removeLiquidity sends
+  to `to` via the router.
+
+Remaining DFS folders: `summerfi`, `insta`,
+`lsv`, `merkel`, `fee`, `checkers`, leftover
+utils (`CreateSub` / wrap-ETH). Not submitted.
+
 ## 2026-09-03: 0x Settler execute + Permit2 + RFQ/UniV3 (`1df9087`)
 
 Immunefi program `0x` ($1,000,000, `kyc: true`).
@@ -4577,11 +4639,11 @@ Euler V2, LlamaLend core, LlamaLend leftover +
 swapper, Aave V4 sig/premium, Aave V4 money
 actions, Maker MCD, TxSaver leftover, and
 triggers, leftover Aave V2, EtherFi / Lido,
-and leftover utils (`e623f20`) are logged.
-Remaining DFS folders: `renzo` / `sky` /
-`pendle` / `yearn` / `summerfi` / `uniswap`
-/ `insta` / `lsv` / `merkel` / `fee` /
-`checkers`. 0x Settler execute / Permit2 /
+leftover utils, and Renzo / Sky / Pendle /
+Yearn / Uni (`e623f20`) are logged.
+Remaining DFS folders: `summerfi` / `insta`
+/ `lsv` / `merkel` / `fee` / `checkers`.
+0x Settler execute / Permit2 /
 RFQ / UniV3 / AllowanceHolder / BridgeSettler
 entry (`1df9087`) is logged; remaining 0x is
 per-DEX adapters and bridge adapters. Next

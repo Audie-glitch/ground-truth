@@ -114,7 +114,8 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Aave V4 + leftover Aave V2, Comp V2/V3, Spark,
   Liquity V1, CurveUsd, Euler V2, LlamaLend,
   Maker MCD, TxSaver, triggers, EtherFi / Lido
-  + leftover utils (`e623f20`),
+  + leftover utils, Renzo / Sky / Pendle /
+  Yearn / Uni (`e623f20`),
   Jito interceptor (`dbd8ce4`) and restaking
   vault path (`db90840`),
   and Horizen ZenStaker (no submittable finding).
