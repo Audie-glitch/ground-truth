@@ -2337,10 +2337,9 @@ Result: no user-exploitable finding.
   only `execTransactionFromModule` collect selectors
   on a Safe-owned veNFT / whitelisted strategy list.
 
-Remaining Origin Sep-1 / later: OETH CrossChain
-HyperEVM master/remote (Base CCTP already reviewed),
-WETH/USDC/Lido ARM adapters if they differ from
-Ethena/AbstractARM, xOGN token itself.
+Remaining Origin after the AMO pass was WETH/USDC/Lido
+ARM (logged next) and CrossChain master/remote (also
+logged this turn). xOGN remains.
 
 Not submitted.
 
@@ -2399,6 +2398,150 @@ origin-dollar / arm-oeth; rewards module already
 reviewed). CapManager / Morpho market wrappers if
 they differ from the Ethena 4626 wrapper.
 
+## 2026-09-03: OZ Confidential leftover ERC7984 modules (`4a4f6c7`)
+
+Continues the v0.5.3 pass. Same Immunefi program
+(`openzeppelin`, $25,000, `kyc: true`). Same clone
+`/tmp/oz-confidential` at `4a4f6c7`. No mainnet
+interaction.
+
+Files: `contracts/token/ERC7984/extensions/{ERC7984Hooked,ERC7984Votes,ERC7984Omnibus,ERC7984ObserverAccess}.sol`,
+`contracts/token/ERC7984/utils/{ERC7984HookModule,ERC7984BalanceCapHookModule,ERC7984HolderCapHookModule}.sol`.
+
+Checked for: an unprivileged install that can zero
+transfers; a hook that forges compliance; holder-count
+accounting that lets a transfer past the cap; omnibus
+transfer that moves tokens of an account the caller
+does not operate; observer that can be set on someone
+else’s account.
+
+Result: no user-exploitable finding.
+
+- `installModule` / `uninstallModule` require
+  `_authorizeModuleChange` (concrete token). Modules
+  are trusted and keep ACL after uninstall
+  (documented). Pre-hooks AND into one `ebool`; false
+  zeroes the amount. Transient ACL on the amount is
+  granted only to installed modules. Module
+  `preTransfer` requires the token already allowed the
+  ciphertext.
+- Balance-cap compare uses `tryIncrease` then
+  `le(future, max)`. `setMaxBalance` is
+  `IERC7984Rwa.isAgent`. Sender-visible compliance is
+  a documented leak, not an extract.
+- Holder-cap must be installed before total supply is
+  initialized. Pre-check uses encrypted from/to
+  balances; post-transfer increments when `to` balance
+  equals the transferred amount and decrements when
+  `from` goes to zero. Self-transfers are skipped.
+  Mint-from-zero edge is documented and dropped when
+  the amount is zero.
+- Votes just `_transferVotingUnits` of the actually
+  transferred amount. Omnibus wrappers call
+  `confidentialTransferFrom` (operator + ACL) and only
+  emit extra encrypted sub-account labels; no on-chain
+  sub-account ledger. Observer can be set by the
+  account or cleared by the current observer.
+
+Not submitted. Payouts need Immunefi KYC.
+
+## 2026-09-03: Lombard SVM token pool + ratio oracle (`09d5e76`)
+
+Immunefi program Lombard Finance ($250,000, `kyc: true`).
+Solana trees added 25 Jun 2026. Same local clone
+`/tmp/reviews/lombard-svm` at `09d5e76`. Completes the
+SVM money path after asset_router / bridge / mailbox.
+
+Files: `programs/lombard_token_pool/src/instructions/{lock_or_burn_tokens,release_or_mint_tokens}.rs`,
+`programs/lombard_token_pool/src/{lib,state}.rs`,
+`programs/ratio_oracle/src/instructions/{publish_ratio,initialize_oracle}.rs`,
+`programs/ratio_oracle/src/{lib,state}.rs`,
+`programs/ratio_oracle/src/utils/consortium_payloads.rs`,
+`programs/bridge/src/instructions/gmp_receive.rs` (mint
+target already reviewed; re-read for the pool CPI).
+
+Checked for: CCIP lock that burns without the onramp
+signer; offramp mint to a caller-chosen token account;
+CCIP amount that does not match the GMP mint; ratio
+publish without a consortium `ValidatedPayload`;
+replay of a used ratio payload; a second oracle for
+the same denom.
+
+Result: no user-exploitable finding.
+
+- `lock_or_burn_tokens` requires
+  `authority == router_onramp_authority`, RMN +
+  allow-list + outbound rate limit
+  (`validate_lock_or_burn`). It CPI-signs `bridge.deposit`
+  as the pool signer. Receiver must be 32 bytes.
+  `dest_pool_data` is the 32-byte payload hash.
+- `release_or_mint_tokens` requires the router
+  `ALLOWED_OFFRAMP` PDA for this offramp + remote
+  selector, then `validate_release_or_mint` (remote
+  pool list, inbound rate limit, RMN). It CPI
+  `mailbox.handle_message(payload_hash)` with the pool
+  signer. Bridge `gmp_receive` mints the **payload**
+  amount to the payload recipient (or that wallet’s
+  ATA) and `init`s `MESSAGE_HANDLED`. If the mailbox
+  returns `InboundResponse`, the pool requires
+  `res.amount == parsed_amount`. If return data is
+  missing it skips that check — the mint already
+  happened at the payload amount; CCIP’s
+  `destination_amount` is then informational. No extra
+  tokens are minted. Not submitted.
+- `publish_ratio` requires a consortium-owned
+  `ValidatedPayload` PDA for `sha256(payload)`. Decoder
+  checks selector `0x6c722c2c` and word widths. Denom
+  hash must match `oracle.denom`. Timestamp must be
+  strictly after `switch_time` and not beyond
+  `now + max_ahead_interval`. Ratio step is bounded by
+  `current * interval * threshold / (MAX * DEFAULT_INTERVAL)`.
+  Replay fails `OutdatedRatioUpdate`. Oracle accounts
+  are `init`ed at `[ORACLE_SEED, sha256(denom)]`, so
+  one PDA per denom. Threshold/consortium updates are
+  admin.
+
+Not submitted. Payouts need Immunefi KYC.
+
+## 2026-09-03: Origin CrossChain master/remote (`4fa0602`)
+
+Immunefi program `originprotocol` ($1,000,000,
+`kyc: false`). Remaining Sep-1 OETH/OUSD cross-chain
+slice. Same clone `/tmp/origin-dollar` at `4fa0602`.
+Base CCTP integrator already reviewed. No mainnet
+interaction.
+
+Files: `contracts/contracts/strategies/crosschain/{CrossChainMasterStrategy,CrossChainRemoteStrategy,CrossChainStrategyHelper}.sol`.
+
+Checked for: a user deposit that credits remote
+balance without bridging; withdraw to a non-vault
+recipient; a replayed CCTP nonce that double-counts;
+a stale balance-check that inflates `checkBalance`
+enough to mint unbacked OUSD.
+
+Result: no user-exploitable finding.
+
+- Master `deposit` / `withdraw` are `onlyVault` +
+  `nonReentrant`. Withdraw recipient must be the
+  vault. One in-flight transfer (`pendingAmount` /
+  `_getNextNonce` reverts if pending). Incoming CCTP
+  tokens are swept entirely to the vault. Balance is
+  local USDC + `pendingAmount` + cached
+  `remoteStrategyBalance`.
+- Balance-check messages must match
+  `lastTransferNonce`. Confirmations clear
+  `pendingAmount` only when `transferConfirmation` is
+  set. Out-of-order or older-than-1-day checks are
+  ignored. Stale cache is documented; it is not a
+  user mint path (vault `mint` still pulls assets).
+- Remote local `deposit` / `withdraw` are
+  `onlyGovernorOrStrategist`. CCTP deposit marks the
+  nonce, then tries 4626 `deposit` in a try/catch so
+  a failed Morpho deposit still sends the
+  confirmation (USDC stays on the remote strategy).
+  Withdraw sends only if idle USDC covers the
+  request; otherwise it tries 4626 withdraw first.
+
 Not submitted.
 
 ## Next candidates
@@ -2410,20 +2553,20 @@ registry / `TrustSwapAndBridgeRouter` (`bb34cc2`),
 Origin OUSD vault + Curve AMO + WOETH/WOUSD + Ethena ARM,
 Origin Aerodrome / Base Curve / Hydrex AMOs + OETH
 zapper + Safe modules, Origin WETH/USDC/Lido ARM
-adapters + zappers, Lombard SVM asset_router /
-bridge / bascule / mailbox deliver-handle, Leather
-extension RPC / PSBT approval, OZ Confidential v0.5.3
-(`4a4f6c7`), and Money on Chain V2 core/queue/V4
-swapper (`d770477`) are exhausted. Remaining Origin:
-xOGN token (separate repo); CapManager / Morpho market
-if they differ from the Ethena 4626 wrapper.
-Remaining Lombard SVM: `lombard_token_pool`,
-`ratio_oracle`. Remaining MoC: governance machines and
-live Rootstock v1 proxies if a later pass wants
-addresses rather than the V2 tree. OZ confidential
-remaining: `ERC7984Hooked` / cap modules,
-`ERC7984Votes`, `ERC7984Omnibus`. Superteam API
-rechecked 03:20 UTC 3 Sep: still 28 open listings.
+adapters + zappers, Origin CrossChain master/remote
+(`4fa0602`), Lombard SVM asset_router / bridge /
+bascule / mailbox / `lombard_token_pool` /
+`ratio_oracle` (`09d5e76`), Leather extension RPC /
+PSBT approval, OZ Confidential v0.5.3 including
+hooked/votes/omnibus/observer/cap modules (`4a4f6c7`),
+and Money on Chain V2 core/queue/V4 swapper
+(`d770477`) are exhausted. Remaining Origin: xOGN
+token (separate repo); CapManager / Morpho market if
+they differ from the Ethena 4626 wrapper. Remaining
+MoC: governance machines and live Rootstock v1
+proxies if a later pass wants addresses rather than
+the V2 tree. Superteam API rechecked 03:25 UTC 3 Sep:
+still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the
