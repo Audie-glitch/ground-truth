@@ -32181,13 +32181,14 @@ level.
 Remaining listed:
 nitro challenge leftover
 is logged;
+custom reverse
+gateway leftover
+is logged;
 governance /
 fund-distribution /
 remaining
 token-bridge
-libs / custom
-reverse
-gateways /
+libs /
 websites
 (if still unused).
 
@@ -46703,13 +46704,158 @@ Not submitted.
 Payment requires
 user KYC.
 Remaining listed:
+custom reverse
+gateway leftover
+is logged;
 governance /
 fund-distribution /
 remaining
 token-bridge
-libs / custom
+libs /
+websites
+(if still unused).
+
+
+## 2026-09-03: Arbitrum leftover remaining custom reverse gateway leftover (`1bdf3cd`)
+
+Immunefi program
+`arbitrum`
+($2,000,000,
+`kyc: true`).
+Official remaining
+listed after
+nitro challenge
+leftover.
+Official
+`OffchainLabs/token-bridge-contracts`
+`1bdf3cd`.
+Extract
+`/tmp/arb-tb/`.
+Do not rematch
+token-bridge +
+Inbox leftover
+or nitro
+challenge
+leftover.
+No mainnet
+writes.
+
+Files:
+`contracts/tokenbridge/ethereum/gateway/{L1CustomGateway,L1ReverseCustomGateway,L1ForceOnlyReverseCustomGateway,L1WethGateway,L1ArbitrumExtendedGateway}.sol`,
+`contracts/tokenbridge/arbitrum/gateway/{L2CustomGateway,L2ReverseCustomGateway,L2WethGateway}.sol`,
+`contracts/tokenbridge/arbitrum/ReverseArbToken.sol`,
+`contracts/tokenbridge/libraries/{L2CustomGatewayToken,aeWETH}.sol`.
+
+Checked for:
+a stranger
+`registerTokenToL2`
+that remaps
+another token;
 reverse
-gateways /
+`bridgeMint`
+that credits
+the caller;
+WETH unwrap
+that pays
+someone else's
+ETH.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Custom
+  register
+  requires
+  `msg.sender`
+  `isArbitrumEnabled`
+  and maps
+  that token
+  only.
+  Force
+  register
+  is
+  `onlyOwner`.
+  L2
+  `registerTokenFromL1`
+  is
+  `onlyCounterpartGateway`.
+- Reverse L1
+  inbound
+  `bridgeMint`s;
+  outbound
+  `bridgeBurn`s
+  leftover-
+  logged
+  router
+  `_from`.
+  Reverse L2
+  inbound
+  `safeTransfer`s
+  escrow;
+  outbound
+  `safeTransferFrom`s
+  `_from`.
+- `ReverseArbToken`
+  mint/burn
+  revert.
+  Force-only
+  user
+  register
+  is
+  disabled.
+- WETH L1
+  unwraps
+  after
+  `transferFrom`
+  `_from`.
+  Inbound
+  wraps then
+  pays
+  `_dest`.
+  L2 address
+  is only
+  `l1Weth`.
+  Tradable
+  exit is
+  disabled
+  on WETH.
+- Exit
+  redirect
+  requires
+  `msg.sender`
+  == expected
+  sender.
+- `aeWETH`
+  `bridgeMint`
+  reverts.
+  `bridgeBurn`
+  is
+  `onlyGateway`.
+  Withdraw
+  burns
+  `msg.sender`.
+
+Do not file
+token-gated
+custom
+register or
+router-bound
+reverse
+escrow as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+governance /
+fund-distribution /
+remaining
+token-bridge
+libs /
 websites
 (if still unused).
 
@@ -47033,6 +47179,8 @@ Optimism leftover remaining rust/op-reth flashblocks leftover (`a8a3b818`)
 is logged.
 Arbitrum leftover remaining nitro challenge leftover (`7fc6624`)
 is logged.
+Arbitrum leftover remaining custom reverse gateway leftover (`1bdf3cd`)
+is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
 Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
@@ -47071,7 +47219,7 @@ Remaining listed Aave: primacy; unused official v3 logic leftover that listed tr
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
-Remaining listed Arbitrum: governance / fund-distribution / remaining token-bridge libs / custom reverse gateways / websites if still unused. Arbitrum leftover remaining nitro challenge leftover is logged.
+Remaining listed Arbitrum: governance / fund-distribution / remaining token-bridge libs / websites if still unused. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
 Do not rematch Hedera consensus-node,
@@ -47177,6 +47325,7 @@ Do not rematch Optimism leftover remaining op-reth consensus leftover.
 Do not rematch Optimism leftover remaining op-reth consensus + txpool leftover.
 Do not rematch Optimism leftover remaining rust/op-reth flashblocks leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
+Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -50002,6 +50151,8 @@ Optimism leftover remaining rust/op-reth flashblocks leftover
 leftovers if still open);
 Arbitrum leftover remaining nitro challenge leftover
 (`7fc6624`) is logged;
+Arbitrum leftover remaining custom reverse gateway leftover
+(`1bdf3cd`) is logged;
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
