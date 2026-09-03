@@ -65594,3 +65594,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a FRI fold that binds the expected leaf or a proof u32 encoder as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `zksync-os` `supporting_crates` (`delegated_u256` / `modexp` / `u256`).
+
+## 2026-09-03: ZKsync OS leftover remaining supporting_crates leftover (`9efc8bf`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Official remaining listed after airbender verifier_common leftover. Official clone `/tmp/zksync-os` `9efc8bf` (sparse `supporting_crates/{u256,delegated_u256,modexp}`). Opened `u256` naive/riscv wrappers, `delegated_u256` arithmetic + CSR delegation, and `modexp` `modexp` / `modpow`. Do not rematch evm_interpreter, crypto, zk_ee, or airbender leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: add/mul/mod that wrap without a flag so a proven EVM result is wrong; `modexp` returning a non-zero residue for modulus 0; delegated bigint CSR skipping a carry.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `u256` is an `ruint` wrapper (host) or delegated RISC-V type. `div_rem` / `div_ceil` panic on 0. `mul_mod` returns early if the modulus is 0. Tests compare naive vs delegated limbs for add/sub/mul/div/mod/shifts.
+- `delegated_u256` dispatches ADD/SUB/MUL/EQ through CSR `0x7ca` on RISC-V; the host path uses `ruint` overflowing add/sub. Alignment is required. This is a precompile helper, not a token transfer.
+- `modexp` returns empty bytes when the modulus is 0. `base^0` is 0 mod 1 and 1 otherwise. Montgomery path requires an odd modulus; even non-power-of-two splits out the 2-adic factor. Aurora-engine port. These crates do not move ETH.
+
+Do not file a wrapping U256 helper or a modulus-0 empty `modexp` as stranger theft.
+
+Not submitted. Payment requires user KYC. Official `zksync-os` GitHub assets are leftover-logged. Remaining listed: Wormhole Relayer Sourcify 404; Filecoin remaining go-* / lotus (avoid collision).
