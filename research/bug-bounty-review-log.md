@@ -37900,3 +37900,148 @@ leftover is
 exhausted at the
 opened-contract
 level.
+
+## 2026-09-03: Kamino leftover klend + kvault (`a087609` / `1d146d7`)
+
+Immunefi program
+`kamino`
+($1,500,000, `kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Official
+clones
+`/tmp/kamino-klend`
+`a087609` (release
+1.25.0) and
+`/tmp/kamino-kvault`
+`1d146d7` (release
+2.2.2). Listed
+program IDs:
+KLend
+`KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD`,
+KVault
+`KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd`.
+No mainnet
+interaction.
+
+Files:
+`programs/klend/src/handlers/handler_deposit_reserve_liquidity.rs`,
+`handler_deposit_obligation_collateral.rs`,
+`handler_withdraw_obligation_collateral.rs`,
+`handler_borrow_obligation_liquidity.rs`,
+`handler_liquidate_obligation_and_redeem_reserve_collateral.rs`,
+`handler_initiate_obligation_ownership_transfer.rs`,
+`handler_approve_obligation_ownership_transfer.rs`,
+`handler_accept_obligation_ownership_transfer.rs`,
+`programs/klend/src/lending_market/lending_operations.rs`,
+`programs/kvault/src/handlers/handler_deposit.rs`,
+`handler_withdraw.rs`.
+
+Checked for: a
+stranger withdraw
+of another
+obligation's
+collateral; borrow
+without the
+obligation owner;
+healthy-position
+liquidation;
+ownership
+`accept` without
+being
+`pending_owner`;
+vault deposit that
+mints shares to
+someone else while
+pulling a victim
+ATA; vault
+withdraw that
+burns another
+user's shares.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Reserve deposit
+  pulls
+  `user_source_liquidity`
+  with `owner` as
+  the SPL
+  authority and
+  mints cTokens to
+  the destination
+  ATA the signer
+  passed.
+- Obligation
+  deposit /
+  withdraw /
+  borrow use
+  `has_one = owner`
+  and a signer
+  `owner`. Withdraw
+  destination ATA
+  `token::authority
+  = owner`.
+- Liquidation
+  calls
+  `assert_obligation_liquidatable`
+  then
+  `calculate_liquidation`.
+  LTV override is
+  staging-only and
+  only when
+  liquidator ==
+  owner.
+- Ownership
+  initiate is
+  current owner.
+  Approve is
+  `global_admin`.
+  Accept requires
+  `pending_owner`
+  signer.
+- Vault deposit /
+  withdraw: `user`
+  signer, user
+  token and share
+  ATAs
+  `token::authority
+  = user`. Deposit
+  mints to that
+  ATA. Withdraw
+  pays that ATA.
+
+Do not file
+admin fee /
+referrer /
+protocol-fee
+withdraw, or
+permissionless
+liquidation of an
+unhealthy
+obligation, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Kamino
+klend + kvault
+money-path leftover
+is exhausted at
+the opened-handler
+level. Remaining
+listed: Scope
+oracle, KFarms,
+Kamino Liquidity,
+and the listed
+third-party oracle
+interfaces
+(Meteora / JUP
+perp / RedStone /
+Securitize /
+Switchboard /
+Adrena).
