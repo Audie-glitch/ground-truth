@@ -12,8 +12,12 @@ presentation covering problem, solution, technology, innovation, impact.
 ## Agent does
 
 - [x] Working MVP with tests (`npm test`), README with setup, presentation (`docs/presentation.md`)
-- [ ] Demo video: 2-3 minute screen recording walking through the seven examples and one pasted real prompt
-- [ ] Hosted demo (optional, strengthens "live demonstration"): deploy to Vercel or any Node host; no env vars required
+- [x] Demo video recorded 3 Sep 2026: `signlens-demo-2.mp4` in this session's artifacts
+  (56 s, 1920x1200, no audio; walks through all seven examples with 7-second holds
+  on each verdict, then the explanatory cards). Upload it as-is or trim.
+- [x] Production build verified (`npx next build`: `/` static, `/api/analyze` dynamic)
+- [ ] Hosted demo (optional, strengthens "live demonstration"): connect Vercel in
+  Cursor or run `npm run build && npm start` on any Node 20+ host; no env vars needed
 
 ## You do
 
