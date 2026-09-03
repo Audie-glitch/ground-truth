@@ -29896,6 +29896,238 @@ managers
 and other-chain
 rows.
 
+## 2026-09-03: Hyperlane leftover ETH Mailbox leftover (Sourcify)
+
+Immunefi program
+`hyperlane`
+($2,500,000,
+`kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Ethereum
+Sourcify `match`
+Mailbox proxy
+`0xc005dc82818d67AF737725bD4bf75435d065D239`
+impl
+`0x7b4D881c122a5e61adCFfb56A2e3CE9927D53455`
++ InterchainGasPaymaster
+`0x1008FAbD07aBd93a7D9bB81803a89cC3a834E1A9`
+(proxy
+`0x9e6B1022bE9BBF5aFd152483DAD9b88911bC8611`)
++ StorageGasOracle
+`0xc9a103990A8dB11b4f627bc5CD1D0c2685484Ec5`
++ MerkleTreeHook
+`0x48e6c30B97748d1e2e03bf3e9FbE3890ca5f8CCA`.
+Extract `/tmp/hl-mailbox`
+/ `/tmp/hl-igp` /
+`/tmp/hl-gasoracle` /
+`/tmp/hl-hook`.
+No mainnet
+interaction.
+
+Files:
+`Mailbox.sol` (flattened
+`contracts/Mailbox.sol`),
+`InterchainGasPaymaster.sol`
+(`contracts/hooks/igp/InterchainGasPaymaster.sol`).
+
+Checked for: a
+stranger
+`dispatch` that
+binds another
+sender; `process`
+that delivers
+without ISM
+verify; IGP
+`claim` that pays
+the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Mailbox
+  `dispatch` builds
+  the message with
+  `msg.sender` as
+  sender and pays
+  required + custom
+  hooks from
+  `msg.value`.
+- `process` is
+  permissionless.
+  It requires the
+  destination
+  domain, unused
+  message id, and
+  `ism.verify`, then
+  `handle`s the
+  recipient.
+- IGP `payForGas`
+  spends
+  `msg.value` and
+  refunds the named
+  address.
+  Permissionless
+  `claim` pays the
+  configured
+  beneficiary.
+  Gas configs are
+  `onlyOwner`.
+
+Do not file
+permissionless
+`process` of an
+ISM-verified
+message, IGP
+`claim` to the
+beneficiary, or
+owner gas-oracle
+writes as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH mailbox / IGP
+types is
+exhausted.
+Remaining listed:
+other-chain
+mailbox twins,
+ISM factories,
+and warp routes.
+
+## 2026-09-03: Ondo Finance leftover TokenManager leftover (Sourcify)
+
+Immunefi program
+`ondofinance`
+($1,000,000,
+`kyc: true`).
+TokenRouter +
+rOUSG leftover
+already logged.
+This slice is the
+listed remaining
+ETH manager /
+oracle /
+messenger types.
+Sourcify `match`
+BasicRecipient
+`0xE9b3c628103580702b465c052F67843CAC61fB35`
++ GMTokenManager
+`0x2c158BC456e027b2AfFCCadF1BDBD9f5fC4c5C8c`
++ TokenManagerRegistrar
+`0xD2746617c58b72254785BDb483e04f311c858d5f`
++ OndoRateLimiter
+`0x98Db502215Da1ad9F626D4a0090A8A2f4971003c`
++ Inspector
+`0x0b34233a94c3433092009D8903080553039bB7a1`
++ USDYOracleWrapper
+`0x87b126e5518b6a1Bb8465779b4607C45C643DF90`
+and `exact_match`
+Messenger
+`0xff2BABA46Df92919705E60120C477Ae5b7341Eb3`.
+Extract
+`/tmp/ondo-recipient`
+/ `/tmp/ondo-gmtm` /
+`/tmp/ondo-messenger`
+/ `/tmp/ondo-registrar`
+/ `/tmp/ondo-inspector`
+/ `/tmp/ondo-usdyoracle`
+/ `/tmp/ondo-ratelimit`.
+No mainnet
+interaction.
+
+Files:
+`contracts/xManager/tokenManagers/tokenRecipients/BasicRecipient.sol`,
+`contracts/globalMarkets/tokenManager/GMTokenManager.sol`,
+`contracts/Messenger.sol`,
+`contracts/globalMarkets/tokenFactory/registrars/TokenManagerRegistrar.sol`,
+`contracts/Inspector.sol`,
+`contracts/xManager/OndoOracle/USDYOracleWrapper.sol`.
+
+Checked for: a
+stranger deposit
+into
+BasicRecipient;
+unsigned
+`mintWithAttestation`;
+Messenger `send`
+from a
+non-registered
+OFT; oracle
+writes.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- BasicRecipient
+  `depositToken` is
+  `DEPOSITOR_ROLE`
+  and pulls
+  `msg.sender`.
+- GMTokenManager
+  mint / redeem
+  require a
+  registered user
+  id and an
+  `ATTESTATION_SIGNER_ROLE`
+  quote. They pull
+  and pay
+  `_msgSender()`.
+  `adminProcessMint`
+  is
+  `ADMIN_MINT_ROLE`.
+- Messenger `send`
+  requires
+  `oftToId[msg.sender]`.
+  `_lzReceive`
+  forwards to the
+  registered OFT.
+- Registrar
+  `register` is
+  `TOKEN_FACTORY_ROLE`.
+- Inspector and
+  USDY wrapper are
+  view / owner
+  pause.
+
+Do not file
+role-gated
+depositor pulls,
+signer-attested
+mint/redeem,
+admin mint, or
+OFT-only messenger
+send as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH manager types
+is exhausted.
+Remaining listed:
+`RWADynamicOracle`
+/ `OndoSanityCheckOracle`
+/ `IssuanceHours`
+/ `OndoIDRegistryView`,
+Sourcify-404 ETH
+rows, and
+other-chain
+twins.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -31276,6 +31508,19 @@ TokenRouter + rOUSG leftover
 (Sourcify; KYC) is logged
 (remaining listed is other
 oracles / tokens / managers);
+Hyperlane leftover ETH
+Mailbox leftover (Sourcify;
+KYC) is logged (remaining
+listed is other-chain twins
+/ ISM factories / warp
+routes);
+Ondo Finance leftover
+TokenManager leftover
+(Sourcify; KYC) is logged
+(remaining listed is
+RWADynamicOracle /
+SanityCheck / 404s /
+other-chain);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

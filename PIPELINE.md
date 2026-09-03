@@ -27,7 +27,8 @@ leftover is logged; Acala leftover is logged;
 Acala leftover ORML leftover is logged;
 Ostium leftover is logged; GMX leftover V2
 AdlHandler leftover is logged; USDT0 leftover
-is logged; Ondo Finance leftover is logged). KeeperHub
+is logged; Ondo Finance leftover is logged;
+Hyperlane leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -373,6 +374,16 @@ Ondo Finance leftover TokenRouter +
 rOUSG (Sourcify; KYC) is logged
 (remaining listed is other oracles /
 tokens / managers).
+Hyperlane leftover ETH Mailbox leftover
+(Sourcify Mailbox / IGP / StorageGasOracle
+/ MerkleTreeHook; KYC) is logged
+(remaining listed is other-chain twins /
+ISM factories / warp routes).
+Ondo Finance leftover TokenManager leftover
+(Sourcify GMTokenManager / Messenger /
+BasicRecipient; KYC) is logged
+(remaining listed is RWADynamicOracle /
+SanityCheck / 404s / other-chain).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -933,6 +944,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Arb OFT (Sourcify; KYC),
   Ondo Finance leftover
   TokenRouter + rOUSG
+  (Sourcify; KYC),
+  Hyperlane leftover ETH
+  Mailbox leftover (Sourcify;
+  KYC),
+  Ondo Finance leftover
+  TokenManager leftover
   (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
