@@ -41,6 +41,14 @@ x402 middleware and Hedera/Arc networks come on Sep 7+, not day 1. Route
 prices stay static strings; page-bucket paths `/v1/parse/{s,m,l}` as in
 `DESIGN.md`.
 
+## Parallel Start Fresh app the same morning
+
+1inch **Build an Aqua App** ($2,500 / $1,500 / $1,000): AquaFloor.
+Design: [`../aqua-app/DESIGN.md`](../aqua-app/DESIGN.md). Kickoff:
+[`../aqua-app/KICKOFF.md`](../aqua-app/KICKOFF.md). Separate
+directory and commit history from this API. No Aqua source before
+the window.
+
 ## Backup PRs if the API slips
 
 - Hedera Harness: issue

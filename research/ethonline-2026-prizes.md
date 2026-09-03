@@ -38,6 +38,22 @@ Live Graph data required (Subgraph Studio API key or The Graph Market). Mocked/l
 
 Official copy asks for agents that hold wallets, make USDC payments, or settle jobs using Arc + Circle Agent Stack. That path needs a funded/signable wallet this VM does not have.
 
+### 1inch — Build an Aqua App ($5,000; $2,500 / $1,500 / $1,000)
+
+Official page (HTTP 200, 3 Sep): custom Aqua app for a sophisticated
+DeFi position. SwapVM use is scored higher; modified SwapVM redeploys
+are allowed; official Aqua must stay the registry. On-chain token
+transfers (local forks ok). No single-commit dump on the last day.
+Continuity $2,000 is a **separate** prize.
+
+Picked Start Fresh app: **AquaFloor** — a reserved-inventory book.
+Makers ship a pair plus a hard floor; a new SwapVM opcode
+`ReserveFloor` (`Opcode._27`) rejects fills that would pull below it.
+Also wire existing `TWAPSwap` (`0x9d`), which AquaOpcodes currently
+omits. Design: [`../aqua-app/DESIGN.md`](../aqua-app/DESIGN.md).
+File-level note: [`ethonline-aqua-app.md`](ethonline-aqua-app.md).
+No Aqua / SwapVM product code before 4 Sep 16:00 UTC.
+
 ### Uniswap Foundation — Best Uniswap Stack Contribution ($3,000; up to 3 × $1,000)
 
 Official page (HTTP 200, 3 Sep): build on or improve any Uniswap stack piece (API, AMM v2/v3/v4, CCA, official repos, v4 hooks, ecosystem tooling). Qualification: public GitHub repo, `FEEDBACK.md`, and the [Uniswap Developer Feedback Form](https://developers.uniswap.org/hackathon-feedback) linking that file. README must point at the changed files. A separate $2,000 prize is Continuity-track only.

@@ -3076,6 +3076,18 @@ Result: no user-exploitable finding.
 Aqua-listed solidity-utils files treated as
 exhausted. Do not submit. Payment requires user KYC.
 
+## 2026-09-03: 1inch-aqua-improvement is a different program (no proposal)
+
+Unofficial mirror slug `1inch-aqua-improvement` ($25k, KYC, not
+paused, last updated 18 Aug 2026). Same GitHub blobs as
+`1inch-aqua`, but the published rules are an **improvement
+proposal** bounty, not a second vuln book: OOS includes new
+protocol mechanics / feature requests, micro gas (< 1k), pure
+refactors, and proposals without the required demonstration.
+`ReserveFloor` / AquaFloor is therefore an ETHOnline app
+(`aqua-app/DESIGN.md`), not an Immunefi submission. No
+improvement proposal from this pass.
+
 ## 2026-09-03: Alchemix V3 leftover curator / gauge / 0x / NFT (`ea6f58b`)
 
 Same Immunefi program (`alchemix-1`, $150,000, no KYC).
@@ -3371,7 +3383,11 @@ Foundation OSS backup is
 file-level plan is in
 `research/ethonline-uniswap-sdks-720.md` (read-only
 clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
-`fd60225`). Rechecked
+`fd60225`). ETHOnline 1inch Aqua App design is
+`aqua-app/DESIGN.md` (AquaFloor / `ReserveFloor`); no
+product code before 4 Sep 16:00 UTC.
+`1inch-aqua-improvement` is an improvement-proposal
+program and is not a second vuln book. Rechecked
 03:24 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;

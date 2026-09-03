@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, 03:40 UTC. Dates verified against each
+Status as of 3 September 2026, 03:45 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging), and Immunefi
@@ -15,7 +15,8 @@ unofficial mirror rechecked 3 Sep.
 | # | Opportunity | Prize | Pays in | Window | Competition signal | Plan |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | [KeeperHub Agent Economy hackathon](https://dorahacks.io/hackathon/agent-economy/detail), Best KeeperHub Feature bounty | $500 x 2 winners | Stablecoins | Build Sep 6-18, submit by Sep 18 12:00 CEST | Niche: needs a mergeable PR into a 2,700-file TypeScript codebase. Maintainers opened `accepted` + `help wanted` feature issues on Sep 2 | Implement issue [#2240](https://github.com/keeperhub/keeperhub/issues/2240) (state-threshold trigger, "ranked first for unlock per unit of cost"). Design proposal first, code from Sep 6. |
-| 2 | [ETHOnline 2026](https://ethglobal.com/events/ethonline2026), Uniswap Foundation "Best Uniswap Stack Contribution" | $1,000 x 3 | USDC (ETHGlobal standard) | Sep 4-16 | Open-source contribution track; typically undersubscribed relative to app tracks | Official issue [Uniswap/sdks#720](https://github.com/Uniswap/sdks/issues/720): uniswapx-sdk DCA EIP-712 hash does not match deployed `DCALib.sol` (4 axes). File-level plan in `research/ethonline-uniswap-sdks-720.md`. Code from 4 Sep 16:00 UTC. Plus `FEEDBACK.md` and the feedback form. |
+| 2 | [ETHOnline 2026](https://ethglobal.com/events/ethonline2026), 1inch "Build an Aqua App" | $2,500 / $1,500 / $1,000 | USDC (ETHGlobal standard) | Sep 4-16 | SwapVM-scored app track; official Aqua + modified SwapVM redeploy allowed; local-fork fills count | **AquaFloor** (design-only today): new `ReserveFloor` opcode (`0x27`) so a shipped pair cannot be pulled below a maker floor. Also wire existing `TWAPSwap` (`0x9d`) into the Aqua dispatcher. `aqua-app/DESIGN.md`. Code from 4 Sep 16:00 UTC. Continuity $2k is a separate prize — do not enter as Continuity. |
+| 2b | ETHOnline 2026, Uniswap Foundation "Best Uniswap Stack Contribution" | $1,000 x 3 | USDC | Sep 4-16 | Open-source contribution track; typically undersubscribed relative to app tracks | Official issue [Uniswap/sdks#720](https://github.com/Uniswap/sdks/issues/720): uniswapx-sdk DCA EIP-712 hash does not match deployed `DCALib.sol` (4 axes). File-level plan in `research/ethonline-uniswap-sdks-720.md`. Code from 4 Sep 16:00 UTC. Plus `FEEDBACK.md` and the feedback form. |
 | 3 | ETHOnline 2026, Hedera "Open Source, Improve the Hedera Harness" | $1,000 x 2 | USDC | Sep 4-16 | PR to [hedera-dev/hedera-harness](https://github.com/hedera-dev/hedera-harness); "open PR, not merged is fine" | Service-coverage or local-dev-mode PR with tests and a before/after demo. |
 | 4 | [BUIDL CTC 2026 Fall](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) (Creditcoin / Attestcoin Protocol) | $10,000 / $3,000 / $2,000 | USD-denominated; payout asset not stated (ask in Discord `#buidl-ctc-qna`) | Open now, deadline Sep 13 23:59 ET | 47 BUIDLs / 203 hackers as of 02:45 UTC 3 Sep; official page still says “11 days left”. Depth of Attestcoin integration is a core scoring criterion | Build now. Project: CreditPassport (see below). |
 | 5 | ETHOnline 2026, Arc (Circle) agentic and DeFi bounties | $1,667 x 3 tracks, plus $3,500 mainnet-readiness | USDC | Sep 4-16 | Requires frontend + backend + architecture diagram + video | Stretch: only if the KeeperHub work can be pointed at Arc (KeeperHub issue #2230 adds Arc testnet). |
@@ -48,13 +49,20 @@ collisions:
 
 ## ETHOnline entry (decided 2 Sep, from the demand list)
 
-A paid API agents call over x402: text-based bank statement PDFs to
-arithmetic-verified CSV, priced per page in USDC. Targets Hedera's x402 track
-($2k x 3), Bazantic's "Agentify a new API" ($1k), and Arc's agentic track
-($1,667), and keeps earning after the event. Design in `x402-api/DESIGN.md`;
-triage of the whole list in `research/demand-list-triage.md`. No code before
-Sep 4 (ETHGlobal rule). Extra user step: create a bazantic.com account and
-share the username.
+Two Start Fresh projects, both design-only until 4 Sep 16:00 UTC:
+
+1. A paid API agents call over x402: text-based bank statement PDFs to
+   arithmetic-verified CSV, priced per page in USDC. Targets Hedera's
+   x402 track ($2k x 3), Bazantic's "Agentify a new API" ($1k), and
+   Arc's agentic track ($1,667), and keeps earning after the event.
+   Design in `x402-api/DESIGN.md`. Extra user step: bazantic.com
+   username.
+2. **AquaFloor**, a reserved-inventory Aqua + SwapVM book for 1inch
+   "Build an Aqua App" ($2,500 / $1,500 / $1,000). Design in
+   `aqua-app/DESIGN.md`. No extra keys; anvil fills count.
+
+Triage of the whole demand list is in `research/demand-list-triage.md`.
+ETHGlobal Start Fresh: no project-specific code before Sep 4.
 
 ## Built so far
 
@@ -107,13 +115,17 @@ share the username.
 - `research/ethonline-uniswap-sdks-720.md`: file-level fix for
   [Uniswap/sdks#720](https://github.com/Uniswap/sdks/issues/720)
   (DCA EIP-712 vs `DCALib.sol`). No SDK code until 4 Sep 16:00 UTC.
+- `aqua-app/DESIGN.md` + `aqua-app/KICKOFF.md` +
+  `research/ethonline-aqua-app.md`: ETHOnline 1inch Aqua App
+  (AquaFloor reserved-inventory book + `ReserveFloor` opcode).
+  Design only. No Aqua / SwapVM product code until 4 Sep 16:00 UTC.
 
 ## Schedule
 
 | Dates | Work |
 | --- | --- |
 | Sep 2-5 | Build CreditPassport for BUIDL CTC (contracts, agent, frontend, docs, demo video). Write the #2240 design proposal for KeeperHub maintainers. Read-only prep for ETHOnline targets (no code before Sep 4: ETHGlobal disqualifies pre-built work). Superteam Mermail skill ($500 USDC, due 23 Sep, HUMAN_ONLY) is a later slot if capacity remains. |
-| Sep 4-16 | ETHOnline: x402 statement API (Hedera, Bazantic, Arc tracks), then Uniswap / Hedera Harness contributions if time allows. ETHGlobal publishes dates only; code starts Sep 4 from 16:00 UTC after confirming the kickoff on their schedule. Small frequent commits inside the window. |
+| Sep 4-16 | ETHOnline: x402 statement API (Hedera, Bazantic, Arc) and AquaFloor (1inch Aqua App) in parallel, then Uniswap / Hedera Harness contributions if time allows. ETHGlobal publishes dates only; code starts Sep 4 from 16:00 UTC after confirming the kickoff on their schedule. Small frequent commits inside the window. |
 | Sep 6-18 | KeeperHub #2240 implementation, tests, PR to `staging` (Sep 6-8), then the elizaOS `plugin-keeperhub` main-track entry (Sep 9-16) if the API key exists. |
 | Sep 13 | BUIDL CTC submission deadline. |
 | Sep 16 | ETHOnline submission deadline. |
