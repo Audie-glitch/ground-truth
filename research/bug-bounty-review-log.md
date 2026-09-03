@@ -7230,6 +7230,133 @@ ProtocolFeeController, and the
 V3 factory / oracle factory
 set. Not submitted.
 
+## 2026-09-03: Yearn stYFI leftover LL redemption / LL+veYFI distributors (`69e262e`)
+
+Same Immunefi program
+`yearnfinance` ($200,000,
+`kyc: false`). Official tree
+[yearn/stYFI](https://github.com/yearn/stYFI)
+at `69e262e`. February rows
+not in the StakedYFI /
+depositor / stYFIx /
+StakingMiddleware pass:
+LiquidLockerMiddleware,
+LiquidLockerRedemption
+(in-tree; no separate
+Immunefi row),
+LiquidLockerRewardDistributor
+`0x7eFc…A000`, and
+VotingEscrowRewardDistributor
+(veYFI) `0x2548…e884`. No
+mainnet interaction.
+
+Files: `contracts/{
+LiquidLockerMiddleware,
+LiquidLockerRedemption,
+LiquidLockerRewardDistributor,
+VotingEscrowRewardDistributor}.vy`.
+
+Checked for: a stranger
+hook that credits another
+account’s LL weight;
+`redeem` that pays more YFI
+than the scale allows;
+`exchange` that underflows
+`used` into extra LL;
+reward `claim` that pays the
+subject instead of the
+claimer.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- LiquidLockerMiddleware
+  forwards `on_stake` /
+  `on_unstake` to downstream
+  + aggregator. Both require
+  `msg.sender == upstream`.
+- `redeem` is enabled +
+  `epoch < lock`. It increments
+  `used` by `_ll_amount //
+  scale` (must be > 0 and
+  `<= capacity`), pulls LL
+  tokens from the caller, and
+  pays YFI minus a decaying
+  fee (`MAX_FEE` 10% over
+  104 epochs). Dust below
+  `scale` stays with the LL
+  recipient. Fee YFI remains
+  in the contract;
+  `sweep` is management.
+- `exchange` decrements
+  `used` (Vyper underflow
+  reverts), pulls YFI, and
+  pays `yfi * scale` LL
+  tokens from inventory.
+- LiquidLockerRewardDistributor
+  and VotingEscrowRewardDistributor
+  `claim(_account)` require
+  `claimers[msg.sender]` and
+  pay `msg.sender`.
+  Permissionless `reclaim`
+  only moves expired rewards
+  (bounty + `reclaim_recipient`).
+
+Remaining Yearn: Vault V3.1.0
+(23 Jun) if wanted. Not
+submitted.
+
+## 2026-09-03: TermMax TMX token (Sourcify BSC)
+
+Same Immunefi program
+`termstructurelabs` ($80,000,
+`kyc: false`). 24 Aug 2026
+rows: TMX Ethereum and BNB
+`0x3c2F…0039`. Ethereum
+Sourcify 404. BSC Sourcify
+exact match, flattened
+`MyOFT.sol` (Hardhat 2.28).
+Extract under
+`/tmp/tmx-sourcify/bsc`. V2
+market / vault / router
+already logged. No
+state-changing txs.
+
+Files: `contracts/MyOFT.sol`
+(LayerZero OFT v3 flatten).
+
+Checked for: a public mint
+after deploy; `_credit` to
+an attacker; constructor
+mint on BSC.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `MyOFT` is stock
+  LayerZero `OFT`. `_debit`
+  burns `amountSentLD`;
+  `_credit` mints to `_to`
+  (`address(0)` remaps to
+  `0xdead`).
+- Constructor
+  `Ownable(_delegate)`. It
+  mints `1e9 ether` only
+  when `block.chainid == 1`.
+  The BSC bytecode therefore
+  does not premint.
+- No extra mint / burn
+  entrypoints beyond OFT
+  send/receive.
+
+Remaining TermMax adapters
+(Kyber, OKX, Pancake, Kodiak,
+vault helpers) are still
+lower-priority copies of the
+already-logged
+approve-and-call pattern.
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -7342,16 +7469,19 @@ operators (Sourcify) are logged;
 remaining Twyne vaults /
 wrappers / EVC / factories are
 still Sourcify 404. TermMax TMX
-token (24 Aug leftover after V2
-core). Yearn stYFI
+token (Sourcify BSC `MyOFT`)
+is logged; remaining TermMax
+adapters are lower-priority
+copies. Yearn stYFI
 July leftover + February
 StakedYFI / LL depositor
 (`69e262e`) plus leftover
 stYFIx / middleware / main
 RewardDistributor (Sourcify)
-are logged; remaining Yearn
-is veYFI / stYFIx / LL
-reward distributors and Vault
+and leftover LL redemption /
+LL+veYFI distributors
+(`69e262e`) are logged;
+remaining Yearn is Vault
 V3.1.0 if wanted. Balancer V3
 Router (23 Jun, Sourcify) is
 logged; remaining Balancer is
@@ -7366,7 +7496,7 @@ Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted).
-Superteam API rechecked ~04:16 UTC
+Superteam API rechecked ~04:21 UTC
 3 Sep: still 28 open listings
 (`earn.superteam.fun/api/listings?status=open`).
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
@@ -7404,7 +7534,7 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-~04:16 UTC 3 Sep: KeeperHub #2105 still `open` +
+~04:21 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 Hedera Harness #8 still `open`, 0 comments;
