@@ -2673,11 +2673,65 @@ Result: no exploitable finding on this pass.
   limits. Token vault: anyone deposits, only authorized
   withdraws.
 
-Remaining Alchemix `src/`: `strategies/`, `adapters/`,
-`router/`, `MYTStrategy`, `AlchemistETHVault`,
-`AlchemistAllocator`, `AlchemistGate`, `StakingGraph`.
+Remaining Alchemix `src/` after the core pass: concrete
+protocol strategies, Euler adapter, `StakingGraph`.
 
+Not submitted.
 
+## 2026-09-03: Alchemix V3 MYT adapter, allocator, router, fee vaults (`ea6f58b`)
+
+Same Immunefi program (`alchemix-1`, $150,000, no KYC).
+Same clone `/tmp/reviews/alchemix-v3` at `ea6f58b`. No
+mainnet interaction. Continues the alchemist/transmuter
+pass with the Morpho-V2 adapter layer and the EOA
+router.
+
+Files: `MYTStrategy.sol`, `strategies/ERC4626Strategy.sol`,
+`AlchemistAllocator.sol`, `AlchemistGate.sol`,
+`AlchemistETHVault.sol`, `adapters/AbstractFeeVault.sol`,
+`router/AlchemistRouter.sol`.
+
+Checked for: a non-vault allocate/deallocate; a 0x
+swap that drains a protected token; allocator cap
+bypass; router depositing into someone else’s NFT or
+keeping the position; repay leftover MYT stuck on the
+router; ETH receive that steals a WETH unwrap;
+unauthorized fee-vault withdraw.
+
+Result: no user-exploitable finding.
+
+- `MYTStrategy.allocate` / `deallocate` are `onlyVault`.
+  Kill-switch reverts allocate (it does not silently
+  skip). Force-deallocate is limited to `ActionType.direct`
+  on strategies that opt in. `dexSwap` pays the owner-
+  set 0x allowance holder and enforces `minAmountOut`.
+  `rescueTokens` cannot move the MYT asset (or, in
+  ERC4626Strategy, the receipt shares). Deallocate
+  requires `_totalValue() >= assets` after the pull.
+- `AlchemistAllocator` is admin/operator. Caps combine
+  vault absolute/relative caps with classifier global
+  and (for operators) local risk caps. Swap calldata
+  is operator-chosen; `minIntermediateOut` is 0 on the
+  swap helpers (trusted operator slippage).
+- `AlchemistGate` is an owner-only auth map. Fee vaults
+  authorize the alchemist + owner at construct;
+  `withdraw` is `onlyAuthorized`. ETH vault unwraps
+  WETH, records deposits only as events, and sends ETH
+  under a reentrancy guard. `receive()` donations add
+  to `totalDeposits` without a depositor credit.
+- Router holds no funds between txs. Existing-position
+  deposit/withdraw/self-liquidate require
+  `ownerOf == msg.sender`. New positions mint to the
+  router then transfer the NFT to the caller. Borrow on
+  an existing id uses `mintFrom` (needs `approveMint`).
+  NFT custody is documented to reset mint allowances.
+  Repay refunds unused MYT via a pre/post balance
+  delta. `receive` only accepts ETH while `_ethExpected`
+  is set around WETH unwrap.
+
+Remaining Alchemix: concrete strategies (Aave, Moonwell,
+Ether.fi, StakeDAO, Tokemak, wstETH, sFRAX, siUSD,
+oracle-priced swap), `EulerUSDCAdapter`, `StakingGraph`.
 Not submitted.
 
 ## 2026-09-03: Origin ARM CapManager + Morpho/Silo 4626 wrappers (`2322537`)
@@ -2791,9 +2845,10 @@ Confidential v0.5.3 including hooked/votes/omnibus/
 observer/cap modules (`4a4f6c7`), Money on Chain V2
 core/queue/V4 swapper (`d770477`), Sky FarmOwner, and
 Alchemix V3 alchemist + transmuter + alUSD + token-vault
-are exhausted. Origin in-scope Solidity listed as
-remaining is exhausted. Remaining Alchemix: strategies /
-adapters / router / MYT / ETH vault / StakingGraph.
++ MYT adapter / allocator / router / fee vaults are
+exhausted. Origin in-scope Solidity listed as remaining
+is exhausted. Remaining Alchemix: concrete protocol
+strategies, Euler adapter, `StakingGraph`.
 Remaining MoC: governance machines and live Rootstock
 v1 proxies if a later pass wants addresses rather than
 the V2 tree. Superteam API rechecked 03:25 UTC 3 Sep:
