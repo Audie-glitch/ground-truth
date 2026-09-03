@@ -6112,6 +6112,105 @@ ERC-20, not pulled here). Vault
 101–105 stay OOS. Not
 submitted.
 
+## 2026-09-03: Lista new-contracts RWA / slisXAUE / LisAster / leftover distributors (`fa5dfa5`)
+
+Same Immunefi program `listadao` ($1,000,000,
+`kyc: false`). Official tree
+[lista-dao/lista-new-contracts](https://github.com/lista-dao/lista-new-contracts)
+at `fa5dfa5`. Immunefi HTML
+(scraped earlier 3 Sep) still lists
+the Moolah / PSM / slisBNB table;
+these RWA / XAUE / LisAster proxies
+are not on that table. Program text
+also invites out-of-table Lista
+assets when the impact matches.
+No mainnet interaction.
+
+Files: `src/rwa/{RWAEarnPool,RWAAdapter,
+OTCManager}.sol`,
+`src/slisXAUE/{SlisXAUE,XAUEAdapter,
+XAUTStaking}.sol`,
+`src/lisaster/{LisAster,LisAsterStaking,
+LisAsterDistributor,AsterVault,
+AsterRewards}.sol`,
+`src/{LendingRewardsDistributor,
+LendingRewardsDistributorV2,
+VaultDistributor,RewardsRouter,
+BeraChainVaultAdapter}.sol`.
+
+Checked for: EarnPool withdraw that
+pays a stranger; adapter notify that
+inflates share price for the next
+depositor; XAUE adapter interest on
+unowned shares; SlisXAUE mint without
+MINTER; LisAster claim that redirects
+payout; `claimAndStake` that stakes
+to the caller instead of the leaf
+account; distributor claim that pays
+`msg.sender`; VaultDistributor claim
+that skips the LP / merkle bind.
+
+Result: no user-exploitable finding
+on in-scope table assets. Not
+submitted.
+
+- RWAEarnPool `deposit` mints then
+  `transferFrom` to the adapter
+  (reverts together). Whitelist
+  gates `receiver` on deposit and
+  share transfer. `requestWithdraw`
+  burns the caller, queues for
+  `receiver`. `claimWithdraw` pays
+  `user`, not the caller.
+  `convertToShares/Assets` uses
+  `totalSupply+1` / `totalAssets()+1`.
+  `finishWithdraw` is adapter-only.
+- RWAAdapter vault / OTC / fee
+  paths are BOT or MANAGER.
+  `_updateVaultAssets` only notifies
+  when vault NAV rose.
+- SlisXAUE mint/burn is `onlyRole
+  (MINTER)`. XAUTStaking deposit
+  and `requestWithdraw` sync adapter
+  NAV first. `claimWithdraw` is
+  self-only. Adapter NAV uses
+  `expectedShareBalance` and
+  fail-closes on a share deficit
+  or NAV drop.
+- LisAster `stake`/`unstake` are
+  `msg.sender`. `stakeFor` is a
+  permissionless gift. Distributor
+  merkle leaf is
+  `(chainid, account, asterToken,
+  cumulative)`. `claim` pays
+  `account`. `claimAndStake` is
+  self-only and deposits 1:1 into
+  AsterVault then `stakeFor`.
+- LendingRewardsDistributor /
+  V2 claims pay `_account` after
+  a chainid-bound proof. V2 leaf
+  also binds `address(this)`,
+  `claim.selector`, and token.
+  RewardsRouter transfers are BOT
+  to a whitelisted distributor.
+- VaultDistributor pulls
+  `_lpAmount` into the contract and
+  never returns it; the leaf binds
+  that amount. MANAGER
+  `emergencyWithdraw` is the only
+  escape. Not filed: not on the
+  Immunefi table, and a privileged
+  rescue exists.
+- BeraChainVaultAdapter user
+  `withdraw` burns the caller’s LP
+  1:1. Manager/bot drains are
+  privileged.
+
+Remaining Lista: price-feed oracles /
+VeLista lock / airdrop. Extra
+Finance leftover listed Solidity is
+EXTRA token. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -6194,9 +6293,12 @@ LisUSD / clip-join / slisBNB
 BNB / ERC20-LP providers, MasterVault
 + yield strategies, leftover
 OFT / distributors / providers
-(`28a3c02` + `fa5dfa5`), and Extra
+(`28a3c02` + `fa5dfa5`), Extra
 Finance Aave-fork leftover (ACL /
-config / aToken / debt) are logged.
+config / aToken / debt), and
+`lista-new-contracts` RWA / slisXAUE /
+LisAster / leftover distributors
+(`fa5dfa5`) are logged.
 Enzyme Blue BebopBlend / ThreeOneThird /
 SharesSplitter (`da3b870` + Sourcify) are
 logged. Next unreviewed Immunefi
@@ -6206,9 +6308,8 @@ EXTRA token; Twyne June-2026 wrappers
 Hashflow factory/pool/router (8 Jun);
 Yearn stYFI (1 Jul, $200k, no KYC).
 Remaining Lista is
-oracles / VeLista lock / airdrop /
-`lista-new-contracts` RWA /
-slisXAUE / LisAster. Jito `jito-solana` /
+oracles / VeLista lock / airdrop.
+Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted).
