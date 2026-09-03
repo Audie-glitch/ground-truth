@@ -60540,3 +60540,264 @@ and Starknet
 cairo
 packages.
 
+
+## 2026-09-03: Lombard leftover BridgeV2 + Mailbox + Bascule leftover (`7fe83e5`)
+
+Immunefi program
+`lombard-finance`
+($250,000, `kyc: true`).
+Follow-on leftover
+after StakeAndBake /
+NativeLBTC /
+AssetRouter
+(`0a1bec3`).
+Official clone
+`/tmp/lombard-evm`
+`7fe83e5`.
+Opened
+`contracts/bridge/BridgeV2.sol`,
+`providers/LombardTokenPoolV2.sol`,
+`providers/BridgeTokenPool.sol`,
+`gmp/Mailbox.sol`,
+`bascule/BasculeV2.sol`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+`deposit`
+that burns
+another
+user's
+tokens;
+`handlePayload`
+that mints
+to the
+caller;
+Mailbox
+`deliverAndHandle`
+without a
+consortium
+proof;
+Bascule
+`validateWithdrawal`
+replay;
+CCIP
+`releaseOrMint`
+that pays
+`offchainTokenData`
+instead of
+the GMP
+recipient.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `BridgeV2.deposit`
+  requires
+  `senderConfig[msg.sender].whitelisted`.
+  `_burnToken`
+  `transferFrom`s
+  and burns
+  `msg.sender`
+  (the
+  whitelist
+  sender /
+  pool),
+  not the
+  recorded
+  `sender`
+  field.
+  The GMP
+  body
+  carries
+  that
+  recorded
+  sender
+  plus the
+  chosen
+  `recipient`.
+  Destination
+  token and
+  path must
+  be
+  registered.
+
+- `handlePayload`
+  is
+  mailbox-
+  only,
+  one-shot
+  `payloadSpent`,
+  requires
+  `payload.msgSender`
+  to be the
+  registered
+  source
+  bridge,
+  then
+  `_withdraw`
+  mints to
+  the
+  decoded
+  body
+  recipient
+  under a
+  rate
+  limit.
+
+- `Mailbox.send`
+  encodes
+  `msg.sender`
+  as the
+  GMP
+  sender
+  and
+  requires
+  an
+  enabled
+  outbound
+  path plus
+  fee /
+  size
+  limits.
+  `deliverAndHandle`
+  checks
+  inbound
+  path,
+  consortium
+  `checkProof`
+  on first
+  delivery,
+  optional
+  `destinationCaller`,
+  then
+  `IHandler.handlePayload`.
+  `withdrawFee`
+  /
+  `rescueERC20`
+  are
+  `TREASURER_ROLE`.
+
+- `LombardTokenPoolV2.lockOrBurn`
+  is CCIP
+  `_validateLockOrBurn`
+  then
+  `bridge.deposit`
+  with
+  `originalSender`
+  and the
+  decoded
+  32-byte
+  receiver.
+  `releaseOrMint`
+  is CCIP
+  `_validateReleaseOrMint`,
+  then
+  `mailbox.deliverAndHandle`
+  with
+  consortium
+  proof;
+  the
+  returned
+  hash must
+  match
+  `sourcePoolData`.
+  Tokens
+  mint
+  inside
+  Bridge
+  to the
+  GMP
+  recipient.
+  `BridgeTokenPool`
+  is the
+  same
+  path
+  with a
+  token
+  adapter
+  address.
+
+- `BasculeV2.reportDeposits`
+  is
+  `DEPOSIT_REPORTER_ROLE`.
+  `validateWithdrawal`
+  is
+  `WITHDRAWAL_VALIDATOR_ROLE`
+  (NativeLBTC
+  holds
+  it).
+  A
+  `REPORTED`
+  id
+  becomes
+  `WITHDRAWN`
+  once.
+  Below-
+  threshold
+  unreported
+  ids are
+  allowed
+  and then
+  marked
+  withdrawn
+  (documented
+  drawbridge
+  policy,
+  not
+  stranger
+  mint).
+
+Do not file
+whitelist
+sender
+burns of
+the
+caller's
+own
+tokens,
+consortium-
+gated
+mint to
+the
+payload
+recipient,
+treasurer
+fee
+withdraw,
+or
+below-
+threshold
+Bascule
+skips as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub opens
+for Lombard
+BridgeV2 /
+CCIP token
+pools /
+Mailbox /
+BasculeV2
+is exhausted
+at the
+opened-file
+level.
+Remaining
+listed:
+Sui move
+packages
+and
+Starknet
+cairo
+packages.
+
