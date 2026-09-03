@@ -31471,6 +31471,294 @@ periphery /
 rewards / GHO
 instances.
 
+## 2026-09-03: Wormhole leftover ETH core + TokenBridge leftover (Sourcify)
+
+Immunefi program
+`wormhole`
+($1,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Ethereum Sourcify
+`match` Core
+`0x98f3c9e6E3fAce36bAAd05FE09d375Ef1464288B`
+impl
+`0x3c3d457f1522D3540AB3325Aa5f1864E34cBA9D0`,
+TokenBridge
+`0x3ee18B2214AFF97000D974cf647E7C347E8fa585`
+impl
+`0x381752f5458282d317d12C30D2Bd4D6E1FD8841e`,
+NFTBridge
+`0x6FFd7EdE62328b3Af38FCD61461Bbfc52F5651fE`
+impl
+`0x3e41904B3766F4cCEb145Cc53D75fEB61722a96C`.
+Relayer
+`0x27428DD766d4699713D3Bd22A30df974c1167a4E`
+Sourcify 404.
+Official SHAs
+(`git ls-remote`):
+wormhole HEAD
+`c58827e`,
+NTT `250d810`,
+circle-integration
+`2342025`.
+Extract
+`/tmp/wh-core-impl`,
+`/tmp/wh-tb-impl`,
+`/tmp/wh-nft-impl`.
+No mainnet
+interaction.
+
+Files:
+`contracts/Implementation.sol`,
+`contracts/Messages.sol`,
+`contracts/Governance.sol`,
+`contracts/bridge/Bridge.sol`,
+`contracts/nft/NFTBridge.sol`.
+
+Checked for: a
+stranger
+`publishMessage`
+that emits as
+another emitter;
+`completeTransfer`
+that pays a
+user's principal
+to the caller;
+`transferTokens`
+/ `transferNFT`
+that pull another
+account; guardian
+set upgrade
+without a
+governance VAA.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `publishMessage`
+  uses
+  `useSequence(msg.sender)`
+  and requires
+  `msg.value ==
+  messageFee()`.
+- `parseAndVerifyVM`
+  / `verifyVM`
+  check guardian
+  set, expiry,
+  quorum, and
+  signatures.
+- Token bridge
+  `_transferTokens`
+  `safeTransferFrom`s
+  `msg.sender`.
+  Wrapped assets
+  burn.
+- `completeTransfer`
+  is permissionless
+  after a valid
+  guardian VAA
+  and unused hash.
+  PayloadID 3
+  requires
+  `msg.sender ==
+  transferRecipient`.
+  Arbiter fee can
+  pay `msg.sender`
+  when
+  `nativeFee > 0
+  &&
+  transferRecipient
+  != msg.sender`
+  (documented;
+  principal goes
+  to
+  `transfer.to`).
+- NFT
+  `transferNFT`
+  `safeTransferFrom`s
+  `msg.sender`.
+  `completeTransfer`
+  mints or
+  transfers to
+  `transfer.to`.
+- `submitNewGuardianSet`
+  is governance
+  VAA gated.
+
+Do not file
+permissionless
+complete of a
+guardian-attested
+VAA to the
+recorded
+recipient, or
+the documented
+arbiter-fee
+payout to
+`msg.sender`.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH core /
+TokenBridge /
+NFTBridge types
+is exhausted.
+Remaining listed:
+Relayer 404,
+NTT,
+circle-integration
+(excl. Circle
+Bridge), Solana /
+CosmWasm / other
+chains, guardian
+node / wormchain.
+
+## 2026-09-03: Ondo Finance leftover remaining oracles leftover (Sourcify)
+
+Immunefi program
+`ondofinance`
+($1,000,000,
+`kyc: true`).
+Already leftover-
+logged (TokenRouter
++ rOUSG,
+TokenManager).
+This slice is
+remaining ETH
+oracle / hours /
+view types.
+Sourcify
+RWADynamicOracle
+`0xA0219AA5B31e65Bc920B5b6DFb8EdF0988121De0`,
+OndoSanityCheckOracle
+`0x914D5Cb27cb30E80BdE8215ff577eD63Eb986B79`,
+IssuanceHours
+`0xE59dbF08CccF8D1ab90156b9664d31Fd20BB2AC7`,
+OndoIDRegistryView
+`0x56A5D911052323D688C731d516530878557463e7`,
+OndoOracle
+`0x9Cad45a8BF0Ed41Ff33074449B357C7a1fAb4094`,
+RWAOracleExternalComparisonCheck
+`0x0502c5ae08E7CD64fe1AEDA7D6e229413eCC6abe`,
+OndoComplianceGMView
+`0x54a8757c2FEF8649830b158a8C19D3a670e80318`.
+Extract
+`/tmp/ondo-dynoracle`,
+`/tmp/ondo-sanity`,
+`/tmp/ondo-hours`,
+`/tmp/ondo-idview`,
+`/tmp/ondo-oracle`,
+`/tmp/ondo-ousg-oracle`,
+`/tmp/ondo-gmview`.
+No mainnet
+interaction.
+
+Files:
+`contracts/rwaOracles/RWADynamicOracle.sol`,
+`contracts/globalMarkets/tokenManager/sanityCheckOracle/OndoSanityCheckOracle.sol`,
+`contracts/globalMarkets/tokenManager/issuanceHours/IssuanceHours.sol`,
+`contracts/xManager/OndoIDRegistry/OndoIDRegistryView.sol`,
+`contracts/xManager/OndoOracle/OndoOracle.sol`,
+`contracts/lending/rwaOracles/RWAOracleExternalComparisonCheck.sol`,
+`contracts/globalMarkets/gmTokenCompliance/OndoComplianceGMView.sol`.
+
+Checked for: a
+stranger
+`setPrice` /
+`postPrice` /
+`setRange` that
+writes a token
+price; a view
+hours / registry
+check that
+mutates user
+state; an oracle
+type change
+without a role.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- RWADynamicOracle
+  `setRange` is
+  `SETTER_ROLE`.
+  `overrideRange`
+  is
+  `DEFAULT_ADMIN_ROLE`.
+  `getPrice` is
+  view.
+- SanityCheck
+  `postPrice` /
+  `postPrices`
+  are
+  `SETTER_ROLE`.
+  `validatePrice`
+  is view.
+- IssuanceHours
+  `checkIsValidHours`
+  is view.
+  `setTimezoneOffset`
+  is owner.
+- IDRegistryView
+  getters are
+  view. Setters
+  are
+  `DEFAULT_ADMIN_ROLE`.
+- OndoOracle
+  type / hardcoded
+  / RWA /
+  aggregator
+  setters are
+  role-gated.
+  `getAssetPrice`
+  is view.
+- OUSG
+  comparison
+  `setPrice` is
+  `SETTER_ROLE`.
+- ComplianceGMView
+  `checkIsCompliant`
+  forwards to the
+  compliance
+  contract.
+  Setters are
+  owner.
+
+Do not file
+setter-role
+oracle writes or
+view-only hours /
+registry /
+compliance
+checks as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH oracle /
+hours / view
+types is
+exhausted.
+Remaining listed:
+other-chain
+oracles /
+remaining 404s /
+listed types not
+these views.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -33011,6 +33299,23 @@ listed is finality-provider
 / expiry-checker / queue-
 client / babylon node /
 websites);
+Wormhole leftover ETH core +
+TokenBridge leftover
+(Sourcify Core / TokenBridge
+/ NFTBridge; KYC) is logged
+(remaining listed is Relayer
+404 / NTT / circle-
+integration / other chains);
+Ondo Finance leftover
+remaining oracles leftover
+(Sourcify RWADynamicOracle /
+SanityCheck / IssuanceHours /
+IDRegistryView / OndoOracle /
+OUSG comparison /
+ComplianceGMView; KYC) is
+logged (remaining listed is
+other-chain oracles /
+remaining 404s);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

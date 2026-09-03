@@ -51,7 +51,11 @@ Ethena leftover is logged;
 Ether.fi leftover is logged;
 Compound leftover is logged;
 Maple leftover is logged;
-Aave leftover is logged).
+Aave leftover is logged;
+Wormhole leftover ETH core +
+TokenBridge leftover is logged;
+Ondo Finance leftover
+remaining oracles leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -482,6 +486,20 @@ Liquidation / vToken; KYC) is logged
 (remaining listed is Configurator /
 ACL / oracles / periphery / rewards /
 GHO).
+Wormhole leftover ETH core +
+TokenBridge leftover (Sourcify Core /
+TokenBridge / NFTBridge; KYC) is
+logged (remaining listed is Relayer
+404 / NTT / circle-integration /
+other chains).
+Ondo Finance leftover remaining
+oracles leftover (Sourcify
+RWADynamicOracle / SanityCheck /
+IssuanceHours / IDRegistryView /
+OndoOracle / OUSG comparison /
+ComplianceGMView; KYC) is logged
+(remaining listed is other-chain
+oracles / remaining 404s).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1081,6 +1099,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (Sourcify; KYC),
   Aave leftover v3 Pool leftover
   (`cff15de`; KYC),
+  Wormhole leftover ETH core +
+  TokenBridge leftover
+  (Sourcify; KYC),
+  Ondo Finance leftover
+  remaining oracles leftover
+  (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover
