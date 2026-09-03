@@ -45455,6 +45455,136 @@ programs /
 runtime
 (if still unused).
 
+## 2026-09-03: Jito leftover remaining jito-solana programs leftover (`d0e3a47`)
+
+Immunefi program
+`jito`
+($250,000,
+`kyc: true`).
+Official
+`jito-foundation/jito-solana`
+`d0e3a47`.
+Extract
+`/tmp/jito-solana/programs/system/`.
+Do not rematch
+tokens
+/
+scheduler leftovers.
+No mainnet
+writes.
+
+Files:
+`programs/system/src/{lib,system_processor,system_instruction}.rs`.
+
+Checked for:
+`Transfer`
+that moves
+lamports
+without
+the `from`
+signer;
+`CreateAccount`
+that
+overwrites
+an existing
+account;
+`Assign`
+that
+changes
+owner
+without
+a
+signature;
+`TransferWithSeed`
+that
+spends a
+PDA
+without
+the base
+signer.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `Transfer`
+  requires
+  the `from`
+  account
+  to sign.
+  `transfer_verified`
+  rejects a
+  data-carrying
+  `from`
+  and
+  insufficient
+  lamports,
+  then
+  `checked_sub`
+  /
+  `checked_add`.
+- `CreateAccount`
+  /
+  `Allocate`
+  require
+  the `to`
+  address
+  to sign
+  and
+  reject
+  an
+  already
+  used
+  account.
+- `Assign`
+  requires
+  the
+  account
+  address
+  to sign.
+- `TransferWithSeed`
+  requires
+  the
+  base
+  signer
+  and
+  re-derives
+  the
+  address
+  from
+  seed +
+  owner.
+- Native
+  system
+  program.
+  A
+  stranger
+  still
+  needs
+  a valid
+  signature
+  on
+  `from`.
+
+Do not file
+standard
+system
+`Transfer`
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`jito-solana`
+vote /
+runtime /
+other
+programs
+(if still unused).
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -45716,6 +45846,8 @@ Jito leftover remaining jito-solana tokens leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana runtime fee leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana programs leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45737,7 +45869,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` programs / remaining runtime if still unused.
+Remaining listed Jito: `jito-solana` vote / remaining runtime / other programs if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45801,6 +45933,7 @@ Do not rematch Jito jito-solana bundle + fee leftover.
 Do not rematch Jito jito-solana scheduler leftover.
 Do not rematch Jito jito-solana tokens leftover.
 Do not rematch Jito jito-solana runtime fee leftover.
+Do not rematch Jito jito-solana programs leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -48538,8 +48671,12 @@ Jito leftover remaining jito-solana bundle + fee leftover
 Jito leftover remaining jito-solana scheduler leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana tokens leftover
-(`d0e3a47`) is logged (remaining listed is programs /
-runtime);
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana runtime fee leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana programs leftover
+(`d0e3a47`) is logged (remaining listed is vote /
+remaining runtime / other programs);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover
