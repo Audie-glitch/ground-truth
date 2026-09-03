@@ -184,6 +184,9 @@ Velvet leftover Base deposit + withdraw leftover is logged;
 Autonolas leftover remaining L1 deposit processors + L2 ServiceRegistry leftover is logged;
 The Graph leftover remaining L2GNS + TokenLock leftover is logged;
 Tetu leftover empty-assets leftover is logged;
+Autonolas leftover remaining oracle + VoteWeighting leftover is logged;
+The Graph leftover remaining Governor leftover is logged;
+Xterio leftover website leftover is logged;
 Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
 KeeperHub
@@ -915,6 +918,22 @@ Tetu leftover empty-assets leftover
 (no KYC; empty `assets`) is
 logged (listed leftover
 exhausted).
+Autonolas leftover remaining
+oracle + VoteWeighting leftover
+(Sourcify BalancerPriceOracle /
+VoteWeighting / Gnosis
+processor; KYC) is logged
+(listed Sourcify leftover
+exhausted except proxy /
+UniswapPriceOracle 404s).
+The Graph leftover remaining
+Governor leftover (Sourcify
+Safe proxy; KYC) is logged
+(remaining listed is
+L2GraphTokenGateway 404).
+Xterio leftover website leftover
+(KYC; no contract URL) is
+logged.
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
@@ -1639,6 +1658,14 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (Sourcify; KYC),
   Tetu leftover empty-assets leftover
   (no KYC),
+  Autonolas leftover remaining
+  oracle + VoteWeighting leftover
+  (Sourcify; KYC),
+  The Graph leftover remaining
+  Governor leftover (Sourcify;
+  KYC),
+  Xterio leftover website leftover
+  (KYC),
   Serai leftover bitcoin-serai
   leftover (`4b89cf02`; KYC),
   Pragma leftover cairo oracle

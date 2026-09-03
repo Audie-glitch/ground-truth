@@ -36731,6 +36731,209 @@ exhausted
 until Immunefi
 adds assets.
 
+## 2026-09-03: Autonolas leftover remaining oracle + VoteWeighting leftover (Sourcify)
+
+Immunefi program
+`autonolas`
+($5,000,
+`kyc: true`).
+Already leftover-
+logged through
+L1 deposit
+processors.
+Sourcify
+Polygon
+BalancerPriceOracle
+`0x43117542A48588be59018A16443Ae75942ffDe91`,
+ETH VoteWeighting
+`0x95418b46d5566D3d1ea62C12Aea91227E566c5c1`,
+ETH
+GnosisDepositProcessorL1
+`0x48d4631f24dAce505c04D5A39458BED209e80A3c`.
+UniswapPriceOracle
+Sourcify 404.
+Extract
+`/tmp/olas-bal-oracle`,
+`/tmp/olas-vote-w`,
+`/tmp/olas-gnosis-dep`.
+No mainnet
+writes.
+
+Files:
+`contracts/oracles/BalancerPriceOracle.sol`,
+`contracts/VoteWeighting.sol`,
+`contracts/staking/DefaultDepositProcessorL1.sol`.
+
+Checked for:
+oracle write
+that moves
+user OLAS;
+vote that
+spends
+another
+account's
+veOLAS.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `BalancerPriceOracle`
+  is a
+  permissionless
+  TWAP
+  observer
+  of vault
+  balances
+  (no token
+  transfer).
+- `VoteWeighting.voteForNomineeWeights`
+  uses
+  `veOLAS.getLastUserPoint(msg.sender)`
+  and the
+  caller's
+  lock end.
+  No token
+  pull.
+- Gnosis
+  `DepositProcessorL1`
+  is the
+  same
+  dispenser-only
+  `sendMessage`
+  twin as
+  the
+  previous
+  leftover.
+
+Do not file
+permissionless
+TWAP
+`updatePrice`
+or
+veOLAS-weighted
+gauge voting
+by the
+caller.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+UniswapPriceOracle
+404 /
+VoteWeighting
+is leftover-
+logged /
+listed Autonolas
+smart-contract
+leftover that
+Sourcify opens
+is exhausted
+except proxy
+404s.
+
+## 2026-09-03: The Graph leftover remaining Governor leftover (Sourcify)
+
+Immunefi program
+`thegraph`
+($50,000,
+`kyc: true`).
+Already leftover-
+logged through
+L2GNS +
+TokenLock.
+Sourcify ETH
+Governor
+`0x74Db79268e63302d3FC69FB5a7627F7454a41732`
+is a
+`Proxy` to
+GnosisSafe
+impl
+`0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552`.
+Extract
+`/tmp/graph-gov`.
+No mainnet
+writes.
+
+Checked for:
+a custom
+governor
+money path
+beyond a
+standard
+Safe.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+The listed
+Governor is
+a Safe
+multisig,
+not a
+custom
+token
+minter.
+
+Do not file
+standard
+Safe
+threshold
+execution.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+L2GraphTokenGateway
+404.
+Listed The
+Graph leftover
+that Sourcify
+opens is
+exhausted
+except that
+404.
+
+## 2026-09-03: Xterio leftover website leftover
+
+Immunefi program
+`xterio`
+($80,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are
+`https://app.xter.io/`
+plus primacy
+of impact
+(no
+smart-contract
+source URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+website /
+primacy of
+impact only.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -38745,6 +38948,22 @@ Tetu leftover empty-assets leftover
 (no KYC; empty `assets`) is
 logged (listed leftover
 exhausted);
+Autonolas leftover remaining
+oracle + VoteWeighting leftover
+(Sourcify BalancerPriceOracle /
+VoteWeighting / Gnosis
+processor; KYC) is logged
+(listed Sourcify leftover
+exhausted except proxy /
+UniswapPriceOracle 404s);
+The Graph leftover remaining
+Governor leftover (Sourcify
+Safe proxy; KYC) is logged
+(remaining listed is
+L2GraphTokenGateway 404);
+Xterio leftover website leftover
+(KYC; no contract URL) is
+logged;
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
