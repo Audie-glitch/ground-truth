@@ -7666,10 +7666,11 @@ finding. Not submitted.
   initializers. Upgrade is
   admin-only.
 
-Remaining SparkLend: PSM3 /
-treasury controllers and
-the 13 Jul Robinhood /
-X Layer rows. Not
+Remaining SparkLend after this
+slice: PSM3 (logged later
+this pass) plus treasury
+controllers and the 13 Jul
+Robinhood / X Layer rows. Not
 submitted.
 
 ## 2026-09-03: Yearn Vault V3.1.0 (Sourcify)
@@ -8031,6 +8032,88 @@ is exhausted. Older Jan
 BufferRouter rows are
 unchanged. Not submitted.
 
+## 2026-09-03: Spark PSM3 (`2b1a72a`)
+
+Immunefi program `sparklend`
+($5,000,000, `kyc: false`).
+Listed GitHub row
+[marsfoundation/spark-psm](https://github.com/marsfoundation/spark-psm)
+`src/PSM3.sol`, plus live
+PSM3 on Base
+`0x1601…47E`, Optimism
+`0xe0F9…7F62`, Arbitrum
+`0x2B05…7266`, Unichain
+`0x7b42…312f`. Local clone
+`/tmp/spark-psm` at
+`2b1a72a`. Live
+`totalShares()` was read
+via `eth_call` only (Base
+~3.41e24, OP ~1.57e24, Arb
+~4.63e25). No state-changing
+txs.
+
+Files: `src/PSM3.sol`,
+`deploy/PSM3Deploy.sol`,
+`test/unit/{InflationAttack,DoSAttack}.t.sol`.
+
+Checked for: first-depositor
+inflation via a 1-wei share
+plus a USDC donation;
+deposit that mints 0 shares
+after a pre-seed donation
+(`totalShares == 0` and
+`totalAssets > 0`); swap
+that pays a stranger;
+withdraw that burns another
+user’s shares; pocket drain
+by a non-owner.
+
+Result: no submittable
+finding. Not submitted.
+
+- README marks both attacks
+  **CRITICAL** and requires
+  a deploy-time seed of at
+  least 1e18 shares.
+  `PSM3Deploy` deposits
+  1e6 USDC (1e18 value) to
+  `address(0)` so those
+  shares cannot withdraw.
+  In-repo tests show the
+  unseeded 1-wei + 10m
+  donation path and the
+  pre-seed 0-share DoS.
+- Live listed PSM3s already
+  have ≫ 1e18 shares. The
+  documented seed
+  mitigation is in place.
+  Do not file a test-suite
+  attack against a seeded
+  pool.
+- Swaps are 1:1 USDC↔USDS
+  or sUSDS via the
+  immutable rate provider.
+  `minAmountOut` /
+  `maxAmountIn` bind the
+  caller. Receiver cannot
+  be 0.
+- Deposit mints to
+  `receiver` then pulls
+  `msg.sender`. Withdraw
+  burns `msg.sender` then
+  pushes to `receiver`.
+  USDC custody is `pocket`
+  (Base live pocket is the
+  PSM itself). `setPocket`
+  is owner-only and moves
+  the full USDC balance.
+
+Remaining SparkLend:
+treasury controllers and
+the 13 Jul Robinhood /
+X Layer rows. Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -8134,15 +8217,17 @@ plus the Spark ALM controller
 tree (`ce5cbd9`: Mainnet /
 Foreign / proxy / rate limits)
 and SparkVault V2
-(`51c6d7a`) are logged. Listed Extra Finance
+(`51c6d7a`) plus PSM3
+(`2b1a72a`; live pools
+seeded) are logged. Listed Extra Finance
 and Hashflow Solidity are
 exhausted. Magpie leftover is
 Primacy of Impact only.
-Remaining SparkLend is PSM3 /
+Remaining SparkLend is
 treasury controllers and the
 13 Jul Robinhood / X Layer
 rows beyond the ALM +
-SparkVault V2 trees. Next
+SparkVault + PSM3 trees. Next
 unreviewed Immunefi
 GitHub-or-recent trees:
 Twyne June-2026 Aave V3
