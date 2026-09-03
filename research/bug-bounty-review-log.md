@@ -66695,3 +66695,22 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an emission-admin-gated rewards claim as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: periphery.
+
+## 2026-09-03: Aave leftover remaining Collector leftover (`308489d`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after RewardsController leftover. Official `bgd-labs/aave-collector-unification` `308489d` (`Collector.sol` REVISION 5). Opened listed `src/contracts/Collector.sol` plus `VersionedInitializable` / `ReentrancyGuard` / `ICollector`. Do not rematch Pool / Oracle / ACL / GHO / rewards leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `approve` / `transfer` / `createStream` without funds admin; `withdrawFromStream` paying a caller more than vested; `initialize` rewriting `_fundsAdmin` on a live revision.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `approve` / `transfer` / `createStream` / `setFundsAdmin` are `onlyFundsAdmin`. ETH `transfer` uses `ETH_MOCK_ADDRESS` + `sendValue`; ERC20 uses `safeTransfer`. `receive()` only accepts ETH.
+- `createStream` does not pull tokens (inventory is already in the collector). It requires `deposit % duration == 0`, `deposit >= duration`, future start, and a recipient that is not 0 / this / caller. Sender is `address(this)`. Over-allocation versus token cash is an admin misconfiguration; later `safeTransfer` reverts.
+- `withdrawFromStream` is `nonReentrant` + `onlyAdminOrRecipient`. Amount is capped by `balanceOf` recipient (streamed `delta * rate` minus prior withdrawals). Tokens always go to `stream.recipient`, not `msg.sender`. Zero remaining deletes the stream.
+- `cancelStream` is the same gate. Recipient is paid vested only; unvested `senderBalance` stays in the collector. `balanceOf` sender is `remainingBalance - recipientBalance`; `delta` saturates at the stream window so recipient cannot exceed deposit.
+- `initialize` is `VersionedInitializable` (`revision > lastInitializedRevision`). `REVISION = 5`. After first init, re-init fails until a higher-revision implementation is upgraded. `_initGuard` sets the proxy reentrancy status.
+
+Do not file an admin-gated treasury stream as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: L2Encoder / PriceOracleSentinel / stk / StakeToken / GHO remaining (FixedFee / flash minter / Gsm4626) / governance.
+
