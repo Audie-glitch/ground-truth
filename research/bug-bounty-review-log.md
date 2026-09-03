@@ -38534,3 +38534,149 @@ opened-contract
 level. Remaining
 listed: the web /
 Telegram apps.
+## 2026-09-03: Decentraland leftover marketplace, bid, and rentals
+
+Immunefi program
+`decentraland`
+($500,000, `kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Official
+clone
+`/tmp/dcl-marketplace`
+`32d17b0`. Bid
+Sourcify flatten
+`/tmp/dcl-src/Bid`
+plus official
+`/tmp/dcl-bid`
+`ef7def6`. Rentals
+implementation
+Sourcify
+`exact_match`
+`/tmp/dcl-src/RentalsImpl`.
+Marketplace proxy
+`0x8e5660b4ab70168b5a6feea0e0315cb49c8cd539`
+OZ2 impl
+`0x19a8ed4860007a66805782ed7e0bed4e44fc6717`
+(Sourcify
+`match`). Bid
+`0xe479dfd9664c693b2e2992300930b00bfde08233`
+(Sourcify
+`match`, target
+`ERC721Bid`).
+Rentals proxy
+`0x3a1469499d0be105d4f77045ca403a5f6dc2f3f5`
+impl
+`0xe90636e24d8faf02aa0e01c26d72dab9629865cb`.
+No mainnet writes.
+
+Files:
+`contracts/marketplace/Marketplace.sol`,
+`ERC721Bid.sol`,
+`contracts/Rentals.sol`.
+
+Checked for: a
+stranger
+`createOrder` on
+someone else's
+NFT; `cancelOrder`
+by a non-seller;
+`executeOrder`
+that pays the
+caller as seller
+or pulls the NFT
+without payment;
+bid accept that
+pays a non-owner
+or sends the NFT
+to the caller;
+rental `claim` by
+a non-lessor;
+`acceptListing`
+without a valid
+lessor signature.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Marketplace
+  `createOrder`
+  requires
+  `_msgSender() ==
+  ownerOf(assetId)`
+  and marketplace
+  approval.
+  `cancelOrder`
+  is seller or
+  contract owner.
+  `executeOrder`
+  pulls MANA from
+  the buyer to the
+  stored seller
+  (minus owner
+  cut) and
+  `safeTransferFrom`
+  seller to buyer.
+  Price must match
+  the stored
+  order.
+- Bid
+  `_placeBid`
+  records
+  `msg.sender`.
+  `cancelBid` looks
+  up the caller's
+  bid. Accept is
+  `onERC721Received`
+  from the NFT:
+  pays MANA from
+  bidder to
+  `_from` and
+  transfers the
+  NFT to
+  `bid.bidder`.
+- Rentals
+  `acceptListing`
+  verifies the
+  listing signer
+  and pays tenant
+  MANA to lessor +
+  fee collector.
+  `claim` requires
+  `lessor ==
+  _msgSender()`
+  and
+  `!getIsRented`.
+
+Do not file
+marketplace owner
+cut, admin
+`cancelOrder`, or
+permissionless
+accept of a
+correctly priced
+listing / bid, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed
+Decentraland
+marketplace / bid
+/ rentals leftover
+is exhausted at
+the opened-contract
+level. Remaining
+listed: MANA,
+LAND / ESTATE
+proxies, name
+registrar /
+controller,
+Collections V1/V2,
+vesting factories,
+and Polygon MANA /
+collections.
