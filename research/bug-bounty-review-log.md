@@ -27070,6 +27070,101 @@ CToken / CErc20 /
 CEther / Delegator
 bytecode).
 
+## 2026-09-03: Threshold Bridge leftover (`502cd39`)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+Bank / vault /
+watchtower / Wormhole /
+RebateStaking leftovers
+are already logged.
+This slice is listed
+Ethereum Sourcify
+`Bridge` (`match`
+`0x8d014903bf7867260584d714e11809fea5293234`).
+Local clone
+`/tmp/threshold-tbtc`
+at `502cd39`.
+No mainnet interaction.
+
+Files:
+`solidity/contracts/bridge/Bridge.sol`,
+`solidity/contracts/bridge/Deposit.sol`,
+`solidity/contracts/bridge/Redemption.sol`.
+
+Checked for: a
+stranger reveal that
+credits another
+depositor; sweep /
+redemption proof
+without SPV
+maintainer;
+callback redemption
+that spends a Vault
+and rebates a
+stranger; timeout
+payout to the
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `revealDeposit` /
+  `revealDepositWithExtraData`
+  embed `msg.sender`
+  in the expected
+  P2(W)SH script and
+  store
+  `depositor = msg.sender`.
+- `submitDepositSweepProof`
+  and
+  `submitRedemptionProof`
+  are
+  `onlySpvMaintainer`
+  and require an SPV
+  proof.
+- Direct
+  `requestRedemption`
+  uses `msg.sender`
+  as
+  `balanceOwner`.
+  `receiveBalanceApproval`
+  is Bank-only.
+  Callback rebate
+  applies only when
+  the named redeemer
+  authorized that
+  balance owner
+  (do not refile
+  1308).
+- `notifyRedemptionTimeout`
+  returns Bank
+  balance to
+  `request.redeemer`
+  after
+  `redemptionTimeout`.
+  `notifyRedemptionVeto`
+  is the watchtower
+  only.
+
+Do not refile 1494
+(closeable wallets)
+or 1320 (relayer
+reimbursement).
+
+Not submitted.
+Remaining Threshold
+listed leftover:
+BridgeGovernance /
+LightRelay /
+TokenholderGovernor,
+and
+`keep-network/tbtc-v2`
+typescript.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -27526,6 +27621,8 @@ Threshold RebateStaking leftover
 Threshold validator +
 ReimbursementPool leftover
 (`502cd39`) is logged.
+Threshold Bridge leftover
+(`502cd39`) is logged.
 Arkadiko leftover (Hiro vaults /
 tokens / liq-pool) is logged
 (remaining listed is the website).
@@ -27686,9 +27783,10 @@ Threshold RebateStaking leftover
 (`502cd39`) is logged;
 Threshold validator +
 ReimbursementPool leftover
+(`502cd39`) is logged;
+Threshold Bridge leftover
 (`502cd39`) is logged
 (remaining Threshold is
-Bridge /
 BridgeGovernance /
 LightRelay /
 TokenholderGovernor +
