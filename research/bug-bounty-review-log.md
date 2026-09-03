@@ -47444,7 +47444,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`validated_reward_certificate` / `validated_block_finalization` / `bank.rs` money-path subset / `bank/fee_distribution`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed Arbitrum: remaining token-bridge libs / websites if still unused. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged.
@@ -47530,6 +47530,7 @@ Do not rematch Jito jito-solana snapshot_bank_utils leftover.
 Do not rematch Jito jito-solana accounts_background_service leftover.
 Do not rematch Jito jito-solana status_cache leftover.
 Do not rematch Jito jito-solana bank_forks leftover.
+Do not rematch Jito jito-solana non_circulating_supply leftover.
 Do not rematch Chainlink leftover remaining CCIP Sui leftover.
 Do not rematch Chainlink leftover remaining CCIP Solana leftover.
 Do not rematch Jito jito-solana snapshot_package leftover.
@@ -50344,8 +50345,11 @@ Jito leftover remaining jito-solana accounts_background_service leftover
 Jito leftover remaining jito-solana status_cache leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana bank_forks leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana non_circulating_supply leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-bank if still unused);
+validated_reward_certificate / validated_block_finalization / bank.rs
+money-path subset / bank/fee_distribution if still unused);
 Optimism leftover remaining op-node deposits + withdrawals leftover
 (`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
@@ -72982,3 +72986,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an Aptos pool release as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink chainlink-evm / OCR / core node / websites if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after bank_forks leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/non_circulating_supply.rs`. Do not rematch remaining runtime leftover, bank_forks leftover, or snapshot_bank_utils leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `calculate_non_circulating_supply` that subtracts a stranger's circulating balance so a later credit looks like inflation; hardcoded `non_circulating_accounts` / `withdraw_authority` lists that a stranger can join to hide stolen lamports as supply math; `unwrap_or_default` on stake state that treats a funded account as unlocked so a withdraw credits extra.
+
+Result: no user-exploitable finding. Not submitted.
+
+- This is an RPC/metrics circulating-supply helper, not a stranger IX. It does not move lamports. It sums `bank.get_balance` over a HashSet and returns the set.
+- The set starts as a hardcoded mainnet-beta foundation/team pubkey list. Stake accounts owned by the stake program are added only when `Initialized` or `Stake` metadata has a lockup still in force on `bank.clock()`, or the withdrawer is on the hardcoded autostake `withdraw_authority` list. Corrupt stake state uses `unwrap_or_default()` → `Uninitialized` and is skipped (can undercount non-circulating; does not credit anyone).
+- Program-id index scan still re-filters `account.owner() == stake::program::id()` so zero-lamport wiped defaults are not treated as stake.
+- `sum()` of balances is reporting only. A forged list would require a source change. Sending lamports to a listed pubkey only changes the reported circulating number.
+- Tests: genesis non-circulating + locked stakes are counted; advancing one epoch unlocks the test stakes so they drop out of the set.
+
+Do not file a circulating-supply reporter as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`validated_reward_certificate` / `validated_block_finalization` / `bank.rs` money-path subset / `bank/fee_distribution`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
