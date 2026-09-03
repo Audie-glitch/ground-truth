@@ -17406,6 +17406,112 @@ Harvest is the polygon
 (`f24a06a`) and
 arbitrum trees.
 
+## 2026-09-03: Harvest polygon CompoundBlue / chef leftover (`f24a06a`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Listed
+GitHub tree
+`harvestfi/harvest-strategy-polygon`
+(3 Apr 2023). Local
+clone
+`/tmp/harvest-strategy-polygon`
+at `f24a06a`
+(`Add merkl toggle`).
+No mainnet interaction.
+
+Files:
+`contracts/strategies/compound-blue/CompoundBlueStrategy.sol`,
+`base/masterchef-base/MasterChefStrategy.sol`,
+`base/sushi-base/MiniChefV2Strategy.sol`,
+`base/ape-base/MiniApeV2Strategy.sol`,
+`base/noop/NoopStrategy.sol`.
+
+Checked for: a stranger
+redeeming MetaMorpho /
+chef LP; withdraw that
+pays more than idle
+plus staked; chef
+`deposit` to a
+mismatched LP; salvage
+of receipt tokens by a
+third party.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Compound Blue
+  (MetaMorpho)
+  `asset()` must match
+  `underlying`. Supply
+  deposits to
+  `address(this)`.
+  Fee is a slice of
+  `current − stored`
+  previewRedeem.
+  Withdraw /
+  hard-work are
+  `restricted`.
+  Transfer of the
+  requested amount
+  reverts if short.
+  Salvage refuses
+  underlying / reward
+  / market. Reward
+  swaps use
+  `minOut = 1` (known
+  Harvest keeper
+  sandwich).
+- MasterChef
+  `poolInfo(poolId)`
+  LP must equal
+  `underlying`.
+  MiniChef /
+  MiniApe
+  `lpToken(poolId)`
+  must equal
+  `underlying`.
+  Deposit / withdraw
+  go to
+  `address(this)`.
+  Partial unwrap is
+  capped at the chef
+  balance; transfer
+  of the requested
+  amount reverts if
+  short. Router
+  `amountOutMin = 1`
+  and
+  `addLiquidity`
+  mins of 1 are the
+  same trusted-keeper
+  path. Routes start
+  empty and are
+  governance-set.
+- Noop holds idle
+  underlying only.
+  Withdraw requires
+  `balance >= amount`
+  and is
+  `restricted`.
+  Salvage mapping
+  marks underlying
+  unsalvageable.
+
+Not submitted. Remaining
+Harvest polygon is
+Aave / Aura /
+Balancer / Convex /
+Gamma / Idle / Quick
+Gamma / Pearl /
+Meshswap / Jarvis /
+Complifi / compound-v2
+wrappers. Remaining
+Harvest listed tree is
+`harvest-strategy-arbitrum`
+`125270d`.
+
 ## 2026-09-03: Marinade crank / withdraw-stake leftover (`b8fe3f8`)
 
 Immunefi program
@@ -18272,10 +18378,15 @@ CompoundV3 / Idle
 leftover and inactive /
 MorphoVault V2 / sDAI /
 StakeDAO lend / cvxCRV
-leftover are logged
+leftover and polygon
+CompoundBlue / chef
+leftover (`f24a06a`)
+are logged
 (remaining Harvest is
-polygon `f24a06a` /
-arbitrum);
+polygon Aave / Aura /
+Balancer / Convex /
+Gamma / Idle plus
+arbitrum `125270d`);
 ICHI oneToken leftover
 (`4873873`) is logged;
 Yearn yCRV token +
