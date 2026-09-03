@@ -44478,10 +44478,16 @@ Aave leftover remaining Lending Rate Oracle leftover (Sourcify)
 is logged.
 Aave leftover remaining WrappedTokenGatewayV2 leftover (Sourcify)
 is logged.
+Jito leftover remaining priority-fee-distribution leftover (`ce1dfb6`)
+is logged.
+Jito leftover remaining jito-solana tip_manager leftover (`d0e3a47`)
+is logged.
+Filecoin leftover remaining lotus actors leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus non-miner (actors wrappers / types / lib).
+Remaining listed Filecoin: remaining lotus non-miner (types / lib).
 Remaining listed Aave: v2 Collector impl / FixedPriceStrategy / v3 VariableDebtToken / GhoOracle 404.
-Remaining listed Jito: `jito-solana` / `priority-fee-distribution` (if still unused).
+Remaining listed Jito: `jito-solana` bundle_stage / rpc bundles (if still unused).
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -68803,3 +68809,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator-local instruction builder as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` bundle_stage / rpc bundles (if still unused).
+
+## 2026-09-03: Filecoin leftover remaining lotus actors leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus index leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/actors`. Opened `manifest.go`, `actor_cids.go`, `builtin/builtin.go`, `builtin/registry.go`, `policy/policy.go`, `aerrors/{error,wrap}.go`, and `adt/{adt,store}.go`. Versioned actor shims. Do not rematch leftover-logged builtin-actors, paych, or miner leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `RegisterManifest` / `AddActorMeta` swapping a builtin CID so a fake miner runs; `MakeRegistry` defaulting an unknown key onto another actor; `SetConsensusMinerMinPower` being callable over RPC; `Absorb` downgrading a fatal error to success.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `RegisterManifest` / `ClearManifests` / `AddActorMeta` write in-process maps under `manifestMx`. They are not JSON-RPC. `GetActorCodeID` for v0–7 returns hardcoded specs-actors CIDs; v8+ looks up the registered manifest. Unknown name → `cid.Undef, false`.
+- `MakeRegistry` panics below v8. For v8+ it maps each manifest key to that version’s `Methods` / `State` from `go-state-types`. Unrecognized keys are skipped. `IsAccountActor` / `IsStorageMinerActor` / `IsBuiltinActor` only match registered meta or the v0–7 hardcoded CIDs.
+- Policy `Set*` helpers (`SetSupportedProofTypes`, `SetConsensusMinerMinPower`, `SetPreCommitChallengeDelay`) mutate package-level constants and are documented as test-only. They are not exposed as node RPC.
+- `aerrors.Absorb` refuses to swallow an already-fatal `ActorError` or `retCode == 0`. `SerializeParams` absorbs a marshal failure as `ErrSerialization`. `adt.WrapStore` is an IPLD helper. None of these sign or move FIL.
+
+Do not file a local actor CID map as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner (types / lib).
