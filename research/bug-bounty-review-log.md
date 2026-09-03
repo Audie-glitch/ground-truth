@@ -74073,7 +74073,7 @@ Result: no user-exploitable finding. Not submitted.
 
 Do not file an owner-/bridger-role gated registry upgrade or a factory-owned TopUp sweep as stranger theft.
 
-Not submitted. Payment requires user KYC. Remaining listed: Scroll Cash modules (DebtManager / EtherFiLiquidModule / LiquidUSDLiquifierModule / SettlementDispatcherCardOrder on Scroll) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+Not submitted. Payment requires user KYC. Remaining listed: eETH impl 404 if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 
 ## 2026-09-03: Ether.fi leftover remaining Scroll Cash modules leftover (`1f502e1`)
 
