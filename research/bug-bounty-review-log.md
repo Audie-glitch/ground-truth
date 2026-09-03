@@ -24973,10 +24973,89 @@ role privilege.
 Not submitted.
 Remaining
 aragon-apps:
-Agreement.
+Agreement leftover
+is logged.
 Listed CSM leftover
 modules are
 exhausted.
+
+## 2026-09-03: Lido aragon-apps Agreement leftover (`e44f928`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Vault /
+Finance / Agent /
+TokenManager and
+Voting /
+DisputableVoting
+leftovers are already
+logged. This slice is
+`Agreement`. Local
+clone
+`/tmp/lidofinance-aragon-apps`
+at `e44f928`. No
+mainnet interaction.
+
+File:
+`apps/agreement/contracts/Agreement.sol`.
+
+Checked for: a
+stranger `newAction`
+that locks another
+account's collateral;
+`challengeAction`
+without
+`CHALLENGE_ROLE`;
+`settleAction` that
+pays the caller the
+submitter's lock.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `newAction` is an
+  activated
+  Disputable app
+  only
+  (`msg.sender` must
+  be in
+  `disputableInfos`
+  and active). It
+  locks
+  `_submitter` after
+  that address has
+  signed the current
+  setting.
+- `challengeAction`
+  needs
+  `CHALLENGE_ROLE` on
+  the related
+  Disputable app.
+  Settlement offer
+  cannot exceed
+  action collateral.
+- `settleAction` is
+  the submitter, or
+  anyone after the
+  settlement period.
+  Slash / unlock
+  go to the stored
+  submitter and
+  challenger.
+- `closeAction` is
+  permissionless and
+  only unlocks the
+  submitter when
+  `_canClose`.
+  `sign` records
+  `msg.sender` only.
+
+Not submitted.
+Remaining
+aragon-apps leftover
+is exhausted.
 
 ## Next candidates
 
@@ -25327,9 +25406,11 @@ factories leftover
 (listed easy-track leftover
 factories exhausted).
 Lido aragon-apps Voting leftover
+(`e44f928`) is logged.
+Lido aragon-apps Agreement leftover
 (`e44f928`) is logged
-(remaining aragon-apps is
-Agreement).
+(remaining aragon-apps leftover
+exhausted).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
@@ -25712,9 +25793,11 @@ factories leftover
 (listed easy-track leftover
 factories exhausted).
 Lido aragon-apps Voting leftover
+(`e44f928`) is logged.
+Lido aragon-apps Agreement leftover
 (`e44f928`) is logged
-(remaining aragon-apps is
-Agreement).
+(remaining aragon-apps leftover
+exhausted).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
