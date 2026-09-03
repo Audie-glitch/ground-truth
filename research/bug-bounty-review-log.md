@@ -15547,6 +15547,101 @@ sAVAX, gauges,
 Maximillion, Ignite,
 veQI, distributors.
 
+## 2026-09-03: Rocket Pool v1.4 vault + RPL auction leftover (`fb7d9c4`)
+
+Immunefi program
+`Rocket Pool`
+($150,000, `kyc: true`).
+Deposit / megapool
+slices on the same pin
+`fb7d9c4` are already
+logged. This slice is
+ETH/token custody and
+slashed-RPL auctions.
+Local clone
+`/tmp/rocketpool`. No
+mainnet interaction.
+
+Files:
+`contracts/contract/RocketVault.sol`,
+`contracts/contract/auction/RocketAuctionManager.sol`.
+
+Checked for: a stranger
+withdrawing another
+contract’s ETH or RPL;
+`depositToken` crediting
+a fake balance that can
+be withdrawn as real
+RPL; auction claim of
+someone else’s bid;
+recover that steals
+allotted RPL.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Vault ETH deposit /
+  withdraw is
+  `onlyLatestNetworkContract`
+  and keys the ledger
+  by `getContractName
+  (msg.sender)`. Withdraw
+  deducts that name’s
+  balance then callbacks
+  `receiveVaultWithdrawalETH`.
+  Token withdraw /
+  transfer / burn use
+  the same gate and the
+  caller’s own token
+  slot.
+- `depositToken` is
+  permissionless: the
+  caller
+  `transferFrom`s
+  themselves and credits
+  a named network
+  contract. That is a
+  gift. Fee-on-transfer
+  would over-credit a
+  slot; the token in
+  scope is RPL, and only
+  the named contract can
+  later withdraw it.
+- `createLot` allots
+  unallotted vault RPL
+  up to the DAO max ETH
+  value / oracle price.
+  `placeBid` caps ETH
+  at remaining RPL *
+  current price, sends
+  the accepted ETH to
+  the deposit pool
+  (`recycleLiquidatedStake`),
+  and refunds the rest.
+- `claimBid` requires
+  the lot cleared and
+  pays only
+  `msg.sender`’s bid /
+  clearing price, then
+  zeros that bid.
+  Rounding is clamped
+  to allotted RPL.
+- `recoverUnclaimedRPL`
+  after the lot ends
+  only un-allots the
+  remainder so a later
+  lot can use it. RPL
+  stays in the vault.
+
+Not submitted. Remaining
+Rocket Pool listed
+GitHub: minipool
+delegate leftover, DAO
+settings / voting,
+smoothing / rewards
+pool.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -16040,12 +16135,13 @@ Marinade is crank /
 admin / validator
 management);
 Rocket Pool v1.4 deposit
-/ rETH / megapool queue
-and dissolve / rewards /
-exit (`fb7d9c4`) are
+/ rETH / megapool queue,
+dissolve / rewards /
+exit, and vault + RPL
+auction (`fb7d9c4`) are
 logged (remaining Rocket
 Pool is minipool leftover,
-vault, auction, DAO,
+DAO settings / voting,
 smoothing / rewards
 pool);
 Beanstalk Basin leftover
