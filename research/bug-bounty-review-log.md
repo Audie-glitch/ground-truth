@@ -19926,6 +19926,7 @@ Not submitted.
 Remaining Instadapp
 is Fluid steth and
 `inst-governance`.
+
 ## 2026-09-03: Instadapp Fluid stETH leftover (`a9949b4`)
 
 Immunefi program
@@ -20094,6 +20095,187 @@ Not submitted.
 Listed Instadapp
 GitHub leftover is
 exhausted.
+
+## 2026-09-03: Gnosis Chain tokenbridge + Omnibridge leftover (`908a481` / `c814f68`)
+
+Immunefi program
+`gnosischain`
+($2,000,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Four listed
+addresses, all
+Sourcify `match` on
+`EternalStorageProxy`
+only (solc 0.4.24):
+XDaiForeignBridge
+Ethereum
+`0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016`,
+HomeBridgeErcToNative
+Gnosis
+`0x7301CFA0e1756B71869E93d4e4Dca5c7d0eb0AA6`,
+ForeignOmnibridge
+Ethereum
+`0x88ad09518695c6c3712AC10a214bE5109a655671`,
+HomeOmnibridge Gnosis
+`0xf6A78083ca3e2a662D6dd1703c939c8aCE2e268d`.
+Extract
+`/tmp/gnosis-bridge`.
+Official trees
+`/tmp/tokenbridge`
+`omni/tokenbridge-contracts`
+`908a481` and
+`/tmp/omnibridge`
+`omni/omnibridge`
+`c814f68`. Do not
+treat proxy-only
+Sourcify as
+exhausting the
+implementation.
+No mainnet
+interaction.
+
+Files:
+`upgradeability/EternalStorageProxy.sol`,
+`OwnedUpgradeabilityProxy.sol`,
+`erc20_to_native/XDaiForeignBridge.sol`,
+`ForeignBridgeErcToNative.sol`,
+`HomeBridgeErcToNative.sol`,
+`BasicForeignBridge.sol`,
+`BasicHomeBridge.sol`,
+`Validatable.sol`,
+`libraries/Message.sol`,
+`omnibridge` `BasicAMBMediator.sol`,
+`BasicOmnibridge.sol`,
+`components/common/TokensRelayer.sol`,
+`FailedMessagesProcessor.sol`.
+
+Checked for: a
+stranger
+`executeSignatures`
+that unlocks DAI
+without validator
+quorum; Home mint
+without a matching
+Foreign lock;
+Omnibridge
+`handleBridgedTokens`
+callable by anyone;
+owner
+`claimTokens`
+sweeping the
+bridged DAI /
+native lock.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Proxy
+  `upgradeTo` /
+  `upgradeToAndCall`
+  are
+  `onlyProxyOwner`.
+  Fallback
+  `delegatecall`s
+  the current
+  implementation.
+- Foreign
+  `executeSignatures`
+  requires
+  `Message.hasEnoughValidSignatures`
+  against
+  `validatorContract()`,
+  `contractAddress ==
+  this`, and a fresh
+  `txHash`. Then
+  `onExecuteMessage`
+  transfers DAI
+  after
+  `ensureEnoughTokens`
+  (may withdraw cDAI
+  interest).
+- Home
+  `executeAffirmation`
+  is
+  `onlyValidator`.
+  Quorum marks the
+  hash processed and
+  `blockReward.addExtraReceiver`
+  mints. Home
+  `relayTokens` /
+  fallback burns
+  native xDAI
+  (`address(0).transfer`)
+  only within
+  minted−burnt and
+  daily limits.
+  Payable
+  `relayTokens` is
+  the native lock,
+  not a free mint.
+- Foreign
+  `relayTokens`
+  `transferFrom`s
+  the caller’s DAI
+  into the lock.
+  Receiver cannot
+  be `0`, `this`,
+  or the other-side
+  bridge.
+- Omnibridge
+  `handleBridgedTokens`
+  / `AndCall` /
+  `fixFailedMessage`
+  are
+  `onlyMediator`:
+  `msg.sender` is
+  the AMB and
+  `messageSender()`
+  is the other-side
+  mediator.
+  `onTokenTransfer`
+  / `relayTokens`
+  pull the caller’s
+  tokens.
+- `claimTokens` is
+  `onlyIfUpgradeabilityOwner`.
+  XDaiForeign
+  refuses DAI /
+  cDAI / COMP when
+  interest is on.
+  `upgradeTo530` is
+  `msg.sender ==
+  this`.
+
+Do not file owner
+`claimTokens`, the
+DAI / cDAI / COMP
+restriction,
+`upgradeTo530`
+self-call, or
+payable Home
+`relayTokens` as
+theft.
+
+Not submitted.
+Listed leftover is
+the four proxies
+plus the official
+erc-to-native and
+Omnibridge money
+paths. Remaining
+Gnosis: AMB /
+other tokenbridge
+trees if Immunefi
+lists them later;
+implementation
+bytecode is not
+independently
+Sourcify-matched
+on these rows.
 
 ## Next candidates
 
@@ -20614,6 +20796,16 @@ Instadapp inst-governance leftover
 (`3fc54af`) is logged
 (listed Instadapp leftover
 exhausted);
+Gnosis Chain tokenbridge +
+Omnibridge leftover
+(`908a481` / `c814f68`,
+Sourcify proxy + official
+money path) is logged
+(listed leftover
+exhausted; remaining is
+AMB / other tokenbridge
+trees if Immunefi lists
+them later);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
 dissolve / rewards /

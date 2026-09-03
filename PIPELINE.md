@@ -30,8 +30,16 @@ leftover (`a9949b4`) is logged. Instadapp Fluid
 vault T2–T4 leftover (`a9949b4`) is logged.
 Instadapp Fluid DEX T1 leftover (`a9949b4`) is
 logged. Instadapp Fluid dexLite leftover
-(`a9949b4`) is logged (remaining Instadapp is
-Fluid steth and `inst-governance`).
+(`a9949b4`) is logged. Instadapp Fluid stETH
+leftover (`a9949b4`) is logged.
+Instadapp inst-governance leftover
+(`3fc54af`) is logged (listed Instadapp
+leftover exhausted).
+Gnosis Chain tokenbridge + Omnibridge leftover
+(`908a481` / `c814f68`, Sourcify proxy +
+official money path) is logged (listed leftover
+exhausted; remaining is AMB / other tokenbridge
+trees if Immunefi lists them later).
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool
 v1.4 listed GitHub leftover is exhausted (deposit /
