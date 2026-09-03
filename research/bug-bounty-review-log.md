@@ -47573,7 +47573,7 @@ Remaining listed Aave: primacy; unused official v3 logic leftover that listed tr
 Remaining listed Jito: unused official leftover that listed remaining-runtime trees open is exhausted on this pin. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_client leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana prioritization_fee leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana commitment leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana slot_params leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana genesis_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana alpenglow_epoch_type leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana leader_schedule leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana sysvar_account leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana loader_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana vote_sender leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana installed_scheduler leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana read_optimized_dashmap leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana static_ids leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana runtime_config leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted at leftover-heading level. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining SuperchainConfig leftover is logged. Optimism leftover remaining LegacyMessagePasser leftover is logged. Optimism leftover remaining L2ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
-Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Remaining listed is USDtb token proxies / other OFT / TON if still unused.
+Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Ethena leftover remaining USDtb leftover is logged. Remaining listed is other OFT adapters / TON / other-chain rows if still unused.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -47706,6 +47706,7 @@ Do not rematch Optimism leftover remaining SuperchainConfig leftover.
 Do not rematch Optimism leftover remaining LegacyMessagePasser leftover.
 Do not rematch Optimism leftover remaining L2ProxyAdmin leftover.
 Do not rematch Ethena leftover remaining StakedENA leftover.
+Do not rematch Ethena leftover remaining USDtb leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
 Do not rematch Arbitrum leftover remaining governance leftover.
@@ -73913,3 +73914,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a caller-bound cooldown or a role-gated reward transfer as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: USDtb token proxies / other OFT adapters / TON / other-chain rows if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Ethena leftover remaining USDtb leftover (Sourcify)
+
+Immunefi program `ethena` ($3,000,000, `kyc: true`). Official remaining unused leftover after StakedENA leftover. Sourcify ETH `exact_match` USDtb proxy `0xC139190F447e929f090Edeb554D95AbB8b18aC1C` (TransparentUpgradeableProxy) impl `0x9D6d77a21702b9AFcF924983fbFB84AAAAe79589` (`AnchorageTokenUSDtb`). Opened listed `AnchorageTokenUSDtb.sol` plus `SingleAdminAccessControlUpgradeable.sol`. Official Sourcify **200**. Local extract `/tmp/ethena-usdtb/` (291 / 93 lines). Do not rematch minting leftover (`USDtbMinting`) or StakedENA leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `mint` / `burn` without `MINTER_BURNER_ROLE`; `initialize` / `initializeV2` that lets a random caller seize admin; deprecated `burn` / `burnFrom` that still burn another account; blocklist bypass that transfers from a blocked holder.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Regulated ERC-20 USDtb. `mint` and `burn(address,amount)` are `onlyRole(MINTER_BURNER_ROLE)` and `whenNotPaused`. Legacy `burn(uint256)` / `burnFrom` always revert `Deprecated()`.
+- `_beforeTokenTransfer` reverts `AccountBlocked` if `from` or `to` is blacklisted (except burns to `address(0)`). `blockAccounts` / `unblockAccounts` are `BLOCKLISTER_ROLE`; `pause` / `unpause` are `PAUSER_ROLE`.
+- `initialize` is `initializer`; `initializeV2` is `reinitializer(2)` and rejects zero addresses. Constructor `_disableInitializers()`. Admin is two-step via leftover-logged `SingleAdminAccessControlUpgradeable`.
+
+Do not file a role-gated stablecoin mint/burn as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: other OFT adapters / TON / other-chain rows if still unused. Next unused leftover is a different Immunefi program, not a rematch.
