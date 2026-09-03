@@ -27639,6 +27639,93 @@ independently
 Sourcify-fetched, and
 other docs addresses.
 
+## 2026-09-03: Pareto Credit leftover queue leftover (`19e7cde`)
+
+Immunefi program
+`Pareto Credit` ($50,000,
+`kyc: false`). IdleCDO
+request-claim, strategy,
+and epoch admin leftovers
+are already logged. This
+slice is the buffer-period
+queue and prefunded
+variant. Official clone
+`/tmp/idle-tranches` at
+`19e7cde`. No mainnet
+interaction.
+
+Files:
+`contracts/IdleCDOEpochQueue.sol`,
+`contracts/IdleCDOEpochVariantPrefunded.sol`.
+
+Checked for: a stranger
+`claimDepositRequest` /
+`claimWithdrawRequest`
+that pays another user's
+queue slot; `deleteRequest`
+after funds already went
+to the borrower;
+`processPrefundedDeposits`
+without being the CDO.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `requestDeposit` /
+  `requestWithdraw` pull
+  from `msg.sender` and
+  credit that sender's
+  next-epoch slot.
+  `deleteRequest` /
+  `deleteWithdrawRequest`
+  refund that sender only
+  if the epoch is not yet
+  priced (and not already
+  prefunded).
+- `processDeposits` /
+  `processDepositsToBorrower`
+  / `processWithdrawRequests`
+  / `processWithdrawalClaims`
+  are owner or strategy
+  manager. Prefunded
+  settlement is CDO-only
+  and AA-only.
+- `claimDepositRequest`
+  / `claimWithdrawRequest`
+  pay `msg.sender` at the
+  saved epoch price.
+  APR=0 claim rebase
+  updates that price from
+  realized cash.
+- Prefunded
+  `setEpochQueue` is
+  owner or manager.
+  `depositDuringEpoch` is
+  disabled. Stop mints AA
+  to the queue for already-
+  prefunded cash.
+
+Do not file owner /
+manager process, Keyring
+allowlist, prefund lock
+after `processDepositsToBorrower`,
+or queue rounding dust as
+theft.
+
+Not submitted.
+Listed leftover that a
+public tree would open
+is exhausted (L2 epoch
+variants only set
+`feeReceiver`). Remaining
+listed: proxy
+implementations not
+independently
+Sourcify-fetched, and
+other docs addresses.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -28150,11 +28237,17 @@ epoch admin leftover
 (`19e7cde` startEpoch /
 stopEpoch /
 depositDuringEpoch) is
-logged (remaining listed
-is IdleCDOEpochQueue /
-Prefunded / L2 variants
-/ proxy impls / other
-docs addresses).
+logged.
+Pareto Credit leftover
+queue leftover
+(`19e7cde`
+IdleCDOEpochQueue /
+Prefunded) is logged
+(listed leftover that a
+public tree would open
+is exhausted; remaining
+listed is proxy impls /
+other docs addresses).
 RootstockLabs RIF token leftover
 (Sourcify `match` `RIFToken`)
 is logged (KYC; remaining
@@ -28694,11 +28787,17 @@ epoch admin leftover
 (`19e7cde` startEpoch /
 stopEpoch /
 depositDuringEpoch) is
-logged (remaining listed
-is IdleCDOEpochQueue /
-Prefunded / L2 variants
-/ proxy impls / other
-docs addresses);
+logged;
+Pareto Credit leftover
+queue leftover
+(`19e7cde`
+IdleCDOEpochQueue /
+Prefunded) is logged
+(listed leftover that a
+public tree would open
+is exhausted; remaining
+listed is proxy impls /
+other docs addresses);
 RootstockLabs RIF token leftover
 (Sourcify) is logged (KYC;
 remaining listed is PegIn /

@@ -237,9 +237,12 @@ Pareto Credit leftover strategy leftover
 is logged.
 Pareto Credit leftover epoch admin leftover
 (`19e7cde` startEpoch / stopEpoch /
-depositDuringEpoch) is logged (remaining
-listed is IdleCDOEpochQueue / Prefunded /
-L2 variants / proxy impls / other docs
+depositDuringEpoch) is logged.
+Pareto Credit leftover queue leftover
+(`19e7cde` IdleCDOEpochQueue / Prefunded)
+is logged (listed leftover that a public
+tree would open is exhausted; remaining
+listed is proxy impls / other docs
 addresses).
 Puffer Finance leftover (Sourcify
 `PufferDepositor` / `PufferVaultV5`) is
@@ -531,7 +534,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   / APR=0) plus epoch
   admin leftover
   (startEpoch / stopEpoch /
-  depositDuringEpoch), and
+  depositDuringEpoch) plus
+  queue leftover
+  (IdleCDOEpochQueue /
+  Prefunded; listed leftover
+  that a public tree would
+  open is exhausted), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.
