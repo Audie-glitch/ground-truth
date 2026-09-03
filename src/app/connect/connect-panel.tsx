@@ -259,7 +259,26 @@ export function ConnectPanel() {
             <p>
               Standing parent {status.nextEarn.bountyContract} pays 2 USDC after a real 1 USDC
               child is settled by a different participant. Need about 1.02 USDC plus Base gas.
-              Do not dual-wallet farm.
+              Do not dual-wallet farm. If MetaMask already has that balance on Base, you can
+              sign on{" "}
+              <a
+                className="underline"
+                href="https://agentbounties.app/earn.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Agent Bounties
+              </a>{" "}
+              without waiting for a Phantom agent wallet. Parent terms:{" "}
+              <a
+                className="underline"
+                href="https://github.com/NSPG13/agent-bounties/issues/647"
+                target="_blank"
+                rel="noreferrer"
+              >
+                issue 647
+              </a>
+              .
             </p>
             <p>
               {status.nextEarn.ready
