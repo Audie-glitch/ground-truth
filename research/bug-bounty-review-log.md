@@ -41160,11 +41160,17 @@ Filecoin leftover remaining filecoin-ffi leftover (`17b1c64`)
 is logged.
 Filecoin leftover remaining go-graphsync leftover (`12cbffa`)
 is logged.
+ZKsync OS leftover zkos-wrapper leftover
+(`8b679aa`) is logged.
+Wormhole leftover remaining CosmWasm token-bridge leftover
+(`c58827e`) is logged.
+Wormhole leftover remaining CosmWasm core leftover
+(`c58827e`) is logged.
 Remaining listed Hedera: hashed transaction-tool website.
 Remaining listed Filecoin: remaining go-* / lotus non-miner / paired / go-data-transfer.
 
 Remaining listed ZKsync OS: airbender CS / prover /
-verifier, `zkos-wrapper`.
+verifier.
 Do not rematch Hedera consensus-node,
 json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
@@ -41172,7 +41178,8 @@ lotus miner, FVM, proofs-api, proofs-ffi, or proofs.
 Do not rematch filecoin.io website leftover.
 Do not rematch filecoin-ffi or go-graphsync leftover.
 Do not rematch ZKsync bootloader, interpreter,
-storage_models, proof_running_system, or zk_ee.
+storage_models, proof_running_system, zk_ee, or
+zkos-wrapper.
 Do not loop `reffinance` 404s or mux-staking auth.
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -43728,6 +43735,9 @@ Filecoin leftover remaining go-graphsync leftover
 (`12cbffa`) is logged (remaining listed is
 remaining go-* / lotus non-miner / paired /
 go-data-transfer);
+ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
+is logged (remaining listed is airbender CS / prover /
+verifier);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
 Sei leftover go-ethereum leftover (`bb451e2`) is logged;
@@ -64266,3 +64276,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a quorum-checked governance VAA or a fee-gated self-attributed post as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / wormchain / other cosmwasm contracts / algorand / aptos / near, and Relayer Sourcify 404.
+
+## 2026-09-03: ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Official remaining listed after zk_ee leftover. Official clone `/tmp/zkos-wrapper` at `8b679aa` (`Merge pull request #68 from matter-labs/oh_v31_zkos_patch`). Opened `wrapper/src/lib.rs`, `wrapper/src/circuits/risc_wrapper.rs`, `wrapper/src/circuits/compression.rs`, `wrapper/src/circuits/snark_wrapper.rs`, `wrapper/src/wrapper_inner_verifier/mod.rs`. Recursion wrapper: RISC proof → RISC-wrapper STARK → compression STARK → SNARK. Do not rematch bootloader, evm_interpreter, storage_models, proof_running_system, or zk_ee leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: wrapper accepting a RISC proof whose `end_params` / `aux_params` do not match the committed binary; compression/SNARK verify treating a failed check as valid; public inputs not bound to the inner proof.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `RiscWrapperWitness::from_full_proof` requires a single base proof, matching `end_params`, Blake2s(`recursion_chain_preimage`) == `recursion_chain_hash` == `binary_commitment.aux_params`.
+- `check_proof_state` enforces zero start PC, memory grand-product = 1, delegation accumulator = 0, hashed `(end_pc || setup_caps)` == `binary_commitment.end_params`, and registers 18–25 == `aux_params`. Inner `wrapper_inner_verifier::verify` drives the transcript and leaf-inclusion queries.
+- `verify_risc_wrapper_proof` / `verify_compression_proof` / `verify_snark_wrapper_proof` return the verifier bool. Prove paths fail closed if any layer is invalid. `CompressionCircuit` `enforce_equal`s `is_valid` to true and carries public inputs. This crate does not move ETH.
+
+Do not file a recursion wrapper that binds the binary commitment and fails closed on invalid proofs as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: airbender CS / prover / verifier.
