@@ -46575,3 +46575,169 @@ core leftover),
 and additional
 live vault
 instances.
+
+## 2026-09-03: Kiln DeFi leftover newer Ethereum impls (Sourcify)
+
+Immunefi program
+`kiln-defi`
+($500,000, `kyc: true`).
+Listed remaining after
+Polygon / Optimism /
+Base (`8f78313`).
+Current docs
+https://docs.kiln.fi/v1/kiln-products/defi/security/source-code
+use Ethereum
+addresses distinct
+from the older ETH
+core leftover
+(`39284` /
+`40070`). Not
+previously logged.
+Sourcify `match`
+Vault
+`0x869855168858364368e62A5D1D092cc1dbD31f5a`,
+beacon
+`0x15f7f910e5a8c86e609fd11c58f7342d86d3a25c`,
+BlockList
+`0x7e7F84Da187117e06AbB03E1454E07Af42D0E4BE`.
+`exact_match`
+ConnectorRegistry
+`0xdE63817c82e93499357aE198518f90Ac1bE93A72`,
+docs VaultFactory
+proxy
+`0xe175F13eB9383bCC61822Ca17ecB02038b00030D`
+(OZ
+`TransparentUpgradeableProxy`;
+impl
+`0x4A1Ede66750e8e44a1569A4Af3F53fb31De3Dd32`
+is Sourcify
+`match`
+`VaultFactory`),
+AaveV3Connector
+`0x08c28e1c82C09487DCB15a3e0839e8C888EeE3CD`,
+CompoundV3Connector
+`0xbeaa30DCB697CFFB64E319A3Fc4b0688Be5aE790`,
+SDAIConnector
+`0x22Fc700401FABbB7de1872461E8733d74e02f88a`,
+MetamorphoConnector
+`0xDa5FfFCF097A95E0aE6e6eC9b966da5ba89844f2`,
+AngleSavingConnector
+`0x3443Ea9BcC9E1E515e567a278bDae103e7324d1d`.
+Extract
+`/tmp/kiln-defi-eth-new-src`.
+Vault / factory /
+registry / Aave /
+Compound /
+BlockList /
+Metamorpho hashes
+match the Arb
+extract. Newer
+SDAI differs from
+the older ETH
+extract only by
+adding
+`reinvest` →
+`NothingToReinvest`.
+No mainnet writes.
+
+Files:
+`src/connectors/AngleSavingConnector.sol`,
+`src/connectors/SDAIConnector.sol`,
+`src/connectors/MetamorphoConnector.sol`,
+`src/Vault.sol`,
+`src/VaultFactory.sol`.
+
+Checked for: a
+stranger Angle /
+sDAI `deposit` /
+`withdraw` that
+moves a vault's
+4626 shares when
+called directly;
+`claim` /
+`reinvest` that
+accept a swap
+payload; factory
+proxy that lets a
+stranger
+initialize or
+hijack the impl.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- AngleSaving
+  deposits and
+  withdraws to
+  `address(this)`
+  on the
+  immutable
+  `stUSD` /
+  `stEUR` 4626.
+  Vault calls via
+  `functionDelegateCall`.
+  Direct calls
+  cannot move a
+  vault's
+  position.
+  `claim` /
+  `reinvest`
+  always revert.
+  `maxDeposit` /
+  `maxWithdraw`
+  return 0 when
+  `paused() == 1`.
+  Constructor
+  rejects a 4626
+  with
+  `totalAssets()
+  == 0`.
+- Newer SDAI is
+  the same
+  address(this)
+  4626 pattern
+  plus
+  `reinvest`
+  revert. No
+  swap target.
+- Metamorpho
+  source matches
+  the Base
+  leftover.
+- Docs factory
+  address is a
+  transparent
+  proxy. Impl
+  `createVault`
+  remains
+  `DEPLOYER_ROLE`
+  and hash-
+  matches Arb.
+
+Do not file
+role-gated vault
+deploy or
+ERC4626
+self-deposit as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Kiln DeFi
+docs addresses
+(ETH + Arb + BSC
++ Polygon +
+Optimism + Base)
+are exhausted at
+the opened-file
+level. Remaining
+listed:
+additional live
+vault instances
+if a later pass
+wants proxies
+rather than
+impls.
