@@ -39713,6 +39713,173 @@ and the
 transaction-tool
 website leftover.
 
+## 2026-09-03: Hedera leftover remaining TokenFeeSchedule leftover (`0d3d9a2`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+after TokenUpdate
+leftover.
+Official
+`hiero-ledger/hiero-consensus-node`
+`0d3d9a2`.
+Extract
+`/tmp/hedera-consensus`
+`TokenFeeScheduleUpdateHandler`
+/
+`TokenUnfreezeAccountHandler`
+/
+`TokenUnpauseHandler`
+/
+`TokenRevokeKycFromAccountHandler`
+/
+`TokenUpdateNftsHandler`.
+Listed
+token-service
+handler leftover
+that this
+extract
+opens is
+exhausted
+after this
+slice
+(views /
+live-hash
+omitted).
+No mainnet
+writes.
+
+Files:
+`handlers/TokenFeeScheduleUpdateHandler.java`,
+`handlers/TokenUnfreezeAccountHandler.java`,
+`handlers/TokenUnpauseHandler.java`,
+`handlers/TokenRevokeKycFromAccountHandler.java`,
+`handlers/TokenUpdateNftsHandler.java`.
+
+Checked for:
+a stranger
+`TokenFeeScheduleUpdate`
+without the
+fee-schedule
+key;
+`TokenUnfreeze`
+without the
+freeze key;
+`TokenUpdateNfts`
+that
+rewrites
+another
+account's
+NFT
+metadata.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `TokenFeeScheduleUpdate`
+  `requireKey`
+  the fee-
+  schedule
+  key when
+  present;
+  handle
+  rejects
+  an empty
+  key
+  (`TOKEN_HAS_NO_FEE_SCHEDULE_KEY`).
+  Collectors
+  with
+  `receiverSigRequired`
+  must
+  sign.
+- `TokenUnfreeze`
+  requires
+  the freeze
+  key;
+  handle
+  rejects
+  an empty
+  freeze
+  key.
+- `TokenUnpause`
+  requires
+  the pause
+  key;
+  handle
+  rejects
+  an empty
+  pause
+  key.
+- `TokenRevokeKyc`
+  requires
+  the KYC
+  key
+  (empty
+  sentinel
+  =
+  `TOKEN_HAS_NO_KYC_KEY`).
+- `TokenUpdateNfts`
+  requires
+  metadata
+  or supply
+  key for
+  treasury-
+  owned
+  serials,
+  else the
+  metadata
+  key.
+  HIP-540
+  empty
+  sentinel
+  is
+  treated
+  as
+  absent.
+
+Do not file
+fee-
+schedule-
+key
+update,
+freeze-key
+unfreeze,
+pause-key
+unpause,
+KYC-key
+revoke, or
+metadata /
+supply-key
+NFT
+update as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-mirror-node`,
+`hiero-cryptography`,
+other consensus
+modules
+(contract /
+file /
+schedule /
+consensus
+if a
+narrow
+money path
+isolates),
+SDKs,
+and the
+transaction-tool
+website leftover.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -42205,6 +42372,11 @@ mirror-node / cryptography / other modules / SDKs);
 Hedera leftover remaining TokenUpdate leftover
 (`0d3d9a2`) is logged (remaining listed is
 mirror-node / cryptography / other modules / SDKs);
+Hedera leftover remaining TokenFeeSchedule leftover
+(`0d3d9a2`) is logged (remaining listed is
+mirror-node / cryptography / other modules / SDKs;
+listed token-service handler leftover that this
+extract opens is exhausted);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
 Sei leftover go-ethereum leftover (`bb451e2`) is logged;
