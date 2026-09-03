@@ -13751,11 +13751,56 @@ operator-gated.
 
 Not submitted. Remaining
 MtPelerin listed files
-in this tree are
-thin wrappers (Coin /
-Share / Bond tokens)
-and KYC attribute
-rules.
+(logged below).
+
+## 2026-09-03: MtPelerin leftover wrappers + KYC rules (`1126cfc`)
+
+Immunefi program
+`mtpelerin` ($5,000,
+`kyc: false`). Same
+`MtPelerin/bridge-v2`
+tree at `1126cfc`. Local
+static read of
+`token/{BridgeToken,
+CoinBridgeToken,
+ShareBridgeToken,
+BondBridgeToken}.sol`
+and
+`rules/{UserValidRule,
+UserKycThresholdFromRule,
+UserFreezeRule,
+AddressThresholdLockRule}.sol`.
+No mainnet interaction.
+
+No finding.
+
+Coin / Bond wrappers
+only call
+`BridgeToken.initialize`.
+Share adds admin-set
+`tokenizedShares` /
+board-resolution
+metadata (no money
+path). Mint / burn are
+`onlySupplier`. EIP-2612
+/ EIP-3009 use typed
+hashes, expiry, and
+one-time
+`authorizationStates`.
+KYC / valid / freeze
+rules are view-only
+registry lookups
+(`TRANSFER_VALID_WITH_NO_HOOK`
+or reject). Address lock
+refuses a send that
+would leave the sender
+below an admin-set
+threshold.
+
+Not submitted. Listed
+MtPelerin GitHub
+Solidity leftover is
+exhausted.
 
 ## 2026-09-03: Orderly Vault leftover (`462e129`)
 
@@ -14291,10 +14336,12 @@ and token-registry AA
 (listed Obyte AAs
 exhausted);
 MtPelerin bridge-v2
-(`1126cfc`) is logged
-(remaining listed files
-are token wrappers +
-KYC attribute rules);
+core + leftover wrappers
+/ KYC rules (`1126cfc`)
+are logged (listed
+MtPelerin GitHub
+Solidity leftover
+exhausted);
 Orderly Vault
 (`462e129`) is logged
 (remaining Orderly is
