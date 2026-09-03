@@ -29650,6 +29650,134 @@ already in opened
 compilations, and
 the websites.
 
+## 2026-09-03: USDT0 leftover ETH adapter + Arb OFT (Sourcify)
+
+Immunefi program
+`usdt0` ($6,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Ethereum
+Sourcify
+`exact_match`
+TransparentUpgradeableProxy
+`0x6C96dE32CEa08842dcc4058c14d3aaAD7Fa41dee`
+impl
+`0xCD979B10A55FCdAC23ec785CE3066c6ef8a479A4`
+(`OAdapterUpgradeable`).
+Arbitrum Sourcify
+`exact_match`
+proxy
+`0x14E4A1B13bf7F943c8ff7C51fb60FA964A298D92`
+impl
+`0x00678FDaAB0D5C91b843a22Fa38E08AF1bBDa85E`
+(`OUpgradeable`)
+and proxy
+`0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9`
+impl
+`0x3263CD783823d04a6B9819517E0E6840d37cA3F4`
+(`ArbitrumExtensionV2`).
+Extract `/tmp/usdt0`
+/ `/tmp/usdt0-oupg` /
+`/tmp/usdt0-arb-ext`.
+No mainnet
+interaction.
+
+Files:
+`contracts/OAdapterUpgradeable.sol`,
+`contracts/OUpgradeable.sol`,
+`@layerzerolabs/oft-evm-upgradeable/contracts/oft/OFTAdapterUpgradeable.sol`,
+`@layerzerolabs/oft-evm-upgradeable/contracts/oft/OFTCoreUpgradeable.sol`,
+`@layerzerolabs/oapp-evm-upgradeable/contracts/oapp/OAppReceiverUpgradeable.sol`,
+`contracts/Wrappers/ArbitrumExtension.sol`,
+`contracts/Tether/TetherToken.sol`.
+
+Checked for: a
+stranger `send`
+that locks another
+account's tokens;
+`lzReceive` that
+credits the
+caller; Arb
+`mint` / `burn`
+by a non-OFT;
+`bridgeMint` that
+inflates supply.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- ETH
+  `OAdapterUpgradeable`
+  `send` `_debit`s
+  `msg.sender` via
+  `safeTransferFrom`
+  into the adapter.
+  `lzReceive` is
+  endpoint-only and
+  requires a
+  configured peer.
+  `_credit` pays
+  the message `to`.
+- Arb
+  `OUpgradeable`
+  `send` burns
+  `msg.sender` on
+  the inner token.
+  `_credit` mints
+  to the message
+  `to` (zero
+  address becomes
+  `0xdead`).
+- Arb token
+  `mint` / `burn`
+  are
+  `onlyAuthorizedSender`
+  (`l2Gateway` /
+  OFT). Owner sets
+  the OFT via
+  `setOFTContract`.
+  `bridgeMint`
+  reverts
+  `NotImplemented`.
+  `bridgeBurn` is
+  a no-op behind
+  the same sender
+  check.
+
+Do not file
+LayerZero
+peer-gated mint /
+burn, OFT `send`
+of the caller's
+own tokens, owner
+`setOFTContract`,
+or the empty
+authorized
+`bridgeBurn` as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH / Arb OFT
+types is
+exhausted.
+Remaining listed:
+other-chain USDT0
+twins (same OFT /
+adapter types —
+do not re-review
+unless a function
+differs) and the
+websites.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -31005,6 +31133,13 @@ ChainReader) is logged
 twins, Sourcify-404 Staked
 Glp Distributor, and
 same-type utils);
+USDT0 leftover ETH adapter +
+Arb OFT leftover (Sourcify
+OAdapterUpgradeable /
+OUpgradeable /
+ArbitrumExtensionV2; KYC)
+is logged (remaining listed
+is other-chain twins);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

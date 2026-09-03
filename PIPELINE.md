@@ -25,7 +25,8 @@ logged; Axelar leftover is logged; Kiln
 On-Chain v1 leftover is logged; Kiln DeFi
 leftover is logged; Acala leftover is logged;
 Ostium leftover is logged; GMX leftover V2
-AdlHandler leftover is logged). KeeperHub
+AdlHandler leftover is logged; USDT0 leftover
+is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -354,6 +355,11 @@ GlpBalance / Chainlink providers /
 ChainReader) is logged (remaining listed
 is Avax twins, Sourcify-404 Staked Glp
 Distributor, and same-type utils).
+USDT0 leftover ETH adapter + Arb OFT
+(Sourcify OAdapterUpgradeable /
+OUpgradeable / ArbitrumExtensionV2;
+KYC) is logged (remaining listed is
+other-chain twins).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -908,6 +914,8 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (AdlUtils / GlpBalance /
   Chainlink providers /
   ChainReader),
+  USDT0 leftover ETH adapter +
+  Arb OFT (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover
