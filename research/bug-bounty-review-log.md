@@ -30610,3 +30610,147 @@ leftover is
 exhausted at the
 five Immunefi
 Ethereum addresses.
+
+## 2026-09-03: Balancer Foundation leftover V2 Vault + V3 BatchRouter (Sourcify)
+
+Immunefi program
+`Balancer Foundation`
+($1,000,000, `kyc: false`).
+V3 Router /
+CompositeLiquidityRouter
+/ ProtocolFeeController
+/ factory leftovers are
+already logged (23 Jun
+slice exhausted; Jan
+2025 BatchRouter /
+BufferRouter rows were
+left). This slice is
+the Foundation-listed
+V2 Vault + Authorizer
++ AuthorizerAdaptor +
+BatchRelayerLibrary and
+the Sourcify-open V3
+`BatchRouter`. Official
+V2 clone
+`/tmp/balancer-v2-monorepo`
+at `e91a2b6`. Blockscout
+extract `/tmp/bal-found`.
+No mainnet interaction.
+
+Listed this slice:
+V2 `Vault`
+`0xBA12222222228d8Ba445958a75a0704d566BF2C8`,
+V2 `Authorizer`
+`0xA331D84eC860Bf466b4CdCcFb4aC09a1B43F3aE6`,
+`AuthorizerAdaptor`
+`0x8F42aDBbA1B16EaAE3BB5754915E0D06059aDd75`,
+`BatchRelayerLibrary`
+`0xeA66501dF1A00261E3bB79D1E90444fc6A186B62`,
+V3 `BatchRouter`
+`0x136f1EFcC3f8f88516B9E94110D56FDBfB1778d1`.
+
+Files:
+`pkg/vault/contracts/{Vault,Swaps,PoolBalances,UserBalance,FlashLoans,VaultAuthorization}.sol`,
+`contracts/BatchRouter.sol`,
+`contracts/BatchRouterCommon.sol`,
+`contracts/admin/AuthorizerAdaptor.sol`,
+`contracts/vault/Authorizer.sol`,
+`contracts/BatchRelayerLibrary.sol`.
+
+Checked for: a
+stranger
+`swap` / `joinPool` /
+`exitPool` /
+`manageUserBalance`
+that spends another
+user without relayer
+approval; a
+`flashLoan` that
+keeps Vault tokens;
+BatchRouter
+`swapExactIn` that
+settles to the
+caller instead of
+the sender;
+`performAction`
+without Authorizer
+permission.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- V2 `swap` /
+  `batchSwap` use
+  `authenticateFor(funds.sender)`.
+  `joinPool` /
+  `exitPool` use
+  `authenticateFor(sender)`
+  inside
+  `_joinOrExit`.
+  Relayers also need
+  per-user
+  `setRelayerApproval`
+  or a signed extra
+  calldata permit.
+- `manageUserBalance`
+  validates each op
+  `sender` the same
+  way. Internal
+  withdraw / transfer
+  debit that sender.
+- `flashLoan` pays
+  the recipient then
+  requires
+  `post >= pre` and
+  fee. Tokens stay
+  in the Vault.
+- V3 BatchRouter
+  `swapExactIn` /
+  `swapExactOut`
+  pass
+  `sender: msg.sender`
+  into the Vault
+  unlock hook.
+  `_settlePaths`
+  `_takeTokenIn` /
+  `_sendTokenOut` /
+  `_returnEth` that
+  sender. Hooks are
+  `onlyVault`.
+- Authorizer
+  `grantRole` is
+  OZ AccessControl.
+  Adaptor
+  `performAction`
+  checks
+  `canPerform` on
+  the inner
+  selector +
+  target.
+- BatchRelayerLibrary
+  is not a relayer
+  by itself; calls
+  go through the
+  entrypoint after
+  Vault relayer
+  approval.
+
+Do not file
+approved-relayer
+spends, flash-loan
+recipient hooks, or
+governance
+`setAuthorizer` as
+stranger theft.
+
+Not submitted.
+Remaining
+Foundation-listed:
+V3 Vault
+`0xbA1333333333a1BA1108E8412f11850A5C319bA9`
+and the other
+listed routers /
+helpers not opened
+this slice.
