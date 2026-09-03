@@ -40183,6 +40183,10 @@ exhausted);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
+Integral leftover TwapDelay + Pair + Relayer leftover (Sourcify)
+is logged (Ethereum listed leftover that Sourcify opens is
+exhausted; remaining listed is Arbitrum Delay / Pair /
+Relayer / Fee governor of the same types);
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub
@@ -58846,4 +58850,72 @@ unless a
 small money
 path is
 isolated).
+
+## 2026-09-03: Integral leftover TwapDelay + Pair + Relayer leftover (Sourcify)
+
+Immunefi program `integral` ($25,000, `kyc: true`). Unique unused standing
+program (updated 2024-11-18). 24 listed addresses (20 Ethereum + 4 Arbitrum).
+Official `integralhq/integral-core` clone is private / 404 from this VM.
+Ethereum Sourcify `match` extracts in `/tmp/integral-src` and
+`/tmp/integral-impl`. No mainnet writes. No exploit PoCs.
+
+Opened Ethereum listed sources: TwapDelay
+`0x35cb375799b28c8d6b7c5c8d494ed180ae2e60cb`, TwapPair
+`0x2fe16Dd18bba26e457B7dD2080d5674312b026a2` (plus listed WETH-USDT /
+WETH-WBTC / USDC-USDT pairs of the same type), TwapFactory
+`0xC480b33eE5229DE3FbDFAD1D2DCD3F3BAD0C56c6`, TwapFactoryGovernor impl
+`0x2B93b9abFA3c3377330Fd45F9525D01DD9b8C020` behind listed Fee governor
+proxy `0xF4418d9fe76A788F2868a558dD216549aD2d869B`, TwapRelayer impl
+`0xAf780dE01DC9C6FF4c29c6556b4666e852951584` behind listed Relayer proxy
+`0xd17b3c9784510E33cD5B87b490E79253BcD81e2E`, IntegralStaking
+`0x36bD665392236b20bd42e161f02Bf0ae1d9441Ff` /
+`0xFFc0EAC1a1aE79C697607229Aca43Ef422625A40`, IntegralTimeRelease
+`0xc8805cebd927941a3b26e2edced20d666fb118ba`, IntegralMerkleTimeRelease
+(eight listed addrs, same type), IntegralToken
+`0xD502F487e1841Fdc805130e13eae80c61186Bc98`.
+
+Checked for: stranger `execute` that refunds to the caller; Delay deposit /
+sell / buy that spends another user's tokens; Pair `mint` that credits the
+caller from another user's transfer; Relayer `sell` that pulls a victim;
+Staking withdraw of another user's stake; Merkle / TimeRelease `claim` of
+another wallet's allocation; FactoryGovernor admin from a stranger.
+
+Result: no user-exploitable finding. Not submitted.
+
+- TwapDelay `deposit` / `sell` / `buy` enqueue via `Orders`;
+  `TokenShares.amountToShares` does `safeTransferFrom(msg.sender, address(this), amount)`.
+  Withdraw LP does `pair.safeTransferFrom(msg.sender, address(this), liquidity)`.
+  `relayerSell` requires `msg.sender == RELAYER_ADDRESS`.
+- `execute` is bot-gated until `validAfterTimestamp + BOT_EXECUTION_TIME`
+  (20 minutes), then permissionless. Failed execute and `cancelOrder` /
+  `retryRefund` pay `order.to` (owner only after 365 days). Executor gas
+  refund is `msg.sender`'s prepaid leftover, not user tokens.
+- TwapPair `mint` / `burn` / `swap` / `sync` require `canTrade(msg.sender)`
+  (`user == trader || user == factory`). Liquidity is minted to `to`; burn
+  pays `to` from LP sitting on the pair. Factory setters are factory-only;
+  TwapFactory `createPair` and fee / oracle / trader setters are owner-only.
+- TwapRelayer `sell` / `buy` pull `msg.sender` via `transferIn` into Delay;
+  output is `sellParams.to`. Owner-only `withdraw` / `approve` / wrap;
+  rebalance is `rebalancer`.
+- IntegralStaking `deposit` pulls `msg.sender`; `withdraw` / `claim` /
+  `withdrawAll` / `claimAll` pay `_to` from that sender's stakes only.
+- MerkleTimeRelease `initializeAllocations` binds `keccak256(wallet, amount1, amount2)`
+  to the merkle root. `claim(to)` and `initializeAndClaim` credit
+  `msg.sender`'s released allocation. TimeRelease `claim(to)` is the same
+  self-only path without a merkle init.
+- TwapFactoryGovernor mutators and `withdrawToken` / `withdrawLiquidity` /
+  `collectFees` are owner-only. `distributeFees(..., pair)` is Delay-only.
+- IntegralToken `mint` is minter-whitelist; `burn` burns `msg.sender`.
+
+Do not file permissionless execute after the bot window, owner-after-1y
+abandoned-order refund, merkle init of a victim's own allocation, or
+Relayer output to a caller-chosen `to` as stranger theft.
+
+Not submitted. Payment requires user KYC. Listed leftover that Ethereum
+Sourcify opens is exhausted at the opened-file level. Remaining listed:
+Arbitrum Fee governor / Delay / Pair / Relayer
+(`0x0800…8d91`, `0xa400…d2a`, `0x4bca…913b`, `0x3c69…5f42`). Sourcify
+42161 opens those as the same types already reviewed (TwapFactoryGovernor
+impl, TwapDelay, TwapPair, TwapRelayer impl). Official GitHub still
+private / 404.
 
