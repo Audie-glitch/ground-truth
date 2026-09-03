@@ -35395,9 +35395,14 @@ staking-expiry-checker leftover
 (`73f4c7b`; KYC) is logged;
 Babylon leftover
 staking-queue-client leftover
-(`c4b08ad`; KYC) is logged
+(`c4b08ad`; KYC) is logged;
+Babylon leftover node
+btcstaking leftover
+(`132d050`; KYC) is logged
 (remaining listed is
-babylon node / websites);
+incentive / finality /
+checkpointing / other
+x/ modules and websites);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -48233,3 +48238,154 @@ listed: Solana
 Lazer if a public
 source drop
 opens.
+
+## 2026-09-03: Babylon leftover node btcstaking leftover (`132d050`)
+
+Immunefi program
+`babylon-labs`
+($500,000, `kyc: true`).
+Listed DLT
+`babylonlabs-io/babylon`
+is the latest official
+release. Official
+clone `/tmp/babylon-node`
+tag `v4.4.0`
+`132d050`. This
+slice is
+`x/btcstaking`
+create / covenant /
+inclusion / undelegate /
+selective slash /
+stake expand.
+No chain writes
+from this VM.
+
+Files:
+`x/btcstaking/keeper/msg_server.go`,
+`x/btcstaking/keeper/btc_delegations.go`,
+`x/btcstaking/keeper/inclusion_proof.go`,
+`x/btcstaking/keeper/finality_providers.go`,
+`x/btcstaking/keeper/unbonding_transaction_sig_validation.go`,
+`x/btcstaking/types/validate_parsed_message.go`.
+
+Checked for: a
+stranger
+CreateBTCDelegation
+that binds someone
+else's UTXO;
+covenant sigs that
+activate without
+quorum; inclusion
+proof reuse /
+too-early;
+BTCUndelegate
+without the
+staker's spend
+sig; Selective
+slashing without
+a recovered FP
+SK; stake expand
+that hijacks
+another staker's
+output.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Create requires
+  a verified PoP,
+  a unused staking
+  tx hash, known
+  unslashed FPs,
+  and
+  `ValidateParsedMessageAgainstTheParams`
+  (rebuilds
+  staking /
+  unbonding /
+  slashing
+  scripts, checks
+  slashing pk
+  script + fees,
+  staker slashing
+  sigs).
+- Covenant sigs
+  require a
+  params covenant
+  PK, reject
+  duplicates and
+  already-unbonded
+  dels, verify
+  adaptor slashing
+  sigs and the
+  unbonding
+  Schnorr.
+- Inclusion needs
+  covenant quorum,
+  not already
+  included /
+  unbonded,
+  merkle + k-deep,
+  not coinbase,
+  start ≥ tip at
+  creation.
+- `BTCUndelegate`
+  needs a BTC
+  inclusion proof,
+  a spend of the
+  staking out, and
+  `VerifySpendStakeTxStakerSig`.
+  Unexpected
+  spends still
+  require the
+  staker key.
+- Selective slash
+  derives the FP
+  PK from the
+  recovered SK and
+  slashes only an
+  existing
+  unslashed FP.
+  Exported
+  `BtcUndelegate`
+  is the v4.3
+  upgrade
+  remediator, not
+  a user handler.
+
+Do not file
+staker-signed
+unexpected
+unbonding, gov
+param updates, or
+slashing an FP
+whose SK the
+reporter holds
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+babylon `v4.4.0`
+opens for
+btcstaking create /
+covenant /
+inclusion /
+undelegate /
+slash is
+exhausted at the
+opened-file
+level. Remaining
+listed: incentive
+withdraw, finality
+votes,
+checkpointing /
+epoching /
+costaking / mint,
+btclightclient,
+and website /
+toolkit rows.
