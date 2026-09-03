@@ -13184,6 +13184,71 @@ Next leftover: Pancake
 `pancake-swap-periphery`,
 or Twyne Sourcify-404
 vaults.
+## 2026-09-03: Pancake V3 MasterChef/LmPool + V2 periphery (`9868479` / `d769a6d`)
+
+Immunefi program
+`pancakeswap`. Listed
+leftover after Infinity:
+`pancake-v3-contracts`
+and
+`pancake-swap-periphery`.
+Local clones
+`/tmp/pancake-v3` at
+`9868479` (“chore:
+Remove router”) and
+`/tmp/pancake-periphery`
+at `d769a6d`. Local
+static read of
+`projects/masterchef-v3/contracts/MasterChefV3.sol`,
+`projects/v3-lm-pool/contracts/PancakeV3LmPool.sol`,
+`PancakeRouter.sol`,
+`PancakeLibrary.sol`.
+No mainnet interaction.
+
+No finding.
+
+MasterChefV3 holds the
+V3 NFT. `onERC721Received`
+requires a listed pid
+and a live LM pool.
+Harvest / withdraw /
+decrease / collect
+require
+`positionInfo.user ==
+msg.sender`. Permissionless
+`updateLiquidity` only
+accrues rewards to the
+position (`_to == 0`)
+and resyncs LM ticks
+from the NFT.
+`increaseLiquidity` is
+also unscoped on owner
+(anyone may gift tokens
+into a staked NFT).
+Boost is clamped to
+`[1x, 2x]`. LM pool
+`accumulateReward` /
+`updatePosition` are
+pool-or-MC only.
+`crossLmTick` is
+pool-only. V2 router is
+the UniV2 pattern with
+Pancake 0.2% fee
+(`998/1000`) and a
+CREATE2 init-code hash;
+deadline + amountMin
+protect swaps. `sweepToken`
+/ `unwrapWETH9` are the
+usual leftover-balance
+helpers; CAKE sweep
+subtracts
+`cakeAmountBelongToMC`.
+
+Not submitted. Remaining
+Pancake listed Solidity:
+v3-core pool/factory
+and v3-periphery NPM
+(same `9868479` tree).
 
 ## Next candidates
 
@@ -13587,10 +13652,14 @@ core / periphery /
 universal-router
 (`pancakeswap`,
 `61cd131` / `8261f8d` /
-`33dbf5a`) are logged
-(remaining Pancake is
-listed V3 + V2
-periphery);
+`33dbf5a`) are logged;
+Pancake V3 MasterChef /
+LmPool + V2 periphery
+(`9868479` / `d769a6d`)
+are logged (remaining
+Pancake is v3-core
+pool/factory and
+v3-periphery NPM);
 Mux3 core trade / pool /
 orderbook (`8674f2b`) is
 logged; Mux aggregator
