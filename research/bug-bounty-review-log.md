@@ -20306,7 +20306,7 @@ ankrBNB
 `TransparentUpgradeableProxy`
 (`exact_match`) impl
 `aBNBc_R1`
-`0x2c00CE1a935FF8c9e78580533e2E17c36281c26E`.
+`0x2c00CE1A935FF8c9e78580533e2E17c36281c26E`.
 Extract `/tmp/ankr`.
 BNB Pool and
 BNBStakingConfig
@@ -20503,6 +20503,115 @@ Not submitted.
 Listed UTIX leftover
 is this crowdsale
 row (exhausted).
+
+## 2026-09-03: 1inch token-plugins + farming leftover (`9b6de97` / `b1fca09`)
+
+Immunefi program
+`1inch-SmartContracts`
+($500,000, `kyc:
+true`). Fusion
+settlement /
+whitelist /
+PowerPod / KycNFT
+and FeeTaker are
+already logged. This
+slice is
+`token-plugins` and
+`farming`. Local
+clones
+`/tmp/1inch-token-plugins`
+at `9b6de97` and
+`/tmp/1inch-farming`
+at `b1fca09`. No
+mainnet interaction.
+
+Files:
+`token-plugins/contracts/ERC20Hooks.sol`,
+`Hook.sol`,
+`libs/ReentrancyGuard.sol`,
+`farming/contracts/FarmingPool.sol`,
+`FarmingHook.sol`,
+`MultiFarmingHook.sol`,
+`Distributor.sol`,
+`FarmingLib.sol`,
+`accounting/UserAccounting.sol`.
+
+Checked for: a
+stranger adding a
+hook that drains
+another holder;
+`updateBalances`
+callable without the
+token; farming
+`claim` of another
+account’s rewards;
+`rescueFunds` that
+takes staked tokens
+or the farmed
+reserve.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `addHook` /
+  `removeHook` /
+  `removeAllHooks`
+  are `msg.sender`
+  only. The hook’s
+  `TOKEN()` must be
+  this ERC-20.
+  `updateBalances` is
+  `onlyToken`. Hook
+  calls are gas-
+  capped; a revert
+  is swallowed
+  unless the caller
+  supplied too
+  little gas (OOG
+  bomb). Transfers
+  are
+  `nonReentrant`.
+- `FarmingPool`
+  `deposit` /
+  `withdraw` /
+  `claim` use
+  `msg.sender`.
+  `startFarming` /
+  `stopFarming` /
+  `rescueFunds` are
+  `onlyDistributor`.
+  Rescue of the
+  staking token
+  requires
+  `balance >=
+  totalSupply +
+  amount`. Rescue of
+  the rewards token
+  requires
+  `balance >=
+  farmInfo.balance +
+  amount`.
+- `FarmingHook` /
+  `MultiFarmingHook`
+  `claim` uses
+  `hookBalanceOf(this,
+  msg.sender)`.
+  `_updateBalances`
+  is `onlyToken`.
+  Multi-farm owner
+  can add at most
+  five reward
+  tokens.
+
+Not submitted.
+Remaining 1inch
+SmartContracts trees
+are `cross-chain-swap`,
+`solana-crosschain-protocol`,
+and `solana-fusion`.
+
 
 ## Next candidates
 
@@ -20804,6 +20913,12 @@ work is Terminal 3 SSO. NectarFi is a creator campaign.
 Manic $1k bug bounty is `HUMAN_ONLY`.
 the402.ai still paused. 1inch Fusion settlement /
 whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
+1inch token-plugins + farming leftover
+(`9b6de97` / `b1fca09`) is logged
+(remaining 1inch SmartContracts
+trees are `cross-chain-swap`,
+`solana-crosschain-protocol`,
+and `solana-fusion`).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
