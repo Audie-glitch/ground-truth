@@ -69653,3 +69653,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a multiaddr parser as stranger theft.
 
 Not submitted. Payment requires user KYC. Unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Rootstock leftover remaining rsk-powhsm leftover (`82a12d44efec`)
+
+Immunefi program `rootstocklabs` ($200,000, `kyc: true`). Official remaining listed after rskj Bridge leftover. Official `rsksmart/rsk-powhsm` `82a12d44efec`. Opened listed `firmware/src/powhsm/src/hsm.c`, `auth.c`, `auth_path.c`, `auth_tx.c`, `auth_receipt.c`, and `pathAuth.c`. Do not rematch rskj Bridge leftover or powpeg-node pegout leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger APDU that signs an arbitrary BTC pegout with the federation seed; unauth-path `INS_SIGN` spending the BTC key.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `INS_SIGN` / `INS_GET_PUBLIC_KEY` require an unlocked, onboarded HSM. This firmware is a federation operator device, not a public RPC.
+- BTC / tBTC paths (`m/44'/0'/0'/0/0`, `m/44'/1'/0'/0/0`) set `auth_required` and will not sign until the host streams a version-1/2 BTC tx, an RSK receipt with the Bridge emitter + `release_btc` event whose topic matches that tx hash, and a merkle proof. Unknown paths throw `ERR_AUTH_INVALID_PATH`.
+- RSK / MST paths sign a caller-supplied hash without that receipt. Those keys are not the BTC federation spend path.
+- The last authorized BTC tx hash is written to NVM so the same authorized hash is not rewritten. A stranger without the unlocked device cannot complete `seed_sign`.
+
+Do not file federation HSM firmware as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: none on official Rootstock leftover trees that still open.
