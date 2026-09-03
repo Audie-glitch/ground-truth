@@ -11878,9 +11878,150 @@ Result: no user-exploitable finding.
   kill is owner-only.
 
 Listed Silo V3 GitHub Solidity leftover is
-exhausted. Next leftover: Twyne Sourcify-404
-vaults, or a new unreviewed Immunefi program.
+exhausted. Next leftover: PancakeSwap
+Infinity (logged below), Twyne
+Sourcify-404 vaults, or Mux
+`mux3-protocol`.
 Not submitted.
+
+## 2026-09-03: PancakeSwap Infinity leftover (`61cd131` / `8261f8d` / `33dbf5a`)
+
+Immunefi program `pancakeswap` ($1,000,000,
+`kyc: false`, not paused). Five GitHub SC
+assets added 30 Oct 2025. This pass is the
+Infinity trees only. Local clones:
+`/tmp/pcs-infinity-core` `61cd131` (single
+squash titled “Fix known issues (#263)”,
+2 Sep 2026), `/tmp/pcs-infinity-periphery`
+`8261f8d` (bin add-liquidity slippage
+#95, 2 Sep 2026), `/tmp/pcs-infinity-ur`
+`33dbf5a` (BytesLib.toLengthOffset bounds
+#57, 22 Jul 2026). Hexens / OtterSec /
+Zellic PDFs ship in-tree. No mainnet
+interaction.
+
+Immunefi known issues — do not refile:
+1291 (UniversalRouter OnlyMintAllowed
+bypass via INCREASE_FROM_DELTAS +
+TAKE_PAIR), 1298 (CL
+MINT_POSITION_FROM_DELTAS /
+_increaseFromDeltas slippage; Uniswap
+v4-periphery #517), 1493 (exact-output
+partial fill). OFT issues go to
+LayerZero. Website scope is only
+pancakeswap.finance.
+
+Files: core `Vault` / `VaultToken` /
+`SettlementGuard` / `AppDeficit` /
+`VaultReserve` / `ProtocolFees` /
+`ProtocolFeeController` / `Hooks` /
+`CLPoolManager` / `CLPool` / `CLHooks` /
+`BinPoolManager` / `BinPool` /
+`BinHooks` / `BinHelper`; periphery
+`SlippageCheck` / `DeltaResolver` /
+`SafeCallback` / `BaseActionsRouter` /
+`InfinityRouter` / `CLPositionManager`
+FROM_DELTAS / `BinPositionManager`
+add/remove; UR `UniversalRouter` /
+`Dispatcher` / `InfinitySwapRouter` /
+`Payments` / `BytesLib` / `Lock`.
+
+Checked for: lock that releases with an
+unrepaid app reserve overdraft; hook
+that takes another app’s physical
+tokens via the shared vault pot;
+`collectFee` vs floored reserves;
+`sync` sandwich from a hook or token
+callback; donate on empty liquidity;
+first-bin share inflation;
+`afterMint`/`afterBurn` hook delta
+unbounded vs official routers;
+BIN_ADD_LIQUIDITY_FROM_DELTAS without
+amountMax / share min; UR
+INFI_SWAP forwarding position-manager
+actions; leftover TRANSFER of another
+user’s tokens; BytesLib length/offset
+OOB after #57.
+
+Result: no user-exploitable finding
+beyond the listed known issues.
+
+- Vault `lock` requires zero unsettled
+  settler deltas and `AppDeficit.count()
+  == 0`. Mid-lock `_accountDeltaForApp`
+  floors `reservesOfApp` at 0 and
+  records a transient per-(app,
+  currency) deficit (the #263 JIT-hook
+  underflow fix). Cross-app deposit
+  cannot repay another app’s deficit
+  (in-repo `VaultAppDeficit` test).
+  `take`/`mint`/`settle`/`clear`/`burn`
+  are `isLocked`. `collectFee` is
+  registered-app only, not locked, and
+  underflows while a deficit has
+  floored the reserve. `sync` is
+  public; a hook that resets
+  VaultReserve after a user transfer
+  zeros the next `settle` and the lock
+  reverts (`CurrencyNotSettled`). Same
+  lock, whole tx reverts.
+- CL donate reverts
+  `NoLiquidityToReceiveFees`. Bin donate
+  reverts on empty active bin and,
+  separately, if
+  `shareOfBin[active] <
+  minBinShareForDonate` (default
+  `2**128`, so donate is owner-gated).
+- First bin mint locks `MINIMUM_SHARE`
+  1e3 and reverts if the minter would
+  receive 0. Burns round down. Last
+  burn that leaves only the min share
+  drops the bin from the tree; reserves
+  for the lock stay.
+- Swap hook specified-delta cannot flip
+  exact-in/out
+  (`HookDeltaExceedsSwapAmount`).
+  Unspecified afterSwap delta is paid
+  by the caller. `afterMint` /
+  `afterBurn` / CL after-modify hook
+  deltas are unbounded — users opt
+  into the hook. Official
+  BinPositionManager now
+  `validateMaxIn` plus per-bin
+  `minLiquidities` (#95). CL
+  FROM_DELTAS still uses
+  `validateMaxIn` on principal only
+  (known issue 1298).
+- UR `INFI_SWAP` calls
+  `InfinityRouter._executeActions`.
+  That router only handles CL/Bin
+  swaps and SETTLE/TAKE — not
+  position-manager mint/increase. No
+  `OnlyMintAllowed` command remains
+  in `33dbf5a`. `TRANSFER` / `SWEEP`
+  move the router’s own balance;
+  leftover from a caller who skipped
+  SWEEP is the next caller’s
+  (same Uniswap UR pattern).
+  `toLengthOffset` reverts if
+  `32*length + relativeOffset`
+  exceeds the input. Self-reentrancy
+  via `EXECUTE_SUB_PLAN` is allowed;
+  external reentrancy is not.
+- Protocol fee is subtracted from bin
+  / CL step input before reserves
+  update and is collected from app
+  reserves later. Controller is
+  owner-set; `protocolFeeForPool`
+  caps each direction at 0.4%.
+
+Not submitted. Remaining Pancake listed
+Solidity: `pancake-v3-contracts` and
+`pancake-swap-periphery` (older V3/V2
+trees added the same day). Next leftover:
+Mux `mux3-protocol` (`mux`, $100k, no
+KYC, GitHub leftover 28 Aug 2025) or
+Twyne Sourcify-404 vaults.
 
 ## Next candidates
 
@@ -12208,9 +12349,10 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-~05:15 UTC 3 Sep: KeeperHub #2105 still `open` +
+~05:20 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 1 comment and
-PR #2275 (`tenk-earn`, `staging`, mergeable) — do not
+PR #2275 (`tenk-earn`, `staging`, mergeable,
+`mergeable_state: unstable`) — do not
 duplicate; #2240 still `open` + `accepted`, 1
 design comment (`edycutjong`), 0 PRs — do not
 implement or claim; Twyne vaults / wrappers /
@@ -12218,8 +12360,8 @@ EVC / factories still Sourcify 404;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 Hedera Harness #8 still `open`, 0 comments;
 CreditPassport deployer still 0 Sepolia ETH
-(publicnode /
-`ethereum-sepolia-rpc.publicnode.com`)
+(Tenderly `sepolia.gateway.tenderly.co`;
+publicnode 403)
 / 0 tCTC
 (`rpc.cc3-testnet.creditcoin.network`);
 Superteam still 28 open listings,
@@ -12278,6 +12420,15 @@ leverage / hooks
 (listed Silo GitHub
 Solidity leftover
 exhausted);
+PancakeSwap Infinity
+core / periphery /
+universal-router
+(`pancakeswap`,
+`61cd131` / `8261f8d` /
+`33dbf5a`) are logged
+(remaining Pancake is
+listed V3 + V2
+periphery);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
