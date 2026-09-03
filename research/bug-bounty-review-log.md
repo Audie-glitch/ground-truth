@@ -33167,6 +33167,190 @@ minting_curve
 config;
 utils.cairo.
 
+## 2026-09-03: Katana leftover ETH portal + KAT OFT + vbToken leftover (Sourcify)
+
+Immunefi program
+`katana`
+($80,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+portal
+`0x250D30c523104bf0a06825e7eAdE4Dc46EdfE40E`
+impl
+`0x3160738db14B27EAe2D0d1b622259010308f4C38`
+is
+`OptimismPortal2`.
+Aggchain FEP
+`0x100d3ca4f97776A40A7D93dB4AbF0FEA34230666`
+impl
+`0x9532A2F35fc9B18BD4FE8315D9C5B1C1Cf6Ac660`.
+Base KAT OFT
+`0xD5390300c5DB71F80d46f0fA9983Fc72D4d1e3da`
+impl
+`0xEB8F9227F5E6012fD4E0d52461a6cD0226A0275F`
+is
+`KATOFTUpgradeable`.
+Katana 747474
+vbETH impl
+`0xBc59c919BBE65aEa7b4A793C1efff4997ca5B6A0`
+is
+`WETH` +
+`VaultBridgeToken`;
+escrow impl
+`0x4623c119d291Fb2235d0D299E6442b402131fa6F`
+is
+`VotingEscrowV1_2_0`;
+KAT
+`0x7F1f4b4b29f5058fA32CC7a97141b8D7e5ABDC2d`
+is
+`KatToken`.
+Extract
+`/tmp/kat-portal-impl`,
+`/tmp/kat-fep-impl`,
+`/tmp/kat-oft-real`,
+`/tmp/kat-impl-vbETH`,
+`/tmp/kat-impl-escrow`,
+`/tmp/kat-impl-KAT`.
+NativeConverter
+impls Sourcify
+404. No mainnet
+writes.
+
+Files:
+`src/L1/OptimismPortal2.sol`,
+`contracts/aggchains/AggchainFEP.sol`,
+`contracts/KATOFTUpgradeable.sol`,
+`src/VaultBridgeToken.sol`,
+`src/NativeConverter.sol`,
+`lib/ve-governance/src/escrow/VotingEscrowIncreasing_v1_2_0.sol`,
+`src/KatToken.sol`.
+
+Checked for: a
+stranger
+portal
+finalize that
+pays the
+caller; a
+stranger OFT
+`send` that
+burns another
+account; a
+vbToken
+deposit that
+pulls another
+user; a
+converter
+`deconvert`
+that burns
+another
+holder; an
+escrow
+`withdraw`
+that pays an
+arbitrary
+caller; a
+stranger
+`KatToken.mint`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Portal
+  `depositTransaction`
+  disables ETH
+  / token
+  bridging.
+  `finalizeWithdrawalTransaction`
+  is
+  permissionless
+  after a
+  proven
+  withdrawal
+  and pays
+  `_tx.target`.
+- `AggchainFEP.onVerifyPessimistic`
+  is
+  `onlyRollupManager`.
+- `KATOFTUpgradeable`
+  is stock
+  upgradeable
+  OFT;
+  `send`
+  debits
+  `msg.sender`.
+- `VaultBridgeToken.deposit`
+  pulls
+  `msg.sender`.
+  `withdraw` /
+  `redeem`
+  spend
+  allowance
+  when
+  `msg.sender
+  != owner`.
+  `claimAndRedeem`
+  is
+  permissionless
+  after SMT
+  proofs and
+  redeems for
+  `destinationAddress`.
+- `NativeConverter.convert`
+  pulls
+  `msg.sender`.
+  `_deconvert`
+  burns
+  `msg.sender`.
+  `migrateBackingToLayerX`
+  is
+  `MIGRATOR_ROLE`.
+- Escrow
+  `createLock`
+  pulls
+  `_msgSender`.
+  `beginWithdrawal`
+  transfers
+  the NFT from
+  the caller.
+  `withdraw`
+  pays the
+  ticket
+  holder.
+- `KatToken.mint`
+  spends
+  `mintCapacity[msg.sender]`.
+
+Do not file
+permissionless
+finalize of a
+proven
+withdrawal or
+permissionless
+claim of an
+SMT-proven
+LxLy exit to
+the recorded
+destination.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+NativeConverter
+impls 404;
+avKAT 404;
+remaining
+Katana-chain
+converters /
+Jitosol OFT;
+Agglayer Bridge
+already
+Polygon-leftover.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -34869,6 +35053,15 @@ mint + cairo staking leftover
 KYC) is logged (remaining
 listed is minting_curve
 config; utils.cairo);
+Katana leftover ETH portal +
+KAT OFT + vbToken leftover
+(Sourcify OptimismPortal2 /
+KATOFT / VaultBridgeToken /
+VotingEscrow / KatToken; KYC)
+is logged (remaining listed
+is NativeConverter impls 404
+/ avKAT 404 / remaining
+converters / Jitosol OFT);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

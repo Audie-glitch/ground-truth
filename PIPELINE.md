@@ -86,7 +86,8 @@ Avail leftover ETH bridge leftover is logged;
 Chainlink leftover remaining VRF leftover is logged;
 Stacks leftover pox-5 leftover is logged;
 Boba Network leftover ETH LightBridge leftover is logged;
-Starknet Staking leftover L1 mint + cairo staking leftover is logged).
+Starknet Staking leftover L1 mint + cairo staking leftover is logged;
+Katana leftover ETH portal + KAT OFT + vbToken leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -602,6 +603,15 @@ mint + cairo staking leftover
 KYC) is logged (remaining
 listed is minting_curve
 config; utils.cairo).
+Katana leftover ETH portal +
+KAT OFT + vbToken leftover
+(Sourcify OptimismPortal2 /
+KATOFT / VaultBridgeToken /
+VotingEscrow / KatToken; KYC)
+is logged (remaining listed
+is NativeConverter impls 404
+/ avKAT 404 / remaining
+converters / Jitosol OFT).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1234,6 +1244,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Starknet Staking leftover L1
   mint + cairo staking leftover
   (`7a7add2`; KYC),
+  Katana leftover ETH portal +
+  KAT OFT + vbToken leftover
+  (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover
