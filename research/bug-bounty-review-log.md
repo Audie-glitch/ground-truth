@@ -1888,26 +1888,84 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Origin OUSD vault + Curve AMO (`4fa0602`)
+
+Immunefi program `originprotocol` ($1,000,000, `kyc: false`).
+OUSD Token / Vault / Curve AMO were added to scope on
+1 Sep 2026 (etherscan assets; source in Origin Dollar).
+Local clone `/tmp/origin-dollar` at `4fa0602`. No mainnet
+interaction. Continues the earlier Origin strategy /
+bridge slices.
+
+Files: `contracts/contracts/vault/VaultCore.sol`,
+`contracts/contracts/vault/OUSDVault.sol`,
+`contracts/contracts/strategies/CurveAMOStrategy.sol`.
+
+Checked for: a user mint that credits more OUSD than
+assets pulled; claiming another account's withdrawal;
+`mintForStrategy` from a non-whitelisted caller;
+Curve AMO withdraw that transfers more hard asset than
+removed; strategist rebalance that worsens the peg
+without the solvency floor.
+
+Result: no user-exploitable finding.
+
+- `mint` scales the asset to 18 decimals, mints that
+  many OTokens, then `safeTransferFrom`s the asset.
+  `whenNotCapitalPaused` + `nonReentrant`. Auto-allocate
+  only above `autoAllocateThreshold`, after the
+  withdrawal queue is filled.
+- `mintForStrategy` / `burnForStrategy` require both
+  `strategies[msg.sender].isSupported` and
+  `isMintWhitelistedStrategy`. Curve AMO is the intended
+  caller. No `nonReentrant` (documented AMO reentry
+  during allocate); user mint/redeem cannot be wired to
+  those strategies in production.
+- Async withdraw burns OUSD on request (1:1, asset
+  decimals in `queued`). Claim requires the requester,
+  the delay, `queued <= claimable`, and not already
+  claimed. `_postRedeem` rejects if
+  `|supply/value - 1| > maxSupplyDiff`. Rebase is
+  operator/strategist/governor and only increases
+  supply up to vault value, with a trustee fee on yield.
+- Curve AMO `deposit`/`withdraw` are `onlyVault`.
+  Deposit mints OUSD between 1× and 2× the hard asset
+  to rebalance, then `add_liquidity` with
+  `maxSlippage`. Withdraw computes LP from the pool
+  hard-asset share, requires `min[hardAsset] = amount`,
+  burns all OUSD left on the strategy, transfers
+  exactly `_amount`. Strategist one-sided adds/removes
+  use `improvePoolBalance` (must move the
+  hardAsset−OUSD diff toward zero without overshoot)
+  and `_solvencyAssert` (≥ 99.8% backed).
+
+Leather was not started: the program requires a working
+PoC against the current published extension/app build
+and forbids theoretical reports.
+
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
-the full `diamond-pau` facet tree at `1b6743a`, and
+the full `diamond-pau` facet tree at `1b6743a`,
 Intuition MultiVault / AtomWallet / curves / emissions /
-registry / `TrustSwapAndBridgeRouter` (`bb34cc2`) are
-exhausted.
-Superteam API rechecked 03:01 UTC 3 Sep: still 28 open
-listings. `AGENT_ALLOWED` is still only Steve Arena and
-ZNS — do not execute. Mermail skill is built
-(`mermail-onchain-receipts/`); remaining work is the
-participant's PR, Mermail MCP, and X demo. T3N Vendor Receipts is built
-(`t3n-vendor-receipts/`); remaining work is Terminal 3 SSO. NectarFi is a creator campaign.
+registry / `TrustSwapAndBridgeRouter` (`bb34cc2`), and
+Origin OUSD vault + Curve AMO (`4fa0602`) are exhausted.
+Remaining Origin: Ethena ARM / Wrapped Super OETH / other
+Sep-1 OUSD strategies. Superteam API rechecked 03:06 UTC
+3 Sep: still 28 open listings. `AGENT_ALLOWED` is still
+only Steve Arena and ZNS — do not execute. Mermail skill
+is built (`mermail-onchain-receipts/`); remaining work is
+the participant's PR, Mermail MCP, and X demo. T3N Vendor
+Receipts is built (`t3n-vendor-receipts/`); remaining work
+is Terminal 3 SSO. NectarFi is a creator campaign.
 the402.ai still paused. 1inch Fusion settlement /
 whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather ($5k, KYC, wallet/web
-plus `leather-io/mono`) is the next unread Immunefi
-program if we want a web2 target. Origin Protocol’s
-1 Sep scope refresh is Etherscan-only (no GitHub asset).
+plus `leather-io/mono`) requires a working PoC against
+the current published build; skip theoretical reports.
 USDT0’s 1 Sep add is Stellar explorer, not a Solidity
 GitHub tree. Sherlock `https://audits.sherlock.xyz/api/contests`
 has 301 items; the only non-FINISHED row as of 03:01 UTC
