@@ -43036,6 +43036,114 @@ Remaining listed:
 IR strategy /
 other helpers.
 
+## 2026-09-03: Filecoin leftover remaining lotus eth leftover (`7740217`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+lotus
+non-miner
+after lotus
+market leftover.
+Official
+`filecoin-project/lotus`
+`7740217`.
+Extract
+`/tmp/lotus-eth-send.go`.
+Do not rematch
+lotus mpool leftover.
+Do not rematch
+lotus wallet leftover.
+Do not rematch
+lotus stmgr leftover.
+No mainnet
+writes.
+
+Files:
+`node/impl/eth/send.go`.
+
+Checked for:
+an
+`EthSendRawTransaction`
+that
+broadcasts
+an
+unsigned
+or
+wrong-signer
+tx;
+an
+untrusted
+push
+that
+skips
+signature
+checks.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `ethSendRawTransaction`
+  `ParseEthTransaction`s
+  the
+  raw
+  bytes,
+  builds
+  `ToSignedFilecoinMessage`,
+  and
+  `MpoolPush`s
+  (or
+  `MpoolPushUntrusted`
+  when
+  flagged).
+- Leftover-
+  logged
+  mpool
+  `checkMessage`
+  still
+  `VerifyMsgSig`s
+  against
+  `From`.
+  This
+  API
+  does
+  not
+  sign.
+- The
+  returned
+  hash
+  is
+  the
+  ETH
+  tx
+  hash
+  indexed
+  to
+  the
+  signed
+  message
+  CID.
+
+Do not file
+a
+signed-raw-tx
+broadcast
+helper
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining lotus
+non-miner.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43163,6 +43271,8 @@ Aave leftover remaining Collector leftover (`308489d`)
 is logged.
 Aave leftover remaining transfer-strategy leftover (`cff15de`)
 is logged.
+Filecoin leftover remaining lotus eth leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
 Remaining listed Aave: IR strategy / other helpers.
@@ -43198,6 +43308,7 @@ Do not rematch Aave periphery leftover.
 Do not rematch Aave WrappedTokenGateway leftover.
 Do not rematch Aave Collector leftover.
 Do not rematch Aave transfer-strategy leftover.
+Do not rematch Filecoin lotus eth leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -45819,6 +45930,9 @@ Collector / transfer strategies);
 Aave leftover remaining transfer-strategy leftover
 (`cff15de`) is logged (remaining listed is
 IR strategy / other helpers);
+Filecoin leftover remaining lotus eth leftover
+(`7740217`) is logged (remaining listed is
+remaining lotus non-miner);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);

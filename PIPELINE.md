@@ -4,13 +4,14 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~14:00 UTC. Dates verified against each
+Status as of 3 September 2026, ~14:10 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~11:00 UTC;
-246 programs; no Sep 2026 launches; Aave leftover remaining transfer-strategy leftover is logged;
+246 programs; no Sep 2026 launches; Filecoin leftover remaining lotus eth leftover is logged;
+Aave leftover remaining transfer-strategy leftover is logged;
 Aave leftover remaining Collector leftover is logged;
 Aave leftover remaining WrappedTokenGateway leftover is logged;
 Aave leftover remaining periphery leftover is logged;
@@ -1455,6 +1456,11 @@ transfer-strategy leftover
 (`cff15de`; KYC) is logged
 (remaining listed is
 IR strategy / other helpers).
+Filecoin leftover remaining
+lotus eth leftover
+(`7740217`; KYC) is logged
+(remaining listed is
+remaining lotus non-miner).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2372,6 +2378,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Aave leftover remaining
   transfer-strategy leftover
   (`cff15de`; KYC),
+  Filecoin leftover remaining
+  lotus eth leftover
+  (`7740217`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai
