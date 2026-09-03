@@ -42542,6 +42542,136 @@ remaining lotus
 non-miner.
 
 
+## 2026-09-03: Filecoin leftover remaining lotus market leftover (`7740217`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+lotus
+non-miner
+after lotus
+wallet leftover.
+Official
+`filecoin-project/lotus`
+`7740217`.
+Extract
+`/tmp/lotus-market`.
+Do not rematch
+lotus miner leftover.
+Do not rematch
+lotus paych leftover.
+Do not rematch
+lotus mpool leftover.
+Do not rematch
+lotus wallet leftover.
+Do not rematch
+builtin-actors
+market leftover.
+No mainnet
+writes.
+
+Files:
+`node/impl/market/market.go`,
+`chain/market/fundmanager.go`.
+
+Checked for:
+a
+`MarketAddBalance`
+or
+`Withdraw`
+that
+spends
+a
+wallet
+this
+node
+does
+not
+hold;
+a
+withdraw
+that
+takes
+reserved
+escrow.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `MarketAddBalance`
+  and
+  `AddFunds`
+  `MpoolPushMessage`
+  a
+  market
+  `AddBalance`
+  from
+  `wallet`.
+  Leftover-
+  logged
+  mpool
+  /
+  wallet
+  sign
+  only
+  a
+  local
+  key.
+- `Withdraw`
+  /
+  `WithdrawFunds`
+  send
+  `WithdrawBalance`
+  from
+  `wallet`.
+  `processWithdrawals`
+  caps
+  the
+  batch
+  at
+  escrow
+  minus
+  reserved
+  and
+  one
+  wallet
+  per
+  batch.
+- On-chain
+  market
+  escrow
+  is
+  leftover-
+  logged
+  on
+  builtin-
+  actors.
+  This
+  API
+  only
+  queues
+  signed
+  messages.
+
+Do not file
+a wallet-
+signed
+market
+helper as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining lotus
+non-miner.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -42655,6 +42785,12 @@ Aave leftover remaining StableDebtToken leftover (`782f519`)
 is logged.
 Filecoin leftover remaining lotus stmgr leftover (`7740217`)
 is logged.
+Filecoin leftover remaining lotus market leftover (`7740217`)
+is logged.
+Aave leftover remaining ACL + PoolConfigurator leftover (`cff15de`)
+is logged.
+Aave leftover remaining RewardsController leftover (`cff15de`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
 
@@ -42682,6 +42818,9 @@ Do not rematch Filecoin lotus wallet leftover.
 Do not rematch Filecoin lotus sync leftover.
 Do not rematch Filecoin lotus stmgr leftover.
 Do not rematch Filecoin lotus miner leftover.
+Do not rematch Filecoin lotus market leftover.
+Do not rematch Aave ACL + PoolConfigurator leftover.
+Do not rematch Aave RewardsController leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -45289,6 +45428,9 @@ Filecoin leftover remaining neptune-triton leftover
 (`9f2c2f4`) is logged (remaining listed is
 lotus non-miner);
 Filecoin leftover remaining lotus mpool leftover
+(`7740217`) is logged (remaining listed is
+remaining lotus non-miner);
+Filecoin leftover remaining lotus market leftover
 (`7740217`) is logged (remaining listed is
 remaining lotus non-miner);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
