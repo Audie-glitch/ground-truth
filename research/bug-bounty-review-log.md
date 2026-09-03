@@ -70148,3 +70148,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator replay / vote signer as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused official `jito-solana` leftover that listed trees open after replay, if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana replay_stage leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after proxy leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `core/src/replay_stage.rs`, `replay_stage/{dead_slots,update_parent}.rs`. Do not rematch banking_stage leftover, bundle_stage leftover, proxy leftover, or tip_manager leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger shred that credits the attacker; `generate_vote_tx` signing with a stolen vote account; replay rewards paying a caller.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Replay is validator-local. `replay_blockstore_into_bank` runs `confirm_slot` on shreds already in blockstore. A chained-block-id mismatch marks the slot hard-dead. This is not a public submit API.
+- `generate_vote_tx` requires a local vote account whose `node_pubkey` matches `node_keypair` and whose authorized voter keypair is present. Missing keys return NonVoting / HotSpare / VoteAccountNotFound. A stranger cannot push a vote.
+- Rewards appear only as `get_rewards_and_num_partitions` metadata for RPC. `dead_slots` classifies TooFewTicks as expected protocol death. `update_parent` defers when SlotMeta parent does not match.
+
+Do not file a validator replay loop as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: none on official Jito leftover trees that still open.
