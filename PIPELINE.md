@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~12:35 UTC. Dates verified against each
+Status as of 3 September 2026, ~12:38 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
@@ -16,6 +16,9 @@ Filecoin leftover remaining go-sectorbuilder leftover is logged;
 Filecoin leftover remaining go-hamt-ipld leftover is logged;
 Filecoin leftover remaining go-ipld-cbor leftover is logged;
 Filecoin leftover remaining cbor-gen leftover is logged;
+Filecoin leftover remaining bellperson leftover is logged;
+ZKsync OS leftover remaining supporting_crates leftover is logged;
+ZKsync OS leftover remaining airbender verifier_common leftover is logged;
 Filecoin leftover remaining go-amt-ipld leftover is logged;
 Filecoin leftover remaining go-bitfield leftover is logged;
 Filecoin leftover remaining go-cbor-util leftover is logged;

@@ -42203,11 +42203,15 @@ Filecoin leftover remaining cbor-gen leftover (`443b860`)
 is logged.
 ZKsync OS leftover remaining airbender prover leftover
 (`6ec4ea7`) is logged.
+ZKsync OS leftover remaining airbender verifier_common leftover
+(`6ec4ea7`) is logged.
+Filecoin leftover remaining bellperson leftover (`a215065`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: lotus non-miner / bellperson / merkletree / neptune.
+Remaining listed Filecoin: lotus non-miner / merkletree / neptune.
 
-Remaining listed ZKsync OS: airbender verifier_common
-(`fri_folding` / `proof_flattener`).
+Remaining listed ZKsync OS: official GitHub leftover
+that trees open is exhausted.
 Do not rematch Hedera consensus-node,
 json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
@@ -42220,9 +42224,12 @@ Do not rematch go-amt-ipld, go-bitfield, go-cbor-util, or
 go-padreader leftover.
 Do not rematch go-statemachine, go-statestore, go-sectorbuilder,
 go-hamt-ipld, go-ipld-cbor, or cbor-gen leftover.
+Do not rematch Filecoin bellperson leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
 Do not rematch ZKsync airbender prover leftover.
+Do not rematch ZKsync airbender verifier_common leftover.
+Do not rematch ZKsync supporting_crates leftover.
 Do not rematch ZKsync bootloader, interpreter,
 storage_models, proof_running_system, zk_ee,
 zkos-wrapper, or airbender verifier.
@@ -65610,3 +65617,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a wrapping U256 helper or a modulus-0 empty `modexp` as stranger theft.
 
 Not submitted. Payment requires user KYC. Official `zksync-os` GitHub assets are leftover-logged. Remaining listed: Wormhole Relayer Sourcify 404; Filecoin remaining go-* / lotus (avoid collision).
+
+## 2026-09-03: Filecoin leftover remaining bellperson leftover (`a215065`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after cbor-gen leftover. Official clone `/tmp/filecoin-bellperson` at `a215065` (`chore(deps): bump dtolnay/rust-toolchain`). Opened `src/groth16/verifier.rs`, `proof.rs`, and `aggregate/{verify.rs,proof.rs}`. Groth16 / inner-pairing-product helpers only. Does not move FIL. Do not rematch rust-fil-proofs leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `verify_proof` accepting a proof whose public-input MSM length does not match the VK; `Proof::read` accepting the identity or a non-curve point; aggregate verify skipping `parsing_check` or a mismatched `nproofs`.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `verify_proof` requires `public_inputs.len()+1 == pvk.ic.len()`, then checks `e(A,B) · e(IC(inputs), -γ) · e(C, -δ) = e(α,β)` after one final exponentiation. Batch verify uses random 128-bit coefficients (Zcash App. B.2).
+- `Proof::read_many` decompresses A/B/C via `GroupEncoding::from_bytes` (curve check) and rejects the identity. Size is exact (`num_proofs * Proof::size()`).
+- `verify_aggregate_proof` calls `parsing_check` (`nproofs` in `[2, MAX_SRS_SIZE]`, power of two, TIPP vector lengths), requires `public_inputs.len() == nproofs`, binds `transcript_include` into `r`, then TIPP/MIPP + the aggregated Groth16 pairing product.
+
+Do not file a pairing-equation Groth16 verifier as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: lotus non-miner / merkletree / neptune.
