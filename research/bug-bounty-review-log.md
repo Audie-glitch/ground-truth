@@ -20612,6 +20612,176 @@ are `cross-chain-swap`,
 `solana-crosschain-protocol`,
 and `solana-fusion`.
 
+## 2026-09-03: Flux Comptroller / KYC cToken / Governor Bravo leftover (Sourcify)
+
+Immunefi program
+`fluxfinance`
+($550,000, `kyc: false`).
+Proxy leftover already
+logged Unitroller /
+`CErc20DelegatorKYC` /
+OndoPriceOracleV2 /
+GovernorBravoDelegator /
+Timelock. This slice is
+the live implementations
+behind those proxies.
+Read-only `eth_call` on
+`https://ethereum-rpc.publicnode.com`
+(no writes). Sourcify
+`exact_match` extract
+`/tmp/flux-impls`.
+
+Resolved:
+Unitroller
+`0x95Af143a…3A51`
+`comptrollerImplementation()`
+`0xdc7b9059…9719`
+(Comptroller, solc
+0.5.17, verified
+2026-01-23);
+fOUSG
+`0x1dD7950c…E018`
+`implementation()`
+`0x159d359b…2d0a`
+(`CCashDelegate`,
+verified 2024-08-08);
+fUSDC
+`0x465a5a63…19e5`
+`0xb521dcf5…fbc5`
+(`CTokenDelegate`,
+verified 2026-02-14);
+fDAI
+`0xe2bA8693…530b`
+`0x690ef7cd…7d82`
+(same
+`CTokenModified`
+hash as fUSDC);
+fFRAX
+`0x1C9A2d6b…978B`
+`0x89ca67ec…17f6`
+(same hash);
+fUSDT
+`0x81994b96…27d7`
+`0x48a56c40…e6bf`
+(same hash);
+GovernorBravoDelegator
+`0x336505EC…465A`
+`0x8886344a…c8e`
+(`GovernorBravoDelegate`,
+solc 0.5.17, verified
+2024-08-08).
+
+Files:
+`Comptroller.sol`,
+`CTokenModified.sol`,
+`CTokenDelegate.sol`,
+`CErc20.sol`,
+`CTokenCash.sol`,
+`CCash.sol`,
+`CCashDelegate.sol`,
+`GovernorBravoDelegate.sol`.
+
+Checked for: a
+stranger mint that
+pulls a victim’s
+underlying; Comptroller
+`borrowAllowed` that
+skips the liquidity
+check; `seize` that
+accepts a spoofed
+seizer token;
+Governor `execute`
+without a queued
+Succeeded proposal.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Comptroller
+  `enterMarkets` only
+  adds `msg.sender`.
+  `mintAllowed` is
+  listed + not paused.
+  `borrowAllowed`
+  auto-enters only
+  when `msg.sender`
+  is the cToken,
+  reverts on a zero
+  oracle price, and
+  requires no
+  hypothetical
+  shortfall.
+  `liquidateBorrowAllowed`
+  needs shortfall
+  (unless the market
+  is deprecated) and
+  a close-factor cap.
+  `seizeAllowed`
+  requires both
+  markets listed and
+  the same
+  Comptroller.
+  `_setPriceOracle` /
+  `_supportMarket` /
+  `_setCollateralFactor`
+  / `_become` /
+  `fixBadAccruals`
+  are admin.
+- `CTokenModified`
+  (identical source
+  on fUSDC / fDAI /
+  fFRAX / fUSDT)
+  `mintFresh` pulls
+  `transferFrom`
+  the minter after a
+  sanctions check.
+  Borrow / repay
+  require KYC.
+  Transfer checks
+  sanctions +
+  allowance.
+  `seize` passes
+  `msg.sender` as the
+  seizer cToken.
+  KYC registry /
+  group setters are
+  admin.
+- fOUSG `CTokenCash`
+  additionally KYCs
+  mint / redeem /
+  transfer / seize.
+  Missing KYC on
+  stablecoin mint is
+  the listed CASH vs
+  USDC split, not a
+  stranger drain.
+- Governor Bravo
+  `propose` needs
+  prior votes above
+  threshold or a
+  whitelist.
+  `queue` requires
+  Succeeded.
+  `execute` requires
+  Queued, then
+  `timelock.executeTransaction`.
+  Voting delay /
+  period / threshold
+  / whitelist /
+  `_initiate` are
+  admin.
+
+Do not file
+admin `setKYCRegistry`
+or vanilla Compound
+first-depositor
+inflation as a
+finding.
+
+Not submitted.
+Listed Flux leftover
+is exhausted.
 
 ## Next candidates
 
@@ -21195,10 +21365,13 @@ Flux Finance leftover
 (Sourcify `exact_match`
 Unitroller / fToken
 delegator / Ondo
-oracle) is logged
-(remaining Flux is
-Comptroller + KYC
-cToken implementations);
+oracle) is logged.
+Flux Comptroller / KYC
+cToken / Governor Bravo
+implementation leftover
+(Sourcify `exact_match`)
+is logged (listed Flux
+leftover exhausted);
 Beets stS
 (`877087b`) + token
 leftover is logged

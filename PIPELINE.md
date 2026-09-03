@@ -64,9 +64,11 @@ UnwrapETH / LSD / marketplace leftover
 exhausted aside from Fertilizer proxy Sourcify
 404). Flux Finance leftover (Sourcify
 `exact_match` Unitroller / KYC fToken
-delegator / OndoPriceOracleV2) is logged
-(remaining Flux is Comptroller + KYC cToken
-implementations). Beets stS + token leftover
+delegator / OndoPriceOracleV2) is logged.
+Flux Comptroller / KYC cToken / Governor
+Bravo implementation leftover (Sourcify
+`exact_match`) is logged (listed Flux
+leftover exhausted). Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
 leftover is logged (yvUSD / Woofy still Sourcify 404).
 Benqi Dual Oracle leftover is logged. Benqi core
