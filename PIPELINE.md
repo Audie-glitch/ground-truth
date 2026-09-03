@@ -17,6 +17,7 @@ Optimism leftover remaining CrossL2Inbox leftover is logged;
 Optimism leftover remaining SuperchainConfig leftover is logged;
 Optimism leftover remaining LegacyMessagePasser leftover is logged;
 Optimism leftover remaining L2ProxyAdmin leftover is logged;
+Ethena leftover remaining StakedENA leftover is logged;
 Jito leftover remaining jito-solana runtime_config leftover is logged;
 Jito leftover remaining jito-solana static_ids leftover is logged;
 Jito leftover remaining jito-solana read_optimized_dashmap leftover is logged;
@@ -910,9 +911,12 @@ FPValidator / ULN301 / OApp examples /
 other chains).
 Ethena leftover minting + staking leftover
 (Sourcify EthenaMinting / StakedUSDeV2 /
-LP staking / PSM; KYC) is logged
-(remaining listed is StakedENA / USDtb
-proxies / other OFT / TON).
+LP staking / PSM; KYC) is logged.
+Ethena leftover remaining StakedENA leftover
+(Sourcify StakedENA proxy / impl / EnaSilo;
+KYC) is logged
+(remaining listed is USDtb token proxies /
+other OFT / TON).
 Ether.fi leftover LiquidityPool leftover
 (Sourcify LiquidityPool / WeETH /
 Liquifier / Redemption / WRNFT; KYC)
@@ -2606,6 +2610,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (Sourcify; KYC),
   Ethena leftover minting +
   staking leftover
+  (Sourcify; KYC),
+  Ethena leftover remaining
+  StakedENA leftover
   (Sourcify; KYC),
   Ether.fi leftover
   LiquidityPool leftover

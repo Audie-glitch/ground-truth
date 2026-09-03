@@ -47573,6 +47573,7 @@ Remaining listed Aave: primacy; unused official v3 logic leftover that listed tr
 Remaining listed Jito: unused official leftover that listed remaining-runtime trees open is exhausted on this pin. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_client leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana prioritization_fee leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana commitment leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana slot_params leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana genesis_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana alpenglow_epoch_type leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana leader_schedule leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana sysvar_account leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana loader_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana vote_sender leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana installed_scheduler leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana read_optimized_dashmap leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana static_ids leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana runtime_config leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted at leftover-heading level. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining SuperchainConfig leftover is logged. Optimism leftover remaining LegacyMessagePasser leftover is logged. Optimism leftover remaining L2ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Remaining listed is USDtb token proxies / other OFT / TON if still unused.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -47704,6 +47705,7 @@ Do not rematch Optimism leftover remaining CrossL2Inbox leftover.
 Do not rematch Optimism leftover remaining SuperchainConfig leftover.
 Do not rematch Optimism leftover remaining LegacyMessagePasser leftover.
 Do not rematch Optimism leftover remaining L2ProxyAdmin leftover.
+Do not rematch Ethena leftover remaining StakedENA leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
 Do not rematch Arbitrum leftover remaining governance leftover.
@@ -73894,3 +73896,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file system-depositor predeploy upgrades as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused bedrock helpers on other standing Immunefi programs if still open; Optimism listed bedrock helpers on pin `eea9542` are largely exhausted at leftover-heading level. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Ethena leftover remaining StakedENA leftover (Sourcify)
+
+Immunefi program `ethena` ($3,000,000, `kyc: true`). Official remaining unused leftover after minting + staking leftover. Sourcify ETH `exact_match` StakedENA proxy `0x8bE3460A480c80728a8C4D7a5D5303c85ba7B3b9` (TransparentUpgradeableProxy) impl `0x7fD57b46aE1a7b14f6940508381877Ee03e1018B` (`StakedENA`). Opened listed `StakedENA.sol`, `ENASilo.sol`, `SingleAdminAccessControlUpgradeable.sol`. Official Sourcify **200**. Local extract `/tmp/ethena-sena/` (411 / 29 / 82 lines). Do not rematch minting + staking leftover (EthenaMinting / StakedUSDeV2 / LP / PSM). No mainnet writes. No exploit PoCs.
+
+Checked for: `unstake` that withdraws another user’s silo cooldown; `cooldownAssets` / `cooldownShares` that burn a stranger’s shares; `withdraw` / `redeem` that bypass cooldown and pull another owner without allowance; `transferInRewards` that credits a caller without `REWARDER_ROLE`; `EnaSilo.withdraw` callable by a random EOA.
+
+Result: no user-exploitable finding. Not submitted.
+
+- ERC-4626 sENA vault over ENA. When `cooldownDuration > 0`, `withdraw` / `redeem` revert via `ensureCooldownOff`. Cooldown path: `cooldownAssets` / `cooldownShares` require `assets <= maxWithdraw(msg.sender)` / `shares <= maxRedeem(msg.sender)` and `_withdraw(..., _owner=msg.sender)` into the silo.
+- `unstake` reads only `cooldowns[msg.sender]` and pays `silo.withdraw(receiver, assets)` after `cooldownEnd` (or if duration is later set to 0). Silo `withdraw` is `onlyStakingVault`.
+- `transferInRewards` is `onlyRole(REWARDER_ROLE)` and `safeTransferFrom`s the rewarder. `rescueTokens` cannot move the ENA asset. Blacklist / redistribute are role-gated; `_beforeTokenTransfer` blocks blacklisted from/to except burn-from-blacklisted.
+- `initialize` is `initializer`; constructor `_disableInitializers()`. Admin transfer is two-step (`transferAdmin` / `acceptAdmin`).
+
+Do not file a caller-bound cooldown or a role-gated reward transfer as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: USDtb token proxies / other OFT adapters / TON / other-chain rows if still unused. Next unused leftover is a different Immunefi program, not a rematch.
