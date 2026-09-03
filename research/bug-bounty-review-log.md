@@ -21164,6 +21164,113 @@ Listed eBTC Boost
 GitHub leftover is
 exhausted.
 
+## 2026-09-03: 1inch Solana CCS + Fusion leftover (`58b8a42` / `0768267`)
+
+Immunefi program
+`1inch-SmartContracts`
+($500,000, `kyc:
+true`). EVM
+cross-chain-swap is
+already logged. This
+slice is the last
+listed trees:
+`solana-crosschain-protocol`
+and `solana-fusion`.
+Local clones
+`/tmp/1inch-sol-ccs`
+at `58b8a42` and
+`/tmp/1inch-sol-fusion`
+at `0768267`. No
+mainnet interaction.
+
+Files:
+`programs/cross-chain-escrow-src/src/{lib,utils}.rs`,
+`programs/cross-chain-escrow-dst/src/{lib,utils}.rs`,
+`programs/whitelist/src/lib.rs`,
+`solana-fusion/programs/fusion-swap/src/lib.rs`.
+
+Checked for: a
+stranger withdraw
+with a wrong secret;
+cancel that pays
+tokens to the
+caller; Fusion
+`fill` that skips
+paying the maker;
+whitelist
+`register` by a
+non-authority.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Src withdraw is
+  taker-signed in
+  the private
+  window;
+  `keccak256(secret)`
+  must match
+  `escrow.hashlock`.
+  Tokens go to the
+  taker ATA. Public
+  withdraw / cancel
+  award the safety
+  deposit to the
+  payer and still
+  pay tokens to
+  taker / maker.
+  Src cancel after
+  `SrcCancellation`
+  returns tokens to
+  the stored maker.
+- Dst `create`
+  pulls from the
+  creator and
+  requires dst
+  cancel not after
+  src cancel.
+  Withdraw is
+  creator-signed,
+  secret-checked,
+  and pays the
+  stored
+  `recipient`.
+- Fusion `fill`
+  requires a
+  whitelist
+  `ResolverAccess`
+  PDA. Escrow seeds
+  bind
+  `order_hash`
+  (config + mints +
+  receiver). Src
+  tokens go to the
+  taker; dst tokens
+  (minus fees) go
+  to
+  `maker_receiver`.
+  `cancel` is
+  maker-signed and
+  returns remaining
+  src to the maker.
+  `cancel_by_resolver`
+  is after expiry
+  only.
+- Whitelist
+  `register` /
+  `deregister` /
+  `set_authority`
+  require the
+  stored authority.
+
+Not submitted.
+Listed 1inch
+SmartContracts
+GitHub leftover is
+exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -21467,11 +21574,11 @@ whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
 1inch token-plugins + farming leftover
 (`9b6de97` / `b1fca09`) is logged;
 1inch cross-chain-swap leftover
-(`ada243b`) is logged
-(remaining 1inch SmartContracts
-trees are
-`solana-crosschain-protocol`
-and `solana-fusion`).
+(`ada243b`) is logged;
+1inch Solana CCS + Fusion leftover
+(`58b8a42` / `0768267`) is logged
+(listed 1inch SmartContracts
+leftover exhausted).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
