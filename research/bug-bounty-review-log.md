@@ -211,9 +211,50 @@ Do not submit. Payment requires user KYC. ETHOnline "Build an Aqua App"
 `AQUA.safeBalances`. Do not pre-build against Start Fresh before the user has
 ETHGlobal + public GitHub.
 
+## 2026-09-03: GMTrade store execute / liquidate / ADL (gmx-solana `50c4d8d`)
+
+Same Immunefi program as the earlier store builder-fee and treasury/LP
+passes. Reviewed the keeper-gated execution and position-cut path, not the
+full `gmsol_model` decrease math (that crate is not in the sparse clone).
+No mainnet interaction.
+
+Files: `lib.rs` (`execute_increase_or_swap_order_v2`, `execute_decrease_order_v2`,
+`liquidate`, `auto_deleverage`), `instructions/exchange/{execute_order,position_cut}.rs`,
+`ops/order.rs` (`ExecuteOrderOperation`, `execute_swap`, `execute_increase_position`,
+`execute_decrease_position`, `PositionCutOperation`).
+
+Checked for: who can execute; liquidation vs healthy positions at the store
+layer; claimable-account PDA + delegation; transfer-out destinations;
+swap/min-output; ADL pnl-factor bounds; builder-fee interaction on decrease.
+
+Result: no exploitable finding at this depth.
+
+- Execute, liquidate, and ADL are all `ORDER_KEEPER`. A user cannot invoke
+  them. Liquidation eligibility itself is inside `gmsol_model::decrease`
+  (`is_liquidation_order`); the store only requires a full close
+  (`size_delta >= position.size_in_usd`) and `throw_on_execution_error`.
+- Position-cut `owner` is unchecked but must match the position PDA seeds
+  and the user account. Receiver of the synthetic order is that owner.
+  Claimable ATAs are store-owned PDAs seeded with the owner (or holding
+  address) plus the recent-time key, and must be delegated to that same
+  address.
+- Increase/swap transfer-out goes only to the order's recorded escrows
+  (no user claimable accounts on that path). Decrease/cut uses those
+  escrows plus the claimable PDAs above.
+- Swaps honor `validate_output_amount`. Limit failures are hard errors;
+  market failures can cancel. Empty market-decrease is allowed only to
+  claim funding.
+- ADL requires `pnl_factor_exceeded` before and a lower-but-not-below-
+  `MinAfterAdl` factor after. Liquidation forbids a closed-index skip
+  except `allow_closed` on liquidate (index can be closed; long/short
+  vaults cannot).
+
+Not a full store review: oracle price assembly, revertible swap internals,
+and `gmsol_model` liquidation thresholds were not read. Not submitted.
+
 ## Next candidates
 
-GMTrade `programs/store` order execution / liquidation is a multi-day Rust
-pass. sBTC is KYC. Sherlock `/api/contests` returned no live items as of
-01:28 UTC 3 Sep 2026. No KeeperHub implementation before the 6 Sep build
-window.
+sBTC (Rust/Clarity, KYC) or a later `gmsol_model` decrease/liquidation
+pass if a full workspace clone is available. Sherlock `/api/contests`
+returned no live items as of 01:28 UTC 3 Sep 2026. No KeeperHub
+implementation before the 6 Sep build window.
