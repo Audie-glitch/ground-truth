@@ -46151,6 +46151,114 @@ rust/op-reth
 (if still unused).
 
 
+## 2026-09-03: Optimism leftover remaining L2OutputOracle leftover
+
+Immunefi program
+`optimism`
+($2,000,042,
+`kyc: true`).
+Official unused
+listed L2OutputOracle
+after mintable
+factory leftover.
+Sourcify ETH
+L2OutputOracle
+proxy
+`0xdfe97868233d1aa22e815a266982f2cf17685a27`
+impl
+`0xF243BEd163251380e78068d317ae10f26042B292`.
+Extract
+`/tmp/op-unused/L2OutputOracle/`.
+GitHub
+`eea9542`
+`L2OutputOracle.sol`
+is 404.
+Do not rematch
+mintable factory
+leftover or L1
+portal leftover.
+No mainnet
+writes.
+
+Files:
+`src/L1/L2OutputOracle.sol`.
+
+Checked for:
+stranger
+`proposeL2Output`
+that writes a
+root;
+`deleteL2Outputs`
+that truncates
+finalized
+outputs;
+payable
+`proposeL2Output`
+that credits
+the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `proposeL2Output`
+  requires
+  `msg.sender
+  == proposer`,
+  the next
+  expected L2
+  block number,
+  a non-zero
+  output root,
+  and a past
+  L2 timestamp.
+  Optional L1
+  blockhash
+  must match
+  `blockhash`.
+  `msg.value`
+  is unused.
+- `deleteL2Outputs`
+  requires
+  `msg.sender
+  == challenger`,
+  an existing
+  index, and
+  that the
+  output is
+  still inside
+  `finalizationPeriodSeconds`.
+- Getters and
+  binary search
+  are view
+  only. This
+  contract
+  does not
+  transfer
+  ETH or
+  tokens.
+
+Do not file
+a proposer-
+gated output
+oracle as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining
+op-node leftover
+(p2p /
+sequencing) /
+SystemConfig /
+websites /
+rust/op-reth
+(if still unused).
+
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -46452,6 +46560,8 @@ Optimism leftover remaining op-node engine leftover (`eea9542`)
 is logged.
 Optimism leftover remaining mintable factory leftover (`eea9542`)
 is logged.
+Optimism leftover remaining L2OutputOracle leftover
+is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
 Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
@@ -46489,7 +46599,7 @@ Remaining listed Filecoin: unused official leftover that listed trees open is ex
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
-Remaining listed Optimism: remaining official op-node leftover (p2p / sequencing) / L2OutputOracle / SystemConfig / websites / rust/op-reth if still unused.
+Remaining listed Optimism: remaining official op-node leftover (p2p / sequencing) / SystemConfig / websites / rust/op-reth if still unused.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -46573,6 +46683,7 @@ Do not rematch Optimism leftover remaining op-node leftover.
 Do not rematch Optimism leftover remaining op-node deposits + withdrawals leftover.
 Do not rematch Optimism leftover remaining op-node engine leftover.
 Do not rematch Optimism leftover remaining mintable factory leftover.
+Do not rematch Optimism leftover remaining L2OutputOracle leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -49360,9 +49471,11 @@ Optimism leftover remaining op-node deposits + withdrawals leftover
 Optimism leftover remaining op-node engine leftover
 (`eea9542`) is logged;
 Optimism leftover remaining mintable factory leftover
-(`eea9542`) is logged (remaining listed is remaining
-op-node leftover (p2p / sequencing) / L2OutputOracle /
-SystemConfig / websites / rust/op-reth);
+(`eea9542`) is logged;
+Optimism leftover remaining L2OutputOracle leftover
+is logged (remaining listed is remaining
+op-node leftover (p2p / sequencing) / SystemConfig /
+websites / rust/op-reth);
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
