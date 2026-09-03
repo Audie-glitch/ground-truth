@@ -15199,6 +15199,354 @@ settings / voting,
 smoothing / rewards
 pool.
 
+## 2026-09-03: Beanstalk Basin leftover (Sourcify + `ecf6923`)
+
+Immunefi program
+`beanstalk`
+($1,100,000, `kyc: false`).
+Listed leftover this
+slice is Basin +
+Pipeline / Depot, not
+the L1/L2 Beanstalk
+diamond. Sourcify
+Arbitrum `exact_match`:
+Pipeline
+`0xb1bE…91B0`, Depot
+`0xDEb0…20c3`, Aquifer
+`0xBA51…7521`, Well
+Upgradeable impl
+`0xBA51…e50B`, Constant
+Product 2
+`0xBA15…72b4`, Multi
+Flow Pump
+`0xBA15…5b13`. Official
+tree `/tmp/basin` at
+`ecf6923`. No mainnet
+interaction.
+
+Program text: unexpected
+outcomes from misuse of
+Pipeline and/or Depot
+do not qualify. Do not
+file leftover Pipeline
+balances or user-signed
+Depot `farm` calls.
+
+Files: Sourcify
+`Pipeline.sol` /
+`LibFunction.sol`,
+`Depot.sol` /
+`DepotFacet.sol` /
+`TokenSupportFacet.sol`,
+`Well.sol` /
+`WellUpgradeable.sol`,
+`Aquifer.sol`,
+`functions/ConstantProduct2.sol`,
+`functions/Stable2.sol`,
+`pumps/MultiFlowPump.sol`.
+
+Checked for: Pipeline
+call that spends a
+stranger’s approval;
+Depot `farm` that
+moves a stranger’s
+Silo deposit; Well
+swap / remove that
+pays without a pull or
+burn; Aquifer bore that
+rewrites an existing
+well; upgrade that
+swaps tokens; CP2
+rounding that drains
+the other reserve;
+Pump update that
+writes another well’s
+slot.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Pipeline is a
+  documented sandbox.
+  `pipe` / `multiPipe` /
+  `advancedPipe` call
+  `target` from
+  Pipeline. Assets left
+  between txs are
+  permissionless. Clipboard
+  paste is
+  caller-controlled.
+- Depot `farm` is a
+  self-`delegatecall`
+  multicall. ERC-20 /
+  deposit transfers
+  require `msg.sender`
+  as the source.
+  `INTERNAL` uses
+  Beanstalk
+  `transferInternalTokenFrom`
+  from the caller.
+  `pipe*` forwards to
+  the listed Pipeline.
+- Well `swapFrom`
+  pulls then updates
+  reserves via the
+  immutable well
+  function. `swapTo`
+  computes then pulls.
+  `removeLiquidity*`
+  burns the caller’s
+  LP. `shift` / `sync`
+  / `skim` extract or
+  mint against excess
+  balances
+  (documented rebase /
+  donation helpers).
+  `_setReserves`
+  requires
+  `balance >= reserve`.
+- Aquifer `boreWell`
+  clones and requires
+  `isInitialized` plus
+  `aquifer() == this`.
+  CREATE2 salt is
+  `keccak256(sender,
+  salt)`.
+- WellUpgradeable
+  upgrade is
+  `onlyOwner`. New impl
+  must already be an
+  Aquifer-bored well
+  with the same token
+  order.
+- CP2
+  `calcLpTokenSupply`
+  is `sqrt(b0*b1*1e12)`.
+  `calcReserve` rounds
+  up (pool-favorable
+  on swap-out).
+- MultiFlowPump
+  storage is keyed by
+  `msg.sender`. Wells
+  ignore a failing
+  `update`. Zero-reserve
+  updates reset that
+  well’s pump.
+
+Not submitted. Remaining
+Beanstalk listed:
+L1/L2 diamond, Bean /
+Unripe / Fertilizer
+tokens, LSD oracle,
+Shipment Planner,
+Junctions, Unwrap ETH.
+
+## 2026-09-03: Beets leftover (stS `877087b` + token Sourcify)
+
+Immunefi program
+`beets`
+($200,000, `kyc: false`).
+Listed leftover: Beets
+Staked Sonic
+`0xE5DA…3955` (Sonic
+Sourcify 404; official
+`beethovenxfi/sonic-staking`
+`/tmp/beets-lst`
+`877087b`), Beets token
+`0x2D0E…e4f0`
+(Sourcify
+`exact_match`
+`Beets.sol`), Token
+Migrator
+`0x5f9a…E386`
+(Sourcify 404). No
+mainnet interaction.
+
+Files:
+`src/SonicStaking.sol`,
+Sourcify
+`src/token/Beets.sol`.
+
+Checked for: stS minted
+without adding S to
+`totalPool`; undelegate
+that burns a stranger’s
+shares; withdraw that
+pays a stranger; donate
+that inflates PPS for
+a first depositor;
+owner mint above the
+yearly cap.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `deposit` requires
+  `msg.value >= 1e16`,
+  adds it to
+  `totalPool`, and mints
+  `convertToShares`
+  (1:1 when supply or
+  assets are 0). README
+  says burn 1e18 on
+  first deposit; not
+  enforced on-chain.
+- `totalAssets` is
+  `totalPool +
+  totalDelegated +
+  pendingClawBackAmount`
+  (accounting, not raw
+  balance). `receive`
+  is SFC-only; a
+  stranger cannot donate
+  native to inflate
+  shares. Operator
+  `donate` is
+  `OPERATOR_ROLE`.
+- Undelegate burns the
+  caller’s shares and
+  writes a withdraw
+  ticket. `withdraw`
+  requires
+  `msg.sender ==
+  request.user` and
+  `kind != CLAW_BACK`.
+  Emergency path can
+  pay less after an
+  SFC slash (user-opted).
+- Operator clawback can
+  drop the rate
+  (documented).
+  `protocolFeeBIPS` and
+  `withdrawDelay` are
+  admin. UUPS is
+  `onlyOwner`.
+- BEETS `mint` is
+  `onlyOwner` and is
+  capped at 10% of
+  supply per year
+  (`incrementYear`
+  required after the
+  window).
+
+Not submitted. Remaining
+Beets listed: Token
+Migrator (Sourcify 404).
+
+## 2026-09-03: Yearn YFI token leftover (Sourcify)
+
+Immunefi program
+`yearnfinance`
+($200,000, `kyc: false`).
+Listed leftover row YFI
+Token
+`0x0bc5…d93e`. Sourcify
+Ethereum `match`
+(`YFI.sol`, Solidity
+0.5.16). Woofy
+`0xD066…57f1` is still
+Sourcify 404. yvUSD
+vault URL is still
+Sourcify 404. No
+mainnet interaction.
+
+Checked for:
+permissionless mint;
+governance transfer
+without the current
+governor.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `mint` requires
+  `minters[msg.sender]`.
+  `addMinter` /
+  `removeMinter` /
+  `setGovernance` are
+  `governance` only.
+  Transfers are
+  standard OpenZeppelin
+  2-era ERC-20.
+
+Not submitted. Remaining
+Yearn listed leftover:
+yvUSD
+`0x696d…6987`
+(Sourcify 404) and
+Woofy (Sourcify 404).
+
+## 2026-09-03: Benqi Dual Oracle leftover (Sourcify)
+
+Immunefi program
+`benqi`
+($500,000, `kyc: false`).
+Listed leftover this
+slice is Benqi Dual
+Oracle
+`0x926C…73A`
+(Avalanche Sourcify
+`exact_match`,
+`Oracle/BenqiDualOracle.sol`).
+Second Dual Oracle row
+`0xf81B…F15e` is the
+same type. No mainnet
+interaction.
+
+Checked for: a
+non-owner that can set
+feeds or a direct
+price; dual mode that
+returns a stale or
+zero price as live;
+fallback that prefers
+the higher of two
+manipulated feeds.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `setAssetOracles`,
+  `setOracleMode`,
+  `setDirectPrice`,
+  `setUnderlyingPrice`,
+  and
+  `transferOracleAdmins`
+  are `onlyOwner`.
+  Manual prices without
+  `manualOverrideAllowed`
+  must stay within 10x
+  of a live feed.
+- Unconfigured assets
+  revert. Dual mode
+  reverts if both
+  feeds are stale or
+  if fresh prices
+  deviate past the
+  asset threshold
+  (default 5%, cap
+  20% / hard 50%).
+  One stale feed falls
+  back to the other.
+  Edge is primary when
+  both are fresh.
+- Zero prices revert
+  inside
+  `getOraclePriceWithFreshness`.
+  This is an oracle,
+  not a vault.
+
+Not submitted. Remaining
+Benqi listed: qiToken
+markets, unitrollers,
+sAVAX, gauges,
+Maximillion, Ignite,
+veQI, distributors.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -15546,7 +15894,8 @@ Sherlock page 1 still only contest `1234` (Tare)
 in `SHERLOCK_JUDGING`; no programs launched
 Sep 2026 in the unofficial Immunefi dump;
 no new Immunefi GitHub SC
-assets since 2026-09-02 (247
+assets since 2026-09-02
+(unofficial dump now 246
 programs);
 Olympus DEPOS / CDEPO is
 logged (Sourcify still
@@ -15699,6 +16048,25 @@ Pool is minipool leftover,
 vault, auction, DAO,
 smoothing / rewards
 pool);
+Beanstalk Basin leftover
+(Pipeline / Depot / Well
+/ Aquifer / CP2 / MFP,
+Sourcify + `ecf6923`) is
+logged (remaining
+Beanstalk is the L1/L2
+diamond + tokens /
+planner);
+Beets stS
+(`877087b`) + token
+leftover is logged
+(migrator Sourcify 404);
+Yearn YFI token leftover
+is logged (yvUSD / Woofy
+still Sourcify 404);
+Benqi Dual Oracle leftover
+is logged (remaining
+Benqi is qiToken /
+unitroller / gauges);
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover
