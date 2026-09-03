@@ -29285,6 +29285,115 @@ DNSSEC / reverse
 rows) and website
 assets.
 
+## 2026-09-03: GMX leftover V2 OrderHandler leftover (Sourcify)
+
+Immunefi program
+`gmx` ($5,000,000,
+`kyc: false`). Sourcify
+Arbitrum `exact_match`
+`OrderVault`
+`0x31eF83a530Fde1B38EE9A18093A333D8Bbbc40D5`
++ `WithdrawalVault`
+`0x0628D46b5D145f183AdB6Ef1f2c97eD1C4701C55`
++ `DepositHandler`
+`0xfe2Df84627950A0fB98EaD49c69a1DE3F66867d6`
++ `LiquidationHandler`
+`0xdAb9bA9e3a301CCb353f18B4C8542BA2149E4010`
+and `match`
+`OrderHandler`
+`0xe68CAAACdf6439628DFD2fe624847602991A31eB`
++ `WithdrawalHandler`
+`0x64fbD82d9F987baF5A59401c64e823232182E8Ed`.
+Extract `/tmp/gmx-v2-orders`.
+No mainnet interaction.
+
+Files:
+`orderHandler/contracts/exchange/OrderHandler.sol`,
+`orderHandler/contracts/order/OrderUtils.sol`,
+`orderVault/contracts/order/OrderVault.sol`,
+`orderVault/contracts/bank/Bank.sol`,
+`depositHandler/contracts/exchange/DepositHandler.sol`,
+`depositHandler/contracts/deposit/DepositUtils.sol`,
+`withdrawalHandler/contracts/exchange/WithdrawalHandler.sol`,
+`withdrawalHandler/contracts/withdrawal/WithdrawalUtils.sol`,
+`liquidationHandler/contracts/exchange/LiquidationHandler.sol`.
+
+Checked for: a stranger
+`createOrder` that
+credits vault
+transfer-in to
+another account;
+`cancelOrder` that
+refunds the caller;
+vault `transferOut`
+without controller;
+liquidation that
+pays the keeper the
+position.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Order / Deposit /
+  Withdrawal
+  `create*` /
+  `cancel*` are
+  `onlyController`
+  (ExchangeRouter
+  already binds
+  `account =
+  msg.sender`).
+- `OrderUtils.createOrder`
+  records vault
+  transfer-in into
+  that account's
+  order.
+  `cancelOrder`
+  refunds
+  `cancellationReceiver`
+  or `order.account()`.
+- Deposit /
+  Withdrawal cancel
+  refund
+  `*.account()`.
+- OrderVault /
+  WithdrawalVault
+  `transferOut` is
+  `onlyController`.
+- `executeOrder` /
+  `executeDeposit` /
+  `executeWithdrawal`
+  are
+  `onlyOrderKeeper`.
+  `executeLiquidation`
+  is
+  `onlyLiquidationKeeper`.
+
+Do not file keeper
+execute / cancel of
+an aged request,
+controller vault
+sweeps, leftover
+tokens sent to a
+vault without a
+matching create, or
+keeper execution-fee
+payment.
+
+Not submitted.
+Remaining listed:
+GlvRouter / Handler /
+Vault, ShiftHandler /
+Vault, SubaccountRouter,
+ExternalHandler,
+FeeHandler, V1 Order
+Book / Timelock /
+StakedGlp / USDG,
+Avax twins, and V2
+Oracle / Reader rows.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -30562,6 +30671,24 @@ exhausted at the opened
 registrar / wrapper /
 registry / resolver
 level);
+GMX leftover V2
+OrderHandler leftover
+(Sourcify Arb
+OrderHandler /
+OrderVault /
+DepositHandler /
+WithdrawalHandler /
+WithdrawalVault /
+LiquidationHandler) is
+logged (remaining listed
+is Glv / Shift /
+SubaccountRouter /
+ExternalHandler /
+FeeHandler, V1 Order
+Book / Timelock /
+StakedGlp / USDG, Avax
+twins, and V2 Oracle /
+Reader rows);
 Royco factory + Makina
 strategy leftover
 (Sourcify Factory /

@@ -287,6 +287,15 @@ ENSRegistry) is logged (listed leftover
 that Sourcify opens is exhausted at the
 opened registrar / wrapper / registry /
 resolver level).
+GMX leftover V2 OrderHandler leftover
+(Sourcify Arb OrderHandler / OrderVault /
+DepositHandler / WithdrawalHandler /
+WithdrawalVault / LiquidationHandler) is
+logged (remaining listed is Glv / Shift /
+SubaccountRouter / ExternalHandler /
+FeeHandler, V1 Order Book / Timelock /
+StakedGlp / USDG, Avax twins, and V2
+Oracle / Reader rows).
 Royco factory + Makina strategy leftover
 (Sourcify Factory /
 RoycoVaultMakinaStrategy; KYC) is
@@ -793,6 +802,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   controller / NameWrapper /
   PublicResolver / registrar /
   registry),
+  GMX leftover V2
+  OrderHandler leftover
+  (OrderVault / DepositHandler
+  / WithdrawalHandler /
+  LiquidationHandler),
   Royco factory + Makina
   strategy leftover (Sourcify;
   KYC),
