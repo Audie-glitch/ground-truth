@@ -42505,8 +42505,11 @@ Filecoin leftover remaining neptune leftover (`b06f03c`)
 is logged.
 Filecoin leftover remaining neptune-triton leftover (`9f2c2f4`)
 is logged.
+Filecoin leftover remaining lotus paych leftover (`7740217`)
+is logged.
+Wormhole leftover remaining Relayer leftover is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: lotus non-miner.
+Remaining listed Filecoin: remaining lotus non-miner.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -42526,6 +42529,9 @@ Do not rematch Filecoin bellperson leftover.
 Do not rematch Filecoin merkletree leftover.
 Do not rematch Filecoin neptune leftover.
 Do not rematch Filecoin neptune-triton leftover.
+Do not rematch Filecoin lotus paych leftover.
+Do not rematch Filecoin lotus miner leftover.
+Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
 Do not rematch ZKsync airbender prover leftover.
@@ -65959,3 +65965,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a guardian-gated delivery or an exact-value send as stranger theft.
 
 Not submitted. Payment requires user KYC. Official Wormhole GitHub + Relayer assets are leftover-logged. Remaining listed: Filecoin remaining go-* / lotus (avoid collision).
+
+## 2026-09-03: Filecoin leftover remaining lotus paych leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after neptune-triton leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217` (`chore: update nv29 codename (#13748)`), `paychmgr`. Opened `manager.go` and `paych.go`. Local payment-channel manager. Does not move FIL without a wallet-signed mpool message. Do not rematch lotus miner leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `createVoucher` signing with a stranger Control key; `checkVoucherValid` accepting a voucher for a different channel or a lower nonce/amount; `SubmitVoucher` / `Settle` / `Collect` pushing from an address this wallet does not control.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `createVoucher` loads the tracked channel, assigns `nextNonceForLane`, and `WalletSign`s with `ci.Control`. `checkVoucherValidUnlocked` requires `ChannelAddr == ch`, no Extra/TimeLock/SecretHash, `sigs.Verify` against the on-chain From, nonce `>` lane nonce, amount `>` redeemed, and `totalRedeemed <= actor balance`.
+- Inbound `AddVoucher` requires `WalletHas` the To/Control key. `SubmitVoucher` rejects a `proof` payload and already-submitted vouchers; `Update` / `Settle` / `Collect` are `MpoolPushMessage`d from `ci.Control`.
+- This manager is a wallet-local helper. On-chain paych Update/Settle/Collect remain in already-logged builtin-actors.
+
+Do not file a Control-signed voucher helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.

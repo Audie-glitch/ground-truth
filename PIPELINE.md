@@ -11,6 +11,7 @@ ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~11:00 UTC;
 246 programs; no Sep 2026 launches; Filecoin leftover remaining merkletree leftover is logged;
+Filecoin leftover remaining lotus paych leftover is logged;
 Filecoin leftover remaining neptune leftover is logged;
 Filecoin leftover remaining neptune-triton leftover is logged;
 Filecoin leftover remaining go-statemachine leftover is logged;
