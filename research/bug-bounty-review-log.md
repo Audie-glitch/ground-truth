@@ -15642,6 +15642,184 @@ settings / voting,
 smoothing / rewards
 pool.
 
+## 2026-09-03: Harvest vault / controller leftover (`0364901`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Listed
+leftover is whole trees
+`harvestfi/harvest-strategy`
+(added 7 Apr 2022),
+`harvest-strategy-polygon`
+(3 Apr 2023), and
+`harvest-strategy-arbitrum`
+(3 Apr 2023, re-added
+15 Mar 2024). This
+slice is the Ethereum
+base vault / controller
+only. Local clone
+`/tmp/harvest-strategy`
+at `0364901` (“Merge
+pull request #20 from
+CryptJS13/claude/inactive-vault-yield-fee-69b38a”).
+No mainnet interaction.
+
+Files:
+`contracts/base/VaultV1.sol`,
+`VaultV2.sol`,
+`Controller.sol`,
+`upgradability/BaseUpgradeableStrategy.sol`,
+`upgradability/BaseUpgradeableStrategyStorage.sol`,
+`noop/NoopStrategyUpgradeable.sol`,
+`interface/IStrategy.sol`.
+
+Checked for: share
+mint without a matching
+underlying pull;
+withdraw that pays more
+than pro-rata or skips
+the owner / allowance
+check; strategy switch
+that leaves funds on
+the old strategy;
+permissionless salvage
+of underlying;
+controller fee change
+without the queued
+delay.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `VaultV1` is an
+  upgradeable ERC20.
+  `initializeVault` caps
+  the invest fraction at
+  100%. Share decimals
+  match the underlying.
+  `defense` greylists
+  only contracts (EOA
+  always passes);
+  `Controller.greyList`
+  is true unless the
+  address or codehash is
+  whitelisted.
+- Empty-vault deposit
+  mints 1:1 then
+  `transferFrom`. That
+  is the known Yearn-
+  style first-depositor
+  inflation if someone
+  donates after a 1-wei
+  first mint. Not treated
+  as a new finding.
+- Later deposits mint
+  `amount * supply /
+  AUM`. Withdraw burns
+  the owner’s shares
+  (allowance if
+  `msg.sender != owner`)
+  then pays pro-rata of
+  vault cash plus
+  `investedUnderlyingBalance`.
+  A shortfall pulls from
+  the strategy and recaps
+  to vault cash.
+- `setStrategy` is
+  controller / governance
+  plus the announce
+  timelock (first
+  strategy is immediate).
+  The new strategy must
+  match `underlying` and
+  `vault`. The old
+  strategy
+  `withdrawAllToVault`
+  before the pointer
+  moves. `doHardWork` /
+  `rebalance` /
+  `withdrawAll` are
+  controller or
+  governance.
+- `VaultV2` is the
+  ERC-4626 wrapper over
+  the same `_deposit` /
+  `_withdraw`. Empty
+  convert is 1:1 after
+  the shared decimals.
+  `mint` converts then
+  `_deposit`.
+- Controller fees start
+  at 10% profit-sharing,
+  5% platform, 0%
+  strategist, max 30% /
+  10_000. Changes queue
+  until
+  `nextImplementationDelay`.
+  `salvage` /
+  `salvageStrategy` are
+  governance only. The
+  interface names
+  `salvageToken`; live
+  strategies implement
+  `salvage`. That is a
+  governance-ops ABI
+  mismatch, not a
+  third-party theft
+  path.
+- `BaseUpgradeableStrategy`
+  `restricted` is vault /
+  controller /
+  governance. Fee notify
+  approves the
+  controller’s
+  `rewardForwarder`.
+  `NoopStrategyUpgradeable`
+  holds idle underlying,
+  withdraws only on
+  `restricted`, and
+  refuses salvage of
+  underlying / reward.
+
+Not submitted. Remaining
+Harvest is
+`contracts/strategies/*`
+(dolomite / fluid /
+euler / sky / morpho /
+yel / stakeDao / convex /
+aave / penpie / notional /
+zerolend / aura /
+compoundV3 / idle /
+inactive) plus the
+polygon and arbitrum
+trees.
+
+Rechecked ~06:10 UTC
+3 Sep: Superteam still
+28 open listings,
+`AGENT_ALLOWED` still
+only Steve Arena and
+ZNS; Sherlock page 1
+still only contest
+`1234` (Tare) in
+`SHERLOCK_JUDGING`;
+KeeperHub #2105 still
+`open` + PR #2275;
+#2240 still `open` +
+1 design comment, search
+hit PR #2277 is #2247;
+Uniswap/sdks#720 and
+Hedera Harness #8 still
+`open`, 0 comments;
+CreditPassport deployer
+still 0 Sepolia ETH /
+0 tCTC; no Immunefi
+programs launched Sep
+2026; no new GitHub SC
+assets since 2026-09-02
+(246 programs).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -16163,6 +16341,12 @@ Benqi Dual Oracle leftover
 is logged (remaining
 Benqi is qiToken /
 unitroller / gauges);
+Harvest vault / controller
+leftover (`0364901`) is
+logged (remaining Harvest
+is `contracts/strategies/*`
+plus polygon / arbitrum
+trees);
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover
