@@ -43241,6 +43241,127 @@ FixedFee) /
 stk /
 governance.
 
+## 2026-09-03: Aave leftover remaining Gsm4626 leftover (`23859bb`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after GHO
+FlashMinter
+leftover.
+Official
+`aave-dao/gho-origin`
+`23859bb`.
+Extract
+`/tmp/gho-next`.
+Do not rematch
+GHO GSM leftover.
+Do not rematch
+GHO token leftover.
+Do not rematch
+FlashMinter leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/facilitators/gsm/Gsm4626.sol`.
+
+Checked for:
+a
+stranger
+`backWithGho`
+that
+mints
+uncapped
+GHO;
+yield
+`_cumulateYieldInGho`
+paying
+the
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `backWithGho`
+  /
+  `backWithUnderlying`
+  are
+  `onlyRole(CONFIGURATOR_ROLE)`
+  and
+  `notSeized`.
+  They
+  only
+  restore
+  up
+  to
+  the
+  current
+  deficit.
+- Buy
+  /
+  sell
+  inherit
+  leftover-
+  logged
+  GSM
+  `notFrozen`
+  /
+  `notSeized`
+  paths.
+- `_cumulateYieldInGho`
+  mints
+  GHO
+  only
+  for
+  excess
+  4626
+  backing,
+  capped
+  by
+  the
+  remaining
+  facilitator
+  bucket,
+  into
+  `_accruedFees`
+  for
+  the
+  treasury.
+  It
+  does
+  not
+  pay
+  the
+  caller.
+
+Do not file
+a
+configurator-
+gated
+deficit
+backfill
+or
+treasury
+yield
+accrual
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+stk /
+StakeToken /
+OwnableFacilitator /
+governance.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43374,9 +43495,15 @@ Aave leftover remaining L2Encoder leftover (`cff15de`)
 is logged.
 Aave leftover remaining IR strategy leftover (`cff15de`)
 is logged.
+Aave leftover remaining GHO FixedFeeStrategy leftover (`23859bb`)
+is logged.
+Aave leftover remaining GHO FlashMinter leftover (`23859bb`)
+is logged.
+Aave leftover remaining Gsm4626 leftover (`23859bb`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: GHO remaining (Gsm4626 / flash minter / FixedFee) / stk / governance.
+Remaining listed Aave: stk / StakeToken / OwnableFacilitator / governance.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43412,6 +43539,9 @@ Do not rematch Aave transfer-strategy leftover.
 Do not rematch Filecoin lotus eth leftover.
 Do not rematch Aave L2Encoder leftover.
 Do not rematch Aave IR strategy leftover.
+Do not rematch Aave GHO FixedFeeStrategy leftover.
+Do not rematch Aave GHO FlashMinter leftover.
+Do not rematch Aave Gsm4626 leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -46039,6 +46169,9 @@ remaining lotus non-miner);
 Aave leftover remaining IR strategy leftover
 (`cff15de`) is logged (remaining listed is
 GHO remaining / stk / governance);
+Aave leftover remaining Gsm4626 leftover
+(`23859bb`) is logged (remaining listed is
+stk / StakeToken / OwnableFacilitator / governance);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
