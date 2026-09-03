@@ -25527,8 +25527,90 @@ listed GitHub:
 liquidity-mining /
 staking / LBP /
 referrals / route-
-executor / EVM
-adapters.
+executor leftover is
+logged.
+
+## 2026-09-03: Hydration staking leftover (`672e02f`)
+
+Immunefi program
+`Hydration`
+($222,222, `kyc: false`).
+DCA and pool leftovers
+are already logged.
+This slice is staking,
+liquidity-mining, LBP,
+referrals, and
+route-executor. Local
+sparse clone
+`/tmp/hydration-node`
+at `672e02f`. No
+mainnet interaction.
+
+Files:
+`pallets/staking/src/lib.rs`,
+`pallets/liquidity-mining/src/lib.rs`,
+`pallets/lbp/src/lib.rs`,
+`pallets/referrals/src/lib.rs`,
+`pallets/route-executor/src/lib.rs`.
+
+Checked for: a
+stranger `claim` /
+`unstake` on someone
+else's position;
+LBP `remove_liquidity`
+by a non-owner;
+`claim_rewards` that
+pays another
+account's shares.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Staking `stake`
+  locks the signer's
+  native balance and
+  mints an NFT to
+  that signer.
+  `increase_stake`,
+  `claim`, and
+  `unstake` require
+  `is_owner`.
+- Liquidity-mining
+  has no public
+  calls. Farm create
+  pulls
+  `total_rewards`
+  from the owner
+  account.
+- LBP `create_pool`
+  is
+  `CreatePoolOrigin`
+  and pulls
+  `pool_owner`.
+  `remove_liquidity`
+  is the stored
+  pool owner after
+  the sale ends.
+- Referrals
+  `claim_rewards`
+  converts the pot
+  then pays the
+  signer from that
+  signer's
+  `ReferrerShares`
+  / `TraderShares`.
+- Route-executor
+  `sell` / `buy` /
+  `sell_all` run as
+  the signer.
+
+Not submitted.
+Remaining Hydration
+listed GitHub:
+EVM adapters /
+precompiles.
 
 ## 2026-09-03: Velvet Capital leftover (Sourcify)
 
@@ -26131,13 +26213,12 @@ exhausted).
 Hydration DCA leftover
 (`672e02f`) is logged.
 Hydration pool leftover
+(`672e02f`) is logged.
+Hydration staking leftover
 (`672e02f`) is logged
 (remaining listed is
-liquidity-mining /
-staking / LBP /
-referrals / route-
-executor / EVM
-adapters).
+EVM adapters /
+precompiles).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
@@ -26556,13 +26637,12 @@ exhausted).
 Hydration DCA leftover
 (`672e02f`) is logged.
 Hydration pool leftover
+(`672e02f`) is logged.
+Hydration staking leftover
 (`672e02f`) is logged
 (remaining listed is
-liquidity-mining /
-staking / LBP /
-referrals / route-
-executor / EVM
-adapters).
+EVM adapters /
+precompiles).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
