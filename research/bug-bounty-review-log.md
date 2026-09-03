@@ -65943,3 +65943,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a pairing-equation Groth16 verifier as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: lotus non-miner / merkletree / neptune.
+
+## 2026-09-03: Wormhole leftover remaining Relayer leftover (Sourcify)
+
+Immunefi program `wormhole` ($1,000,000, `kyc: true`). Official remaining listed after Algorand/Aptos/Near leftover. Prior Relayer Sourcify 404 retried with Ethereum Standard Relayer proxy `0x27428DD2d3DD32A4D7f7C497eAaa23130d894911` — exact match. Implementation `0x90995DBd1aae85872451b50A569dE947D34ac4ee` (`WormholeRelayer`). Opened Sourcify `WormholeRelayerDelivery` / `Send` / `Governance` / `Base`. Do not rematch ETH core + TokenBridge Sourcify leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `deliver` accepting an unverified VAA and paying a stranger refund; `send` keeping leftover `msg.value`; governance upgrade without a consumed guardian VAA.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `deliver` requires `parseAndVerifyVM`, emitter == registered relayer on the source chain, `msg.value` covering gas-limit refund + receiver value, and `targetChain == this`. Extra message keys are `parseVM` identity checks only; the delivery instruction itself is guardian-signed. Replay of a success hash skips the target call and refunds from the new `msg.value` (relayer-funded), not vault balance.
+- `send` `checkMsgValue` requires exact `deliveryPrice + extra + wormholeFee`. `publishAndPay` publishes the instruction and pays the provider that quote.
+- Governance `verifyAndConsumeGovernanceVM` requires a valid VAA from the core `governanceChainId` / `governanceContract`, then consumes `vm.hash`. Module must be `WormholeRelayer`. This contract does not custody user tokens.
+
+Do not file a guardian-gated delivery or an exact-value send as stranger theft.
+
+Not submitted. Payment requires user KYC. Official Wormhole GitHub + Relayer assets are leftover-logged. Remaining listed: Filecoin remaining go-* / lotus (avoid collision).
