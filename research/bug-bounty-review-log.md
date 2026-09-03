@@ -74289,3 +74289,20 @@ Result: no user-exploitable finding. Not submitted.
 Time spent: roughly 35 minutes on hdwallet only. Remaining Quantus scope: mobile SDK, Poseidon circuits (`audit-comp-quantus-qp-poseidon`), dilithium crate sibling, quantus-apps. Submission requires Immunefi account.
 
 Not submitted. Next unused Immunefi program: Quantus Poseidon/circuits or ENS portal/manager if continuing audit comps.
+
+## 2026-09-03: Quantus audit competition Poseidon core (`f885ad5`)
+
+Immunefi program `audit-comp-quantus` ($20,000 pool, `kyc: false`). In-scope tree `immunefi-team/audit-comp-quantus-qp-poseidon` branch `audit-comp-ready`. Pin `f885ad5` (`f885ad5dce133557cb3f7cce3f2ab29539008e7f`). Local clone `/tmp/quantus-poseidon`. Reviewed `src/{lib,poseidon2,goldilocks,serialization}.rs` and security tests (`non_canonical_limbs`, `digest_limb_truncation`, `alloc_bounds`, `stack_zeroization`). No mainnet interaction. No exploit PoCs.
+
+Checked for: hash collision via non-canonical Goldilocks limbs in digest re-hash; sponge state leakage after hash; unbounded allocation on attacker-controlled byte inputs; preimage confusion between 4-byte/felt and 8-byte/felt encodings; incorrect double-hash / wormhole chain semantics.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `rehash_to_bytes` and `bytes_to_digest` reject limbs `>= P` to block digest aliasing collisions.
+- `Poseidon2State` wipes absorbed input and squeezed output on `Drop` (including unwind); finalize uses in-place API to avoid moved stack copies.
+- Byte streaming uses injective 4-bytes/felt encoding with terminator; digest encoding is separate 8-bytes/felt canonical form.
+- Dedicated tests pin non-canonical rejection, allocation bounds, and stack zeroization.
+
+Time spent: roughly 25 minutes on Poseidon core only. Remaining Quantus scope: ZK circuits crate, mobile SDK, quantus-apps. Submission requires Immunefi account.
+
+Not submitted. Next unused Immunefi program: Quantus ZK circuits or ENS portal/manager if continuing audit comps.
