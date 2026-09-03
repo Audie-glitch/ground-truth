@@ -35757,14 +35757,16 @@ user KYC.
 Remaining listed:
 ServiceRegistry /
 ServiceManager /
-governance
-(GovernorOLAS /
-Timelock /
-VoteWeighting) /
-LiquidityManager /
 Tokenomics /
-remaining
-L2 factories.
+LiquidityManager
+(now leftover-
+logged);
+remaining L2
+ServiceRegistry /
+deposit
+processors /
+oracles /
+proxy 404s.
 
 ## 2026-09-03: The Graph leftover remaining Curation + Dispute leftover (Sourcify)
 
@@ -35932,7 +35934,426 @@ L2GraphTokenGateway
 404 /
 L2GNS /
 AllocationExchange /
-GraphTallyCollector /
+GraphTallyCollector
+(now leftover-
+logged);
+Governor /
+TokenLockWallet.
+
+## 2026-09-03: Mars leftover BSC swap + farm leftover (Sourcify)
+
+Immunefi program
+`marsecosystem`
+($10,000,
+`kyc: false`).
+Unique unused
+standing program.
+Sourcify BSC
+Core
+`0x00789Cfb69499c65ac9A3a68fb4917c9b4FcA2a7`,
+MarsSwapFactory
+`0x6f12482D9869303B998C54D91bCD8bCcba81f3bE`,
+MarsSwapRouter
+`0xb68825C810E67D4e444ad5B9DeB55BA56A66e72D`,
+AirDrop
+`0x01D152fF991E76b6cb310387c07cAfdFda790a25`,
+Timelock
+`0xC35a8BdBB93abFAb362aF6dC3383cD2c6aEA6cBc`,
+LiquidityMiningMaster
+`0xc7B8285a9E099e8c21CA5516D23348D8dBADdE4a`,
+LiquidityMiningMaster
+V1.1
+`0x22D8d50454203bd5a41B49ef515891f1aD9f3e53`,
+VestingMaster
+`0x381Facb9282770a5E3Ac6c8637096b442039C3dB`.
+XMS
+`0x7859B01BbF675d67Da8cD128a50D155cd881B576`
+Sourcify 404.
+Extract
+`/tmp/mars-core`,
+`/tmp/mars-factory`,
+`/tmp/mars-router`,
+`/tmp/mars-airdrop`,
+`/tmp/mars-timelock`,
+`/tmp/mars-lm`,
+`/tmp/mars-lm11`,
+`/tmp/mars-vest`.
+No mainnet
+writes.
+
+Files:
+`contracts/core/Core.sol`,
+`contracts/liquidity/MarsSwapRouter.sol`,
+`contracts/liquidity/LiquidityMiningMaster.sol`,
+`contracts/liquidity/VestingMaster.sol`,
+`contracts/airdrop/AirDrop.sol`.
+
+Checked for:
+farm
+withdraw of
+another
+account's LP;
+router swap
+that spends
+another
+account;
+airdrop claim
+of another
+account's
+allocation.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `Core` is
+  governor-gated
+  role /
+  token
+  wiring.
+  Listed
+  `XMSToken.mint`
+  in the Core
+  extract is
+  `onlyGovernor`.
+- Router
+  `addLiquidity`
+  /
+  swaps
+  `safeTransferFrom(msg.sender)`
+  or spend
+  `msg.value`
+  (Uniswap V2
+  clone).
+- Farm
+  `deposit`
+  `safeTransferFrom(msg.sender)`
+  and credits
+  `userInfo[pid][msg.sender]`.
+  `withdraw`
+  /
+  `emergencyWithdraw`
+  pay
+  `msg.sender`.
+- `VestingMaster.lock`
+  is
+  `onlyFarms`.
+  `claim` pays
+  matured
+  locks of
+  `msg.sender`.
+- `AirDrop.claim`
+  pays the
+  recorded
+  `userClaimed[msg.sender].amount`
+  once.
+  `addList` /
+  `recover`
+  are
+  governor-only.
+
+Do not file
+Uniswap-style
+router
+transfers of
+the caller,
+MasterChef
+deposit /
+withdraw of
+the caller's
+LP, or
+airdrop claim
+of the
+caller's
+recorded
+allocation.
+
+Not submitted.
+Remaining listed:
+XMS Sourcify
+404 /
+website.
+
+## 2026-09-03: Autonolas leftover remaining Tokenomics + ServiceRegistry leftover (Sourcify)
+
+Immunefi program
+`autonolas`
+($5,000,
+`kyc: true`).
+Already leftover-
+logged as
+Depository /
+Treasury, L2
+dispenser,
+Bridge2Burner,
+and
+marketplace.
+Sourcify ETH
+Tokenomics
+`0xaeeC8bC8E5Fe28BC4dF2e9586b222924b8a0d5e9`,
+TokenomicsProxy
+`0xc096362fa6f4A4B1a9ea68b1043416f3381ce300`,
+LiquidityManagerETH
+`0x0171D7178fbf3B48E75675DEE2EA3EfecEf775C1`,
+ServiceRegistry
+`0x48b6af7B12C71f09e2fC8aF4855De4Ff54e775cA`,
+ServiceManager
+`0x4443ddD8EC67CbCf7E291ee3198f81dD0326b3A1`,
+ServiceRegistryTokenUtility
+`0x3Fb926116D454b95c669B6Bf2E7c3bad8d19affA`,
+GovernorOLAS
+`0x060D0CBdDFb0498d610E2EF55C01516B5B1251E6`.
+ServiceManagerProxy
+and
+LiquidityManagerProxy
+Sourcify 404.
+Extract
+`/tmp/olas-tokenomics`,
+`/tmp/olas-tok-proxy`,
+`/tmp/olas-liq-eth`,
+`/tmp/olas-svc-reg`,
+`/tmp/olas-svc-mgr-impl`,
+`/tmp/olas-svc-util`,
+`/tmp/olas-gov`.
+No mainnet
+writes.
+
+Files:
+`contracts/Tokenomics.sol`,
+`contracts/pol/LiquidityManagerETH.sol`,
+`contracts/pol/LiquidityManagerCore.sol`,
+`contracts/ServiceRegistry.sol`,
+`contracts/ServiceRegistryTokenUtility.sol`.
+
+Checked for:
+permissionless
+tokenomics
+payout of
+another
+account;
+service
+bond that
+pulls another
+owner;
+POL collect
+that steals
+user LP.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `Tokenomics.checkpoint`
+  is
+  permissionless
+  epoch close
+  after
+  `epochLen`
+  and not in
+  the same
+  block as a
+  donation
+  (flash-loan
+  guard).
+  It
+  rebalances
+  protocol
+  accounting,
+  not user
+  wallets.
+- `LiquidityManagerETH`
+  manages
+  protocol-owned
+  Uniswap
+  positions
+  and
+  `_burn`s
+  this
+  contract's
+  OLAS.
+  `collectFees`
+  is
+  permissionless
+  of
+  protocol
+  position
+  fees
+  (owner
+  gates
+  config).
+- `ServiceRegistry.activateRegistration`
+  /
+  `registerAgents`
+  /
+  `terminate`
+  /
+  `unbond`
+  are
+  manager-only
+  and refund
+  the recorded
+  owner /
+  operator.
+- `ServiceRegistryTokenUtility.activateRegistrationTokenDeposit`
+  is
+  manager-only
+  and
+  `transferFrom`
+  the service
+  owner.
+  `GovernorOLAS`
+  is
+  Governor-style
+  voting
+  (no user
+  token
+  pull).
+
+Do not file
+permissionless
+epoch
+`checkpoint`,
+permissionless
+`collectFees`
+of
+protocol-owned
+Uniswap
+fees, or
+manager-gated
+service bond
+refund to
+the recorded
+owner.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+ServiceManagerProxy
+404 /
+LiquidityManagerProxy
+404 /
+L2 ServiceRegistry /
+deposit processors /
+oracles /
+Governor
+timelock /
+VoteWeighting.
+
+## 2026-09-03: The Graph leftover remaining AllocationExchange + Tally leftover (Sourcify)
+
+Immunefi program
+`thegraph`
+($50,000,
+`kyc: true`).
+Already leftover-
+logged as ETH
+L1 staking,
+Arb Horizon +
+payments, and
+Curation +
+Dispute.
+Sourcify Arb
+AllocationExchange
+`0x993F00C98D1678371a7b261Ed0E0D4b6F42d9aEE`,
+GraphTallyCollector
+`0x8f69F5C07477Ac46FBc491B1E6D91E2bb0111A9e`.
+L2GNS proxy
+`0xec9A7fb6CbC2E41926127929c2dcE6e9c5D33Bec`
+is
+`GraphProxy`
+(impl
+`0x9B81c7C5A21E65b849FD487540B0A82d3b97b2c7`
+not extracted
+this leftover).
+Extract
+`/tmp/graph-alloc-ex`,
+`/tmp/graph-tally`.
+No mainnet
+writes.
+
+Files:
+`contracts/statechannels/AllocationExchange.sol`,
+`contracts/payments/collectors/GraphTallyCollector.sol`.
+
+Checked for:
+permissionless
+redeem of an
+unsigned
+voucher to
+an
+attacker;
+tally collect
+that drains
+another
+payer without
+an authorized
+RAV.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `AllocationExchange.redeem`
+  is
+  permissionless
+  after an
+  authority
+  ECDSA
+  voucher.
+  It calls
+  `staking.collect`
+  for the
+  recorded
+  `allocationID`
+  and marks
+  it redeemed
+  once.
+  `withdraw`
+  is
+  governor-only.
+- `GraphTallyCollector.collect`
+  requires
+  `msg.sender
+  ==
+  rav.dataService`,
+  an
+  authorized
+  RAV signer
+  for the
+  payer, and
+  an active
+  provision.
+  It spends
+  escrow of
+  the signed
+  payer up
+  to the
+  unused
+  aggregate.
+
+Do not file
+permissionless
+redeem of an
+authority-signed
+allocation
+voucher or
+data-service
+collect of
+an
+authorized
+RAV.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+L2GraphTokenGateway
+404 /
+L2GNS impl /
 Governor /
 TokenLockWallet.
 
@@ -37845,10 +38266,11 @@ marketplace leftover
 Karma / balance trackers /
 registries; KYC) is logged
 (remaining listed is
-ServiceRegistry /
-ServiceManager / governance /
-LiquidityManager /
-Tokenomics);
+L2 ServiceRegistry /
+deposit processors / oracles /
+proxy 404s after Tokenomics +
+ServiceRegistry leftover is
+leftover-logged);
 The Graph leftover remaining
 Arb Horizon + payments leftover
 (Sourcify HorizonStaking /
@@ -37870,8 +38292,35 @@ L2Curation / DisputeManager /
 SubgraphService; KYC) is
 logged (remaining listed is
 L2GraphTokenGateway 404 /
-L2GNS / AllocationExchange /
-GraphTallyCollector);
+L2GNS impl / Governor /
+TokenLockWallet after
+AllocationExchange + Tally
+leftover is leftover-logged);
+The Graph leftover remaining
+AllocationExchange + Tally leftover
+(Sourcify AllocationExchange /
+GraphTallyCollector; KYC) is
+logged (remaining listed is
+L2GraphTokenGateway 404 /
+L2GNS impl / Governor /
+TokenLockWallet);
+Autonolas leftover remaining
+Tokenomics + ServiceRegistry leftover
+(Sourcify Tokenomics /
+LiquidityManagerETH /
+ServiceRegistry /
+ServiceRegistryTokenUtility;
+KYC) is logged (remaining
+listed is L2 ServiceRegistry /
+deposit processors / oracles /
+proxy 404s);
+Mars leftover BSC swap + farm leftover
+(Sourcify Core / Router /
+LiquidityMiningMaster /
+VestingMaster / AirDrop;
+no KYC) is logged
+(remaining listed is XMS
+Sourcify 404 / website);
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed

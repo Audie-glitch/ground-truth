@@ -170,6 +170,11 @@ The Graph leftover remaining
 Arb Horizon + payments leftover is logged;
 The Graph leftover remaining
 Curation + Dispute leftover is logged;
+The Graph leftover remaining
+AllocationExchange + Tally leftover is logged;
+Autonolas leftover remaining
+Tokenomics + ServiceRegistry leftover is logged;
+Mars leftover BSC swap + farm leftover is logged;
 Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
 KeeperHub
@@ -818,10 +823,11 @@ marketplace leftover
 Karma / balance trackers /
 registries; KYC) is logged
 (remaining listed is
-ServiceRegistry /
-ServiceManager / governance /
-LiquidityManager /
-Tokenomics).
+L2 ServiceRegistry /
+deposit processors / oracles /
+proxy 404s after Tokenomics +
+ServiceRegistry leftover is
+leftover-logged).
 The Graph leftover remaining
 Arb Horizon + payments leftover
 (Sourcify HorizonStaking /
@@ -843,8 +849,35 @@ L2Curation / DisputeManager /
 SubgraphService; KYC) is
 logged (remaining listed is
 L2GraphTokenGateway 404 /
-L2GNS / AllocationExchange /
-GraphTallyCollector).
+L2GNS impl / Governor /
+TokenLockWallet after
+AllocationExchange + Tally
+leftover is leftover-logged).
+The Graph leftover remaining
+AllocationExchange + Tally leftover
+(Sourcify AllocationExchange /
+GraphTallyCollector; KYC) is
+logged (remaining listed is
+L2GraphTokenGateway 404 /
+L2GNS impl / Governor /
+TokenLockWallet).
+Autonolas leftover remaining
+Tokenomics + ServiceRegistry leftover
+(Sourcify Tokenomics /
+LiquidityManagerETH /
+ServiceRegistry /
+ServiceRegistryTokenUtility;
+KYC) is logged (remaining
+listed is L2 ServiceRegistry /
+deposit processors / oracles /
+proxy 404s).
+Mars leftover BSC swap + farm leftover
+(Sourcify Core / Router /
+LiquidityMiningMaster /
+VestingMaster / AirDrop;
+no KYC) is logged
+(remaining listed is XMS
+Sourcify 404 / website).
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
@@ -1550,6 +1583,14 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   The Graph leftover remaining
   Curation + Dispute leftover
   (Sourcify; KYC),
+  The Graph leftover remaining
+  AllocationExchange + Tally leftover
+  (Sourcify; KYC),
+  Autonolas leftover remaining
+  Tokenomics + ServiceRegistry leftover
+  (Sourcify; KYC),
+  Mars leftover BSC swap + farm leftover
+  (Sourcify; no KYC),
   Serai leftover bitcoin-serai
   leftover (`4b89cf02`; KYC),
   Pragma leftover cairo oracle
