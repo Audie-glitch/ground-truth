@@ -22613,6 +22613,130 @@ onchain-mon are
 ops or web.
 
 
+## 2026-09-03: Lido dual-governance Escrow leftover (`ba9dfc9`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). `core`,
+`lido-l2`,
+`lido-l2-with-steth`,
+circuit-breaker,
+vesting, and stonks
+are already logged.
+This slice is the
+Escrow money path in
+`dual-governance`.
+Local clone
+`/tmp/lidofinance-dual-governance`
+at `ba9dfc9`. No
+mainnet interaction.
+
+Files:
+`contracts/Escrow.sol`,
+`libraries/AssetsAccounting.sol`.
+
+Checked for: a
+stranger unlock that
+returns another
+vetoer’s stETH;
+rage-quit
+`withdrawETH` that
+pays a caller who
+did not lock;
+unstETH claim that
+credits the caller;
+pro-rata withdraw
+that can be drained
+by a late lock.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Signalling
+  `lockStETH` /
+  `lockWstETH` pull
+  `msg.sender` then
+  credit that
+  holder’s shares.
+  `unlock*` require
+  the min lock
+  duration and pay
+  only the holder’s
+  accounted shares
+  (wstETH wrap is
+  after unlock
+  accounting).
+  `lockUnstETH` /
+  `unlockUnstETH`
+  transfer NFTs
+  only after
+  `accountUnstETH*`
+  binds
+  `lockedBy ==
+  holder`.
+  Finalized /
+  already-locked
+  NFTs revert.
+- `startRageQuit`
+  and
+  `setMinAssetsLockDuration`
+  are DualGovernance
+  only. After rage
+  quit, lock /
+  unlock are
+  blocked by
+  `checkSignallingEscrow`.
+- `withdrawETH()`
+  is holder-only.
+  It zeros that
+  holder’s shares
+  and pays
+  `claimedETH *
+  holderShares /
+  totals.lockedShares`.
+  Totals stay
+  fixed so later
+  holders cannot
+  inflate the
+  denominator.
+  Dust stays in
+  the contract.
+- `withdrawETH(ids)`
+  requires each
+  record
+  `Claimed` and
+  `lockedBy ==
+  msg.sender`, then
+  marks
+  `Withdrawn`.
+  `claimUnstETH` is
+  permissionless
+  but ETH stays in
+  the Escrow;
+  accounting
+  asserts the
+  balance delta
+  equals the
+  claimable sum.
+
+Not submitted.
+Remaining
+dual-governance:
+`DualGovernance.sol`,
+EmergencyProtectedTimelock,
+committees,
+ResealManager.
+Remaining Lido
+listed GitHub:
+CSM / easy-track /
+governance bridges.
+0.8.25 vault leftover
+is already logged on
+`2da0f48`.
+
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -22926,10 +23050,13 @@ vesting-escrow + stonks leftover
 (`badf17c` / `6829a5a` / `580f802` /
 `a7812a4`) is logged.
 Lido `lido-l2-with-steth` leftover
-(`4fec842`) is logged (remaining
-Lido is `dual-governance` / CSM /
-easy-track / governance bridges /
-0.8.25 vaults).
+(`4fec842`) is logged.
+Lido dual-governance Escrow leftover
+(`ba9dfc9`) is logged (remaining
+dual-governance is DualGovernance /
+timelock / committees;
+remaining Lido is CSM /
+easy-track / governance bridges).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -23257,10 +23384,12 @@ Lido `lido-l2-with-steth`
 leftover (`4fec842`) is
 logged.
 Lido 0.8.25 vault leftover
-(`2da0f48`) is logged
-(remaining Lido is
-CSM / dual-governance /
-easy-track /
+(`2da0f48`) is logged.
+Lido dual-governance Escrow
+leftover (`ba9dfc9`) is
+logged (remaining Lido is
+DualGovernance / timelock /
+CSM / easy-track /
 governance bridges);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
