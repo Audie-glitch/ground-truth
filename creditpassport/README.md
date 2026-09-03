@@ -47,7 +47,9 @@ Three parts:
 1. **Contracts** (`contracts/`, Foundry).
    - `source/PaymentRail.sol` on the source chain settles invoices in a test
      stablecoin and emits `InvoicePaid(invoiceId, payer, payee, amount,
-     dueBlock, paidBlock)`.
+     dueBlock, paidBlock)`. Plain `Transfer` logs of a registered settlement
+     token (Circle's Sepolia USDC by default) count too, as undated payments,
+     so any address with real USDC activity can build a passport.
    - `AttestedBase.sol` on Creditcoin verifies proofs through the Native Query
      Verifier precompile. Modeled on `ASCBase` from `@gluwa/asc-contracts`; it
      keeps the same query-id replay protection and adds source-chain binding
@@ -134,11 +136,15 @@ cd ../agent && npm install && cp .env.example .env   # set AGENT_PRIVATE_KEY
 npm run cli -- chains                                # which chains Creditcoin attests, and how far behind
 npm run cli -- pay --payee 0xMerchant --amount 250   # settle an invoice on Sepolia (add --late to miss the due block)
 npm run agent                                        # scan, wait for attestation, prove, submit, underwrite
+npm run cli -- import 0xAnyone                       # passport from an address's real Sepolia USDC transfers (batched proofs)
 npm run cli -- profile 0xPayer                       # verified history, score, limit, memo
 ```
 
 The agent reads contract addresses from `contracts/deployments/*.json` written
 by the deploy scripts, or from `*_ADDRESS` environment variables.
+`ATTESTATION_RPC_URL` lets the prover and attestation reads target the real
+CC3 testnet while the ledger runs on a local anvil; with it, `import` pulls a
+real address's USDC history into the local demo passport.
 
 Status endpoint while the agent runs: `http://127.0.0.1:47391/status`.
 

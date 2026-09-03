@@ -38,6 +38,10 @@ const USAGE = `CreditPassport agent
                                         continuity proof. No key, no gas.
   prove <sepoliaTxHash> [--action InvoicePaid|TokenTransfer]
                                         Wait for attestation, fetch the proof, submit it to CreditPassport
+  import <payer> [--lookback 20000] [--max 10]
+                                        Build a passport from the payer's real settlement-token (USDC)
+                                        transfers on Sepolia: prove up to --max attested transfers within
+                                        the prover's 1000-block batch range, submit, then underwrite
   underwrite <payer>                    Score and underwrite a payer now
   profile <payer>                       Show a payer's verified history, score, limit, and memo
 `;
@@ -61,7 +65,7 @@ async function main(): Promise<void> {
       requireAgentKey(cfg);
       const store = new StateStore(cfg.stateDir);
       const chains = connect(cfg);
-      const proofs = new ProofService(cfg, chains.creditcoin);
+      const proofs = new ProofService(cfg, chains.attestation);
       const agent = new Agent(cfg, store, chains, proofs);
       startStatusServer(cfg, store, chains, proofs);
       store.log("info", `agent ${chains.agent?.address} watching rail ${cfg.paymentRail}, passport ${cfg.creditPassport}`);
@@ -83,7 +87,7 @@ async function main(): Promise<void> {
     case "status": {
       requireDeployed(cfg);
       const chains = connect(cfg);
-      const proofs = new ProofService(cfg, chains.creditcoin);
+      const proofs = new ProofService(cfg, chains.attestation);
       const store = new StateStore(cfg.stateDir);
       const [sepolia, creditcoin, attested] = await Promise.all([
         chains.sepolia.getBlockNumber(),
@@ -102,7 +106,7 @@ async function main(): Promise<void> {
 
     case "chains": {
       const chains = connect({ ...cfg, creditPassport: cfg.creditPassport || "0x0000000000000000000000000000000000000001", paymentRail: cfg.paymentRail || "0x0000000000000000000000000000000000000001", settlementToken: cfg.settlementToken || "0x0000000000000000000000000000000000000001" });
-      const proofs = new ProofService(cfg, chains.creditcoin);
+      const proofs = new ProofService(cfg, chains.attestation);
       for (const c of await proofs.supportedChains()) {
         const latest = await proofs.info.getLatestAttestedHeightAndHash(c.chainKey);
         const name = c.chainName.startsWith("0x") ? toUtf8String(c.chainName).replace(/\0+$/, "") : c.chainName;
@@ -119,7 +123,7 @@ async function main(): Promise<void> {
         paymentRail: cfg.paymentRail || placeholder,
         settlementToken: cfg.settlementToken || placeholder,
       });
-      const proofs = new ProofService(cfg, chains.creditcoin);
+      const proofs = new ProofService(cfg, chains.attestation);
       const attested = await proofs.latestAttestedHeight();
       let txHash = args[0];
 
@@ -166,7 +170,7 @@ async function main(): Promise<void> {
         paymentRail: cfg.paymentRail || placeholder,
         settlementToken: cfg.settlementToken || placeholder,
       });
-      const proofs = new ProofService(cfg, chains.creditcoin);
+      const proofs = new ProofService(cfg, chains.attestation);
       const attested = await proofs.latestAttestedHeight();
       const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
@@ -273,7 +277,7 @@ async function main(): Promise<void> {
       if (!payee || !amountArg) throw new Error("pay requires --payee and --amount");
       const chains = connect(cfg);
       const payer = new Wallet(key, chains.sepolia);
-      const token = new Contract(cfg.settlementToken, ABI.TestUSD, payer);
+      const token = new Contract(cfg.railToken, ABI.TestUSD, payer);
       const rail = new Contract(cfg.paymentRail, ABI.PaymentRail, payer);
       const amount = parseUnits(amountArg, 6);
 
@@ -313,7 +317,7 @@ async function main(): Promise<void> {
       const actionName = (flag(args, "action") ?? "InvoicePaid") as ActionName;
       if (!(actionName in ACTION)) throw new Error(`unknown action ${actionName}`);
       const chains = connect(cfg);
-      const proofs = new ProofService(cfg, chains.creditcoin);
+      const proofs = new ProofService(cfg, chains.attestation);
 
       const receipt = await chains.sepolia.getTransactionReceipt(txHash);
       if (!receipt) throw new Error("transaction not found on the source chain");
@@ -345,6 +349,21 @@ async function main(): Promise<void> {
       return;
     }
 
+    case "import": {
+      requireDeployed(cfg);
+      requireAgentKey(cfg);
+      const payer = args.find((a) => a.startsWith("0x"));
+      if (!payer) throw new Error("import requires a payer address");
+      const store = new StateStore(cfg.stateDir);
+      const chains = connect(cfg);
+      const proofs = new ProofService(cfg, chains.attestation);
+      const agent = new Agent(cfg, store, chains, proofs);
+      const recorded = await agent.importTransfers(payer, Number(flag(args, "lookback") ?? 20_000), Number(flag(args, "max") ?? 10));
+      store.save();
+      console.log(`${recorded} transfer(s) recorded for ${payer}${recorded > 0 ? "; underwritten" : ""}`);
+      return;
+    }
+
     case "underwrite": {
       requireDeployed(cfg);
       requireAgentKey(cfg);
@@ -352,7 +371,7 @@ async function main(): Promise<void> {
       if (!payer) throw new Error("underwrite requires a payer address");
       const store = new StateStore(cfg.stateDir);
       const chains = connect(cfg);
-      const proofs = new ProofService(cfg, chains.creditcoin);
+      const proofs = new ProofService(cfg, chains.attestation);
       await new Agent(cfg, store, chains, proofs).underwrite(payer);
       store.save();
       return;

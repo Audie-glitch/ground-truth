@@ -200,6 +200,90 @@ export class Agent {
     delete p.lastError;
   }
 
+  // ------------------------------------------------------------------ 3b. import a payer's real settlement-token transfers
+
+  /**
+   * Builds history for `payer` from plain `Transfer` logs of the settlement token (USDC on Sepolia by
+   * default): finds attested transfers sent by the payer, skips ones already on the passport, proves up to
+   * `max` of the newest within the prover's 1000-block batch range, and submits them as undated payments.
+   * Returns the number of payments recorded in this call.
+   */
+  async importTransfers(payer: string, lookbackBlocks = 20_000, max = 10): Promise<number> {
+    if (!this.chains.agent) throw new Error("agent key not configured; cannot submit proofs");
+    const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+    const [head, attested] = await Promise.all([this.chains.sepolia.getBlockNumber(), this.proofs.latestAttestedHeight()]);
+    const toBlock = Math.min(head, attested);
+    const fromBlock = Math.max(0, toBlock - lookbackBlocks);
+    const topicPayer = `0x${payer.toLowerCase().replace("0x", "").padStart(64, "0")}`;
+
+    const candidates: Array<{ txHash: string; block: number; index: number }> = [];
+    for (let from = fromBlock; from <= toBlock; from += 5_000) {
+      const to = Math.min(toBlock, from + 4_999);
+      const logs = await this.chains.sepolia.getLogs({
+        address: this.cfg.settlementToken,
+        topics: [TRANSFER_TOPIC, topicPayer],
+        fromBlock: from,
+        toBlock: to,
+      });
+      for (const log of logs) {
+        if (!candidates.some((c) => c.txHash === log.transactionHash)) {
+          candidates.push({ txHash: log.transactionHash, block: log.blockNumber, index: log.transactionIndex });
+        }
+      }
+    }
+    this.store.log("info", `import ${payer}: ${candidates.length} settlement-token transfer(s) in attested blocks ${fromBlock}-${toBlock}`);
+    if (candidates.length === 0) return 0;
+
+    candidates.sort((a, b) => b.block - a.block);
+    const newest = candidates[0]!;
+    const fresh: typeof candidates = [];
+    for (const c of candidates) {
+      if (newest.block - c.block > 1_000 || fresh.length >= max) break;
+      const queryId = queryIdFor(this.proofs.chainKey, c.block, c.index);
+      if (!(await fn(this.chains.passport, "processedQueries")(queryId))) fresh.push(c);
+    }
+    if (fresh.length === 0) {
+      this.store.log("info", `import ${payer}: every recent transfer is already on the passport`);
+      return 0;
+    }
+
+    let recorded = 0;
+    if (fresh.length >= 2) {
+      try {
+        const proof = await this.proofs.getBatchProof(fresh.map((c) => c.txHash));
+        const { args, entries } = executeBatchArgs(ACTION.TokenTransfer, proof);
+        await fn(this.chains.passport, "executeBatch").staticCall(...args);
+        const gas = padGas(await fn(this.chains.passport, "executeBatch").estimateGas(...args));
+        const tx = await fn(this.chains.passport, "executeBatch")(...args, { gasLimit: gas });
+        const receipt = await tx.wait();
+        if (!receipt || receipt.status !== 1) throw new Error(`executeBatch reverted in ${tx.hash}`);
+        recorded = entries.length;
+        this.store.log("info", `import ${payer}: executeBatch recorded ${entries.length} transfer(s) in ${tx.hash}`);
+      } catch (err) {
+        this.store.log("warn", `import ${payer}: batch failed, falling back to single proofs: ${describeRevert(this.chains.passport, err)}`);
+      }
+    }
+    if (recorded === 0) {
+      for (const c of fresh) {
+        try {
+          const proof = await this.proofs.getProof(c.txHash);
+          const args = executeArgs(ACTION.TokenTransfer, proof);
+          await fn(this.chains.passport, "execute").staticCall(...args);
+          const gas = padGas(await fn(this.chains.passport, "execute").estimateGas(...args));
+          const tx = await fn(this.chains.passport, "execute")(...args, { gasLimit: gas });
+          const receipt = await tx.wait();
+          if (!receipt || receipt.status !== 1) throw new Error(`execute reverted in ${tx.hash}`);
+          recorded += 1;
+          this.store.log("info", `import ${payer}: recorded ${c.txHash} in ${tx.hash}`);
+        } catch (err) {
+          this.store.log("warn", `import ${payer}: ${c.txHash} failed: ${describeRevert(this.chains.passport, err)}`);
+        }
+      }
+    }
+    if (recorded > 0) await this.underwrite(payer);
+    return recorded;
+  }
+
   // ------------------------------------------------------------------ 4. underwrite anyone whose history changed
 
   async underwriteDirty(): Promise<void> {

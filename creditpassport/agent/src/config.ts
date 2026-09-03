@@ -13,12 +13,18 @@ loadDotenv({ path: join(AGENT_ROOT, ".env"), quiet: true });
 export interface AgentConfig {
   sepoliaRpcUrl: string;
   creditcoinRpcUrl: string;
+  /** RPC used for attestation queries and proof pre-flight; defaults to creditcoinRpcUrl. Point it at the
+   *  real CC3 testnet when the passport itself runs on a local anvil. */
+  attestationRpcUrl: string;
   proofBuilderUrl: string;
   sourceChainKey: number;
   agentPrivateKey: string | undefined;
   payerPrivateKey: string | undefined;
   creditPassport: string;
   paymentRail: string;
+  /** Token the PaymentRail settles in; the demo `pay` command mints and approves it. */
+  railToken: string;
+  /** Token whose plain Transfer logs the passport accepts as undated payments (Sepolia USDC by default). */
   settlementToken: string;
   creditToken: string | undefined;
   pollIntervalMs: number;
@@ -30,6 +36,7 @@ export interface AgentConfig {
 
 interface Deployments {
   paymentRail?: string;
+  railToken?: string;
   settlementToken?: string;
   creditPassport?: string;
   creditToken?: string;
@@ -84,12 +91,17 @@ export function loadConfig(): AgentConfig {
   return {
     sepoliaRpcUrl: process.env.SEPOLIA_RPC_URL?.trim() || "https://ethereum-sepolia-rpc.publicnode.com",
     creditcoinRpcUrl: process.env.CREDITCOIN_RPC_URL?.trim() || "https://rpc.cc3-testnet.creditcoin.network",
+    attestationRpcUrl:
+      process.env.ATTESTATION_RPC_URL?.trim() ||
+      process.env.CREDITCOIN_RPC_URL?.trim() ||
+      "https://rpc.cc3-testnet.creditcoin.network",
     proofBuilderUrl: process.env.PROOF_BUILDER_URL?.trim() || "https://prover.cc3-testnet.creditcoin.network",
     sourceChainKey: intEnv("SOURCE_CHAIN_KEY", 1),
     agentPrivateKey: optionalKey("AGENT_PRIVATE_KEY") ?? optionalKey("TESTNET_DEPLOYER_PRIVATE_KEY"),
     payerPrivateKey: optionalKey("PAYER_PRIVATE_KEY"),
     creditPassport: optionalAddress("CREDIT_PASSPORT_ADDRESS", deployments.creditPassport) ?? "",
     paymentRail: optionalAddress("PAYMENT_RAIL_ADDRESS", deployments.paymentRail) ?? "",
+    railToken: optionalAddress("RAIL_TOKEN_ADDRESS", deployments.railToken ?? deployments.settlementToken) ?? "",
     settlementToken: optionalAddress("SETTLEMENT_TOKEN_ADDRESS", deployments.settlementToken) ?? "",
     creditToken: optionalAddress("CREDIT_TOKEN_ADDRESS", deployments.creditToken),
     pollIntervalMs: intEnv("POLL_INTERVAL_MS", 15_000),
@@ -105,7 +117,7 @@ export function loadConfig(): AgentConfig {
 }
 
 export function requireDeployed(cfg: AgentConfig): void {
-  const missing = (["creditPassport", "paymentRail", "settlementToken"] as const).filter((k) => !cfg[k]);
+  const missing = (["creditPassport", "paymentRail", "railToken", "settlementToken"] as const).filter((k) => !cfg[k]);
   if (missing.length) {
     throw new Error(
       `Missing contract addresses: ${missing.join(", ")}. Run the deploy scripts in ../contracts or set the *_ADDRESS env vars.`,

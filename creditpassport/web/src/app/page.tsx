@@ -49,8 +49,9 @@ export default async function Home() {
               Proven payments
             </CardTitle>
             <CardDescription>
-              Every row on a passport is an <code>InvoicePaid</code> log decoded from a receipt whose inclusion the
-              Creditcoin verifier precompile checked. Late or on time is fixed by the source log itself.
+              Every row on a passport is an <code>InvoicePaid</code> log, or a plain USDC <code>Transfer</code>, decoded
+              from a receipt whose inclusion the Creditcoin verifier precompile checked. Late or on time is fixed by the
+              source log itself.
             </CardDescription>
           </CardHeader>
         </Card>

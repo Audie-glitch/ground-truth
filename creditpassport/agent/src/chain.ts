@@ -16,23 +16,32 @@ export const ABI = {
 export interface Chains {
   sepolia: JsonRpcProvider;
   creditcoin: JsonRpcProvider;
+  /** Provider for ChainInfo / verifier precompile reads; same as `creditcoin` unless ATTESTATION_RPC_URL is set. */
+  attestation: JsonRpcProvider;
   agent: Wallet | undefined;
   passport: Contract;
   rail: Contract;
+  railToken: Contract;
   settlementToken: Contract;
 }
 
 export function connect(cfg: AgentConfig): Chains {
   const sepolia = new JsonRpcProvider(cfg.sepoliaRpcUrl, undefined, { staticNetwork: true, polling: true });
   const creditcoin = new JsonRpcProvider(cfg.creditcoinRpcUrl, undefined, { staticNetwork: true, polling: true });
+  const attestation =
+    cfg.attestationRpcUrl === cfg.creditcoinRpcUrl
+      ? creditcoin
+      : new JsonRpcProvider(cfg.attestationRpcUrl, undefined, { staticNetwork: true, polling: true });
   const agent = cfg.agentPrivateKey ? new Wallet(cfg.agentPrivateKey, creditcoin) : undefined;
 
   return {
     sepolia,
     creditcoin,
+    attestation,
     agent,
     passport: new Contract(cfg.creditPassport, ABI.CreditPassport, agent ?? creditcoin),
     rail: new Contract(cfg.paymentRail, ABI.PaymentRail, sepolia),
+    railToken: new Contract(cfg.railToken, ABI.TestUSD, sepolia),
     settlementToken: new Contract(cfg.settlementToken, ABI.TestUSD, sepolia),
   };
 }

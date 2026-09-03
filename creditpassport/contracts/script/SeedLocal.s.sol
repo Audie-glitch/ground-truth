@@ -80,6 +80,7 @@ contract SeedLocal is Script {
         vm.serializeAddress(json, "creditToken", address(cUSD));
         vm.serializeAddress(json, "agent", deployer);
         vm.serializeAddress(json, "paymentRail", RAIL);
+        vm.serializeAddress(json, "railToken", SETTLEMENT_TOKEN);
         vm.serializeAddress(json, "settlementToken", SETTLEMENT_TOKEN);
         string memory out = vm.serializeAddress(json, "creditPassport", address(passport));
         vm.writeJson(out, "deployments/local.json");

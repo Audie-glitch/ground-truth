@@ -23,7 +23,7 @@ contract DeploySource is Script {
 
         string memory json = "source";
         vm.serializeUint(json, "chainId", block.chainid);
-        vm.serializeAddress(json, "settlementToken", address(token));
+        vm.serializeAddress(json, "railToken", address(token));
         string memory out = vm.serializeAddress(json, "paymentRail", address(rail));
         vm.writeJson(out, "deployments/source.json");
     }

@@ -32,6 +32,7 @@ npm run cli -- chains                           # Creditcoin attests Sepolia; sh
 npm run cli -- pay --payee 0x<merchant> --amount 250          # on time
 npm run cli -- pay --payee 0x<merchant> --amount 90 --late    # late
 npm run agent                                   # scans, waits ~7 min for attestation, proves, submits, underwrites
+npm run cli -- import 0x<any active Sepolia address>   # passport from real USDC transfers, batch-proved
 npm run cli -- profile 0x<payer>                # verified history, score, limit, memo
 cd ../web && npm run dev                        # http://127.0.0.1:43331/passport/0x<payer>
 ```
