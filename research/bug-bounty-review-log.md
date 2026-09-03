@@ -71912,3 +71912,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a gossip or req/resp handler as stranger theft of L2 ETH.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining `op-node` sequencing (`rollup/sequencing`) / websites if still unused.
+
+## 2026-09-03: Optimism leftover remaining op-node sequencing leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining listed after op-node p2p leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `op-node/rollup/sequencing/{sequencer,origin_selector,engine_iface,iface,disabled}.go`. Extract `/tmp/op-seq/`. Do not rematch deposits leftover, engine leftover, or p2p leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `FindL1Origin` that adopts a stranger or future L1 hash so deposits mint to a caller; `startBuildingBlock` that injects extra attributes; `RunAction` that commits a gossiped stranger envelope as the next unsafe head.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `FindL1Origin` / `findL1OriginOfNextL2Block` require `currentL1Origin.Hash == l2Head.L1Origin.Hash`. A next origin must be the immediate child (`ParentHash` match). A future L1 (negative drift) is not adopted. Missing next origin stays on current unless sequencer drift would be exceeded, then it fetches `current.Number+1` by number from the L1 source. Orphaned next origin and hash mismatch emit reset, not a built block.
+- `startBuildingBlock` builds attributes via `PreparePayloadAttributes(l2Head, l1Origin.ID())` (deposit decode already reviewed). `NoTxPool` is forced past max sequencer drift, on fork-activation blocks, and in recover mode. `StartBuild` is dropped on stale parent or invalid attributes.
+- `RunAction` seals only the in-flight job, then `conductor.CommitUnsafePayload`, then gossip, then `ProcessPayload`. Stale / denied / invalid payloads are dropped. The async-gossip buffer is a previously sealed local payload, not a peer insert. `DisabledSequencer` is a no-op.
+- This package does not send L1 transactions or mutate user balances. It is sequencer-operator local.
+
+Do not file an origin-selector or seal loop as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining `op-node` websites / other unused official leftovers if still open.
