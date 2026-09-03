@@ -15090,6 +15090,115 @@ Not submitted. Listed
 Raydium GitHub leftover
 is exhausted.
 
+## 2026-09-03: Rocket Pool v1.4 megapool dissolve / rewards / exit (`fb7d9c4`)
+
+Immunefi program
+`Rocket Pool`
+($150,000, `kyc: true`).
+Deposit / rETH / queue
+on the same pin
+`fb7d9c4` is already
+logged. This slice is
+megapool dissolve,
+reward split, and
+beacon exit notify.
+Local clone
+`/tmp/rocketpool`. No
+mainnet interaction.
+
+Files:
+`contracts/contract/megapool/RocketMegapoolDelegate.sol`
+(`dissolveValidator`,
+`distribute` /
+`_distributeAmount`,
+`claim`,
+`notifyExit`,
+`notifyFinalBalance`,
+`_notifyFinalBalance`,
+`challengeExit`,
+`getPendingRewards`,
+`_calculateCapitalDispersal`).
+
+Checked for: permissionless
+dissolve that recycles
+another node’s bond;
+`distribute` treating
+exit principal as
+rewards; claim to a
+stranger; final-balance
+that sends user capital
+to the node.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `dissolveValidator`
+  requires `inPrestake`.
+  Anyone may call after
+  `timeBeforeDissolve`;
+  the manager may skip
+  the wait. Penalty is
+  debt. Recycle is
+  `32 ETH - prestake`
+  split by the new bond
+  requirement. User
+  share returns to the
+  deposit pool; node
+  share goes to
+  `refundValue`. Lost
+  prestake is the
+  dissolve cost.
+- `getPendingRewards`
+  is `balance -
+  refundValue -
+  assignedValue`.
+  `distribute` is public
+  but reverts while
+  `numExitingValidators`
+  or `numLockedValidators`
+  is non-zero, so an
+  in-progress exit’s
+  withdrawal is not
+  treated as rewards.
+  The window before
+  `notifyExit` is oDAO
+  timing, not a
+  stranger extract.
+- Reward split uses
+  oDAO revenue shares
+  and the time-weighted
+  capital ratio. Node
+  share can repay debt;
+  the rest is
+  `refundValue`. User
+  share goes to rETH;
+  voter / pDAO shares
+  to those contracts.
+- `claim` is
+  megapool-owner only
+  and pays the node
+  withdrawal address.
+- `notifyExit` /
+  `notifyFinalBalance`
+  are manager-only.
+  Shortfall of user
+  capital becomes debt.
+  Node share takes the
+  first loss. Permissionless
+  final-balance waits
+  a configured delay
+  (longer if shortfall).
+
+Not submitted. Remaining
+Rocket Pool listed
+GitHub: minipool
+delegate leftover,
+vault, auction, DAO
+settings / voting,
+smoothing / rewards
+pool.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -15583,12 +15692,13 @@ admin / validator
 management);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue
-(`fb7d9c4`) is logged
-(remaining Rocket Pool
-is megapool
-stake/dissolve/rewards,
-minipool leftover,
-vault, auction, DAO);
+and dissolve / rewards /
+exit (`fb7d9c4`) are
+logged (remaining Rocket
+Pool is minipool leftover,
+vault, auction, DAO,
+smoothing / rewards
+pool);
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover
