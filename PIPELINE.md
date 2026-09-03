@@ -14,8 +14,8 @@ unofficial mirror rechecked 3 Sep. KeeperHub #2105 is claimed by PR #2275.
 EVM 15 Jul strategy leftover (Shard / BlocklistOracle / merkle
 validator / converters) is logged. Listed Silo V3 GitHub Solidity
 is exhausted. PancakeSwap Infinity leftover is logged. Pancake
-MasterChefV3 + LmPool leftover is logged (remaining Pancake is
-V3 core/periphery fork + V2 periphery). Mux3 core leftover is
+MasterChefV3 + LmPool + V2 periphery leftover is logged
+(remaining Pancake is V3 core/periphery fork). Mux3 core leftover is
 logged. Mux aggregator, degen pool, and protocol v1 core
 leftovers are logged (remaining Mux listed Solidity is
 mux-staking, GitHub 404 as of 3 Sep 2026). Threshold tBTC
