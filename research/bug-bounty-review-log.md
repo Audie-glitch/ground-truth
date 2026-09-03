@@ -43596,6 +43596,8 @@ Aave leftover remaining StakedAaveV3 leftover (`0c4cb0b`)
 is logged.
 Aave leftover remaining StakeToken leftover (`5346765`)
 is logged.
+Filecoin leftover remaining lotus node leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
 Remaining listed Aave: governance.
@@ -43624,6 +43626,7 @@ Do not rematch Filecoin lotus wallet leftover.
 Do not rematch Filecoin lotus sync leftover.
 Do not rematch Filecoin lotus stmgr leftover.
 Do not rematch Filecoin lotus store leftover.
+Do not rematch Filecoin lotus node leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Filecoin lotus market leftover.
 Do not rematch Aave ACL + PoolConfigurator leftover.
@@ -67385,3 +67388,19 @@ Do not file a cooldown-gated stake/redeem token as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: PriceOracleSentinel / OwnableFacilitator / governance.
 
+## 2026-09-03: Filecoin leftover remaining lotus node leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus store leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `node/impl`. Opened `full/multisig.go`, `full/wallet.go`, `full/gas.go`, `full/mpool.go`, `common/common.go`, and `backup.go`. Node JSON-RPC wrappers. Do not rematch lotus market / eth / paych / wallet / mpool / store leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `MsigPropose` / `MsigApprove` spending a multisig without a local key; `WalletSign` signing an address this node does not hold; `MpoolPushMessage` sending a stranger `From`; `backup` writing outside `LOTUS_BACKUP_BASE_PATH`.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Every `Msig*` helper returns a `MessagePrototype` (`From=src`, `ValidNonce=false`). It does not sign or `MpoolPush`. On-chain approve still requires the leftover-logged builtin-actors threshold.
+- `WalletSign` / `WalletSignMessage` resolve an ID to a deterministic key and call leftover-logged `Wallet.WalletSign` (keystore-only).
+- `MpoolPush` / `MpoolPushUntrusted` require a signed message plus `sanityCheckOutgoingMessage`. `MpoolPushMessage` estimates gas, requires nonce 0 and local `From` funds, then `MessageSigner.SignMessage` (local key) before push.
+- `GasEstimateMessageGas` only fills gas fields and `CapGasFee`. `backup` requires `LOTUS_BACKUP_BASE_PATH` and `HasPrefix` of the dest path. `AuthNew` is JWT-signed with `APISecret` and is admin-gated at the RPC layer.
+
+Do not file an unsigned MessagePrototype helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
