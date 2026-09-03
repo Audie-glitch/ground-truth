@@ -8946,16 +8946,96 @@ finding. Not submitted.
   is a view; the Auth path
   rejects `ssr < RAY`.
 
-Remaining SparkLend:
-`SSR_RATE_SOURCE`,
-`KILL_SWITCH_ORACLE`,
-`SavingsDaiOracle`, and
-`AAVE_ORACLE` if a later
-pass wants those addresses.
-The `xchain-ssr-oracle`
-GitHub tree and DSR / SSR
-live rows are exhausted.
-Not submitted.
+Remaining SparkLend after
+this write-up was
+`SSR_RATE_SOURCE` /
+`KILL_SWITCH_ORACLE` /
+`SavingsDaiOracle`; that
+pass is logged below. The
+`xchain-ssr-oracle` GitHub
+tree and DSR / SSR live
+rows are exhausted. Not
+submitted.
+
+## 2026-09-03: Spark leftover SSRRateSource + KillSwitchOracle + SavingsDaiOracle (Sourcify)
+
+Immunefi program `sparklend`
+($5,000,000, `kyc: false`).
+Leftover oracle addresses
+after the DSR / SSR tree:
+`SSR_RATE_SOURCE`
+`0x57027B…9973` (Sourcify
+exact, verified 2024-12-28,
+`SSRRateSource`),
+`KILL_SWITCH_ORACLE`
+`0x909A86…be82` (exact,
+2024-08-08,
+`KillSwitchOracle`),
+`SavingsDaiOracle`
+`0xb9E6DB…AB5f` (exact,
+2025-07-04). Extract under
+`/tmp/spark-leftover-oracles`.
+15 Jul sUSDC / `UsdcVault`
+already logged. No
+state-changing txs.
+Read-only `eth_call` only.
+
+Files: `src/SSRRateSource.sol`,
+`src/KillSwitchOracle.sol`,
+`src/SavingsDaiOracle.sol`.
+
+Checked for: a stranger
+`trigger` that disables
+borrows while listed
+oracles are healthy; a
+threshold of zero that
+still counts; `getAPR`
+that underflows into a
+huge rate; `getAnswer`
+that multiplies a stale
+DAI round by current
+`chi` in a money path.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `SSRRateSource.getAPR`
+  is a view:
+  `(susds.ssr() - 1e27) *
+  365 days` in 0.8
+  (reverts if `ssr < RAY`).
+  Live ~04:45 UTC: ~3.46e25
+  (~3.46% APR ray).
+- `KillSwitchOracle.trigger`
+  is permissionless. The
+  first trip requires a
+  owner-listed oracle with
+  `latestAnswer > 0` and
+  `price <= threshold`.
+  After that, anyone can
+  keep disabling borrow on
+  remaining active reserves
+  until `reset` (owner).
+  Live: `triggered = false`,
+  6 oracles, owner
+  `0x3300f198…8c4`.
+- `SavingsDaiOracle` is a
+  view adapter:
+  `daiPrice * pot.chi / RAY`.
+  `getAnswer(roundId)` uses
+  **current** `chi` against
+  a historical DAI round
+  (known inaccuracy; Aave
+  paths use `latestAnswer`).
+  Live `latestAnswer`
+  ~1.18e8 (8-dec USD).
+
+Remaining SparkLend listed
+oracle leftovers are
+exhausted (`AAVE_ORACLE` is
+the already-logged Aave V3
+price oracle). Not
+submitted.
 
 ## 2026-09-03: KeeperHub #2105 claimed
 
@@ -9099,13 +9179,17 @@ the same gov-relay contracts
 already logged (`6218d57`);
 do not re-review. DSR / SSR
 `xchain-ssr-oracle` (`4a23d1f`)
-is logged. Leftover Spark
-addresses if a later pass
-wants them: 15 Jul sUSDC /
-sUSDC_IMPL, `SSR_RATE_SOURCE`,
-`KILL_SWITCH_ORACLE`,
-`SavingsDaiOracle`,
-`AAVE_ORACLE`. GammaSwap May
+plus leftover
+`SSRRateSource` /
+`KillSwitchOracle` /
+`SavingsDaiOracle` (Sourcify)
+plus 15 Jul sUSDC /
+`UsdcVault` are logged.
+`AAVE_ORACLE` is the
+already-logged Aave V3 price
+oracle. Listed Spark leftover
+oracle rows are exhausted.
+GammaSwap May
 2026 vault + PositionManager
 are logged; remaining
 GammaSwap is the 2024 factory

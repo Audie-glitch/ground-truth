@@ -166,7 +166,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   SPARK_RECEIVER (`6218d57`) +
   DSR / SSR
   `xchain-ssr-oracle`
-  (`4a23d1f`), GammaSwap May
+  (`4a23d1f`) + leftover
+  `SSRRateSource` /
+  `KillSwitchOracle` /
+  `SavingsDaiOracle`
+  (Sourcify), GammaSwap May
   2026 vault + PositionManager
   (`e71dd91` / Sourcify PM;
   live observers unset),
