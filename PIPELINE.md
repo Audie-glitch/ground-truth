@@ -16,7 +16,7 @@ organizer's own page on that day.
 | 3 | ETHOnline 2026, Hedera "Open Source, Improve the Hedera Harness" | $1,000 x 2 | USDC | Sep 4-16 | PR to [hedera-dev/hedera-harness](https://github.com/hedera-dev/hedera-harness); "open PR, not merged is fine" | Service-coverage or local-dev-mode PR with tests and a before/after demo. |
 | 4 | [BUIDL CTC 2026 Fall](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) (Creditcoin / Attestcoin Protocol) | $10,000 / $3,000 / $2,000 | USD-denominated; payout asset not stated (ask in Discord `#buidl-ctc-qna`) | Open now, deadline Sep 13 23:59 ET | 46 submissions so far; most hackathon entries are shallow. Depth of Attestcoin integration is a core scoring criterion | Build now. Project: CreditPassport (see below). |
 | 5 | ETHOnline 2026, Arc (Circle) agentic and DeFi bounties | $1,667 x 3 tracks, plus $3,500 mainnet-readiness | USDC | Sep 4-16 | Requires frontend + backend + architecture diagram + video | Stretch: only if the KeeperHub work can be pointed at Arc (KeeperHub issue #2230 adds Arc testnet). |
-| 6 | KeeperHub main track, Best Integration into a Live Project | $2,000 / $1,200 / $800 | Stablecoins | Sep 6-18 | Needs a KeeperHub account, a funded testnet wallet, and a real third-party project on the other side | Phase 2 once you have a KeeperHub account. |
+| 6 | KeeperHub main track, Best Integration into a Live Project | $2,000 / $1,200 / $800 | Stablecoins | Sep 6-18 | Needs a KeeperHub account, a funded testnet wallet, and a real third-party project on the other side | Plan: `plugin-keeperhub` for elizaOS (KeeperHub as the execution layer for Eliza agents: dry run, idempotent execute, status, balances). See `keeperhub/main-track-plan.md`. Needs your KeeperHub API key by Sep 9. |
 | 7 | [3rd-Web-Hack](https://3rd-web-hack.devpost.com/) (Devpost) | $500 / $200 / $50 | USDT | Deadline Sep 27 | 86 participants, tiny pool, low bar | Rules require a project "original and developed for the hackathon," so no re-entry of CreditPassport. **Built 3 Sep: SignLens** (`signlens/`), a pre-signature inspector for wallet requests; MVP, 23 tests, README, presentation. Needs your Devpost registration and a demo video upload; see `signlens/SUBMISSION.md`. |
 | 8 | [Arbitrum Open House Singapore buildathon](https://web3voyager.com/event/arbitrum-open-house-singapore-online-buildathon) | $115,000 pool | Not stated | Sep 13 - Oct 4; existing projects allowed | Large field | Re-target the ETHOnline or CTC project after Sep 16. |
 | 9 | [Monad Metropolis](https://www.monad.xyz/developers/hackathons/metropolis) | $250,000 pool, $30k per track | Not stated | Sep 1 - Oct 13 | Very large field, startup-oriented | Only if items 1-4 are shipped early. |
@@ -70,8 +70,8 @@ share the username.
 | Dates | Work |
 | --- | --- |
 | Sep 2-5 | Build CreditPassport for BUIDL CTC (contracts, agent, frontend, docs). Write the #2240 design proposal for KeeperHub maintainers. Read-only prep for ETHOnline targets (no code before Sep 4: ETHGlobal disqualifies pre-built work). |
-| Sep 4-16 | ETHOnline: Uniswap and Hedera Harness contributions, small frequent commits inside the window. |
-| Sep 6-18 | KeeperHub #2240 implementation, tests, PR to `staging`. |
+| Sep 4-16 | ETHOnline: x402 statement API (Hedera, Bazantic, Arc tracks), then Uniswap / Hedera Harness contributions if time allows. ETHGlobal publishes dates only; code starts Sep 4 from 16:00 UTC after confirming the kickoff on their schedule. Small frequent commits inside the window. |
+| Sep 6-18 | KeeperHub #2240 implementation, tests, PR to `staging` (Sep 6-8), then the elizaOS `plugin-keeperhub` main-track entry (Sep 9-16) if the API key exists. |
 | Sep 13 | BUIDL CTC submission deadline. |
 | Sep 16 | ETHOnline submission deadline. |
 | Sep 18 | KeeperHub submission deadline. Finalist calls Sep 18-25. |
@@ -117,7 +117,10 @@ Ordered by urgency. Each is a few minutes.
 8. Demo videos: I record the screen; you upload to YouTube or Loom and paste
    the link in the submission form. If a track wants narration, I write the
    script.
-9. For the ETHOnline x402 entry: a bazantic.com account (share the username),
+9. For the KeeperHub main track: a KeeperHub account with an organization API
+   key stored as the secret `KEEPERHUB_API_KEY`, and its wallet funded with
+   testnet gas and USDC on Base Sepolia or Sepolia. Needed by Sep 9.
+10. For the ETHOnline x402 entry: a bazantic.com account (share the username),
    and a Hedera ECDSA testnet account from the Hedera Developer Portal, funded
    with testnet HBAR, USDC `0.0.429274` associated, testnet USDC from
    faucet.circle.com; store as secrets `HEDERA_ACCOUNT_ID` and
