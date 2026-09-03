@@ -1997,22 +1997,93 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Lombard SVM asset_router / bridge / bascule / mailbox (`09d5e76`)
+
+Immunefi program Lombard Finance ($250,000, `kyc: true`).
+Solana trees added 25 Jun 2026. Local clone
+`/tmp/reviews/lombard-svm` at `09d5e76`. No mainnet
+interaction. Reviewed only the money-moving mint/burn/GMP
+paths in the in-scope programs.
+
+Files: `programs/asset_router/src/instructions/{deposit,redeem,redeem_for_btc,mint_from_payload,mint_with_fee,gmp_receive}.rs`,
+`programs/asset_router/src/utils/{mod,fee,consortium_payloads,ed25519}.rs`,
+`programs/bridge/src/instructions/{deposit,gmp_receive}.rs`,
+`programs/bascule/src/instructions/validator.rs`,
+`programs/bascule_gmp/src/instructions/validate_mint.rs`,
+`programs/mailbox/src/instructions/{deliver_message,handle_message,send_message}.rs`,
+`programs/consortium/src/instructions/finalize_session.rs`.
+
+Checked for: a replayed consortium payload that mints
+twice; GMP mint of a caller-chosen mint; mailbox deliver
+without a validated payload; bascule below-threshold
+bypass of consortium; fee signature that is not the
+recipient owner; bridge inbound without a remote-bridge
+sender match.
+
+Result: no user-exploitable finding.
+
+- `mint_from_payload` / `mint_with_fee` require a
+  consortium `ValidatedPayload` PDA for
+  `sha256(payload)`, destination `CHAIN_ID`, native mint,
+  and recipient-account match. Replay is an `init` PDA
+  (`DEPOSIT_PAYLOAD_SPENT`). Bascule is extra: above
+  threshold the deposit must already be `Reported`;
+  below threshold it is marked `Withdrawn` without a
+  report (documented). Consortium attestation is the
+  mint gate.
+- `mint_with_fee` is `Claimer`-gated. The fee payload is
+  Ed25519-checked against the token-account **owner**
+  via the previous native ed25519 ix (offsets must live
+  in that ix). Fee is `min(signed, max_mint_commission)`
+  and minted to the treasury; remainder to the recipient.
+- Asset-router `deposit` / `redeem` / `redeem_for_btc`
+  burn (and optionally fee-transfer) the payer’s own
+  tokens, then mailbox-send. Routes are PDA-bound.
+- Asset-router `gmp_receive` requires the mailbox
+  `MessageV1Info` PDA as signer, sender
+  `BTC_STAKING_MODULE_ADDRESS`, recipient match, and a
+  `MESSAGE_HANDLED` init PDA. Optional bascule_gmp
+  `validate_mint` same threshold pattern.
+- Bridge `deposit` is sender-whitelist + outbound
+  direction. `gmp_receive` requires mailbox signer,
+  `remote_bridge_config.bridge == message.sender`,
+  inbound direction, and consumes the inbound rate
+  limit. Recipient may be the message pubkey or its ATA.
+- Mailbox `deliver_message` `init`s the message PDA only
+  when consortium has both the session payload and
+  `ValidatedPayload` for that hash. `handle_message`
+  flips Delivered→Handled then CPI-signs as the message
+  PDA. `inbound_message_path` on deliver is
+  program-owned (admin-created), matched by identifier.
+- Consortium `finalize_session` requires
+  `session.weight >= current_weight_threshold` then
+  `init_if_needed` the hash PDA. Trusted notary set.
+
+Remaining in-scope SVM (not read this pass):
+`lombard_token_pool`, `ratio_oracle`, mailbox admin /
+path enable, consortium valset update.
+
+Not submitted. Payouts need Immunefi KYC.
+
 ## Next candidates
 
 Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
 the full `diamond-pau` facet tree at `1b6743a`,
 Intuition MultiVault / AtomWallet / curves / emissions /
-registry / `TrustSwapAndBridgeRouter` (`bb34cc2`), and
-Origin OUSD vault + Curve AMO + WOETH/WOUSD + Ethena ARM
-are exhausted. Remaining Origin: other Sep-1 OUSD
-strategies (Morpho already reviewed). Superteam API
-rechecked 03:06 UTC
-3 Sep: still 28 open listings. `AGENT_ALLOWED` is still
-only Steve Arena and ZNS — do not execute. Mermail skill
-is built (`mermail-onchain-receipts/`); remaining work is
-the participant's PR, Mermail MCP, and X demo. T3N Vendor
-Receipts is built (`t3n-vendor-receipts/`); remaining work
-is Terminal 3 SSO. NectarFi is a creator campaign.
+registry / `TrustSwapAndBridgeRouter` (`bb34cc2`),
+Origin OUSD vault + Curve AMO + WOETH/WOUSD + Ethena ARM,
+and Lombard SVM asset_router / bridge / bascule / mailbox
+deliver-handle are exhausted. Remaining Origin: other
+Sep-1 OUSD strategies (Morpho already reviewed).
+Remaining Lombard SVM: `lombard_token_pool`,
+`ratio_oracle`. Superteam API rechecked 03:06 UTC 3 Sep:
+still 28 open listings. `AGENT_ALLOWED` is still only
+Steve Arena and ZNS — do not execute. Mermail skill is
+built (`mermail-onchain-receipts/`); remaining work is
+the participant's PR, Mermail MCP, and X demo. T3N
+Vendor Receipts is built (`t3n-vendor-receipts/`);
+remaining work is Terminal 3 SSO. NectarFi is a creator
+campaign.
 the402.ai still paused. 1inch Fusion settlement /
 whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
 Remaining OZ hooks: none of the money-moving
@@ -2024,10 +2095,10 @@ GitHub tree. Sherlock `https://audits.sherlock.xyz/api/contests`
 has 301 items; the only non-FINISHED row as of 03:01 UTC
 3 Sep is contest `1234` (Tare) in `SHERLOCK_JUDGING`.
 Hedera Harness #8 still `open`, 0 comments, 0 HOL-Guard
-PRs. Rechecked 03:00 UTC 3 Sep: KeeperHub #2105 still
+PRs. Rechecked 03:07 UTC 3 Sep: KeeperHub #2105 still
 `open` + `accepted` + `confirmed`, 0 comments, 0 PRs;
 CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
-official CTC page still 47 BUIDLs, “11 days left,”
-deadline 13 Sep 2026 23:59 ET. No KeeperHub
-implementation before the 6 Sep build window. No
-ETHOnline project code before 4 Sep 16:00 UTC.
+official CTC HTML still **47 BUIDLs / 203 hackers**,
+“11 days left,” deadline 13 Sep 2026 23:59 ET. No
+KeeperHub implementation before the 6 Sep build window.
+No ETHOnline project code before 4 Sep 16:00 UTC.

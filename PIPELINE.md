@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, 03:05 UTC. Dates verified against each
+Status as of 3 September 2026, 03:07 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC), Sherlock contests API, and Immunefi unofficial
 mirror rechecked 3 Sep.
@@ -89,8 +89,9 @@ share the username.
 - `research/bug-bounty-review-log.md`: Immunefi target selection method and
   time-boxed reviews through Sky PAS / SBEBeam, Intuition money paths,
   and Sky diamond-pau through the full facet tree at `1b6743a`,
-  plus Intuition `TrustSwapAndBridgeRouter` (`bb34cc2`)
-  (no submittable finding).
+  plus Intuition `TrustSwapAndBridgeRouter` (`bb34cc2`),
+  Origin OUSD / WOETH / Ethena ARM, and Lombard SVM
+  mint/GMP paths at `09d5e76` (no submittable finding).
 
 ## Schedule
 
