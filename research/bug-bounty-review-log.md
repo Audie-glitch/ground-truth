@@ -7593,12 +7593,84 @@ finding. Not submitted.
   limits. Users do not
   call these entrypoints.
 
-Remaining SparkLend: other
-listed vaults / PSM3 /
+Remaining SparkLend after this
+slice: SparkVault V2 (logged
+below) plus PSM3 / treasury
+controllers and the 13 Jul
+Robinhood / X Layer rows. Not
+submitted.
+
+## 2026-09-03: SparkVault V2 (`51c6d7a`)
+
+Immunefi program `sparklend`
+($5,000,000, `kyc: false`).
+Listed GitHub row
+[sparkdotfi/spark-vaults-v2](https://github.com/sparkdotfi/spark-vaults-v2)
+`src/SparkVault.sol`
+(“Spark Savings V2”). Local
+clone `/tmp/spark-vaults-v2`
+at `51c6d7a`. No mainnet
+interaction.
+
+Files: `src/SparkVault.sol`
+(sUSDS-style pot).
+
+Checked for: first-depositor
+inflation via a dust mint
+plus a raw asset donation;
+`take` by a non-taker;
+redeem that pays
+`msg.sender` instead of
+`receiver`; chi/VSR overflow
+that mints extra shares;
+taker depositing then
+redeeming other users’
+liquidity.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- PPS is `chi`, not
+  `balance / supply`. A raw
+  donation does not change
+  `convertToShares`. Initial
+  `chi == RAY` so the first
+  deposit is 1:1.
+- `take` is `TAKER_ROLE`
+  only and just
+  `_pushAsset`s. Liquidity
+  can go below
+  `totalAssets()`
+  (`assetsOutstanding`).
+  That is the ALM model
+  already reviewed above;
+  `maxRedeem` /
+  `maxWithdraw` are capped
+  by the token balance.
+- Deposit/mint pull
+  `msg.sender` and mint to
+  `receiver` (not 0 / self).
+  Taker cannot be sender
+  or receiver. Redeem /
+  withdraw burn `owner`
+  (allowance if sender ≠
+  owner) and pay
+  `receiver`.
+- `drip` is the Maker pot
+  `_rpow`. VSR is bounded
+  to `[RAY, MAX_VSR]`
+  (100% APY). UUPS
+  `initialize` is
+  initializer-gated; impl
+  constructor disables
+  initializers. Upgrade is
+  admin-only.
+
+Remaining SparkLend: PSM3 /
 treasury controllers and
 the 13 Jul Robinhood /
-X Layer rows beyond this
-ALM tree. Not submitted.
+X Layer rows. Not
+submitted.
 
 ## 2026-09-03: Yearn Vault V3.1.0 (Sourcify)
 
@@ -7879,15 +7951,16 @@ PSM Variant1 actions (Sourcify)
 plus the Spark ALM controller
 tree (`ce5cbd9`: Mainnet /
 Foreign / proxy / rate limits)
-are logged. Listed Extra Finance
+and SparkVault V2
+(`51c6d7a`) are logged. Listed Extra Finance
 and Hashflow Solidity are
 exhausted. Magpie leftover is
 Primacy of Impact only.
-Remaining SparkLend is other
-listed vaults / PSM3 /
+Remaining SparkLend is PSM3 /
 treasury controllers and the
 13 Jul Robinhood / X Layer
-rows beyond that ALM tree. Next
+rows beyond the ALM +
+SparkVault V2 trees. Next
 unreviewed Immunefi
 GitHub-or-recent trees:
 Twyne June-2026 Aave V3

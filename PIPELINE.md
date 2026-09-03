@@ -148,8 +148,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   operators (Sourcify), TermMax TMX
   OFT, Balancer V3
   CompositeLiquidityRouter +
-  ProtocolFeeController, Spark ALM
-  controller (`ce5cbd9`), and
+  ProtocolFeeController +
+  LBPoolFactory, Spark ALM
+  controller (`ce5cbd9`) +
+  SparkVault V2 (`51c6d7a`), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.
