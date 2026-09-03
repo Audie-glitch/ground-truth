@@ -4,13 +4,13 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~08:00 UTC. Dates verified against each
+Status as of 3 September 2026, ~08:03 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~07:58 UTC;
-246 programs; no Sep 2026 launches; Pareto Credit leftover
-factory leftover is logged). KeeperHub
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:01 UTC;
+246 programs; no Sep 2026 launches; Threshold leftover
+StarkNet depositor leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -227,9 +227,21 @@ Threshold leftover gov / relay leftover
 Threshold leftover wallet registry leftover
 (Sourcify WalletRegistry / SortitionPool /
 EcdsaDkgValidator / WalletRegistryGovernance)
-is logged (remaining Threshold is
-keep-network typescript and Starknet / Sui /
+is logged.
+Threshold leftover StarkNet depositor leftover
+(`502cd39` Sourcify `StarkNetBitcoinDepositor`
+impl behind `0xC903…C155`) is logged
+(remaining Threshold is keep-network
+typescript, Starkscan Cairo, and Sui /
 Solana explorer rows).
+Aspida leftover (Sourcify aETH / saETH /
+CorePrimary / RewardOracle / StETHMinter)
+is logged (listed leftover exhausted at
+the five Ethereum addresses).
+Balancer Foundation leftover V2 Vault +
+V3 BatchRouter (Sourcify) is logged
+(remaining Foundation-listed is V3 Vault
+and other unopened routers / helpers).
 JustLend leftover rewards leftover
 (`f28f3b4` ComptrollerLegacy JST /
 PriceOracleV1 / rate models) is logged
@@ -562,6 +574,13 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   orchestrator / implied
   price / programmable
   borrower),
+  Threshold leftover
+  StarkNet depositor leftover
+  (`502cd39` Sourcify
+  `StarkNetBitcoinDepositor`),
+  Aspida leftover (Sourcify
+  aETH / saETH / CorePrimary /
+  RewardOracle / StETHMinter),
   Mars Ecosystem leftover
   timelock leftover
   (Sourcify BSC `Timelock`),

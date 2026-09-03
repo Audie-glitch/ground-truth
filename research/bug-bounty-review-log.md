@@ -28455,6 +28455,28 @@ pufETH vault) is logged.
 Threshold leftover
 wallet registry leftover
 (Sourcify) is logged.
+Threshold leftover
+StarkNet depositor leftover
+(`502cd39` Sourcify
+`StarkNetBitcoinDepositor`
+impl) is logged
+(remaining Threshold is
+keep-network typescript,
+Starkscan Cairo, and
+Sui / Solana explorer
+rows).
+Aspida leftover (Sourcify
+aETH / saETH / CorePrimary /
+RewardOracle / StETHMinter)
+is logged (listed leftover
+exhausted at the five
+Ethereum addresses).
+Balancer Foundation leftover
+V2 Vault + V3 BatchRouter
+(Sourcify) is logged
+(remaining Foundation-listed
+is V3 Vault and other
+unopened routers / helpers).
 Arkadiko leftover (Hiro vaults /
 tokens / liq-pool) is logged
 (remaining listed is the website).
@@ -28669,11 +28691,29 @@ relay leftover
 (`502cd39`) is logged;
 Threshold leftover
 wallet registry leftover
-(Sourcify) is logged
+(Sourcify) is logged.
+Threshold leftover
+StarkNet depositor leftover
+(`502cd39` Sourcify
+`StarkNetBitcoinDepositor`
+impl) is logged
 (remaining Threshold is
-keep-network typescript
-and Starknet / Sui /
-Solana explorer rows);
+keep-network typescript,
+Starkscan Cairo, and
+Sui / Solana explorer
+rows);
+Aspida leftover (Sourcify
+aETH / saETH / CorePrimary /
+RewardOracle / StETHMinter)
+is logged (listed leftover
+exhausted at the five
+Ethereum addresses);
+Balancer Foundation leftover
+V2 Vault + V3 BatchRouter
+(Sourcify) is logged
+(remaining Foundation-listed
+is V3 Vault and other
+unopened routers / helpers);
 Pancake MasterChefV3 +
 LmPool + V2 periphery
 and v3-core / v3-periphery
@@ -30754,3 +30794,120 @@ and the other
 listed routers /
 helpers not opened
 this slice.
+
+## 2026-09-03: Threshold leftover StarkNet depositor leftover (`502cd39`)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+WalletRegistry /
+SortitionPool leftovers
+are already logged.
+This slice is listed
+Ethereum
+`StarkNetBitcoinDepositor`
+proxy
+`0xC9031f76006da0BD4bFa9E02aDf0d448dB3BC155`
+(Sourcify
+`TransparentUpgradeableProxy`)
+and impl
+`0xd3585922b7f6b30953fc81726f48046826b8b2ca`
+(Sourcify
+`exact_match`
+`StarkNetBitcoinDepositor`).
+Official clone
+`/tmp/threshold-tbtc`
+at `502cd39`. Listed
+`0x2111A49ebb717959059693a3698872a0aE9866b9`
+is official StarkGate
+`ProxyV5`, not
+Threshold source.
+Read-only
+`eth_getStorageAt`
+for the impl slot.
+No other mainnet
+interaction.
+
+Files:
+`solidity/contracts/cross-chain/starknet/StarkNetBitcoinDepositor.sol`,
+`solidity/contracts/cross-chain/starknet/interfaces/IStarkGateBridge.sol`.
+
+Checked for: a
+stranger
+`finalizeDeposit`
+that bridges minted
+tBTC to the caller
+instead of the
+Bitcoin-script
+extraData owner;
+`_transferTbtc`
+that approves the
+caller; initialize
+that rebinds another
+deposit's L2 owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Parent
+  `initializeDeposit`
+  / `finalizeDeposit`
+  (already logged in
+  the Wormhole L1
+  leftover) bind
+  extraData in the
+  Bitcoin script and
+  one-shot
+  Initialized →
+  Finalized.
+- StarkNet
+  `_transferTbtc`
+  requires
+  `msg.value >=
+  estimateFee()`,
+  rejects a zero L2
+  recipient, and
+  `deposit`s tBTC to
+  `starkGateBridge`
+  for
+  `uint256(destinationChainReceiver)`.
+  Relayer
+  `msg.sender` is
+  not the L2 owner.
+  Excess `msg.value`
+  is forwarded to
+  StarkGate (no
+  refund).
+- Gas
+  reimbursements
+  pay the recorded
+  initialize
+  receiver and an
+  authorized
+  finalize caller
+  from the pool,
+  not user tBTC.
+
+Do not file
+permissionless
+finalize (relayer
+path), leftover
+bridge fee, owner
+gas-offset writes,
+or official
+StarkGate `ProxyV5`
+as Threshold theft.
+
+Not submitted.
+Listed leftover is
+the Ethereum
+StarkNet depositor
+impl. Remaining
+Threshold listed:
+`keep-network/tbtc-v2`
+typescript, Starkscan
+Cairo rows, and Sui /
+Solana explorer
+rows.
