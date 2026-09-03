@@ -27726,6 +27726,149 @@ independently
 Sourcify-fetched, and
 other docs addresses.
 
+## 2026-09-03: Mars Ecosystem leftover timelock leftover (Sourcify)
+
+Immunefi program
+`Mars Ecosystem`
+($10,000, `kyc: false`).
+Core / factory / router /
+farm leftover is already
+logged. Remaining listed
+`0xC35a8BdBB93abFAb362aF6dC3383cD2c6aEA6cBc`
+was a prior checksum typo
+(`A03dB`); Sourcify
+`exact_match` `Timelock`
+on BSC. Extract
+`/tmp/mars-timelock`. No
+mainnet interaction.
+
+Files:
+`contracts/dao/Timelock.sol`
+(Compound fork).
+
+Checked for: a stranger
+`queueTransaction` /
+`executeTransaction`
+without being admin;
+`setDelay` /
+`setPendingAdmin`
+without a self-call.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `queueTransaction` /
+  `cancelTransaction` /
+  `executeTransaction`
+  require `admin`.
+  Execute also requires
+  a queued hash, `eta`
+  delay, and 14-day
+  grace.
+- `setDelay` /
+  `setPendingAdmin` must
+  come from the timelock
+  itself. `acceptAdmin`
+  is `pendingAdmin`.
+- `receive` can hold
+  BNB. No user deposit
+  or redeem path.
+
+Do not file admin
+queue / execute or
+Compound-style delay
+as theft.
+
+Not submitted.
+Listed leftover is the
+BSC Timelock. Remaining
+listed:
+`0x7859B01BbF675d67Da8cD128a50D155cd881B576`
+Sourcify 404. Other
+listed VestingMaster /
+LiquidityMiningMaster
+rows are the same
+bytecode already
+logged.
+
+## 2026-09-03: SushiSwap leftover RedSnwapper leftover (Sourcify)
+
+Immunefi program
+`SushiSwap` ($200,000,
+`kyc: false`). Unique
+no-KYC listed slice.
+Listed assets are docs
+deployment pages.
+Docs name Ethereum
+`RedSnwapper`
+`0xAC4c6e212A361c968F1725b4d055b47E63F80b75`.
+Sourcify `exact_match`
+on Ethereum and the
+same address on Arb /
+OP / Base / Polygon /
+BSC. Extract
+`/tmp/sushi-redsnwapper`.
+No mainnet interaction.
+
+Files:
+`contracts/RedSnwapper.sol`
+(includes `SafeExecutor`).
+
+Checked for: a stranger
+`snwap` /
+`snwapMultiple` that
+`transferFrom`s another
+user; leftover-token
+sweep of someone else's
+balance; `SafeExecutor`
+calling with this
+contract's token
+allowance.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `snwap` /
+  `snwapMultiple` pull
+  ERC20 only from
+  `msg.sender` (or this
+  contract's leftover
+  minus 1 when
+  `amountIn == 0`).
+  Native skips the
+  pull and forwards
+  `msg.value`.
+- Output check is the
+  recipient's balance
+  delta versus
+  `amountOutMin`.
+  Executor is
+  caller-chosen.
+- `SafeExecutor` has
+  no token approvals.
+  Tokens are sent to
+  the executor, not
+  held here.
+
+Do not file leftover
+dust sweep (`balance-1`),
+user-chosen executor
+theft of the caller's
+own tokens, or public
+`SafeExecutor` leftover
+ETH as theft.
+
+Not submitted.
+Listed leftover is the
+Sourcify-open
+RedSnwapper. Remaining
+listed: CPAMM and CLAMM
+docs deployments.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -28157,9 +28300,16 @@ logged (remaining listed is two BSC
 addresses Sourcify 404).
 Mars Ecosystem leftover (Sourcify BSC
 Core / factory / router / farm /
-vesting / airdrop) is logged
-(remaining listed is two BSC
-addresses Sourcify 404).
+vesting / airdrop) is logged.
+Mars Ecosystem leftover timelock
+leftover (Sourcify BSC `Timelock`)
+is logged (remaining listed is
+`0x7859B01B…B576` Sourcify 404).
+SushiSwap leftover RedSnwapper
+leftover (Sourcify `exact_match`
+`0xAC4c6e21…80b75`) is logged
+(remaining listed is CPAMM / CLAMM
+docs deployments).
 Beefy Finance leftover (Sourcify
 Polygon `BeefyVaultV6` + common
 chef / DFYN / Curve / BIFI-maxi
@@ -28722,9 +28872,20 @@ Mars Ecosystem leftover
 (Sourcify BSC Core /
 factory / router / farm /
 vesting / airdrop) is
-logged (remaining listed
-is two BSC addresses
+logged;
+Mars Ecosystem leftover
+timelock leftover
+(Sourcify BSC `Timelock`)
+is logged (remaining
+listed is `0x7859B01B…B576`
 Sourcify 404);
+SushiSwap leftover
+RedSnwapper leftover
+(Sourcify `exact_match`
+`0xAC4c6e21…80b75`) is
+logged (remaining listed
+is CPAMM / CLAMM docs
+deployments);
 Beefy Finance leftover
 (Sourcify Polygon
 `BeefyVaultV6` + common

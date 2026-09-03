@@ -178,8 +178,15 @@ Safe module / handlers) is logged
 Sourcify 404).
 Mars Ecosystem leftover (Sourcify BSC
 Core / factory / router / farm / vesting
-/ airdrop) is logged (remaining listed is
-two BSC addresses Sourcify 404).
+/ airdrop) is logged.
+Mars Ecosystem leftover timelock leftover
+(Sourcify BSC `Timelock`) is logged
+(remaining listed is `0x7859B01B…B576`
+Sourcify 404).
+SushiSwap leftover RedSnwapper leftover
+(Sourcify `exact_match` `0xAC4c6e21…80b75`)
+is logged (remaining listed is CPAMM /
+CLAMM docs deployments).
 Beefy Finance leftover (Sourcify Polygon
 `BeefyVaultV6` + common chef / DFYN /
 Curve / BIFI-maxi strategies) is logged.
@@ -539,7 +546,14 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (IdleCDOEpochQueue /
   Prefunded; listed leftover
   that a public tree would
-  open is exhausted), and
+  open is exhausted),
+  Mars Ecosystem leftover
+  timelock leftover
+  (Sourcify BSC `Timelock`),
+  SushiSwap leftover
+  RedSnwapper leftover
+  (Sourcify `0xAC4c6e21…80b75`),
+  and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.
