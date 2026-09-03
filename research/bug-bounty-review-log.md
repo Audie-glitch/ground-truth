@@ -46033,6 +46033,123 @@ PolicyEngineStaking /
 websites
 (if still unused).
 
+## 2026-09-03: Optimism leftover remaining op-node leftover (`eea9542`)
+
+Immunefi program
+`optimism`
+($2,000,042,
+`kyc: true`).
+Official remaining
+listed after
+op-dispute-mon leftover.
+Official
+`ethereum-optimism/optimism`
+`eea9542`.
+Extract
+`/tmp/op-node/`.
+Do not rematch
+L1 portal /
+StandardBridge leftover,
+dispute games leftover,
+L2 ETH liquidity leftover,
+or op-dispute-mon leftover.
+No mainnet
+writes.
+
+Files:
+`op-node/rollup/derive/{deposits,deposit_log,deposit_source,attributes}.go`,
+`op-node/withdrawals/{utils,proof}.go`.
+
+Checked for:
+deposit decode
+that mints
+caller-chosen
+ETH without
+a portal log;
+`PreparePayloadAttributes`
+that injects
+extra deposits;
+withdrawal
+helpers that
+submit
+`proveWithdrawal`
+for a stranger.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `UserDeposits`
+  only reads
+  successful
+  receipts from
+  `depositContractAddr`
+  with the
+  `TransactionDeposited`
+  topic.
+- `UnmarshalDepositLogEvent`
+  binds `from` /
+  `to` / version
+  from indexed
+  topics and
+  mint / value
+  from
+  version-0
+  opaqueData.
+  `SourceHash`
+  is L1 block
+  hash + log
+  index.
+- A malformed
+  deposit log
+  is a critical
+  derive error,
+  not a skipped
+  mint.
+- Attributes
+  builder
+  derives
+  deposits only
+  on L1-origin
+  change, after
+  parent-hash
+  checks.
+- Withdrawal
+  helpers only
+  parse
+  `MessagePassed`
+  logs, hash
+  the recorded
+  fields, and
+  verify an
+  L2 storage
+  proof. They
+  do not send
+  transactions.
+
+Do not file
+a receipt-bound
+deposit decode
+or a proof
+helper as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+unused official
+op-node leftover
+that listed trees
+still open
+(batch / channel
+/ p2p / driver)
+/ websites /
+rust/op-reth
+(if still unused).
+
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -46318,6 +46435,14 @@ Jito leftover remaining jito-solana stakes leftover (`d0e3a47`)
 is logged.
 Optimism leftover remaining PolicyEngineStaking leftover (`eea9542`)
 is logged.
+Optimism leftover remaining L2 ETH liquidity leftover (`eea9542`)
+is logged.
+Optimism leftover remaining ETHLockbox leftover (`eea9542`)
+is logged.
+Optimism leftover remaining op-dispute-mon leftover (`eea9542`)
+is logged.
+Optimism leftover remaining op-node leftover (`eea9542`)
+is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
 Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
@@ -46355,6 +46480,7 @@ Remaining listed Filecoin: unused official leftover that listed trees open is ex
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`epoch_stakes` / `snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
+Remaining listed Optimism: unused official op-node leftover that listed trees still open after this deposit/withdrawal helper slice (batch / channel / p2p / driver) / websites / rust/op-reth if still unused.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -46429,6 +46555,10 @@ Do not rematch Jito jito-solana check_transactions leftover.
 Do not rematch Jito jito-solana transaction_execution leftover.
 Do not rematch Jito jito-solana stakes leftover.
 Do not rematch Optimism leftover remaining PolicyEngineStaking leftover.
+Do not rematch Optimism leftover remaining L2 ETH liquidity leftover.
+Do not rematch Optimism leftover remaining ETHLockbox leftover.
+Do not rematch Optimism leftover remaining op-dispute-mon leftover.
+Do not rematch Optimism leftover remaining op-node leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -49201,6 +49331,16 @@ Jito leftover remaining jito-solana stakes leftover
 epoch_stakes / snapshot / bank / stake_weighted_timestamp if still unused);
 Optimism leftover remaining PolicyEngineStaking leftover
 (`eea9542`) is logged;
+Optimism leftover remaining L2 ETH liquidity leftover
+(`eea9542`) is logged;
+Optimism leftover remaining ETHLockbox leftover
+(`eea9542`) is logged;
+Optimism leftover remaining op-dispute-mon leftover
+(`eea9542`) is logged;
+Optimism leftover remaining op-node leftover
+(`eea9542`) is logged (remaining listed is unused official
+op-node leftover that listed trees still open after this
+deposit/withdrawal helper slice / websites / rust/op-reth);
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
@@ -49214,9 +49354,7 @@ Filecoin leftover remaining go-commp-utils leftover
 Filecoin leftover remaining go-fil-commp-hashhash leftover
 (`256368516783`) is logged;
 Optimism leftover remaining dispute games leftover
-(`eea9542`) is logged (remaining listed is op-node /
-op-dispute-mon / L2 contracts / PolicyEngineStaking /
-websites);
+(`eea9542`) is logged;
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover

@@ -10,7 +10,11 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana stakes leftover is logged;
+246 programs; no Sep 2026 launches; Optimism leftover remaining op-node leftover is logged;
+Optimism leftover remaining op-dispute-mon leftover is logged;
+Optimism leftover remaining ETHLockbox leftover is logged;
+Optimism leftover remaining L2 ETH liquidity leftover is logged;
+Jito leftover remaining jito-solana stakes leftover is logged;
 Jito leftover remaining jito-solana transaction_execution leftover is logged;
 Optimism leftover remaining PolicyEngineStaking leftover is logged;
 Optimism leftover remaining dispute games leftover is logged;
@@ -1714,6 +1718,24 @@ if still unused).
 Optimism leftover remaining
 PolicyEngineStaking leftover
 (`eea9542`; KYC) is logged.
+Optimism leftover remaining
+L2 ETH liquidity leftover
+(`eea9542`; KYC) is logged.
+Optimism leftover remaining
+ETHLockbox leftover
+(`eea9542`; KYC) is logged.
+Optimism leftover remaining
+op-dispute-mon leftover
+(`eea9542`; KYC) is logged.
+Optimism leftover remaining
+op-node leftover
+(`eea9542`; KYC) is logged
+(remaining listed is unused
+official op-node leftover
+that listed trees still open
+after this deposit/withdrawal
+helper slice / websites /
+rust/op-reth if still unused).
 Filecoin leftover remaining
 go-jsonrpc leftover
 (`059363558429`; KYC) is logged.
@@ -1734,11 +1756,7 @@ go-fil-commp-hashhash leftover
 (`256368516783`; KYC) is logged.
 Optimism leftover remaining
 dispute games leftover
-(`eea9542`; KYC) is logged
-(remaining listed is op-node /
-op-dispute-mon / L2 contracts /
-PolicyEngineStaking / websites
-if still unused).
+(`eea9542`; KYC) is logged.
 Rootstock leftover remaining
 powpeg-node pegout leftover
 (`254fb3d`; KYC) is logged.
@@ -2819,6 +2837,18 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`d0e3a47`; KYC),
   Optimism leftover remaining
   PolicyEngineStaking leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  L2 ETH liquidity leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  ETHLockbox leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  op-dispute-mon leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  op-node leftover
   (`eea9542`; KYC),
   Filecoin leftover remaining
   go-jsonrpc leftover
