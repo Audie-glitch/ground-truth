@@ -4,12 +4,17 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~12:20 UTC. Dates verified against each
+Status as of 3 September 2026, ~10:35 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
-ZNS), Sherlock contests API (paginated; page-1 items empty this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:20 UTC;
-246 programs; no Sep 2026 launches; Felix leftover RedStone + composite price feeds leftover is logged;
+ZNS), Sherlock contests API (paginated; page-1 Tare is
+`SHERLOCK_JUDGING`, no live RUNNING contest this
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~10:35 UTC;
+246 programs; no Sep 2026 launches; Linea leftover TokenBridge + rollup + yield leftover is logged;
+MUX leftover mux3 orderbook + pool + position leftover is logged;
+MUX leftover mux-protocol core + orderbook leftover is logged;
+OnRe leftover prop AMM + buffer + configurable vault leftover is logged;
+Felix leftover RedStone + composite price feeds leftover is logged;
 OnRe leftover Solana program money path leftover is logged;
 Felix leftover zappers + leftover pools leftover is logged;
 Felix leftover feUSD + borrower + redeem leftover is logged;

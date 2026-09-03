@@ -38408,11 +38408,30 @@ composite price feeds leftover
 of Impact);
 OnRe leftover Solana program
 money path leftover
-(`f6a4c6e`; KYC) is logged
-(remaining listed is prop AMM
-/ buffer / reserve /
-configurable vault /
-market-stats views);
+(`f6a4c6e`; KYC) is logged;
+OnRe leftover prop AMM +
+buffer + configurable vault
+leftover (`f6a4c6e`; KYC) is
+logged (listed leftover that
+official GitHub opens is
+exhausted);
+MUX leftover mux3 orderbook +
+pool + position leftover
+(`8674f2b`) is logged;
+MUX leftover mux-protocol
+core + orderbook leftover
+(`0f70a70`) is logged
+(remaining listed is
+mux-aggregator-protocol /
+mux-degen-protocol /
+mux-staking);
+Linea leftover TokenBridge +
+rollup + yield leftover
+(`a83412e` / `a9a43aa` /
+main; KYC) is logged
+(remaining listed is the
+immunefi.com scope
+placeholder);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -56040,3 +56059,255 @@ gmxV2,
 and
 `mux-staking`.
 
+
+## 2026-09-03: Linea leftover TokenBridge + rollup + yield leftover (`a83412e` / `a9a43aa` / main)
+
+Immunefi program
+`linea`
+($100,000, `kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Official
+GitHub
+`Consensys/linea-monorepo`
+listed SHAs
+`a83412e`
+(TokenBridge /
+LineaRollup /
+ZkEvmV2 /
+L2MessageService /
+L1MessageService)
+and
+`a9a43aa`
+(L1 / L2 Linea
+token), plus
+`main` yield
+files. Extract
+`/tmp/linea-src`.
+No mainnet
+writes.
+No exploit
+PoCs.
+
+Opened
+`contracts/contracts/tokenBridge/TokenBridge.sol`,
+`BridgedToken.sol`,
+`contracts/contracts/LineaRollup.sol`,
+`ZkEvmV2.sol`,
+`messageService/l2/L2MessageService.sol`,
+`l2/v1/L2MessageServiceV1.sol`,
+`l2/L2MessageManager.sol`,
+`l1/L1MessageService.sol`,
+`MessageServiceBase.sol`,
+`contracts-tge/src/L1/LineaToken.sol`,
+`L2/L2LineaToken.sol`,
+`contracts/src/yield/YieldManager.sol`,
+`LidoStVaultYieldProvider.sol`,
+`LidoStVaultYieldProviderFactory.sol`.
+
+Checked for: a
+stranger
+`completeBridging`
+that mints or
+pays without
+the message
+service;
+`claimMessage`
+that pays the
+caller instead
+of `_to`;
+`finalizeBlocks`
+by a
+non-operator
+that anchors
+forged L2
+roots;
+L2 LINEA
+`mint` without
+the canonical
+bridge;
+permissionless
+`fundYieldProvider`
+that moves
+reserve ETH.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `bridgeToken`
+  burns
+  bridged
+  tokens from
+  `msg.sender`
+  or
+  `safeTransferFrom`
+  the caller
+  and uses
+  the received
+  balance as
+  the remote
+  amount.
+  `completeBridging`
+  is
+  `onlyMessagingService`
+  +
+  `onlyAuthorizedRemoteSender`
+  and either
+  transfers
+  native
+  tokens to
+  `_recipient`
+  or mints
+  the
+  bridged
+  token to
+  that
+  recipient.
+  BridgedToken
+  `mint` /
+  `burn` are
+  `onlyBridge`.
+- L2
+  `claimMessage`
+  marks a
+  previously
+  anchored
+  inbox hash
+  claimed
+  and
+  `call`s
+  `_to` with
+  `_value`.
+  The fee
+  goes to
+  `_feeRecipient`
+  or the
+  postman
+  (`msg.sender`
+  when that
+  field is
+  zero), not
+  as a
+  substitute
+  for the
+  intended
+  `_to`.
+  L1
+  `claimMessageWithProof`
+  requires a
+  finalized
+  L2 Merkle
+  root and
+  the same
+  hashed
+  leaf.
+  `sendMessage`
+  only
+  spends
+  `msg.value`.
+- `finalizeBlocks`
+  is
+  `OPERATOR_ROLE`
+  and
+  `_verifyProof`
+  against
+  the
+  registered
+  verifier.
+  L2
+  `anchorL1L2MessageHashes`
+  is
+  `L1_L2_MESSAGE_SETTER_ROLE`.
+- L1 LINEA
+  `mint` is
+  `MINTER_ROLE`.
+  L2 LINEA
+  `mint` /
+  `burn` are
+  the stored
+  canonical
+  token
+  bridge.
+  `syncTotalSupplyFromL1`
+  is
+  message-service
+  + remote
+  L1 token.
+- YieldManager
+  `fundYieldProvider`
+  /
+  `unstake`
+  /
+  `safeWithdrawFromYieldProvider`
+  /
+  `reportYield`
+  are role
+  gated.
+  `unstakePermissionless`
+  only runs
+  while the
+  reserve is
+  in deficit
+  and caps
+  the amount
+  to the
+  remaining
+  target
+  gap.
+  Lido
+  provider
+  money
+  paths are
+  `onlyDelegateCall`.
+  The
+  factory
+  only
+  deploys
+  an
+  uninitialized
+  provider
+  (YieldManager
+  `addYieldProvider`
+  is
+  permissioned).
+
+Do not file
+operator
+finalization,
+postman fee
+on a valid
+claim,
+permissionless
+L1 supply
+sync, or
+deficit-capped
+permissionless
+unstake as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub opens
+for Linea
+TokenBridge /
+rollup /
+message
+service /
+TGE tokens /
+yield is
+exhausted at
+the
+opened-file
+level.
+Remaining
+listed: the
+immunefi.com
+scope
+placeholder.
