@@ -3747,6 +3747,140 @@ Remaining DFS: those, Fluid Dex T2–T4,
 `llamalend`, `mcd`, `tx-saver`, triggers.
 Not submitted.
 
+## 2026-09-03: Jito restaking vault money path + NCN tickets (`db90840`)
+
+Immunefi program `jito` ($250,000, KYC). In-scope trees
+`jito-foundation/restaking/{vault_core,vault_program,
+restaking_core,restaking_program}`. Sparse clone
+`/tmp/jito-restaking` at `db90840`. No mainnet
+interaction. Interceptor already logged (`dbd8ce4`).
+The restaking audit-competition page states slashing
+was not enabled at launch; this tree has no slash
+instruction (only `DelegationState::slash` math).
+
+Files: `vault_program/src/{mint_to,enqueue_withdrawal,
+burn_withdrawal_ticket,change_withdrawal_ticket_owner,
+update_vault_balance,initialize_vault_update_state_tracker,
+crank_vault_update_state_tracker,close_update_state_tracker,
+add_delegation,cooldown_delegation,initialize_vault,
+initialize_vault_with_mint,set_fees,delegate_token_account}.rs`,
+`vault_core/src/{vault,vault_staker_withdrawal_ticket,
+delegation_state}.rs`,
+`restaking_program/src/{initialize_ncn_vault_ticket,
+warmup_ncn_vault_ticket,initialize_ncn_vault_slasher_ticket,
+ncn_delegate_token_account,operator_delegate_token_account}.rs`.
+
+Checked for: empty-vault share inflation or a
+donate-then-update brick; mint that credits VRT
+without transferring ST; enqueue that locks another
+staker’s VRT; permissionless burn that pays a
+non-owner; reserved-VRT accounting that under-reserves
+ST so a later depositor funds an earlier withdrawal;
+`update_vault_balance` that mints unbounded fee VRT;
+crank that force-cools another operator’s stake for
+an attacker; ticket owner change without the old
+owner; restaking ticket warmup that a non-admin can
+flip; a user slash path.
+
+Result: no user-exploitable finding.
+
+- `InitializeVault` requires `initialize_token_amount
+  > 0`, temporarily zeros the deposit fee, mints 1:1
+  VRT to a burn-vault ATA, then restores the fee.
+  `vrt_supply` is never zero on a live vault, so the
+  donate-then-`update_vault_balance` brick (tokens>0,
+  vrt=0, later mints return 0) is not reachable.
+  `InitializeVaultWithMint` is a no-op stub.
+- `mint_to` requires the depositor signer, classic
+  SPL token only, rejects depositor==vault and
+  depositor ATA==vault ATA, `mint_with_fee` +
+  `min_amount_out`, and `vrt_to_depositor == 0`.
+  Deposit fee is `div_ceil` against the depositor.
+- Enqueue: staker+base sign; ticket PDA
+  `(program, vault, base)`; VRT moves to the ticket
+  ATA; `increment_vrt_enqueued_for_cooldown_amount`.
+  Burn is permissionless after `current_epoch >
+  unstake_epoch+1` but `check_staker` pins payout
+  to the ticket’s staker ATA. Extra VRT sent to the
+  ticket after enqueue is swept to the program fee
+  wallet. Owner change needs the old staker.
+- Reserved ST is
+  `calculate_burn_summary` on the sum of enqueued +
+  cooling + ready VRT. Individual ticket burns apply
+  fees per ticket (`div_ceil`), so they take
+  slightly more fee / less ST than the aggregate
+  reserve. Conservative, not an extract. `delegate`
+  subtracts that reserve plus already-delegated
+  security from `tokens_deposited`.
+- `update_vault_balance` treats ATA growth as
+  rewards, takes `reward_fee_bps` in ST, mints the
+  matching VRT to the fee wallet, then stores the
+  full ATA as `tokens_deposited`.
+  `check_reward_fee_effective_rate` aborts a zero
+  fee mint when `reward_fee_bps > 0`.
+- Epoch crank: only `Greedy` allocation; force
+  cooldown is capped at that operator’s staked
+  amount and `additional_assets_need_unstaking`.
+  Close of the *current* epoch requires every
+  operator updated and
+  `additional_assets_need_unstaking == 0`, then
+  copies tracker delegation and shifts VRT buckets
+  at most two epochs. Old-epoch close is rent-only.
+- Restaking tickets are NCN/operator-admin PDAs.
+  Warmup/cooldown need the matching admin. Delegate
+  token is admin `approve(u64::MAX)` of an NCN- or
+  operator-owned ATA (not the vault ST). Slasher
+  tickets store `max_slashable_per_epoch` but no
+  instruction spends them. Vault
+  `delegate_token_account` refuses the supported
+  mint.
+
+Jito restaking `vault_*` / `restaking_*` treated as
+exhausted at `db90840`. `jito-solana` and
+`mev-programs` remain. Not submitted. Payouts need
+Immunefi KYC.
+
+## 2026-09-03: DeFi Saver CurveUsd advanced + transient (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/defisaver-v3` at `e623f20`. Core
+CurveUsd money actions already logged; this slice is
+the leftover extended/transient path.
+
+Files: `contracts/actions/curveusd/advanced/{CurveUsdRepay,
+CurveUsdLevCreate,CurveUsdSelfLiquidateWithColl}.sol`,
+`advanced/transient/{CurveUsdRepayTransient,
+CurveUsdLevCreateTransient,CurveUsdSelfLiquidateWithCollTransient,
+CurveUsdSwapperTransient}.sol`.
+
+Checked for: lev-create that borrows for a third
+party; repay_extended callback that a non-controller
+can fire with leftover routes; transient
+`ExchangeData` that another recipe can overwrite
+in the same tx; leftover funds left on the swapper.
+
+Result: no user-exploitable finding.
+
+- Advanced actions write routes via
+  `_setupCurvePath` then call
+  `repay_extended` / `create_loan_extended` /
+  `liquidate_extended` as the wallet. After the
+  callback they `withdrawAll` on the swapper and
+  `_sendLeftoverFunds` to `to`. Liquidate target
+  is `address(this)`.
+- Transient actions write `exData` to
+  `BYTES_TRANSIENT_STORAGE` in the same tx, then
+  pass the registry swapper. The swapper decodes
+  that blob and requires a valid controller
+  `msg.sender`. Leftovers use a starting-balance
+  snapshot so only the delta is sent to `to`.
+  `srcAmount == 0` reverts.
+
+CurveUsd treated as exhausted. Remaining DFS:
+Fluid Dex T2–T4, `eulerV2`, `aaveV4` / leftover
+Aave, `llamalend`, `mcd`, `tx-saver`, triggers.
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3788,19 +3922,18 @@ exhausted. DeFi Saver V3 executor + FL + auth
 (`e623f20`) and exchangeV3 + sell actions (`e623f20`)
 are logged; Morpho Blue, Liquity V2, Fluid T1
 + liquidity logic, Aave V3, Comp V2/V3, Spark,
-Liquity V1, and CurveUsd core create/borrow/
-withdraw/supply/adjust/payback/self-liquidate
-(`e623f20`) are logged. Remaining DFS is
-CurveUsd advanced/transient, Fluid Dex T2–T4,
-`eulerV2`, `aaveV4` / leftover Aave,
-`llamalend`, `mcd`, `tx-saver`, and triggers.
-Next unreviewed
+Liquity V1, CurveUsd core, and CurveUsd
+advanced/transient (`e623f20`) are logged.
+Remaining DFS is Fluid Dex T2–T4, `eulerV2`,
+`aaveV4` / leftover Aave, `llamalend`, `mcd`,
+`tx-saver`, and triggers. Next unreviewed
 Immunefi GitHub-or-recent trees: those DFS
-trees, Jito restaking `restaking_*` / `vault_*`
-plus `jito-solana` / `mev-programs` ($250k, KYC;
-interceptor `dbd8ce4` is exhausted), Enzyme Blue
-adapters added as etherscan addresses after Apr 2026
-(Bebop / ThreeOneThird / SharesSplitter). Superteam API rechecked 03:39 UTC
+trees, Jito `jito-solana` / `mev-programs` ($250k,
+KYC; interceptor `dbd8ce4` and restaking
+`vault_*` / `restaking_*` at `db90840` are
+exhausted), Enzyme Blue adapters added as etherscan
+addresses after Apr 2026 (Bebop / ThreeOneThird /
+SharesSplitter). Superteam API rechecked 03:55 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
