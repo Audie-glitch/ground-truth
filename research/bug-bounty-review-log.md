@@ -1301,6 +1301,61 @@ Solana) are separate slices.
 
 Not submitted.
 
+## 2026-09-03: Intuition MultiVault deposit/redeem (`94bddae`)
+
+Immunefi program `intuition` ($100,000, `kyc: true`, launched
+8 Jul 2026). In-scope assets are live proxies (MultiVault,
+curves, emissions, atom wallets) plus primacy of impact.
+Local clone `/tmp/intuition-v2`. No mainnet interaction.
+
+Files: `src/protocol/{MultiVault,MultiVaultCore}.sol`,
+`src/protocol/curves/LinearCurve.sol`.
+
+Checked for: vault assets vs contract ETH insolvency after
+create/deposit/redeem; ghost min-share backing on atom,
+triple, and counter vaults; protocol/entry/exit/atom-wallet
+fees reserved twice or not at all; redeeming someone else's
+shares to a third party; batch `msg.value` mismatch;
+empty-supply inflation on LinearCurve; fee flow from a
+non-default curve emptying the source vault for remaining LPs.
+
+Result: no new user-exploitable finding.
+
+- `createAtoms` / `createTriples` require `msg.value == sum(assets)`.
+  Atom cost is `atomCreationProtocolFee + minShare`; triple cost
+  is `tripleCreationProtocolFee + 2 * minShare`. Those minShare
+  units back ghost shares on the default Linear curve (1:1
+  `previewMint`). Counter triple gets the second minShare.
+- Subsequent deposits add `assetsAfterFees` to the chosen
+  curve. Protocol and atom-wallet fees stay as contract ETH
+  for sweep/claim. Entry fee and triple atom-fraction go to
+  the **default** curve via `_increaseProRataVaultAssets`,
+  and only once default shares are above `feeThreshold`.
+- Redeem subtracts `convertToAssets(shares)` from the source
+  vault, pays the user net of protocol+exit, and (if above
+  threshold) adds the exit fee to the default curve. Remaining
+  source LPs keep the pre-redeem price; the fee ETH is
+  re-attributed, not double-spent.
+- Ghost `minShare` cannot be burned (`remainingShares < minShare`
+  reverts). LinearCurve empty-supply deposit is `shares = assets`;
+  create/init never leave `totalShares = 0` with leftover assets.
+- Redeem always burns `receiver`'s shares and sends ETH to
+  `receiver`. A third party needs redemption approval and
+  cannot redirect the payout.
+- `nonReentrant` on create/deposit/redeem/claim. Admin fee
+  setters are role-gated. Default-curve-must-be-created-via
+  create paths blocks a first-depositor inflation on the
+  pro-rata vault.
+- Repo `POST-MORTEM.md` documents a Nov 2025 TrustBonding /
+  VotingEscrow `_supply_at` underflow (PR #126). Not
+  re-reported. Progressive / Offset curves and emissions
+  were not reviewed in this slice.
+
+C4 2026-03 + mitigation 2026-04 and two Diligence reports
+already cover this tree.
+
+Not submitted.
+
 ## Next candidates
 
 sBTC in-scope slices from this clone are exhausted. Superteam
@@ -1309,8 +1364,9 @@ All other open Superteam listings are `HUMAN_ONLY` (Mermail skill is
 a later $500 slot). the402.ai still paused. Skip Sky and Money on
 Chain. 1inch Fusion settlement / whitelist / PowerPod / KycNFT and
 FeeTaker / AmountGetterWithFee are exhausted. Remaining OZ hooks:
-none of the money-moving general/fee/base files. Intuition
-(launched Jul 2026, $100k, KYC) is the next unread new program.
-Sherlock `/api/contests` returned no live items as of 01:28 UTC
-3 Sep 2026. No KeeperHub implementation before the 6 Sep build
-window. No ETHOnline project code before 4 Sep 16:00 UTC.
+none of the money-moving general/fee/base files. Next Intuition
+slices: ProgressiveCurve / OffsetProgressiveCurve convert math,
+then TrustBonding emissions (skip the known VotingEscrow
+underflow). Sherlock `/api/contests` returned no live items as of
+01:28 UTC 3 Sep 2026. No KeeperHub implementation before the 6 Sep
+build window. No ETHOnline project code before 4 Sep 16:00 UTC.
