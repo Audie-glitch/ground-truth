@@ -25347,6 +25347,85 @@ implementations are
 not independently
 Sourcify-fetched.
 
+## 2026-09-03: Hydration DCA leftover (`672e02f`)
+
+Immunefi program
+`Hydration`
+($222,222, `kyc: false`).
+Unique listed GitHub
+leftover not previously
+logged. Local sparse
+clone `/tmp/hydration-node`
+at `672e02f`. No
+mainnet interaction.
+
+Files:
+`pallets/dca/src/lib.rs`,
+`pallets/bonds/src/lib.rs`,
+`pallets/circuit-breaker/src/lib.rs`.
+
+Checked for: a
+stranger `schedule`
+that spends another
+account's reserve;
+`terminate` that
+unreserves to the
+caller; `redeem`
+that pays without
+burning the caller's
+bonds.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- DCA `schedule`
+  requires
+  `who ==
+  schedule.owner`
+  and
+  `reserve_named`s
+  `asset_in` from
+  that signer. Buy
+  orders are
+  disabled.
+  `terminate` is
+  the owner or
+  `TerminateOrigin`
+  and unreserves to
+  the stored owner.
+  `execute_trade`
+  runs as
+  `schedule.owner`.
+- Bonds `issue` is
+  `IssueOrigin` and
+  pulls from
+  `IssuerAccount`.
+  `redeem` burns
+  the signer's
+  bonds after
+  maturity and pays
+  that signer 1:1.
+- Circuit-breaker
+  limit / lockdown
+  writes are
+  authority.
+  `release_deposit`
+  is signed or
+  authority and
+  releases the
+  named `who`
+  after lockdown
+  ends.
+
+Not submitted.
+Remaining Hydration
+listed GitHub:
+other pallets
+(omnipool / stableswap
+/ XYK / DCA leftover
+opened).
 
 ## Next candidates
 
@@ -25709,6 +25788,10 @@ Nexus Mutual claims leftover
 (`9e88562`) is logged
 (remaining listed is
 legacy modules).
+Hydration DCA leftover
+(`672e02f`) is logged
+(remaining listed is
+other pallets).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
@@ -26107,6 +26190,10 @@ Nexus Mutual claims leftover
 (`9e88562`) is logged
 (remaining listed is
 legacy modules).
+Hydration DCA leftover
+(`672e02f`) is logged
+(remaining listed is
+other pallets).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
