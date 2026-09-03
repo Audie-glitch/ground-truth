@@ -33605,7 +33605,9 @@ Payment requires
 user KYC.
 Remaining listed:
 OP / Base
-twins;
+twins
+(now leftover-
+logged);
 CrossChainDispatcher;
 ProxyOFT;
 Quoter.
@@ -35132,7 +35134,9 @@ Payment requires
 user KYC.
 Remaining listed:
 TWAP /
-randomness /
+randomness
+(now leftover-
+logged);
 website
 (Astraly-Labs/Pragma
 is the
@@ -36462,14 +36466,11 @@ Not submitted.
 Payment requires
 user KYC.
 Remaining listed:
-remaining Base
-config /
 rebalancing /
 fee /
-oracle rows
-if a later
-pass wants
-them;
+oracle
+(now leftover-
+logged);
 PortfolioFactory
 404;
 website
@@ -36933,6 +36934,393 @@ Remaining listed:
 website /
 primacy of
 impact only.
+
+## 2026-09-03: Metronome leftover remaining OP + Base twins leftover (Sourcify)
+
+Immunefi program
+`metronome`
+($50,000,
+`kyc: true`).
+Already leftover-
+logged as ETH
+deposit + debt.
+Sourcify OP
+DepositToken
+`0x850C8d57F6c5FEf42D9A44Df9e99feaa807e4cCc`,
+DebtToken
+`0x2f6EF744B1f47F5A4e91213B55C69dAb10c6D535`,
+Pool
+`0xbdF0380E921b4c0d73B9EF86a5b4c08869ACc23D`,
+Treasury
+`0x22C799230d837958Fc24920f8DA9Bd1254A5538c`;
+Base
+DepositToken
+`0x9bF24739310FB7F79af48ECc38557E2172469EEE`,
+DebtToken
+`0x94020A4636bcdCA343014988114d755984B44175`,
+Pool
+`0x2144B696bEbA98f077531e96023A7DF821Bc4586`,
+Treasury
+`0x934aB2262C6258fafd619Cb63bE7d89B20C19633`,
+NativeTokenGateway
+`0xBd700f301DC8e644DC074023369fe5Bdf6051b29`.
+Extract
+`/tmp/metro-op-dep`,
+`/tmp/metro-op-debt`,
+`/tmp/metro-op-pool`,
+`/tmp/metro-op-treas`,
+`/tmp/metro-base-dep`,
+`/tmp/metro-base-debt`,
+`/tmp/metro-base-pool`,
+`/tmp/metro-base-treas`,
+`/tmp/metro-base-gw`.
+No mainnet
+writes.
+
+Files:
+`contracts/DepositToken.sol`,
+`contracts/DebtToken.sol`,
+`contracts/Pool.sol`,
+`contracts/Treasury.sol`,
+`contracts/NativeTokenGateway.sol`.
+
+Checked for:
+deposit that
+spends another
+account's
+collateral;
+liquidation of
+a healthy
+position.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- OP / Base
+  `DepositToken.deposit`
+  `safeTransferFrom(msg.sender)`
+  and mints
+  to
+  `onBehalfOf_`
+  (same as
+  ETH).
+- `Pool.liquidate`
+  requires an
+  unhealthy
+  position
+  and forbids
+  self-
+  liquidation.
+- `flashWithdraw`
+  is
+  `onlyIfSmartFarmingManager`.
+
+Do not file
+deposit-to-named
+receiver or
+liquidation of
+an unhealthy
+position.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+CrossChainDispatcher /
+ProxyOFT /
+Quoter
+(same-type
+across
+chains).
+
+## 2026-09-03: Velvet leftover remaining rebalance + fee leftover (Sourcify)
+
+Immunefi program
+`velvet-capital-v2`
+($10,000,
+`kyc: true`).
+Already leftover-
+logged as Base
+deposit +
+withdraw.
+Sourcify Base
+TokenExclusionManager
+`0x4f69982392bA29E98c62B07482be190301D12Ca7`,
+Rebalancing
+`0x0827cf431c2f2a4F12584fddB6F01Ab0E26cCbE0`,
+AssetManagementConfig
+`0x17E14a8BC2380096f9e9EAfEa47fe1015502a09D`,
+FeeModule
+`0xc05D2e4Bbe442172C649Faa1FDc503E627062bd3`,
+PriceOracleL2
+`0x608E93AD410F3E3288dfc1A60446925A0fcf967E`.
+Extract
+`/tmp/velvet-excl`,
+`/tmp/velvet-rebal`,
+`/tmp/velvet-amcfg`,
+`/tmp/velvet-fee`,
+`/tmp/velvet-oracle`.
+No mainnet
+writes.
+
+Files:
+`contracts/rebalance/Rebalancing.sol`,
+`contracts/fee/FeeModule.sol`,
+`contracts/core/management/TokenExclusionManager.sol`,
+`contracts/oracle/PriceOracleL2.sol`.
+
+Checked for:
+permissionless
+rebalance that
+drains user
+vaults;
+fee mint that
+dilutes
+without a
+role.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `Rebalancing.updateWeights`
+  is
+  `onlyAssetManager`
+  and swaps
+  via a
+  protocol
+  solver
+  handler.
+- `FeeModule.chargePerformanceFee`
+  is
+  `onlyAssetManager`.
+  `chargeProtocolAndManagementFees`
+  is
+  permissionless
+  mint of
+  accrued
+  protocol /
+  management
+  shares
+  (not a
+  user
+  steal).
+- `TokenExclusionManager.claimRemovedTokens`
+  /
+  `claimTokenAtId`
+  pay the
+  recorded
+  user's
+  snapshot
+  share.
+- `PriceOracleL2`
+  is a
+  Chainlink
+  + sequencer
+  uptime
+  reader
+  (no token
+  transfer).
+
+Do not file
+asset-manager
+rebalance,
+permissionless
+accrued-fee
+charge, or
+permissionless
+claim of a
+recorded
+user's
+removed-token
+share.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+PortfolioFactory
+404 /
+ProtocolConfig
+404.
+Listed Velvet
+V2 leftover
+that Sourcify
+opens is
+exhausted
+except those
+404s.
+
+## 2026-09-03: Pragma leftover remaining TWAP + randomness leftover (`83094b9`)
+
+Immunefi program
+`pragmaoracle`
+($50,000,
+`kyc: true`).
+Already leftover-
+logged as cairo
+oracle.
+Official
+`Astraly-Labs/pragma-oracle`
+HEAD
+`83094b93`.
+Extract
+`/tmp/pragma-oracle`
+(`compute_engines/summary_stats`,
+`randomness`).
+No mainnet
+writes.
+
+Files:
+`pragma-oracle/src/compute_engines/summary_stats/summary_stats.cairo`,
+`pragma-oracle/src/randomness/randomness.cairo`.
+
+Checked for:
+TWAP write
+that moves
+user funds;
+randomness
+request that
+pulls another
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `calculate_twap`
+  is a view
+  over oracle
+  checkpoints
+  (window
+  capped).
+  `update_options_data`
+  requires a
+  merkle
+  proof
+  against the
+  latest
+  generic
+  oracle
+  entry.
+- `request_random`
+  `transferFrom`
+  the caller
+  for premium
+  + callback
+  fee.
+  `update_status`
+  is
+  admin-only.
+
+Do not file
+view TWAP,
+merkle-proven
+options-feed
+update, or
+randomness
+request that
+pulls the
+caller.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+website
+(Astraly-Labs/Pragma
+marketing
+site).
+Listed Pragma
+cairo leftover
+that the
+official repo
+opens is
+exhausted.
+
+## 2026-09-03: Kiln leftover website leftover
+
+Immunefi program
+`kiln-webapp`
+($100,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are kiln.fi
+websites /
+API / widget
+only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+website /
+API only.
+Kiln on-chain
+leftovers are
+already logged
+under `kiln`
+/ Kiln DeFi.
+
+## 2026-09-03: 1inch leftover wallet leftover
+
+Immunefi program
+`1inch-wallet`
+($100,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are Apple /
+Play wallet
+store pages
+only (no
+smart-contract
+URL).
+No in-scope
+on-chain
+money path
+to open
+this pass.
+
+Checked for:
+a listed
+contract
+URL.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+Remaining listed:
+mobile wallet
+store pages
+only.
+1inch on-chain
+leftovers are
+already logged
+under
+`1inch-aqua`
+/ token-plugins.
 
 ## Next candidates
 
@@ -38964,6 +39352,30 @@ L2GraphTokenGateway 404);
 Xterio leftover website leftover
 (KYC; no contract URL) is
 logged;
+Metronome leftover remaining
+OP + Base twins leftover
+(Sourcify DepositToken /
+DebtToken / Pool / Treasury;
+KYC) is logged (remaining
+listed is CrossChainDispatcher /
+ProxyOFT / Quoter);
+Velvet leftover remaining
+rebalance + fee leftover
+(Sourcify Rebalancing /
+FeeModule /
+TokenExclusionManager /
+PriceOracleL2; KYC) is logged
+(remaining listed is
+PortfolioFactory /
+ProtocolConfig 404s);
+Pragma leftover remaining
+TWAP + randomness leftover
+(`83094b9`; KYC) is logged
+(remaining listed is website);
+Kiln leftover website leftover
+(`kiln-webapp`; KYC) is logged;
+1inch leftover wallet leftover
+(`1inch-wallet`; KYC) is logged;
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed

@@ -187,6 +187,11 @@ Tetu leftover empty-assets leftover is logged;
 Autonolas leftover remaining oracle + VoteWeighting leftover is logged;
 The Graph leftover remaining Governor leftover is logged;
 Xterio leftover website leftover is logged;
+Metronome leftover remaining OP + Base twins leftover is logged;
+Velvet leftover remaining rebalance + fee leftover is logged;
+Pragma leftover remaining TWAP + randomness leftover is logged;
+Kiln leftover website leftover is logged;
+1inch leftover wallet leftover is logged;
 Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
 KeeperHub
@@ -728,9 +733,10 @@ deposit + debt leftover
 DebtToken / Gateway / Pool /
 Treasury / SFM / Synth / AMO;
 KYC) is logged (remaining
-listed is OP / Base twins /
-CrossChainDispatcher /
-ProxyOFT / Quoter).
+listed is CrossChainDispatcher /
+ProxyOFT / Quoter after OP /
+Base twins leftover is
+leftover-logged).
 Glo Dollar leftover USDGLO
 leftover (Sourcify
 GloDollarV3; KYC) is logged
@@ -934,6 +940,30 @@ L2GraphTokenGateway 404).
 Xterio leftover website leftover
 (KYC; no contract URL) is
 logged.
+Metronome leftover remaining
+OP + Base twins leftover
+(Sourcify DepositToken /
+DebtToken / Pool / Treasury;
+KYC) is logged (remaining
+listed is CrossChainDispatcher /
+ProxyOFT / Quoter).
+Velvet leftover remaining
+rebalance + fee leftover
+(Sourcify Rebalancing /
+FeeModule /
+TokenExclusionManager /
+PriceOracleL2; KYC) is logged
+(remaining listed is
+PortfolioFactory /
+ProtocolConfig 404s).
+Pragma leftover remaining
+TWAP + randomness leftover
+(`83094b9`; KYC) is logged
+(remaining listed is website).
+Kiln leftover website leftover
+(`kiln-webapp`; KYC) is logged.
+1inch leftover wallet leftover
+(`1inch-wallet`; KYC) is logged.
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
 is logged (remaining listed
@@ -1666,6 +1696,19 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   KYC),
   Xterio leftover website leftover
   (KYC),
+  Metronome leftover remaining
+  OP + Base twins leftover
+  (Sourcify; KYC),
+  Velvet leftover remaining
+  rebalance + fee leftover
+  (Sourcify; KYC),
+  Pragma leftover remaining
+  TWAP + randomness leftover
+  (`83094b9`; KYC),
+  Kiln leftover website leftover
+  (`kiln-webapp`; KYC),
+  1inch leftover wallet leftover
+  (`1inch-wallet`; KYC),
   Serai leftover bitcoin-serai
   leftover (`4b89cf02`; KYC),
   Pragma leftover cairo oracle
