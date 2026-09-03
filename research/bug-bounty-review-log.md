@@ -15932,6 +15932,217 @@ MorphoVault V2 and the
 polygon / arbitrum
 trees.
 
+## 2026-09-03: CoW GPv2 leftover (`6ebbd81`)
+
+Immunefi program
+`cowprotocol`
+($1,000,000, `kyc: false`).
+All 19 listed assets are
+GitHub blobs at
+`cowprotocol/contracts`
+`6ebbd810ff2da635fb6f88e9a15fde196f8c852a`.
+Local clone
+`/tmp/cow-contracts` at
+`6ebbd81`. No mainnet
+interaction.
+
+Files:
+`GPv2Settlement.sol`,
+`GPv2VaultRelayer.sol`,
+`mixins/GPv2Signing.sol`,
+`GPv2AllowListAuthentication.sol`,
+`libraries/GPv2Transfer.sol`,
+`GPv2Order.sol`,
+`GPv2Trade.sol`,
+`GPv2Interaction.sol`,
+plus the listed mixins /
+SafeMath / IERC20 /
+IVault interfaces.
+
+Checked for: unsigned
+`settle`; a solver
+interaction that spends
+a stranger’s Vault
+Relayer approval; limit-
+price bypass; EIP-1271 /
+pre-sign owner spoof.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `settle` / `swap` are
+  `onlySolver` +
+  `nonReentrant`.
+  Authenticator
+  `addSolver` /
+  `removeSolver` are
+  manager-gated.
+- Interactions cannot
+  target `vaultRelayer`
+  (`GPv2: forbidden
+  interaction`). Relayer
+  `transferFromAccounts`
+  / `batchSwapWithFee`
+  are `onlyCreator`
+  (the settlement
+  contract).
+- Limit:
+  `sellAmount *
+  sellPrice >=
+  buyAmount * buyPrice`.
+  Sell FOK:
+  `executedBuy =
+  sellAmount *
+  sellPrice / buyPrice`
+  and must still clear
+  that floor. Partial
+  fills are tracked in
+  `filledAmount`.
+- Signing: EIP-712 /
+  eth_sign ECDSA;
+  EIP-1271 owner is the
+  first 20 bytes of the
+  signature and must
+  return magic;
+  pre-sign owner is the
+  20-byte signature and
+  `preSignature[uid] ==
+  PRE_SIGNED` set by
+  that owner.
+- `invalidateOrder` /
+  `setPreSignature`
+  require
+  `owner == msg.sender`.
+  `freeFilledAmountStorage`
+  is `onlyInteraction`
+  and only expired
+  UIDs.
+- Solver interactions
+  can use settlement
+  balances
+  (documented;
+  misbehaving solvers
+  are slashed). User
+  buy amounts still go
+  out via
+  `vault.transferToAccounts
+  (outTransfers)` after
+  `interactions[1]`.
+
+Do not file “solver can
+steal via interactions”
+without a path that
+bypasses the signed
+limit and the
+out-transfers.
+
+Not submitted. Listed
+CoW GitHub leftover is
+exhausted.
+
+## 2026-09-03: Stader ETHx user deposit / withdraw leftover (`9d4a921`)
+
+Immunefi program
+`staderforeth`
+($1,000,000, `kyc: false`).
+Listed leftover is 2023
+etherscan addresses
+(proxies). This slice is
+the user money path:
+Stake Pool Manager
+`0xcf5EA1b38380f6aF39068375516Daf40Ed70D299`,
+User Withdrawal Manager
+`0x9F0491B32DBce587c50c4C43AB303b06478193A7`,
+ETHx
+`0xA35b1B31Ce002FBF2058D22F30f95D405200A15b`.
+Official tree
+`stader-labs/ethx`.
+Local clone
+`/tmp/stader-ethx` at
+`9d4a921`. No mainnet
+interaction.
+
+Files:
+`StaderStakePoolsManager.sol`,
+`UserWithdrawalManager.sol`,
+`ETHx.sol`.
+
+Checked for: ETHx minted
+without ETH; a withdraw
+claim that pays a
+stranger; a donation
+that inflates PPS for a
+first depositor;
+permissionless burn.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `deposit` requires
+  min/max,
+  `previewDeposit`
+  (round down), and
+  mints via
+  `ETHx.mint`
+  (`MINTER_ROLE`). Rate
+  is the oracle
+  `totalETHBalance /
+  totalETHXSupply`, not
+  raw
+  `address(this).balance`.
+  Accidental `receive` /
+  `fallback` on SPM
+  revert
+  (`UnsupportedOperation`).
+- `receiveExecutionLayerRewards`
+  is permissionless
+  payable — it increases
+  raw balance only; the
+  rate updates when the
+  oracle reports. Not a
+  finding.
+- `transferETHToUserWithdrawManager`
+  is UWM-only.
+- `requestWithdraw`
+  pulls ETHx from
+  `msg.sender`; ticket
+  `owner` can be a gift.
+  `finalizeUserWithdrawalRequest`
+  is permissionless,
+  blocked in oracle
+  `safeMode` or an
+  unhealthy vault, pays
+  `min(ethExpected,
+  lockedEthX *
+  currentRate)`, burns
+  ETHx from UWM, and
+  pulls ETH from SPM.
+- `claim` requires
+  `msg.sender ==
+  request.owner`.
+- `ETHx.mint` is
+  `MINTER_ROLE`;
+  `burnFrom` is
+  `BURNER_ROLE`.
+
+Do not file oracle-rate
+/ permissionless EL-
+reward donation as
+inflation.
+
+Not submitted. Remaining
+Stader listed: oracle,
+node registries,
+validator / node EL
+vaults, SD collateral,
+socializing pool,
+auction,
+permissioned /
+permissionless pools,
+insurance, VaultFactory.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -16478,6 +16689,20 @@ Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase
 recheck ~05:35 UTC);
+CoW GPv2 leftover
+(`6ebbd81`, all 19
+listed blobs) is logged
+(listed CoW GitHub
+leftover exhausted);
+Stader ETHx user deposit
+/ withdraw leftover
+(`9d4a921`) is logged
+(remaining Stader is
+oracle / registries /
+pools / vaults / SD /
+socializing / auction /
+insurance /
+VaultFactory);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
