@@ -4153,6 +4153,52 @@ Aave V4 listed wrappers treated as exhausted.
 Remaining DFS: `mcd`, `tx-saver`, triggers.
 Not submitted.
 
+## 2026-09-03: DeFi Saver Maker MCD actions (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction.
+
+Files: `contracts/actions/mcd/{McdOpen,McdSupply,McdWithdraw,
+McdGenerate,McdPayback,McdGive,McdMerge,McdClaim,
+McdDsrDeposit,McdDsrWithdraw,McdTokenConverter,
+McdBoostComposite,McdRepayComposite,McdRatio}.sol`,
+`helpers/{McdHelper,McdRatioHelper}.sol`.
+
+Checked for: generate/withdraw of a CDP the
+wallet does not own; Give that a bot can fire
+on a stranger’s vault; Cropper claim that
+steals another owner’s bonus; DSR withdraw of
+another pot pie; composite leftover DAI sent
+to the wrong address.
+
+Result: no user-exploitable finding.
+
+- `McdOpen` mints the CDP to `address(this)`.
+  Manager `frob` / `give` / `shift` / `move` /
+  `flux` require the wallet to own the vault.
+  Cropper paths resolve `owns(vaultId)` and
+  `frob` as that owner; Cropper only accepts
+  the owner’s authorized proxy.
+- Payback caps at `getAllDebt`. Give reverts
+  on `0x0`. Claim crops with amount 0 and
+  sends only the wallet’s bonus delta.
+- DSR `join`/`exit` use `pot.pie(address(this))`
+  on max. Converter only routes DAI/USDS/MKR
+  through hardcoded Sky converters.
+- Boost/repay composites hardcode
+  `MCD_MANAGER_ADDR`, sell via already-logged
+  `DFSSell`, and send leftover DAI to the
+  wallet owner. Strategy ratio checks revert
+  if the ratio moves the wrong way.
+- A caller-chosen `joinAddr` plus
+  `withdrawTokens` of a requested amount is
+  the same owner-or-bot fake-target class
+  already logged for Comp / Spark / LlamaLend.
+
+Maker MCD treated as exhausted. Remaining DFS:
+`tx-saver`, triggers. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -4197,9 +4243,9 @@ are logged; Morpho Blue, Liquity V2, Fluid T1
 + GHO/Umbrella, Comp V2/V3, Spark, Liquity V1,
 CurveUsd core, CurveUsd advanced/transient,
 Euler V2, LlamaLend core, LlamaLend leftover +
-swapper, and Aave V4 sig/premium (`e623f20`) are
-logged. Remaining DFS is `mcd`, `tx-saver`,
-and triggers. Next unreviewed Immunefi
+swapper, Aave V4 sig/premium, and Maker MCD
+(`e623f20`) are logged. Remaining DFS is
+`tx-saver` and triggers. Next unreviewed Immunefi
 GitHub-or-recent trees: those DFS trees, Jito
 `jito-solana` / `mev-programs` ($250k, KYC;
 interceptor `dbd8ce4` and restaking
