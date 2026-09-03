@@ -170,12 +170,19 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   `SSRRateSource` /
   `KillSwitchOracle` /
   `SavingsDaiOracle`
-  (Sourcify), GammaSwap May
+  (Sourcify) + X Layer
+  `SavingsVaultIntents` +
+  L2 `UsdcVaultL2`, GammaSwap May
   2026 vault + PositionManager
   (`e71dd91` / Sourcify PM;
   live observers unset),
   Olympus V1Migrator + Cooler
-  V2 + CCIP + CD Facility
+  V2 + CCIP + CD Facility +
+  DepositManager /
+  RedemptionVault /
+  Clearinghouse / Heart +
+  Governor Bravo /
+  BondTeller / BondCallback
   (`3f918a0`), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan

@@ -8744,12 +8744,16 @@ Remaining Olympus leftover:
 DepositManager / ReceiptToken
 / RedemptionVault, Clearinghouse
 v1.2, Heart / Operator /
-Emission, CCIP token pool,
-Governor Bravo, cross-chain
-MINTR copies, BondTeller.
-Spark 15 Jul sUSDC impls
-are already logged. Not
-submitted.
+Emission, CCIP token pool
+(logged below), Governor
+Bravo, BondTeller /
+BondCallback, L2 MINTR /
+Roles / CrossChainBridge
+copies. Spark 15 Jul
+Ethereum `UsdcVault` is
+logged; L2 rows are
+`UsdcVaultL2` (logged
+below). Not submitted.
 
 ## 2026-09-03: Spark leftover gov-relay Executor + SPARK_RECEIVER (`6218d57`)
 
@@ -9149,12 +9153,357 @@ finding. Not submitted.
   constructor.
 
 Spark leftover oracle
-rows and 15 Jul sUSDC /
+rows and 15 Jul Ethereum
 `UsdcVault` were logged
-in a parallel pass.
+in a parallel pass. L2
+15 Jul `SUSDC_IMPL` rows
+are `UsdcVaultL2` (logged
+below), not the Ethereum
+vault. Not submitted.
+
+## 2026-09-03: Olympus DepositManager + RedemptionVault + Clearinghouse + Heart (`3f918a0`)
+
+Same Immunefi program
+`olympus` ($3,333,333,
+`kyc: false`, critical
+only). 20 Feb leftover
+after the V1Migrator /
+Cooler V2 / CCIP / CD
+Facility pass:
+DepositManager
+`0xcb4E…bbf2`,
+ReceiptTokenMgr
+`0xD98B…ddd1`,
+DepositRedemptionVault
+`0x20a3…029Db`,
+Clearinghouse v1.2
+`0x1e09…e0`, Heart v1.7
+`0x5824…5ECB`, Operator
+v1.5 `0x6417…b52`,
+EmissionManager v1.2
+`0xa61b…b6ff`,
+CCIPBurnMintTokenPool
+`0xa558…e3aD`. Official
+`olympus-v3` `3f918a0`.
+Sourcify v2 HTTP 400 on
+several leftovers; used
+the public tree. No
+state-changing txs.
+
+Files:
+`src/policies/deposits/{DepositManager,
+ReceiptTokenManager,
+DepositRedemptionVault}.sol`,
+`policies/{Clearinghouse,
+Heart,Operator,EmissionManager}.sol`,
+`policies/bridge/CCIPBurnMintTokenPool.sol`.
+
+Checked for: a deposit
+operator withdrawing
+another operator’s
+liabilities; receipt mint
+by a stranger; redemption
+finish before `redeemableAt`;
+borrow-against-redemption
+without a committed
+receipt; Clearinghouse
+`lendToCooler` to a
+factory-foreign cooler;
+Heart `beat` minting
+unbounded OHM; CCIP pool
+`_mint` callable outside
+the router.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `DepositManager.deposit`
+  / `withdraw` / `claimYield`
+  / `borrowingWithdraw` are
+  `ROLE_DEPOSIT_OPERATOR` and
+  keyed by `msg.sender`.
+  Receipt token IDs bind
+  `(manager, asset, period,
+  operator)`. Mint/burn
+  require the token owner
+  (`ReceiptTokenManager`).
+  Solvency is
+  `liabilities <= assets
+  + borrowed`. Borrow
+  capacity is the operator’s
+  own liabilities minus
+  already borrowed.
+- Redemption start pulls
+  unwrapped receipts, records
+  `msg.sender`, and commits
+  at the facility. Finish /
+  cancel / borrow / repay
+  are `onlyValidRedemptionId`
+  for the owner. Finish
+  waits for `redeemableAt`
+  and refuses an unpaid
+  loan. Default burns unpaid
+  principal receipts and
+  sends the buffer to TRSRY.
+- `Clearinghouse.lendToCooler`
+  requires `factory.created`
+  and matching gOHM/reserve,
+  pulls collateral from the
+  caller, and clears the
+  request itself. Defaults
+  pay a capped keeper
+  reward and burn leftover
+  gOHM. `defund` is
+  `cooler_overseer`.
+- `Heart.beat` is
+  frequency-gated and mints
+  at most `currentReward()`.
+  `EmissionManager.execute`
+  and `Operator.operate` are
+  `heart`. `Operator.swap`
+  is the RBS wall with
+  capacity + `minAmountOut`.
+- CCIP pool `_mint` /
+  `_burn` override
+  Chainlink’s TokenPool
+  hooks (`onlyEnabled`).
+  Router / RMN still gate
+  the external path.
+
+## 2026-09-03: Olympus Governor Bravo + BondTeller + BondCallback (`3f918a0`)
+
+Same program. Sourcify
+exact matches on
+GovernorBravoDelegate
+`0xa601…1B4`, Delegator
+`0x0941…fcD`, Timelock
+`0x953E…9c39`,
+BondFixedTermTeller
+`0x007F…Fed6`,
+BondCallback v1.1
+`0x73df…795e`. Bond
+Manager
+`0xf577…B2A3` is
+`BondManager.sol`.
+Official tree `3f918a0`.
+No state-changing txs.
+
+Files:
+`src/external/governance/{GovernorBravoDelegate,
+GovernorBravoDelegator,Timelock}.sol`,
+`src/policies/{BondCallback,BondManager}.sol`,
+Bond Protocol
+`BondFixedTermTeller` /
+`BondBaseTeller` (Sourcify
++ vendored `src/test/lib/bonds`).
+Also read L2 copies of
+`OlympusMinter.sol` and
+deprecated
+`policies/CrossChainBridge.sol`.
+
+Checked for: a stranger
+`initialize` / `_setImplementation`;
+emergency propose / queue
+without the veto guardian;
+cancel of an emergency
+proposal by a non-proposer
+when `proposalThreshold`
+is 0; execute after a
+target codehash change;
+callback mint to a
+non-whitelisted teller;
+teller redeem that pays
+more underlying than
+shares burned; BondManager
+market create by a
+non-admin; L2 MINTR mint
+without kernel permission;
+LZ receive from an
+untrusted remote.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- Delegator constructor
+  `delegatecall`s
+  `initialize` (admin-only,
+  reverts if `timelock`
+  already set) then sets
+  `admin = timelock_`.
+  `_setImplementation` is
+  admin-only and rejects
+  `address(0)`.
+- `propose` requires prior
+  votes above the
+  percentage threshold.
+  `activate` (anyone, after
+  `startBlock`) locks
+  quorum from current
+  gOHM supply. Votes take
+  `min(startBlock,
+  now-1)` prior votes.
+  Queue / execute require
+  `Succeeded` / `Queued`
+  and that the proposer
+  still holds the captured
+  threshold. Timelock
+  execute re-checks the
+  propose-time codehash.
+- `emergencyPropose` /
+  emergency queue /
+  execute are
+  `vetoGuardian` and only
+  while `gOHM.totalSupply
+  < 1000e18`. Emergency
+  proposals store
+  `proposalThreshold = 0`;
+  cancel by a stranger
+  hits `votes >= 0` and
+  reverts
+  `Cancel_AboveThreshold`.
+  Only the proposer
+  (guardian) can cancel.
+- BondCallback `callback`
+  requires
+  `approvedMarkets[msg.sender][id_]`.
+  Whitelist /
+  blacklist are
+  `callback_whitelist`
+  and the teller must
+  match the aggregator.
+  Quote tokens must
+  already sit on the
+  callback. OHM payout
+  mints to the teller;
+  inverse withdraws
+  TRSRY (unwraps a
+  configured 4626 first)
+  and burns the received
+  OHM. `batchToTreasury`
+  / `setOperator` are
+  `callback_admin`.
+- Teller `purchase` pulls
+  quote, pays protocol /
+  referrer fees from the
+  quote, then either
+  `callback` (must return
+  `payout_` of the payout
+  token) or
+  `transferFrom` the
+  market owner. Redeem /
+  `create` are 1:1 with
+  the ERC1155 supply
+  after expiry. Protocol
+  fee is `requiresAuth`
+  and capped at 5%.
+- `BondManager` market
+  launch / settle /
+  emergency withdraw are
+  `bondmanager_admin`.
+- L2 `OlympusMinter`
+  `mintOhm` is
+  `permissioned` +
+  `onlyWhileActive` and
+  spends `mintApproval`.
+  Deprecated LZ
+  `CrossChainBridge`
+  `lzReceive` requires
+  the endpoint and a
+  stored trusted remote;
+  mint goes to the
+  decoded recipient.
+  Failed messages retry
+  the same payload hash.
+
+Remaining Olympus leftover:
+CD Auctioneer / Limit
+Orders / CDEPO / CHREG /
+RGSTY, CoolerFactory +
+v2 LTV + Composites,
+RANGE v2 / YRF,
+Treasury Borrower,
+DLGTE, L2 RolesAdmin
+copies. Not submitted.
+
+## 2026-09-03: Spark UsdcVaultL2 (15 Jul L2 SUSDC_IMPL)
+
+Immunefi program
+`sparklend` ($5,000,000,
+`kyc: false`). 15 Jul
+L2 `SUSDC_IMPL` rows are
+**not** the Ethereum
+`UsdcVault` already
+logged. Sourcify exact
+`UsdcVaultL2`
+`src/UsdcVaultL2.sol`:
+Base
+`0x6ACC…7723`
+(verified 2026-06-30),
+Arbitrum
+`0xdC8D…92d6`
+(2026-06-19), Optimism
+`0x3a1d…CEA5`
+(2026-06-19). Unichain
+`0x1fcc…4C79`
+Sourcify 404 (same
+listing). Ethereum
+`0xf943…20bA` remains
+`UsdcVault`. Extract
+under
+`/tmp/spark-usdcvault-l2`.
+Read-only. No
+state-changing txs.
+
+Checked for: first-depositor
+share inflation; withdraw /
+redeem that spends vault
+sUSDS without burning the
+owner’s shares; `exit`
+that pays more sUSDS than
+shares; `mint` /
+`swapExactOut` taking a
+stranger’s USDC; UUPS
+upgrade without `wards`.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- Shares mint 1:1 with
+  sUSDS received from
+  `psm.swapExactIn` /
+  `swapExactOut`, not from
+  a `totalAssets` /
+  `totalSupply` ratio.
+  Donated USDC or sUSDS
+  does not mint shares.
+- `deposit` pulls USDC
+  from `msg.sender`, swaps
+  into this vault, then
+  `_mint`s `amountOut`.
+  `withdraw` / `redeem`
+  swap vault sUSDS to the
+  receiver and then
+  `_burn` the owner
+  (allowance if not
+  sender). A shortfall
+  reverts the whole tx.
+- `exit` burns shares and
+  transfers that many
+  sUSDS. Transfer to
+  `address(this)` is
+  rejected.
+- UUPS
+  `_authorizeUpgrade` is
+  `auth`. `initialize`
+  is disabled on the
+  implementation.
+
 Listed Spark leftover
 addresses after this
-slice are exhausted.
+correction: Unichain
+impl still unverified
+on Sourcify (treat as
+the same L2 vault).
 Not submitted.
 
 ## Next candidates
@@ -9277,9 +9626,11 @@ plus leftover
 `SSRRateSource` /
 `KillSwitchOracle` /
 `SavingsDaiOracle` (Sourcify)
-plus 15 Jul sUSDC /
-`UsdcVault` are logged.
-`AAVE_ORACLE` is the
+plus 15 Jul Ethereum
+sUSDC / `UsdcVault` and
+L2 `UsdcVaultL2` (Base /
+Arb / OP Sourcify) are
+logged. `AAVE_ORACLE` is the
 already-logged Aave V3 price
 oracle. Listed Spark leftover
 oracle rows are exhausted.
@@ -9303,15 +9654,20 @@ Next
 unreviewed Immunefi
 GitHub-or-recent trees:
 Olympus V1Migrator + Cooler
-V2 + CCIP + CD Facility
-(`3f918a0`) are logged;
-remaining Olympus leftover
-is DepositManager /
+V2 + CCIP + CD Facility +
+DepositManager /
 RedemptionVault /
-Clearinghouse / Heart /
-Operator / Emission / token
-pool / Governor. Spark 15
-Jul sUSDC impls. 
+Clearinghouse / Heart +
+Governor Bravo / Timelock +
+BondTeller / BondCallback /
+BondManager (`3f918a0`)
+are logged; remaining
+Olympus leftover is CD
+Auctioneer / CoolerFactory /
+RANGE / YRF / L2 RolesAdmin
+copies. Spark 15 Jul
+Ethereum `UsdcVault` + L2
+`UsdcVaultL2` are logged. 
 Twyne June-2026 Aave V3
 operators (Sourcify) are logged;
 remaining Twyne vaults /
