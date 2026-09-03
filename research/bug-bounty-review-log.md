@@ -47204,16 +47204,8 @@ Not submitted.
 Payment requires
 user KYC.
 Remaining listed:
-websites
-(if still unused).
-Official
-Arbitrum leftover
-that listed
-trees open is
-exhausted except
-unused official
-leftovers if
-still open.
+unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level.
+Next unused leftover is a different Immunefi program, not a rematch.
 
 
 ## Next candidates
@@ -47581,7 +47573,7 @@ Remaining listed Aave: primacy; unused official v3 logic leftover that listed tr
 Remaining listed Jito: unused official leftover that listed remaining-runtime trees open is exhausted on this pin. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana account_saver leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_client leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana prioritization_fee leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana commitment leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana slot_params leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana genesis_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana alpenglow_epoch_type leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana leader_schedule leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana sysvar_account leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana loader_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana vote_sender leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana installed_scheduler leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana read_optimized_dashmap leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana static_ids leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana runtime_config leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
-Remaining listed Arbitrum: websites if still unused. Official Arbitrum leftover that listed trees open is exhausted except unused official leftovers if still open. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged.
+Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
 Do not rematch Hedera consensus-node,
@@ -47711,6 +47703,7 @@ Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
 Do not rematch Arbitrum leftover remaining governance leftover.
 Do not rematch Arbitrum leftover remaining fund-distribution leftover.
 Do not rematch Arbitrum leftover remaining token-bridge libs leftover.
+Do not rematch Arbitrum leftover remaining websites leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -50583,6 +50576,8 @@ Arbitrum leftover remaining fund-distribution leftover
 (`52bc499`) is logged;
 Arbitrum leftover remaining token-bridge libs leftover
 (`1bdf3cd`) is logged;
+Arbitrum leftover remaining websites leftover
+is logged (remaining listed Arbitrum trees on this pin are exhausted);
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
@@ -73776,3 +73771,23 @@ Do not rematch leftover-logged compute-budget leftover or slot_params leftover. 
 **No finding.** Config bag only. Out of Immunefi leftover remaining for this slice.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused official leftover that listed remaining-runtime trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Arbitrum leftover remaining websites leftover
+
+Immunefi program `arbitrum` ($2,000,000, `kyc: true`). Official remaining listed after token-bridge libs leftover. Listed first-party web surfaces. Live fetch 2026-09-03 via Firecrawl (portal) + curl HEAD (docs / foundation). Do not rematch token-bridge + Inbox leftover, custom reverse gateway leftover, nitro challenge leftover, fund-distribution leftover, governance leftover, or token-bridge libs leftover. No mainnet writes. No exploit PoCs.
+
+Opened: `https://portal.arbitrum.io/bridge`, `https://portal.arbitrum.io/earn`, `https://docs.arbitrum.io/`, `https://arbitrum.foundation/`, `https://arbitrum.io/tos`. Direct curl from this VM returns Cloudflare **403** on `arbitrum.io` / `portal.arbitrum.io`; Firecrawl returned **200** for portal pages.
+
+Checked for: an official page that asks for a seed phrase or private key; a first-party wallet connect that signs a stranger transfer; a bridge UI that drains a connected mainnet wallet without user intent.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `portal.arbitrum.io/bridge` is the official Arbitrum bridge UI. It shows From/To chain selectors, amount fields, optional custom recipient, a Terms checkbox linking `arbitrum.io/tos`, and **Connect Wallet**. No seed/private-key import form in the rendered page.
+- `portal.arbitrum.io/earn` is a yield discovery aggregator (Aave, Pendle, Lido, Ether.fi, etc.). It lists APY/TVL and deep-links to opportunity pages; it does not custody user funds itself.
+- `docs.arbitrum.io` is developer documentation (Docusaurus). It links to the official bridge/portal and node/run guides. No wallet connect on the docs home page.
+- `arbitrum.foundation` is marketing + DAO governance links (Tally form, forum, Discord). No wallet connect on the homepage scrape.
+- `arbitrum.io/tos` is Offchain Labs Terms of Service (legal). Not a wallet surface.
+
+Do not file third-party protocol yield links on the Earn tab as an official first-party drain.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Next unused leftover is a different Immunefi program, not a rematch.
