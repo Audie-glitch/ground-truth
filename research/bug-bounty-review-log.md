@@ -503,6 +503,90 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Origin CrossChain CCTP (origin-dollar `4fa0602`)
+
+Same Immunefi program (`originprotocol`, $1M, `kyc: false`). In-scope
+proxies include Morpho V2 CrossChain Master/Remote
+`0xB1d624fc40824683e2bFBEfd19eB208DbBE00866` (Ethereum + Base, added
+23 Feb 2026 and again 1 Sep 2026) and HyperEVM twins
+`0xE0228DB13F8C4Eb00fD1e08e076b09eF5cD0EA1e`. Local clone
+`/tmp/origin-dollar` at `4fa0602`. No mainnet interaction.
+
+Files: `contracts/strategies/crosschain/{CrossChainMasterStrategy,CrossChainRemoteStrategy,AbstractCCTPIntegrator,CrossChainStrategyHelper}.sol`.
+
+Checked for: user-callable mint/withdraw; forged CCTP or Origin
+payloads; `remoteStrategyBalance` inflation; nonce replay / skip;
+`relay` vs `handleReceiveFinalizedMessage` double-apply; pending
+deposit/withdraw accounting; Morpho 4626 try/catch leaving funds
+untracked.
+
+Result: no user-exploitable finding.
+
+- Master `deposit` / `withdraw` are vault-only. Remote
+  `deposit` / `withdraw` / `sendBalanceUpdate` are
+  governor/strategist/operator. `relay` is operator-only.
+- `handleReceiveFinalizedMessage` / `handleReceiveUnfinalizedMessage`
+  are `onlyCCTPMessageTransmitter`, then require
+  `sourceDomain == peerDomainID` and `sender == peerStrategy`.
+  Unfinalized receives additionally require `minFinalityThreshold == 1000`.
+- Burn messages are accepted only through `relay`: header sender must
+  be the TokenMessenger, burn token must be `peerUsdcToken`, and the
+  extracted mint sender/recipient must be `peerStrategy` / `address(this)`.
+  Circle `receiveMessage` then the Origin hook. A user cannot inject a
+  balance-check or deposit hook.
+- Nonces start at 1 with `nonceProcessed[0] = true`.
+  `_getNextNonce` reverts while the last nonce is open, so only one
+  in-flight transfer exists. Confirmations apply only when
+  `nonce == lastTransferNonce`. Out-of-order non-confirmation checks
+  are ignored; idle checks older than one day are ignored.
+- Master `checkBalance` is local USDC + `pendingAmount` + cached
+  `remoteStrategyBalance`. Deposits set `pendingAmount` before the
+  burn; confirmations clear it. Withdrawals do not reduce the cache
+  until the remote confirmation, so TVL can stay high for one CCTP
+  round-trip. That is an accounting window, not a path for a user to
+  mint against unbacked value: the next Master withdraw reverts
+  (`Pending token transfer`) and Origin’s rules exclude accounting
+  discrepancies without extractable loss.
+- Remote Morpho `deposit` / `withdraw` are try/catch so a 4626 revert
+  still sends a confirmation. Idle USDC is included in
+  `checkBalance`. A failed withdraw sends a confirmation without
+  tokens and the Master cache is corrected to the reported balance.
+
+Not submitted. Circle CCTP attestation and Morpho share-price behavior
+are third-party / documented. Ethena ARM source is not in this clone
+(only `ARMBuyback` deployment JSON).
+
+## 2026-09-03: Origin MorphoV2Strategy (origin-dollar `4fa0602`)
+
+Same program. In-scope proxy `0x3643cafA6eF3dd7Fcc2ADaD1cabf708075AFFf6e`
+(“OUSD Strategy - Morpho V2”, added 1 Sep 2026). Local clone
+`/tmp/origin-dollar`. No mainnet interaction.
+
+Files: `contracts/strategies/{MorphoV2Strategy,Generalized4626Strategy,MorphoV2VaultUtils}.sol`.
+
+Checked for: non-vault withdraw; `maxWithdraw` over-pull; idle-asset
+under/over-count; permissionless Merkl claim redirection.
+
+Result: no user-exploitable finding.
+
+- `deposit` / `withdraw` stay vault-only. `withdrawAll` is
+  vault-or-governor and sends assets to `vaultAddress`. Morpho V2’s
+  `maxRedeem`/`maxWithdraw` return 0, so the override withdraws
+  `min(idle-on-V2 + V1-adapter maxWithdraw, checkBalance)`.
+- `MorphoV2VaultUtils` only adds the V1 adapter’s `maxWithdraw` when
+  `morphoVaultV1()` succeeds; any other adapter reverts
+  `IncompatibleAdapter`. That can block `withdrawAll`, not a user
+  drain. Ordinary `withdraw` still uses ERC-4626 `withdraw`.
+- `checkBalance` is `previewRedeem(shares)` only. Idle `assetToken` on
+  the strategy is intentionally omitted. Donated vault shares raise
+  TVL for existing holders; they do not let a later minter extract
+  others’ funds.
+- `merkleClaim` is permissionless but hardcodes `users[0] = address(this)`,
+  so rewards can only land on the strategy. A valid proof cannot
+  redirect to the caller.
+
+Not submitted.
+
 ## Next candidates
 
 sBTC `wsts` (KYC). Superteam `AGENT_ALLOWED` is still only Steve Arena
