@@ -8351,6 +8351,159 @@ vault factory if a later
 pass wants the Vyper
 bodies. Not submitted.
 
+## 2026-09-03: GammaSwap vault May 2026 leftover + PositionManager
+
+Immunefi program `gammaswap`
+($40,000, `kyc: false`,
+Primacy of Rules, critical
+only, PoC required). 10 May
+2026 leftover: VaultGammaPool
+`0xbd6e…311c` (live factory
+protocol 3 impl),
+VaultBorrow / Repay /
+Rebalance / ExternalRebalance
+/ Liquidation / ExternalLiq
+/ BatchLiq / Short strategies,
+CPMMMath, VaultBatchLiquidation
+(listed; pool no-ops batch +
+external liquidate), and
+PositionManager proxy
+`0x3b72…98b0` → impl
+`0x3Cc1…fB37` (Sourcify
+exact `PositionManagerExternalWithStaking`).
+Sources: `@gammaswap/v1-implementations@1.2.18`
+`/tmp/gammaswap-impl` `e71dd91`,
+`v1-core` `/tmp/gammaswap-core`
+`2312d0e`, periphery Sourcify
+`/tmp/gammaswap-pm` (repo
+`v1-periphery` `6774367`).
+Live factory
+`0xFD51…c20B` owner
+`0x937f…C3Fb`.
+`getLoanObserver(1..15)` all
+unset (zero addr, refType 0).
+Known issues list empty.
+No Arbitrum state-changing
+txs from this VM.
+
+Files: `contracts/pools/VaultGammaPool.sol`,
+`strategies/vault/**`,
+`libraries/cpmm/CPMMMath.sol`,
+`v1-core` `AbstractLoanObserverStore`
++ `LibStorage.createLoan`,
+`PositionManager{,WithStaking,ExternalWithStaking}.sol`,
+`base/{Transfers,GammaPoolERC721,GammaPoolQueryableLoans}.sol`.
+
+Checked for: anyone opening a
+refType-3 interest-free loan;
+reserved-LP global counter
+theft; reserved borrowed
+invariant desync on repay;
+share-price inflation from
+reserved debt; no-op
+liquidation freezing funds;
+PositionManager callback
+paying a stranger; public
+`clearToken` / `unwrapWETH`
+stealing user funds in
+flight.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `createLoan(refId)` reads
+  `getPoolObserverByUser`
+  from the factory. refType
+  3 requires an owner-set
+  observer that implements
+  `ICollateralManager`, an
+  observed pool, and (if
+  `restricted`) an allowlist.
+  `createLoan(0)` is refType
+  0 and accrues interest.
+  Live observers 1–15 are
+  empty, so nobody can open
+  a refType-3 loan today.
+  Do not file “anyone can
+  borrow interest-free.”
+- `_reserveLPTokens` is
+  loan-creator + refType 3
+  only. The reserved-LP
+  counter is global: any
+  other live refType-3
+  creator can unreserve.
+  That is privileged-user
+  griefing, not theft, and
+  it is not live.
+- Reserved LP is excluded
+  from `maxAssets`,
+  `getAdjLPTokenBalance`,
+  and utilization (98% cap).
+  Reserved borrowed
+  invariant is excluded from
+  interest in
+  `accrueBorrowedInvariant`
+  and added back as
+  `convertInvariantToLPRoundUp`
+  in `totalReservedAssetsAndSupply`.
+  `payLoanLiquidity`
+  decrements reserved
+  borrowed invariant on
+  refType-3 repay.
+- `VaultGammaPool.liquidateExternally`
+  and `batchLiquidations`
+  return `(0, [])`. Regular
+  `liquidate` still hits
+  `VaultLiquidationStrategy`.
+  External / batch strategy
+  contracts exist but are
+  unreachable through the
+  pool. Not a freeze of
+  liquidatable debt.
+- OOS: UniV2 issues in
+  DeltaSwap unless GammaSwap
+  materially changed them;
+  “impacts affecting only
+  the state of implementation
+  contracts”; GS / timelock /
+  staking capped at high;
+  airdrop ineligible for
+  medium. Program pays
+  critical only.
+- PositionManager: loans are
+  owned by the PM; the NFT
+  owner (or approved) gates
+  borrow / repay / collateral.
+  `sendTokensCallback`
+  requires `msg.sender` is
+  the computed GammaPool.
+  `createLoan` uses PM as
+  `msg.sender` for observer
+  lookup. `clearToken` /
+  `unwrapWETH` / `refundETH`
+  sweep leftovers on the PM
+  (UniV3-style dust), not
+  funds sitting in a pool.
+  UUPS `_authorizeUpgrade`
+  is `onlyOwner`.
+
+Remaining GammaSwap listed
+Solidity: 2024 factory /
+DeltaSwap / staking / GS /
+timelock / airdrop rows
+(staking / GS / timelock
+capped at high; airdrop
+medium ineligible). Spark
+13 Jul Robinhood / X Layer
+rows are the same ALM +
+Vault V2 trees already
+logged. Next leftover:
+Olympus March 2026
+migrator / Cooler / CCIP
+(`olympus`, $3.33M, no KYC)
+or Spark 15 Jul sUSDC
+impls. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -8463,12 +8616,22 @@ Primacy of Impact only.
 Remaining SparkLend is the
 13 Jul Robinhood / X Layer
 executor / receiver rows
-beyond ALM + SparkVault +
-PSM3 + CapAutomator / ratio
-oracles / CollectorController.
-Next
+(same ALM + Vault V2 trees
+already logged; do not
+re-review) plus the 15 Jul
+sUSDC / sUSDC_IMPL rows.
+GammaSwap May 2026 vault +
+PositionManager are logged;
+remaining GammaSwap is the
+2024 factory / DeltaSwap /
+staking / GS / timelock /
+airdrop set. Next
 unreviewed Immunefi
 GitHub-or-recent trees:
+Olympus March 2026 leftover
+(v1 Migrator / Cooler v2 /
+CCIP; `olympus`, $3.33M,
+no KYC).
 Twyne June-2026 Aave V3
 operators (Sourcify) are logged;
 remaining Twyne vaults /
