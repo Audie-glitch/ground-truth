@@ -13066,7 +13066,9 @@ critical. Not submitted.
 
 Not submitted. Remaining
 Mux listed Solidity:
-`mux-staking` only.
+`mux-staking` only
+(GitHub 404 as of 3 Sep
+2026; cannot open).
 
 ## Next candidates
 
@@ -13478,7 +13480,7 @@ Mux3 core trade / pool /
 orderbook (`8674f2b`) is
 logged; Mux aggregator
 proxyFactory + GmxV2 +
-LendingPool (`0f36131`)
+LendingPool (`0f36131`),
 Mux degen pool
 (`c5bfe81`), and Mux
 protocol v1 core
