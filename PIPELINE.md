@@ -9,7 +9,9 @@ organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 items empty this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:20 UTC;
-246 programs; no Sep 2026 launches; Felix leftover zappers + leftover pools leftover is logged;
+246 programs; no Sep 2026 launches; Felix leftover RedStone + composite price feeds leftover is logged;
+OnRe leftover Solana program money path leftover is logged;
+Felix leftover zappers + leftover pools leftover is logged;
 Felix leftover feUSD + borrower + redeem leftover is logged;
 Livepeer leftover go-livepeer client leftover is logged;
 Serai leftover listed crypto + bitcoin leftover is logged;

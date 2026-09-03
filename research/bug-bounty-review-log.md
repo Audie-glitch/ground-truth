@@ -37231,10 +37231,19 @@ borrower + redeem leftover
 (`10b5457`; KYC) is logged;
 Felix leftover zappers +
 leftover pools leftover
+(`10b5457`; KYC) is logged;
+Felix leftover RedStone +
+composite price feeds leftover
 (`10b5457`; KYC) is logged
-(remaining listed is
-RedStone / composite price
-feeds / Primacy);
+(remaining listed is Primacy
+of Impact);
+OnRe leftover Solana program
+money path leftover
+(`f6a4c6e`; KYC) is logged
+(remaining listed is prop AMM
+/ buffer / reserve /
+configurable vault /
+market-stats views);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -53908,3 +53917,128 @@ configurable
 vault, and
 market-stats
 views.
+
+## 2026-09-03: Felix leftover RedStone + composite price feeds leftover (`10b5457`)
+
+Immunefi program
+`felix`
+($100,000, `kyc: true`).
+Listed remaining after
+zappers + leftover
+pools leftover
+(`9e2d560`). Official
+clone
+`/tmp/felix-contracts`
+`10b5457`. Opened
+`src/PriceFeeds/`.
+No mainnet writes.
+No exploit PoCs.
+
+Files:
+`RedStonePriceFeedBase.sol`,
+`RedStonePriceFeedBaseLst.sol`,
+`RedstoneCompositePriceFeedLst.sol`,
+`WHYPERedStonePriceFeed.sol`,
+`BTCRedStonePriceFeedOracle.sol`,
+`MainnetPriceFeedBase.sol`,
+`CompositePriceFeed.sol`,
+and the LST
+wrappers
+(`WSTHYPE`,
+`KHYPE`,
+`WHYPE`).
+
+Checked for: a
+stranger
+`fetchPrice`
+that writes
+an arbitrary
+USD price;
+permissionless
+oracle
+aggregator
+swap.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- RedStone
+  feeds read
+  `AggregatorV3.latestRoundData`.
+  Stale /
+  non-positive
+  /
+  revert
+  shuts the
+  branch via
+  BO
+  `shutdownFromOracleFailure`
+  and freezes
+  `lastGoodPrice`.
+- Composite
+  LST feeds
+  multiply a
+  market
+  oracle by a
+  canonical
+  rate
+  provider.
+  `fetchRedemptionPrice`
+  is the same
+  path with a
+  redemption
+  flag.
+  Shutdown
+  switches to
+  HYPE-USD *
+  canonical.
+- `WHYPERedStonePriceFeed`
+  initialize
+  is
+  `initializer`.
+  No setter
+  for the
+  aggregator
+  after init.
+- Mainnet
+  Chainlink
+  base
+  `setAddresses`
+  is
+  `onlyOwner`
+  then
+  renounces.
+- No public
+  `setPrice` /
+  `transmit`
+  on these
+  wrappers.
+
+Do not file
+a shutdown
+on a stale
+RedStone
+round as
+stranger
+theft of
+trove
+collateral.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub of listed
+types opens for
+Felix price
+feeds is
+exhausted at
+the opened-file
+level.
+Remaining
+listed:
+Primacy of
+Impact.
