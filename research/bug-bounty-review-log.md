@@ -2065,6 +2065,213 @@ path enable, consortium valset update.
 
 Not submitted. Payouts need Immunefi KYC.
 
+## 2026-09-03: Leather wallet provider + extension RPC (`eca229c`)
+
+Immunefi program `leather` ($5,000, `kyc: true`,
+`immunefiStandard: false`, `safeHarbor` unset / false).
+Web/app only. Assets: `leather-io/mono` (added 13 Jul
+2026), leather.io (primacy of impact), Chrome
+extension, iOS, Android, `app.leather.io`,
+`api.leather.io`. Local clone `/tmp/leather-mono` on
+`dev` at `eca229c` (2026-09-02). No live wallet,
+extension, or API testing. No exploit or reproduction
+steps written.
+
+Program rules that bound this pass: reports need a
+working PoC against the **current published** Chrome /
+App Store build; theoretical or AI-only reports are
+closed; pre-release / unreleased code is out of scope;
+third-party dApps and protocol-level Bitcoin/Stacks
+bugs are out of scope; on-chain metadata spoofing is
+out of scope unless it becomes code execution or a
+signing bypass.
+
+Files: `apps/extension/src/content-scripts/content-script.ts`,
+`apps/extension/src/background/background.ts`,
+`apps/extension/src/background/messaging/{rpc-message-handler,rpc-request-utils,methods-requiring-connected-wallet}.ts`,
+`apps/extension/src/background/messaging/internal-methods/message-handler.ts`,
+`apps/extension/src/background/messaging/rpc-methods/{get-addresses,sign-psbt}.ts`,
+`apps/extension/src/shared/{messages,permissions/permission.helpers,crypto/mnemonic-encryption,messaging/send-message-to-originating-frame,utils/urls}.ts`,
+`apps/extension/src/app/common/psbt/use-psbt-request-params.ts`,
+`apps/extension/src/app/features/psbt-signer/hooks/use-psbt-details.tsx`,
+`apps/extension/src/app/pages/rpc-sign-psbt/use-rpc-sign-psbt.tsx`,
+`packages/provider/src/{injected-provider,mobile}.ts`,
+`apps/web/tests/xss-protection.spec.ts`,
+`apps/extension/tests/specs/rpc-get-addresses/rpc-cross-origin-frame.spec.ts`.
+
+Checked for: a page that can drive another origin’s
+granted permissions; a sign/broadcast path that skips
+the approval popup; approval UI that is not derived
+from the same PSBT hex that is signed; mnemonic
+plaintext leaving the encrypt/decrypt helpers;
+internal background methods callable from a content
+script; HTML injection from CMS/metadata.
+
+Result: no submittable finding.
+
+- Content-script → background uses
+  `chrome.runtime.connect` named `CONTENT_SCRIPT_PORT`.
+  Origin is `port.sender.url` / `port.sender.origin`
+  (Chromium/Firefox), not a page-supplied string.
+  Responses go to `{tabId, frameId}` via
+  `chrome.tabs.sendMessage`.
+- Signing methods sit in
+  `methodsRequiringConnectedWallet` and open a popup.
+  `getAddresses` / `stx_getAddresses` also open a
+  popup and do not auto-return addresses.
+- Internal background handler requires
+  `sender.url` to start with `chrome.runtime.getURL('')`.
+- Permissions are keyed by hostname (`localhost` keeps
+  the port). That is weaker than a full origin key, but
+  without a working PoC against the published build it
+  is theoretical and the program closes those.
+- PSBT approval reads `hex` from the popup search
+  params that the background copied from the validated
+  request, then signs that same hex. Inputs/outputs
+  come from `@scure/btc-signer` parse of that hex.
+  Cross-origin iframes get an explicit callout
+  (`rpc-cross-origin-frame.spec.ts`).
+- Mnemonic encrypt/decrypt uses Stacks encryption +
+  Argon2 salt; no extra log of the secret in those
+  helpers. Background `logger.info` of the RPC envelope
+  is verbose, not a key leak.
+- v0.5.2-style XSS coverage on the marketing web app
+  is a Playwright sanitizer check, not a wallet signing
+  surface.
+
+Not submitted. A valid Leather report would still need
+the participant to reproduce against the live store
+build; this agent will not write that PoC.
+
+## 2026-09-03: OpenZeppelin Confidential Contracts v0.5.3 (`4a4f6c7`)
+
+Immunefi program `openzeppelin` ($25,000, `kyc: true`).
+Confidential-contracts asset added 18 Aug 2026: only
+release `v0.5.3`
+(`4a4f6c71f58b75e391899b57e42e3b73d288dfe3`). Local
+clone `/tmp/oz-confidential` at that tag. Library
+scope: loss of funds, permanent DoS, access-control
+bypass, unintended behavior. Best-practice critiques
+out of scope. No mainnet interaction.
+
+v0.5.3 itself only extracts `BatcherConfidential.quit`
+into `_quit(batchId, account)` so a derived contract
+can quit on behalf of a depositor. Public `quit` still
+uses `msg.sender`.
+
+Files: `contracts/finance/BatcherConfidential.sol`,
+`contracts/token/ERC7984/ERC7984.sol`,
+`contracts/token/ERC7984/extensions/{ERC7984ERC20Wrapper,ERC7984Rwa,ERC7984Freezable}.sol`,
+`contracts/token/ERC7984/utils/ERC7984Utils.sol`,
+`contracts/finance/VestingWalletConfidential.sol`,
+`contracts/utils/{FHESafeMath,HandleAccessManager}.sol`.
+
+Checked for: unwrap/finalize that pays a different
+account or amount than the burned ciphertext; join
+that credits without a matching confidential transfer;
+claim/quit that drains another depositor; RWA recovery
+or force-transfer callable without `AGENT_ROLE`;
+receiver hook that forges an `ebool` the recipient
+does not own; vesting release of unvested handles.
+
+Result: no user-exploitable finding.
+
+- `onConfidentialTransferReceived` requires
+  `msg.sender == fromToken`. Join amount is the
+  encrypted transfer; overflow uses `tryIncrease` and
+  joins 0.
+- `dispatchBatchCallback` finalizes the stored unwrap
+  request or, if already finalized, re-checks the
+  decryption proof against that request’s handle.
+  Cancel rewraps `unwrapAmountCleartext * rate` of
+  `fromToken`. Partial forbids a change in underlying
+  `toToken` balance. Exchange rate uses this batch’s
+  `toToken` underlying balance; leftover wrap dust is
+  documented to roll into the next batch.
+- Public `claim` / `quit` are `nonReentrant`. `_claim`
+  / `_quit` are documented as needing that guard.
+  Permissionless claim-for is documented and sends to
+  the depositor.
+- Wrapper `wrap` pulls `amount - amount % rate` then
+  mints `amount / rate`. Unwrap burns first, request id
+  is the ciphertext (`assert` unique), `finalizeUnwrap`
+  deletes the request then transfers
+  `cleartext * rate` after `FHE.checkSignatures`.
+  Fee-on-transfer underlying is documented unsupported.
+  Donating underlying can inflate `inferredTotalSupply`
+  and grief wraps — known, documented.
+- ERC7984 transfers require ACL on ciphertext amounts;
+  operators are time-bounded. Transfer-and-call refund
+  is documented best-effort if the receiver drains
+  itself in the hook. Receiver `ebool` must be
+  uninitialized or ACL-owned by `to` (v0.5.2).
+- RWA mint/burn/freeze/force/recover are `onlyAgent`.
+  Force/recover bypass pause and restriction via
+  selector allowlist, not frozen amounts
+  (`ERC7984Freezable` still clamps).
+- Vesting `release` transfers `releasable` then adds
+  `amountSent` to released. Handle ACL on the token is
+  checked (v0.5.2). `HandleAccessManager` defaults
+  `_validateHandleAllowance` to false.
+- `FHESafeMath` treats uninitialized as 0; add/sub
+  detect wrap via comparison.
+
+Not submitted. Payouts need Immunefi KYC.
+
+## 2026-09-03: Money on Chain V2 core + queue + V4 swapper (`d770477`)
+
+Immunefi program `moneyonchain` ($10,000, `kyc: true`).
+GitHub asset `money-on-chain/stable-protocol-core-v2`
+added 8 Jul 2026; many Rootstock addresses added 20 Aug
+2026. Local clone `/tmp/moneyonchain` at `d770477`.
+Known-issues gist
+`nubis/9c24c0e2792e4dbb25db74f8f478756f` already lists
+SP-01–SP-24 on this tree (stale-price queue, liquidation
+AMM bounds, reverse-auction oracle flag, flux-capacitor
+TP/TP, RC20 callback refresh, locked-fund refunds,
+etc.). This pass looked only for a **new** extract
+path. No mainnet interaction.
+
+Files: `contracts/core/MocOperations.sol`,
+`contracts/core/MocBaseBucket.sol` (`checkRecipient`,
+`unlock` accounting),
+`contracts/queue/MocQueue.sol` (execute + failed-op
+unlock),
+`contracts/multiCollateral/swapper/MocSwapperV4.sol`.
+
+Checked for: queue execute callable by a non-queue
+caller; mint that credits without locking AC/TC/TP;
+recipient override when `_allowDifferentRecipient` is
+false; unlock that returns more than `qACmax`; V4
+swapper that sends the contract’s leftover balance or
+skips `amountOutMin`.
+
+Result: no new user-exploitable finding.
+
+- Enqueue mint/redeem is `notLiquidated notPaused
+  checkRecipient`. `_checkRecipient` reverts
+  `RecipientMustBeSender` unless the bucket allows a
+  different recipient. TP lock calls `_tpi` so only
+  registered pegged tokens enter the queue.
+- `execMintTC` / redeem / swap are `onlyMocQueue`.
+  Failed mint unlocks `params.qACmax` via
+  `unlockACInPending` (`onlyMocQueue`); a failing AC
+  refund is recorded in `senderLockedFunds` (known
+  SP-18, no self-serve recover).
+- `MocSwapperV4` is a permissionless exact-in/exact-out
+  Uniswap v4 wrapper. It spends the caller’s tokens,
+  checks `balanceInAfter == before - amountIn` (exact
+  in) or `balanceOutAfter == before + amountOut` (exact
+  out), and transfers only the swap delta (exact in) or
+  the requested out plus surplus in (exact out). Pool
+  fee/hook/tick maps are governor-set. Matches the
+  documented V3 “no leftover sweep of whole balance”
+  pattern; not a new extract.
+
+Duplicates of SP-01–SP-24 were not re-filed.
+
+Not submitted. Payouts need Immunefi KYC.
+
 ## Next candidates
 
 Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
@@ -2072,33 +2279,41 @@ the full `diamond-pau` facet tree at `1b6743a`,
 Intuition MultiVault / AtomWallet / curves / emissions /
 registry / `TrustSwapAndBridgeRouter` (`bb34cc2`),
 Origin OUSD vault + Curve AMO + WOETH/WOUSD + Ethena ARM,
-and Lombard SVM asset_router / bridge / bascule / mailbox
-deliver-handle are exhausted. Remaining Origin: other
-Sep-1 OUSD strategies (Morpho already reviewed).
-Remaining Lombard SVM: `lombard_token_pool`,
-`ratio_oracle`. Superteam API rechecked 03:06 UTC 3 Sep:
-still 28 open listings. `AGENT_ALLOWED` is still only
-Steve Arena and ZNS — do not execute. Mermail skill is
-built (`mermail-onchain-receipts/`); remaining work is
-the participant's PR, Mermail MCP, and X demo. T3N
-Vendor Receipts is built (`t3n-vendor-receipts/`);
-remaining work is Terminal 3 SSO. NectarFi is a creator
-campaign.
+Lombard SVM asset_router / bridge / bascule / mailbox
+deliver-handle, Leather extension RPC / PSBT approval,
+OZ Confidential v0.5.3 (`4a4f6c7`), and Money on Chain
+V2 core/queue/V4 swapper (`d770477`) are exhausted.
+Remaining Origin: other Sep-1 OUSD strategies (Morpho
+already reviewed). Remaining Lombard SVM:
+`lombard_token_pool`, `ratio_oracle`. Remaining MoC:
+governance machines and live Rootstock v1 proxies if a
+later pass wants addresses rather than the V2 tree.
+OZ confidential remaining: `ERC7984Hooked` / cap
+modules, `ERC7984Votes`, `ERC7984Omnibus`. Superteam
+API rechecked 03:20 UTC 3 Sep: still 28 open listings.
+`AGENT_ALLOWED` is still only Steve Arena and ZNS —
+do not execute. Mermail skill is built
+(`mermail-onchain-receipts/`); remaining work is the
+participant's PR, Mermail MCP, and X demo. T3N Vendor
+Receipts is built (`t3n-vendor-receipts/`); remaining
+work is Terminal 3 SSO. NectarFi is a creator campaign.
 the402.ai still paused. 1inch Fusion settlement /
 whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
 Remaining OZ hooks: none of the money-moving
-general/fee/base files. Leather ($5k, KYC, wallet/web
-plus `leather-io/mono`) requires a working PoC against
-the current published build; skip theoretical reports.
-USDT0’s 1 Sep add is Stellar explorer, not a Solidity
-GitHub tree. Sherlock `https://audits.sherlock.xyz/api/contests`
-has 301 items; the only non-FINISHED row as of 03:01 UTC
-3 Sep is contest `1234` (Tare) in `SHERLOCK_JUDGING`.
+general/fee/base files. Leather still requires a
+working PoC against the published store build; do not
+file theoretical reports. USDT0’s 1 Sep add is Stellar
+explorer, not a Solidity GitHub tree. Sherlock
+`https://audits.sherlock.xyz/api/contests` has 301
+items; the only non-FINISHED row as of 03:01 UTC 3 Sep
+is contest `1234` (Tare) in `SHERLOCK_JUDGING`.
 Hedera Harness #8 still `open`, 0 comments, 0 HOL-Guard
-PRs. Rechecked 03:07 UTC 3 Sep: KeeperHub #2105 still
-`open` + `accepted` + `confirmed`, 0 comments, 0 PRs;
-CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
-official CTC HTML still **47 BUIDLs / 203 hackers**,
-“11 days left,” deadline 13 Sep 2026 23:59 ET. No
-KeeperHub implementation before the 6 Sep build window.
-No ETHOnline project code before 4 Sep 16:00 UTC.
+PRs; file-level plan is in
+`research/ethonline-hedera-harness-8.md` (read-only
+clone `/tmp/hedera-harness` at `e045b10`). Rechecked
+03:20 UTC 3 Sep: KeeperHub #2105 still `open` +
+`accepted` + `confirmed`, 0 comments, 0 PRs;
+CreditPassport deployer still 0 Sepolia ETH / 0 tCTC.
+No KeeperHub implementation before the 6 Sep build
+window. No ETHOnline project code before 4 Sep 16:00
+UTC.
