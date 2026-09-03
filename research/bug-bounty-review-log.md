@@ -6857,6 +6857,92 @@ Extra Finance and Hashflow
 Solidity are exhausted. Not
 submitted.
 
+## 2026-09-03: SparkLend sUSDC vault + PSM Variant1 actions (Sourcify)
+
+Immunefi program `sparklend`
+($5,000,000, `kyc: false`).
+Newest money-moving adds
+(15 Jul 2026): Ethereum SUSDC
+proxy
+`0xBc65ad17c5C0a2A4D159fa5a503f4992c7B545FE`,
+SUSDC_IMPL
+`0xf943Cb8D5f06f2bBF352878ebEF3Ec5C537A20bA`
+(`UsdcVault`, Sourcify exact
+match, verified 2025-04-29),
+and USER_ACTIONS_PSM_VARIANT1
+`0xd0A61F2963622e992e6534bde4D52fd0a89F39E0`
+(`PSMVariant1Actions`,
+verified 2024-09-11). Same
+impl is listed on Arb / Base
+/ OP / Unichain. Extract
+under `/tmp/spark/{usdc-vault,
+psm-actions}`. No mainnet
+interaction.
+
+Files: `src/UsdcVault.sol`,
+`src/PSMVariant1Actions.sol`.
+
+Checked for: first-depositor
+share inflation via donated
+sUSDS; withdraw that burns a
+stranger without allowance;
+`exit` that transfers more
+sUSDS than shares; PSM helper
+that deposits a delta to the
+caller after a stranger’s
+pull.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- Vault shares are minted 1:1
+  with sUSDS received from
+  `susds.deposit` / `mint`,
+  not from a
+  `totalAssets`/`totalSupply`
+  ratio. Donated USDC or
+  sUSDS does not mint shares.
+  `exit` transfers exactly
+  `shares` of sUSDS after
+  `_burn`.
+- `deposit` / `mint` pull
+  USDC from `msg.sender`,
+  `sellGem` through the
+  immutable PSM wrapper, and
+  credit `receiver`. PSM
+  `tin >= WAD` halt-closes
+  sells.
+- `withdraw` / `redeem` pull
+  sUSDS, `_burn` the owner
+  (allowance if not sender),
+  then `buyGem` to
+  `receiver`. `tout ==
+  type(uint256).max`
+  halt-closes buys. Rounding
+  overestimates PSM fees and
+  can leave USDS dust
+  (documented).
+- UUPS `_authorizeUpgrade`
+  is `auth` (`wards`).
+- PSMVariant1Actions
+  `swapAndDeposit` measures
+  the DAI delta after
+  `sellGem` and deposits that
+  to `receiver`.
+  `withdrawAndSwap` /
+  `redeemAndSwap` spend
+  `msg.sender`’s 4626
+  allowance. Leftover DAI
+  dust is documented.
+
+Remaining SparkLend: the rest
+of the 359-asset table (ALM
+controllers, other-chain
+vaults, Robinhood / X Layer
+13 Jul rows). Twyne sources
+still unavailable. Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -6952,17 +7038,24 @@ SharesSplitter (`da3b870` + Sourcify) are
 logged. Extra Finance EXTRA token
 (Sourcify), Hashflow Wormhole
 messenger (listed 8 Jun row,
-Sourcify), and Magpie
-WombatPoolHelper (Sourcify) are
-logged. Listed Extra Finance and
-Hashflow Solidity are exhausted.
-Magpie leftover is Primacy of
-Impact only. Next unreviewed
-Immunefi GitHub-or-recent trees:
+Sourcify), Magpie
+WombatPoolHelper (Sourcify), and
+SparkLend Ethereum sUSDC vault +
+PSM Variant1 actions (Sourcify)
+are logged. Listed Extra Finance
+and Hashflow Solidity are
+exhausted. Magpie leftover is
+Primacy of Impact only.
+Remaining SparkLend is the rest
+of the 359-asset table. Next
+unreviewed Immunefi
+GitHub-or-recent trees:
 Twyne June-2026 wrappers
 (`aPT22Oct2026`, EVC) $50k no KYC
 (GitHub private from this VM;
-Sourcify 404). Yearn stYFI
+Sourcify 404); TermMax TMX
+token (24 Aug leftover after V2
+core). Yearn stYFI
 July leftover (`69e262e`) is
 logged; remaining Yearn stYFI is
 Feb 2026 core if wanted. Remaining
