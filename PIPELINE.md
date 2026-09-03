@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~11:32 UTC. Dates verified against each
+Status as of 3 September 2026, ~11:50 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
@@ -39,6 +39,8 @@ ZKsync OS leftover zk_ee + basic_system IO leftover is logged;
 Hedera leftover remaining SDK-java leftover is logged;
 Hedera leftover remaining SDK-go leftover is logged;
 Filecoin leftover remaining lotus miner leftover is logged;
+Filecoin leftover remaining proofs leftover is logged;
+Filecoin leftover remaining filecoin.io website leftover is logged;
 Filecoin leftover builtin-actors market + paych leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 ZKsync OS leftover evm_interpreter leftover is logged;
@@ -1235,6 +1237,37 @@ lotus miner leftover
 (`7740217`; KYC) is logged
 (remaining listed is proofs /
 FVM / filecoin.io).
+Filecoin leftover remaining
+FVM leftover
+(`d4efdd4`; KYC) is logged
+(remaining listed is proofs /
+filecoin.io).
+Filecoin leftover remaining
+proofs-api leftover
+(`7637843`; KYC) is logged
+(remaining listed is
+rust-fil-proofs / ffi /
+filecoin.io).
+Filecoin leftover remaining
+proofs-ffi leftover
+(`59f46f4`; KYC) is logged
+(remaining listed is
+rust-fil-proofs / filecoin-ffi /
+filecoin.io).
+Filecoin leftover remaining
+proofs leftover
+(`d451d23`; KYC) is logged
+(remaining listed is
+filecoin.io / go-graphsync /
+remaining go-* / lotus
+non-miner / paired /
+filecoin-ffi).
+Filecoin leftover remaining
+filecoin.io website leftover
+is logged (remaining listed
+is go-graphsync / remaining
+go-* / lotus non-miner /
+paired / filecoin-ffi).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2084,6 +2117,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Filecoin leftover remaining
   lotus miner leftover
   (`7740217`; KYC),
+  Filecoin leftover remaining
+  proofs leftover
+  (`d451d23`; KYC),
+  Filecoin leftover remaining
+  filecoin.io website leftover,
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai

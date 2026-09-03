@@ -40738,6 +40738,214 @@ proofs /
 FVM /
 filecoin.io.
 
+## 2026-09-03: Filecoin leftover remaining proofs leftover (`d451d23`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+rust-fil-proofs /
+bellperson /
+merkletree /
+neptune
+after proofs-ffi leftover.
+Official
+`filecoin-project/rust-fil-proofs`
+`d451d23`.
+Extract
+`/tmp/filecoin-proofs`.
+Do not rematch
+proofs-api leftover
+(`7637843`)
+or proofs-ffi leftover
+(`59f46f4`).
+No mainnet
+writes.
+
+Files:
+`filecoin-proofs/src/api/seal.rs`,
+`window_post.rs`,
+`winning_post.rs`,
+`fake_seal.rs`.
+
+Checked for:
+a stranger
+`verify_seal`
+that
+accepts a
+forged Groth16
+and credits
+another
+miner's
+sector;
+`verify_window_post`
+/
+`verify_winning_post`
+that
+skip the
+verifying
+key;
+`fauxrep`
+that
+forges a
+live
+replica
+commitment.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `verify_seal`
+  rejects
+  all-zero
+  comm_d /
+  comm_r and
+  empty
+  proofs,
+  then
+  `StackedCompound::verify`
+  against
+  the cached
+  Groth16
+  verifying
+  key.
+- `verify_window_post`
+  and
+  `verify_winning_post`
+  run
+  `FallbackPoStCompound::verify`
+  on
+  `MultiProof`
+  plus
+  challenge
+  count.
+- API /
+  FFI
+  wrappers
+  only
+  return
+  bool;
+  they
+  do not
+  move FIL.
+- `fauxrep`
+  /
+  `fauxrep2`
+  write
+  local
+  null-byte
+  replicas
+  for
+  genesis
+  tooling.
+- Sector
+  update
+  verify
+  takes
+  old/new
+  comm_r
+  and
+  comm_d.
+- Funds
+  still
+  flow
+  through
+  leftover-
+  logged
+  builtin
+  actors
+  after
+  consensus
+  accepts
+  a proven
+  sector.
+- bellperson /
+  merkletree /
+  lurk-lab/neptune
+  are
+  library-
+  only
+  SNARK /
+  hash
+  crates.
+
+Do not file
+Groth16
+verify of
+the caller's
+proof as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+filecoin.io /
+go-graphsync /
+remaining go-* /
+lotus non-miner /
+paired /
+filecoin-ffi.
+
+## 2026-09-03: Filecoin leftover remaining filecoin.io website leftover
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Hashed remaining
+listed
+filecoin.io
+after proofs
+leftover.
+Fetched
+https://www.filecoin.io
+200.
+No wallet
+connect,
+no deposit
+form,
+no custody
+path.
+testFIL
+Faucet is
+docs copy
+only.
+
+Checked for:
+a listed
+on-chain
+money path
+on the
+marketing
+site.
+
+Result: no
+user-exploitable
+finding.
+Not submitted.
+
+Do not file
+a marketing
+site as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+go-graphsync /
+remaining go-* /
+lotus non-miner /
+paired /
+filecoin-ffi.
+
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -40761,15 +40969,20 @@ Filecoin leftover remaining proofs-api leftover
 (`7637843`) is logged.
 Filecoin leftover remaining proofs-ffi leftover
 (`59f46f4`) is logged.
+Filecoin leftover remaining proofs leftover (`d451d23`)
+is logged.
+Filecoin leftover remaining filecoin.io website leftover
+is logged.
 Remaining listed Hedera: hashed transaction-tool website.
-Remaining listed Filecoin: rust-fil-proofs /
-filecoin-ffi / filecoin.io.
+Remaining listed Filecoin: go-graphsync / remaining go-* / lotus non-miner / paired / filecoin-ffi.
+
 Remaining listed ZKsync OS: airbender CS / prover /
 verifier, `zkos-wrapper`.
 Do not rematch Hedera consensus-node,
 json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
-lotus miner, FVM, proofs-api, or proofs-ffi.
+lotus miner, FVM, proofs-api, proofs-ffi, or proofs.
+Do not rematch filecoin.io website leftover.
 Do not rematch ZKsync bootloader, interpreter,
 storage_models, proof_running_system, or zk_ee.
 Do not loop `reffinance` 404s or mux-staking auth.
@@ -43303,6 +43516,22 @@ proofs / FVM / filecoin.io);
 Filecoin leftover remaining lotus miner leftover
 (`7740217`) is logged (remaining listed is proofs /
 FVM / filecoin.io);
+Filecoin leftover remaining FVM leftover (`d4efdd4`)
+is logged (remaining listed is proofs / filecoin.io);
+Filecoin leftover remaining proofs-api leftover
+(`7637843`) is logged (remaining listed is
+rust-fil-proofs / ffi / filecoin.io);
+Filecoin leftover remaining proofs-ffi leftover
+(`59f46f4`) is logged (remaining listed is
+rust-fil-proofs / filecoin-ffi / filecoin.io);
+Filecoin leftover remaining proofs leftover (`d451d23`)
+is logged (remaining listed is filecoin.io /
+go-graphsync / remaining go-* / lotus non-miner /
+paired / filecoin-ffi);
+Filecoin leftover remaining filecoin.io website leftover
+is logged (remaining listed is go-graphsync /
+remaining go-* / lotus non-miner / paired /
+filecoin-ffi);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
 Sei leftover go-ethereum leftover (`bb451e2`) is logged;
