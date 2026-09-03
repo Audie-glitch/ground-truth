@@ -45714,6 +45714,8 @@ Jito leftover remaining jito-solana scheduler leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana tokens leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana runtime fee leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45735,7 +45737,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` programs / runtime if still unused.
+Remaining listed Jito: `jito-solana` programs / remaining runtime if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45798,6 +45800,7 @@ Do not rematch Jito jito-solana tvu leftover.
 Do not rematch Jito jito-solana bundle + fee leftover.
 Do not rematch Jito jito-solana scheduler leftover.
 Do not rematch Jito jito-solana tokens leftover.
+Do not rematch Jito jito-solana runtime fee leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -70474,3 +70477,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator-local scheduler as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` tokens / programs / runtime if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana runtime fee leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after scheduler leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/bank/fee_distribution.rs`, `runtime/src/bank/bundle_simulation.rs`, `runtime/src/prioritization_fee.rs`, and `runtime/src/prioritization_fee_cache.rs`. Do not rematch bundle + fee leftover (`fee/src/lib.rs`) or scheduler leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `distribute_transaction_fee_details` paying a stranger collector; `simulate_transactions_unchecked_with_pre_accounts` committing to the working bank; prioritization-fee cache minting lamports.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `calculate_reward_and_burn_fee_details` burns 50% of the transaction fee and deposits the rest plus the priority fee. `deposit_or_burn_fee` pays the vote-state `block_revenue_collector` (SIMD-0232, reserved keys rejected) and the leader vote account. A failed deposit is burned, not sent to the caller.
+- `bundle_simulation` runs `load_and_execute_transactions_with_program_cache` against `AccountOverrides` only (`all_or_nothing`, `drop_on_failure`). It never `store_account`s the working bank.
+- `PrioritizationFee` / `PrioritizationFeeCache` are in-memory RPC views. Updates after finalize increment a metric and return. They do not transfer lamports.
+
+Do not file leader fee distribution or simulation overrides as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` programs / remaining runtime if still unused.
