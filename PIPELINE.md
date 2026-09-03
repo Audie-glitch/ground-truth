@@ -13,8 +13,9 @@ recheck), and Immunefi unofficial mirror rechecked 3 Sep. KeeperHub
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
 is exhausted. MtPelerin leftover is exhausted. Orderly Vault and
-Ledger withdraw leftovers are logged (remaining Orderly is Operator
-/ Fee / Market, LedgerImpl B/C/D, and evm-cross-chain). Yearn yCRV
+Ledger withdraw leftovers are logged. Orderly evm-cross-chain
+leftover is logged (remaining Orderly is Operator / Fee / Market
+and LedgerImpl B/C/D). Yearn yCRV
 token + Boosted Staker / distributor leftover is logged (yvUSD
 still Sourcify 404). Hermetica hBTC vault leftover is logged
 (listed Clarity exhausted). Twyne vaults still Sourcify 404.

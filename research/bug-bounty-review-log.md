@@ -14190,6 +14190,109 @@ slug (beanstalk /
 cowprotocol / staderforeth
 have older trees).
 
+## 2026-09-03: Orderly evm-cross-chain leftover (`9a8ba76`)
+
+Immunefi program
+`orderlynetwork`
+($100,000, `kyc: false`).
+Listed leftover
+`OrderlyNetwork/evm-cross-chain`
+`/contracts/` except
+`contracts/test` and the
+vendored `contracts/layerzero`
+UA copy. Local clone
+`/tmp/orderly-xchain` at
+`9a8ba76` (“init”). Vault
+and Ledger withdraw on
+`contract-evm` `462e129`
+are already logged. No
+mainnet interaction.
+
+Files:
+`VaultCrossChainManagerUpgradeable.sol`,
+`LedgerCrossChainManagerUpgradeable.sol`,
+`CrossChainRelayUpgradeable.sol`,
+`utils/OrderlyCrossChainMessage.sol`,
+proxies.
+
+Checked for: a forged LZ
+payload that credits a
+deposit or pays a
+withdraw; `srcChainId`
+spoof that inflates
+`convertDecimal`;
+permissionless
+`receiveMessage` on the
+managers; relay
+`onlyCaller` that includes
+a stranger.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Relay `lzReceive` is
+  endpoint-only and
+  requires the owner-set
+  `trustedRemoteLookup`.
+  `_blockingLzReceive`
+  remaps the LZ chain id
+  and forwards the inner
+  `MessageV1` to
+  `_managerAddress`. It
+  does not re-bind
+  `message.srcChainId` to
+  the LZ source; a lying
+  inner id still needs a
+  trusted remote relay
+  (owner-set callers:
+  owner, endpoint,
+  manager).
+- Vault CCM
+  `receiveMessage` is
+  `onlyRelay` and
+  `dstChainId == chainId`.
+  Withdraw decodes
+  `EventTypesWithdrawData`
+  and calls
+  `vault.withdraw`.
+  Rebalance burn/mint
+  forward to the vault.
+  `deposit` /
+  `depositWithFee` /
+  `withdraw` /
+  burn/mint finish are
+  `onlyVault`.
+- Ledger CCM
+  `receiveMessage` is
+  `onlyRelay`. Deposit /
+  withdraw-finish /
+  rebalance finish convert
+  amounts with owner-set
+  `tokenDecimalMapping`
+  (unset both sides is
+  1:1; one-sided zeros
+  are owner misconfig,
+  not a user path) and
+  call `ledger.accountDeposit`
+  / `accountWithDrawFinish`.
+  Outbound withdraw /
+  burn / mint are
+  `onlyLedger`.
+- `CrossChainManagerTest`
+  token hash is a ping
+  that does not pay.
+  Owner `sendTestWithdraw`
+  / native + ERC20 sweep
+  are privileged.
+
+Not submitted. Remaining
+Orderly listed GitHub:
+Operator / Fee / Market
+managers and LedgerImpl
+B/C/D trade / Sol
+withdraw paths.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -14657,8 +14760,9 @@ Orderly Vault and Ledger
 withdraw (`462e129`) are
 logged (remaining Orderly
 is Operator / Fee /
-Market, LedgerImpl B/C/D,
-and `evm-cross-chain`);
+Market and LedgerImpl
+B/C/D; `evm-cross-chain`
+`9a8ba76` is logged);
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover
