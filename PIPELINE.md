@@ -4,13 +4,19 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~12:20 UTC. Dates verified against each
+Status as of 3 September 2026, ~12:35 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~11:00 UTC;
-246 programs; no Sep 2026 launches; Filecoin leftover remaining go-amt-ipld leftover is logged;
+246 programs; no Sep 2026 launches; Filecoin leftover remaining go-statemachine leftover is logged;
+Filecoin leftover remaining go-statestore leftover is logged;
+Filecoin leftover remaining go-sectorbuilder leftover is logged;
+Filecoin leftover remaining go-hamt-ipld leftover is logged;
+Filecoin leftover remaining go-ipld-cbor leftover is logged;
+Filecoin leftover remaining cbor-gen leftover is logged;
+Filecoin leftover remaining go-amt-ipld leftover is logged;
 Filecoin leftover remaining go-bitfield leftover is logged;
 Filecoin leftover remaining go-cbor-util leftover is logged;
 Filecoin leftover remaining go-padreader leftover is logged;
@@ -47,6 +53,7 @@ Filecoin leftover remaining go-crypto leftover is logged;
 Filecoin leftover remaining go-address leftover is logged;
 Filecoin leftover remaining go-fil-commcid leftover is logged;
 ZKsync OS leftover remaining airbender CS leftover is logged;
+ZKsync OS leftover remaining airbender prover leftover is logged;
 Wormhole leftover remaining Algorand Aptos Near leftover is logged;
 Wormhole leftover remaining node leftover is logged;
 Wormhole leftover remaining wormchain leftover is logged;
@@ -68,6 +75,12 @@ Filecoin leftover remaining go-bitfield leftover is logged;
 Filecoin leftover remaining go-cbor-util leftover is logged;
 Filecoin leftover remaining go-padreader leftover is logged;
 Hedera leftover remaining hashed transaction-tool leftover is logged;
+Filecoin leftover remaining go-statemachine leftover is logged;
+Filecoin leftover remaining go-statestore leftover is logged;
+Filecoin leftover remaining go-sectorbuilder leftover is logged;
+Filecoin leftover remaining go-hamt-ipld leftover is logged;
+Filecoin leftover remaining go-ipld-cbor leftover is logged;
+Filecoin leftover remaining cbor-gen leftover is logged;
 Filecoin leftover builtin-actors market + paych leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 ZKsync OS leftover evm_interpreter leftover is logged;
@@ -1338,6 +1351,43 @@ hashed transaction-tool leftover
 (listed leftover that
 official trees open is
 exhausted).
+Filecoin leftover remaining
+go-statemachine leftover
+(`029d947`; KYC) is logged
+(remaining listed is
+remaining go-* / lotus
+non-miner).
+Filecoin leftover remaining
+go-statestore leftover
+(`14f1c4b`; KYC) is logged
+(remaining listed is
+remaining go-* / lotus
+non-miner).
+Filecoin leftover remaining
+go-sectorbuilder leftover
+(`5177536`; KYC) is logged
+(remaining listed is
+remaining go-* / lotus
+non-miner).
+Filecoin leftover remaining
+go-hamt-ipld leftover
+(`eb80f85`; KYC) is logged
+(remaining listed is
+remaining go-* / lotus
+non-miner).
+Filecoin leftover remaining
+go-ipld-cbor leftover
+(`22f1772`; KYC) is logged
+(remaining listed is
+remaining go-* / lotus
+non-miner).
+Filecoin leftover remaining
+cbor-gen leftover
+(`443b860`; KYC) is logged
+(remaining listed is
+lotus non-miner /
+bellperson / merkletree /
+neptune).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2213,6 +2263,24 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Hedera leftover remaining
   hashed transaction-tool leftover
   (`224dfd2`; KYC),
+  Filecoin leftover remaining
+  go-statemachine leftover
+  (`029d947`; KYC),
+  Filecoin leftover remaining
+  go-statestore leftover
+  (`14f1c4b`; KYC),
+  Filecoin leftover remaining
+  go-sectorbuilder leftover
+  (`5177536`; KYC),
+  Filecoin leftover remaining
+  go-hamt-ipld leftover
+  (`eb80f85`; KYC),
+  Filecoin leftover remaining
+  go-ipld-cbor leftover
+  (`22f1772`; KYC),
+  Filecoin leftover remaining
+  cbor-gen leftover
+  (`443b860`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai

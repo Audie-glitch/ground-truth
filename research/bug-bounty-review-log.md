@@ -41582,6 +41582,542 @@ open is
 exhausted.
 
 
+## 2026-09-03: Filecoin leftover remaining go-statemachine leftover (`029d947`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`filecoin-project/go-statemachine`
+after go-padreader leftover.
+Official
+`filecoin-project/go-statemachine`
+`029d947`.
+Extract
+`/tmp/filecoin-sm`.
+Do not rematch
+go-cbor-util leftover.
+No mainnet
+writes.
+
+Files:
+`machine.go`,
+`fsm/fsm.go`,
+`fsm/eventprocessor.go`.
+
+Checked for:
+an
+event
+that
+applies
+a
+transition
+the
+table
+does
+not
+allow;
+a
+planner
+that
+mutates
+another
+machine's
+state
+by
+id.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `Apply`
+  requires
+  a
+  listed
+  `(event, src)`
+  or
+  `(event, nil)`
+  fallback.
+  Unknown
+  transitions
+  error.
+- `Plan`
+  applies
+  one
+  event
+  (or
+  all
+  queued
+  when
+  configured)
+  then
+  runs
+  the
+  host
+  entry
+  func.
+- This
+  crate
+  is a
+  generic
+  FSM.
+  It
+  does
+  not
+  move FIL.
+
+Do not file
+a host-
+defined
+FSM as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining go-* /
+lotus non-miner.
+
+## 2026-09-03: Filecoin leftover remaining go-statestore leftover (`14f1c4b`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`filecoin-project/go-statestore`
+after go-statemachine leftover.
+Official
+`filecoin-project/go-statestore`
+`14f1c4b`.
+Extract
+`/tmp/filecoin-ss`.
+No mainnet
+writes.
+
+Files:
+`store.go`,
+`state.go`.
+
+Checked for:
+a
+`Mutate`
+that
+rewrites
+another
+key;
+a
+`Begin`
+that
+overwrites
+tracked
+state.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `Begin`
+  refuses
+  an
+  existing
+  key.
+- `Mutate`
+  loads
+  that
+  key,
+  runs
+  the
+  caller
+  mutator,
+  and
+  writes
+  back
+  only
+  if
+  bytes
+  change.
+- CBOR
+  encode
+  uses
+  leftover-
+  logged
+  go-cbor-util.
+  This
+  crate
+  does
+  not
+  move FIL.
+
+Do not file
+a local
+KV store
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining go-* /
+lotus non-miner.
+
+## 2026-09-03: Filecoin leftover remaining go-sectorbuilder leftover (`5177536`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`filecoin-project/go-sectorbuilder`
+after go-statestore leftover.
+Official
+`filecoin-project/go-sectorbuilder`
+`5177536`.
+Extract
+`/tmp/filecoin-sb`.
+Do not rematch
+filecoin-ffi leftover.
+Do not rematch
+lotus miner leftover.
+No mainnet
+writes.
+
+Files:
+`sectorbuilder.go`,
+`sectorbuild_cgo.go`,
+`interface.go`.
+
+Checked for:
+a
+seal
+or
+PoSt
+that
+lets
+a
+stranger
+claim
+another
+miner's
+reward
+without
+that
+miner's
+local
+paths.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `Config.Miner`
+  binds
+  cache
+  and
+  sealed
+  paths.
+  `AddPiece`
+  /
+  `SealPreCommit`
+  /
+  `SealCommit`
+  /
+  PoSt
+  helpers
+  call
+  leftover-
+  logged
+  filecoin-ffi
+  on
+  those
+  local
+  files.
+- This
+  crate
+  is
+  miner
+  disk
+  tooling.
+  It
+  does
+  not
+  debit
+  FIL.
+
+Do not file
+local seal
+FFI as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining go-* /
+lotus non-miner.
+
+## 2026-09-03: Filecoin leftover remaining go-hamt-ipld leftover (`eb80f85`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`ipfs/go-hamt-ipld`
+after go-sectorbuilder leftover.
+Official
+`ipfs/go-hamt-ipld`
+`eb80f85`.
+Extract
+`/tmp/filecoin-hamt`.
+No mainnet
+writes.
+
+Files:
+`hamt.go`,
+`README.md`.
+
+Checked for:
+a
+listed
+HAMT
+that
+rewrites
+an
+actor
+map
+or
+moves
+FIL.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Listed
+  `ipfs/go-hamt-ipld`
+  is a
+  deprecated
+  shim.
+  It
+  re-exports
+  unlisted
+  `filecoin-project/go-hamt-ipld`.
+- This
+  repo
+  has
+  no
+  FIL
+  path.
+  Do not
+  leftover-
+  log the
+  unlisted
+  upstream
+  as if
+  it were
+  listed.
+
+Do not file
+a HAMT
+shim as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining go-* /
+lotus non-miner.
+
+## 2026-09-03: Filecoin leftover remaining go-ipld-cbor leftover (`22f1772`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`ipfs/go-ipld-cbor`
+after go-hamt-ipld leftover.
+Official
+`ipfs/go-ipld-cbor`
+`22f1772`.
+Extract
+`/tmp/filecoin-ipldcbor`.
+No mainnet
+writes.
+
+Files:
+`node.go`.
+
+Checked for:
+a
+`DecodeBlock`
+that
+rewrites
+a
+CID
+to
+point
+at
+attacker
+bytes
+as
+if
+they
+were
+the
+original
+block.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `DecodeBlock`
+  keeps
+  the
+  caller's
+  `block.Cid()`
+  and
+  raw
+  bytes.
+  It
+  does
+  not
+  recompute
+  or
+  swap
+  the
+  CID.
+- This
+  crate
+  is an
+  IPLD
+  CBOR
+  node.
+  It
+  does
+  not
+  move FIL.
+
+Do not file
+an IPLD
+CBOR node
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining go-* /
+lotus non-miner.
+
+## 2026-09-03: Filecoin leftover remaining cbor-gen leftover (`443b860`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`whyrusleeping/cbor-gen`
+after go-ipld-cbor leftover.
+Official
+`whyrusleeping/cbor-gen`
+`443b860`.
+Extract
+`/tmp/filecoin-cborg`.
+No mainnet
+writes.
+
+Files:
+`validate.go`,
+`gen.go`.
+
+Checked for:
+a
+`ValidateCBOR`
+that
+accepts
+trailing
+or
+oversize
+objects
+as
+a
+single
+value;
+a
+codegen
+helper
+that
+moves
+FIL.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `ValidateCBOR`
+  walks
+  one
+  CBOR
+  value.
+  Byte
+  strings
+  cap at
+  `ByteArrayMaxLen`
+  (2 MiB).
+  Arrays
+  and
+  maps
+  cap at
+  `MaxLength`
+  (8192).
+  Trailing
+  bytes
+  error.
+- This
+  crate
+  generates
+  and
+  checks
+  CBOR.
+  It
+  does
+  not
+  move FIL.
+
+Do not file
+a CBOR
+codegen
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+lotus non-miner /
+bellperson /
+merkletree /
+neptune.
+
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -41653,11 +42189,25 @@ Filecoin leftover remaining go-padreader leftover (`2d55fc9`)
 is logged.
 Hedera leftover remaining hashed transaction-tool leftover (`224dfd2`)
 is logged.
+Filecoin leftover remaining go-statemachine leftover (`029d947`)
+is logged.
+Filecoin leftover remaining go-statestore leftover (`14f1c4b`)
+is logged.
+Filecoin leftover remaining go-sectorbuilder leftover (`5177536`)
+is logged.
+Filecoin leftover remaining go-hamt-ipld leftover (`eb80f85`)
+is logged.
+Filecoin leftover remaining go-ipld-cbor leftover (`22f1772`)
+is logged.
+Filecoin leftover remaining cbor-gen leftover (`443b860`)
+is logged.
+ZKsync OS leftover remaining airbender prover leftover
+(`6ec4ea7`) is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining go-* / lotus non-miner.
+Remaining listed Filecoin: lotus non-miner / bellperson / merkletree / neptune.
 
-Remaining listed ZKsync OS: airbender prover /
-verifier_generator / field.
+Remaining listed ZKsync OS: airbender verifier_common
+(`fri_folding` / `proof_flattener`).
 Do not rematch Hedera consensus-node,
 json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
@@ -41668,8 +42218,11 @@ go-data-transfer, go-crypto, go-address, or
 go-fil-commcid leftover.
 Do not rematch go-amt-ipld, go-bitfield, go-cbor-util, or
 go-padreader leftover.
+Do not rematch go-statemachine, go-statestore, go-sectorbuilder,
+go-hamt-ipld, go-ipld-cbor, or cbor-gen leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
+Do not rematch ZKsync airbender prover leftover.
 Do not rematch ZKsync bootloader, interpreter,
 storage_models, proof_running_system, zk_ee,
 zkos-wrapper, or airbender verifier.
@@ -44243,6 +44796,24 @@ remaining go-* / lotus non-miner);
 Hedera leftover remaining hashed transaction-tool leftover
 (`224dfd2`) is logged (listed leftover that official
 trees open is exhausted);
+Filecoin leftover remaining go-statemachine leftover
+(`029d947`) is logged (remaining listed is
+remaining go-* / lotus non-miner);
+Filecoin leftover remaining go-statestore leftover
+(`14f1c4b`) is logged (remaining listed is
+remaining go-* / lotus non-miner);
+Filecoin leftover remaining go-sectorbuilder leftover
+(`5177536`) is logged (remaining listed is
+remaining go-* / lotus non-miner);
+Filecoin leftover remaining go-hamt-ipld leftover
+(`eb80f85`) is logged (remaining listed is
+remaining go-* / lotus non-miner);
+Filecoin leftover remaining go-ipld-cbor leftover
+(`22f1772`) is logged (remaining listed is
+remaining go-* / lotus non-miner);
+Filecoin leftover remaining cbor-gen leftover
+(`443b860`) is logged (remaining listed is
+lotus non-miner / bellperson / merkletree / neptune);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
