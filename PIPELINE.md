@@ -28,6 +28,8 @@ Hedera leftover remaining Contract leftover is logged;
 Hedera leftover remaining Node leftover is logged;
 Hedera leftover remaining cryptography leftover is logged;
 Hedera leftover remaining SDK-js leftover is logged;
+Hedera leftover remaining mirror-node leftover is logged;
+Filecoin leftover remaining boost leftover is logged;
 Filecoin leftover builtin-actors market + paych leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 ZKsync OS leftover evm_interpreter leftover is logged;
@@ -1191,6 +1193,29 @@ Node leftover
 (remaining listed is
 mirror-node / cryptography /
 other modules / SDKs).
+Hedera leftover remaining
+cryptography leftover
+(`39f28f3`; KYC) is logged
+(remaining listed is
+mirror-node / SDKs /
+transaction-tool).
+Hedera leftover remaining
+SDK-js leftover
+(`5b785ed`; KYC) is logged
+(remaining listed is
+mirror-node / sdk-java /
+sdk-go / transaction-tool).
+Hedera leftover remaining
+mirror-node leftover
+(`abfc59f`; KYC) is logged
+(remaining listed is
+cryptography / SDKs /
+transaction-tool).
+Filecoin leftover remaining
+boost leftover
+(`240aa6e`; KYC) is logged
+(remaining listed is lotus /
+proofs / go-f3 / filecoin.io).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2022,6 +2047,18 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Hedera leftover remaining
   Node leftover
   (`0d3d9a2`; KYC),
+  Hedera leftover remaining
+  cryptography leftover
+  (`39f28f3`; KYC),
+  Hedera leftover remaining
+  SDK-js leftover
+  (`5b785ed`; KYC),
+  Hedera leftover remaining
+  mirror-node leftover
+  (`abfc59f`; KYC),
+  Filecoin leftover remaining
+  boost leftover
+  (`240aa6e`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai

@@ -40412,17 +40412,246 @@ and the
 transaction-tool
 website leftover.
 
+## 2026-09-03: Hedera leftover remaining mirror-node leftover (`abfc59f`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+DLT after
+consensus-node
+leftovers.
+Official
+`hiero-ledger/hiero-mirror-node`
+`abfc59f`.
+CDN / raw
+extract
+`/tmp/hedera-mirror`
+Rosetta
+construction
++ web3
+`/call`.
+No mainnet
+writes.
+
+Files:
+`rosetta/app/services/construction_service.go`,
+`rosetta/app/services/construction/crypto_transfer_transaction_constructor.go`,
+`web3/.../ContractCallService.java`,
+`web3/.../TransactionExecutionService.java`,
+`web3/.../ContractController.java`.
+
+Checked for:
+a stranger
+Rosetta
+`ConstructionSubmit`
+that
+broadcasts
+an unsigned
+transfer;
+web3
+`/call`
+that
+mutates
+mainnet.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Rosetta
+  `ConstructionCombine`
+  verifies
+  each
+  Ed25519
+  signature
+  over the
+  frozen
+  body
+  before
+  attaching
+  it.
+  `ConstructionSubmit`
+  broadcasts
+  that
+  already-
+  signed
+  payload.
+- Crypto
+  transfer
+  construct
+  requires
+  HBAR
+  operations
+  that sum
+  to zero
+  and
+  records
+  negative
+  amounts
+  as
+  senders
+  (payer
+  is
+  `signers[0]`).
+- Web3
+  `POST /call`
+  is
+  `ETH_CALL`
+  /
+  `ETH_ESTIMATE_GAS`
+  against
+  a local
+  mirror
+  EVM.
+  It does
+  not
+  submit
+  a
+  consensus
+  transaction.
+
+Do not file
+client-
+signed
+Rosetta
+submit or
+local
+`eth_call`
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-cryptography`,
+SDKs,
+and the
+transaction-tool
+website leftover.
+
+## 2026-09-03: Filecoin leftover remaining boost leftover (`240aa6e`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+after builtin-
+actors leftovers.
+Official
+`filecoin-project/boost`
+`240aa6e`.
+Extract
+`/tmp/filecoin-boost`
+`storagemarket`
++
+`fundmanager`.
+No mainnet
+writes.
+
+Files:
+`storagemarket/provider.go`,
+`storagemarket/deal_acceptance.go`,
+`storagemarket/deal_execution.go`,
+`fundmanager/fundmanager.go`.
+
+Checked for:
+a stranger
+`ExecuteDeal`
+that
+locks
+another
+miner's
+collateral;
+`MoveFundsToEscrow`
+that
+pulls a
+third
+party's
+FIL.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `ExecuteDeal`
+  `validateDealProposal`
+  checks
+  the
+  client
+  signature
+  over the
+  proposal
+  (`sigVerifier.VerifySignature`
+  on
+  `Proposal.Client`)
+  and the
+  client's
+  market
+  escrow
+  balance.
+- `FundManager.TagFunds`
+  reserves
+  the
+  provider's
+  own
+  tagged
+  collateral
+  /
+  publish
+  balance.
+  `MoveFundsToEscrow`
+  calls
+  `MarketAddBalance`
+  from the
+  configured
+  `CollatWallet`
+  (operator
+  node
+  API).
+
+Do not file
+client-
+signed
+deal
+accept or
+operator-
+wallet
+escrow
+top-up as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+lotus /
+proofs /
+go-f3 /
+filecoin.io.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
 logged. Hedera leftover remaining cryptography leftover
 (`39f28f3`) is logged. Hedera leftover remaining SDK-js
-leftover (`5b785ed`) is logged. Remaining listed Hedera:
-`hiero-mirror-node` (sparse only), `hiero-sdk-java` /
-`hiero-sdk-go`, transaction-tool website. Do not rematch
-consensus-node handlers, json-rpc-relay, cryptography,
-Node handlers, or sdk-js. Do not loop `reffinance` 404s
-or mux-staking auth.
+leftover (`5b785ed`) is logged. Hedera leftover remaining
+mirror-node leftover (`abfc59f`) is logged.
+Hedera leftover hiero-mirror-node importer leftover
+(`abfc59f`) is logged. Filecoin leftover remaining boost
+leftover (`240aa6e`) is logged. Remaining listed Hedera:
+`hiero-sdk-java` / `hiero-sdk-go`, transaction-tool
+website. Do not rematch consensus-node handlers,
+json-rpc-relay, cryptography, Node handlers, sdk-js,
+or mirror-node Rosetta / web3 `/call` / importer.
+Do not loop `reffinance` 404s or mux-staking auth.
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
 the full `diamond-pau` facet tree at `1b6743a`,
@@ -42938,6 +43167,15 @@ mirror-node / SDKs / transaction-tool);
 Hedera leftover remaining SDK-js leftover
 (`5b785ed`) is logged (remaining listed is
 mirror-node / sdk-java / sdk-go / transaction-tool);
+Hedera leftover hiero-mirror-node importer leftover
+(`abfc59f`) is logged (remaining listed is
+sdk-java / sdk-go / transaction-tool);
+Hedera leftover remaining mirror-node leftover
+(`abfc59f`) is logged (remaining listed is
+cryptography / SDKs / transaction-tool);
+Filecoin leftover remaining boost leftover
+(`240aa6e`) is logged (remaining listed is lotus /
+proofs / go-f3 / filecoin.io);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
 Sei leftover go-ethereum leftover (`bb451e2`) is logged;
