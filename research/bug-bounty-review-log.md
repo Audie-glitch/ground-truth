@@ -9901,6 +9901,167 @@ zvstBTC strategy vault
 Hiro row). Not
 submitted.
 
+## 2026-09-03: GammaSwap staking + GS token + timelock + airdrop leftover
+
+Immunefi program
+`gammaswap` ($40,000,
+`kyc: false`, Primacy of
+Rules, **critical only**:
+theft / freeze /
+insolvency). Custom OOS:
+GS, `GSTimelockController`,
+and staking are eligible
+for at most high (so they
+do not pay on this
+program); airdrop is not
+eligible for medium.
+Factory + DeltaSwap + May
+2026 vault leftovers are
+already logged. This pass
+is the remaining 2024
+staking / GS / timelock /
+airdrop rows. Sourcify
+exact (Arbitrum 42161).
+Read-only `eth_call` via
+`https://arb1.arbitrum.io/rpc`
+~05:05 UTC 3 Sep. No
+state-changing txs.
+
+Listing labels are
+swapped: listed
+`GSTimelockController`
+`0xb08d…3e83` is an
+ERC1967 proxy whose
+implementation
+`0x91fb…f2dd` is `GS`
+(symbol `GS`, name
+`GammaSwap`); listed `GS`
+`0x3f7c…73f8` is
+`GSTimelockController`
+(`minDelay` 60). Airdrop
+`0x4c02…0f98` `token()`
+is the GS proxy.
+
+Sources: staking router
+Sourcify
+`/tmp/gammaswap-leftover/c582…4ae4`
++ tree `/tmp/gammaswap-staking`
+`c3df0b0`; GS impl
+`/tmp/gammaswap-leftover/91fb…f2dd`
++ `/tmp/gammaswap-gstoken`
+`9e7e3d2`; timelock
+`/tmp/gammaswap-leftover/3f7c…73f8`
++ `/tmp/gammaswap-timelock`
+`d3cfc85`; airdrop
+`/tmp/gammaswap-leftover/4c02…0f98`.
+
+Files:
+`StakingRouter.sol`,
+`StakingAdmin.sol`,
+`RewardTracker.sol`,
+`RewardDistributor.sol`,
+`Vester.sol`,
+`FeeTracker.sol`,
+`BonusDistributor.sol`,
+`BeaconProxyFactory.sol`,
+`contracts/GS.sol` (LZ V2
+OFT + UUPS),
+`GSTimelockController.sol`,
+`Airdrop.sol`.
+
+Checked for: public
+`stake` / `stakeForAccount`
+draining a tracker;
+uninitialized GS-token
+router accepting deposits;
+airdrop claim against a
+zero merkle root; OFT mint
+above `MAX_SUPPLY` or
+without a peer; timelock
+`executeEmergency` on an
+unlisted selector;
+permissionless
+`addEmergencyCall`.
+
+Result: no user-exploitable
+finding. Not submitted.
+Would not pay even as
+high (GS / staking /
+timelock cap) or medium
+(airdrop).
+
+- StakingRouter owner
+  `0x937f…C3Fb`.
+  `gsTokensInitialized`
+  is false; `gs` / `esGs`
+  are zero. Live
+  RewardTracker
+  `0xd04F…4088` is in
+  private staking /
+  transfer mode,
+  `distributor == 0`,
+  `totalSupply == 0`.
+  `stake` reverts when
+  private; `stakeForAccount`
+  is handler-only. Loan
+  staking is a published
+  known issue (unused).
+  `initializeGSTokens` is
+  owner-only and one-shot.
+- GS is LayerZero V2 OFT
+  + UUPS. Constructor /
+  `initialize` mint once;
+  later mint is OFT
+  `_credit` (peer-gated)
+  and `_mint` enforces
+  `MAX_SUPPLY`
+  1.6e9. Live supply
+  ~3.33e8. Proxy owner
+  `0x9b2a…b3f1` (not the
+  factory EOA). Upgrade
+  is `onlyOwner`.
+- Timelock `minDelay` is
+  60 seconds. Factory EOA
+  `0x937f…C3Fb` holds
+  proposer / executor /
+  canceller / emergency;
+  it does not hold
+  `DEFAULT_ADMIN_ROLE`.
+  `addEmergencyCall` /
+  `removeEmergencyCall`
+  require
+  `msg.sender ==
+  address(this)`.
+  `executeEmergency` is
+  `EMERGENCY_ROLE` and
+  only for a previously
+  registered
+  `(target, func)` id.
+- Airdrop: `isPaused ==
+  true`, merkle roots 0
+  and 1 are zero,
+  `totalClaimed == 0`,
+  GS balance 0. `claim`
+  reverts
+  `MerkleRootNotSet` when
+  the epoch root is zero
+  (also `Paused`).
+  `updateRoot` / `withdraw`
+  / `pause` / UUPS are
+  owner-only. Constructor
+  `_disableInitializers()`.
+
+Listed GammaSwap Solidity
+is exhausted. Do not
+re-review factory /
+DeltaSwap / May 2026
+vault. Next leftover:
+Zest DAO + zvstBTC,
+TermMax adapters, Twyne
+Sourcify-404 vaults, or
+Olympus CDEPO if source
+appears. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -10035,12 +10196,16 @@ X Layer
 is logged. GammaSwap May
 2026 vault + PositionManager
 and 2024 factory +
-DeltaSwap (Sourcify) are
-logged; remaining
-GammaSwap is staking / GS /
-timelock (high-capped) and
-airdrop (medium
-ineligible).
+DeltaSwap (Sourcify) plus
+staking / GS token proxy
+`0xb08d…3e83` +
+`GSTimelockController`
+`0x3f7c…73f8` + airdrop
+`0x4c02…0f98` (Sourcify;
+listing labels swapped)
+are logged. Listed
+GammaSwap Solidity is
+exhausted.
 KeeperHub #2105 is claimed by
 `tenk-earn` PR #2275
 (do not duplicate).
@@ -10168,20 +10333,29 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-~04:50 UTC 3 Sep: KeeperHub #2105 still `open` +
+~05:05 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 1 comment and
 PR #2275 (`tenk-earn`, `staging`, mergeable) — do not
-duplicate;
+duplicate; #2240 still `open` + `accepted`, 1
+design comment (`edycutjong`), 0 PRs — do not
+implement or claim;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 Hedera Harness #8 still `open`, 0 comments;
 CreditPassport deployer still 0 Sepolia ETH
-(publicnode) / 0 tCTC
+(publicnode / `ethereum-sepolia-rpc.publicnode.com`)
+/ 0 tCTC
 (`rpc.cc3-testnet.creditcoin.network`);
+Superteam still 28 open listings,
+`AGENT_ALLOWED` still only Steve Arena and ZNS;
+Sherlock page 1 still only contest `1234` (Tare)
+in `SHERLOCK_JUDGING`; no programs launched
+Sep 2026 in the unofficial Immunefi dump;
 no new Immunefi GitHub SC
 assets since 2026-09-02;
-GammaSwap 2024 factory +
-DeltaSwap leftover is
-logged;
+Olympus CDEPO `0x0233…9F1c` still Sourcify 404;
+GammaSwap listed leftover (factory /
+DeltaSwap / staking / GS / timelock /
+airdrop) is exhausted;
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub

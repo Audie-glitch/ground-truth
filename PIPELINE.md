@@ -4,11 +4,12 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~04:41 UTC. Dates verified against each
+Status as of 3 September 2026, ~05:05 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging), and Immunefi
 unofficial mirror rechecked 3 Sep. KeeperHub #2105 is claimed by PR #2275.
+#2240 has a design comment from `edycutjong` — do not implement.
 
 ## Opportunities, ranked by expected payout per unit of work
 
@@ -37,9 +38,9 @@ Truth backtester at the repo root, and a KeeperHub analysis that targets issue
 [#2105](https://github.com/keeperhub/keeperhub/issues/2105). To avoid
 collisions:
 
-- This track owns `creditpassport/` (BUIDL CTC entry), `keeperhub/2240-*`
-  (the #2240 trigger design and implementation), and the ETHOnline
-  open-source bounties.
+- This track owns `creditpassport/` (BUIDL CTC entry) and the ETHOnline
+  open-source bounties. Do not implement KeeperHub #2240 (design
+  comment already posted by `edycutjong`).
 - #2105 stays with the run that scoped it; the two KeeperHub PRs are
   independent and both can be entered for the bounty.
 - One note (`research/crypto-earning-opportunities-2026-09.md`) marks BUIDL
@@ -176,7 +177,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   2026 vault + PositionManager
   (`e71dd91` / Sourcify PM;
   live observers unset) +
-  2024 factory / DeltaSwap,
+  2024 factory / DeltaSwap +
+  staking / GS OFT proxy +
+  timelock / airdrop
+  (listed GammaSwap Solidity
+  exhausted),
   Olympus V1Migrator + Cooler
   V2 + CCIP + CD Facility +
   DepositManager /
