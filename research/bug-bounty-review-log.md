@@ -44484,10 +44484,14 @@ Jito leftover remaining jito-solana tip_manager leftover (`d0e3a47`)
 is logged.
 Filecoin leftover remaining lotus actors leftover (`7740217`)
 is logged.
+Jito leftover remaining jito-solana bundle_stage leftover (`d0e3a47`)
+is logged.
+Filecoin leftover remaining lotus types leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus non-miner (types / lib).
+Remaining listed Filecoin: remaining lotus non-miner (lib).
 Remaining listed Aave: v2 Collector impl / FixedPriceStrategy / v3 VariableDebtToken / GhoOracle 404.
-Remaining listed Jito: `jito-solana` bundle_stage / rpc bundles (if still unused).
+Remaining listed Jito: `jito-solana` other crates (if still unused).
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -68842,3 +68846,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a blacklisted tip-program bundle as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` other crates (if still unused). Official Jito mev-programs + tip_manager leftovers are logged.
+
+## 2026-09-03: Filecoin leftover remaining lotus types leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus actors leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/types`. Opened `message.go`, `signedmessage.go`, `blockheader.go`, `tipset.go`, and `electionproof.go`. Do not rematch lotus eth leftover (`ethtypes`) or lotus actors leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `DecodeMessage` accepting a non-v0 message that later spends as v0; `ValidForBlockInclusion` allowing a negative `Value`; `SignedMessage.Cid` hashing only the unsigned body for SECPK so a signature can be swapped; `NewTipSet` joining blocks with different parents.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `DecodeMessage` requires `Version == MessageVersion` (0). `ValidForBlockInclusion` rejects undef / NV-illegal From/To, zero-address To after NV7, nil or negative Value / fee fields, Value above `TotalFilecoinInt`, GasPremium > GasFeeCap, and GasLimit outside `(0, BlockGasLimit]` and below `minGas`.
+- BLS `SignedMessage.Cid` / `ChainLength` use the unsigned message (aggregate lives on the leftover-logged block header). SECPK CIDs include the signature bytes. `BlockHeader.SigningBytes` serializes a copy with `BlockSig` cleared. `SetValidated` is a local flag.
+- `NewTipSet` requires a non-empty set, a ticket on every block, equal heights, and identical parent CID lists. Election-proof win-count uses the leftover-logged poisson / `expneg` helpers against miner vs network power. These types do not sign or move FIL.
+
+Do not file a serialize/validate helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner (lib).
