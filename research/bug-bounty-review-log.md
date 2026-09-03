@@ -23021,6 +23021,99 @@ CSM bond leftover is
 already logged on
 `2824e21`.
 
+## 2026-09-03: Lido dual-governance committees leftover (`ba9dfc9`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Escrow
+and submit / timelock
+leftovers are already
+logged on this pin.
+This slice is
+HashConsensus,
+TiebreakerCore, and
+ResealManager. Same
+clone
+`/tmp/lidofinance-dual-governance`
+at `ba9dfc9`. No
+mainnet interaction.
+
+Files:
+`committees/{HashConsensus,TiebreakerCoreCommittee}.sol`,
+`ResealManager.sol`.
+
+Checked for: a
+stranger vote that
+schedules a hash;
+execute before the
+committee timelock;
+reseal / resume by
+a non-governance
+caller; sealable
+resume nonce reuse.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `HashConsensus.
+  _vote` is
+  internal.
+  Tiebreaker
+  `scheduleProposal`
+  / `sealableResume`
+  require a
+  committee member.
+  Quorum schedules
+  the hash and
+  snapshots
+  support. Members
+  add/remove and
+  quorum / timelock
+  setters are
+  owner.
+- `_markUsed`
+  requires the hash
+  scheduled, unused,
+  and the committee
+  timelock elapsed.
+  `executeScheduleProposal`
+  then calls Dual
+  Governance
+  `tiebreakerScheduleProposal`.
+- `executeSealableResume`
+  uses the current
+  nonce in the key,
+  marks used, then
+  increments the
+  nonce. A replay
+  needs a new
+  quorum on the
+  next nonce.
+- `ResealManager.
+  reseal` /
+  `resume` require
+  `msg.sender ==
+  timelock.
+  getGovernance()`.
+  Reseal only
+  extends a pause
+  that is still
+  active and not
+  already infinite.
+
+Not submitted.
+Listed dual-governance
+GitHub leftover is
+exhausted aside from
+TiebreakerSubCommittee
+/ DualGovernance
+tiebreaker wrappers.
+Remaining Lido:
+easy-track /
+governance bridges /
+remaining CSM gates.
 
 ## Next candidates
 
@@ -23340,9 +23433,12 @@ Lido dual-governance Escrow leftover
 (`ba9dfc9`) is logged.
 Lido dual-governance submit /
 timelock leftover (`ba9dfc9`) is
-logged (remaining dual-governance
-is committees / ResealManager /
-Tiebreaker).
+logged.
+Lido dual-governance committees
+leftover (`ba9dfc9`) is logged
+(remaining dual-governance is
+TiebreakerSubCommittee /
+tiebreaker wrappers).
 Lido CSM bond leftover
 (`2824e21`) is logged
 (remaining Lido is easy-track /
@@ -23680,11 +23776,12 @@ Lido dual-governance Escrow
 leftover (`ba9dfc9`) is
 logged. Lido dual-governance
 submit / timelock leftover
-is logged.
+is logged. Lido
+dual-governance committees
+leftover is logged.
 Lido CSM bond leftover
 (`2824e21`) is logged
 (remaining Lido is
-committees / ResealManager /
 easy-track /
 governance bridges /
 remaining CSM gates);
