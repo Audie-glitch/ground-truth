@@ -4900,6 +4900,55 @@ Dodo, Curve, PancakeInfinity, Renegade,
 Ekubo, Hanji, NucleusTeller). Not
 submitted.
 
+## 2026-09-03: 0x Settler Maverick / Dodo / BalancerV3 (`1df9087`)
+
+Same Immunefi program `0x` ($1,000,000, `kyc: true`).
+Same clone `/tmp/reviews/0x-settler` at `1df9087`.
+No mainnet interaction. UniV4 / Relay /
+SETTLER_SWAP already logged.
+
+Files: `src/core/{MaverickV2,DodoV1,DodoV2,
+BalancerV3}.sol`,
+`src/chains/Mainnet/Common.sol` (dispatch).
+
+Checked for: a fake Maverick/Dodo pool that
+drains a later action; BalancerV3 vault
+callback that spends a payer the taker
+did not authorize; Dodo V1 quote-for-base
+that over-buys past `minBuyAmount`.
+
+Result: no user-exploitable finding.
+
+- Maverick V2 transfers `ppm` of Settler
+  balance (or pool-balance delta when
+  `ppm==0`), then `swap` with empty
+  callback data so the pool does not
+  flash-callback. `minBuyAmount` still
+  applies. A fake pool can only take
+  tokens already in this execution.
+- Dodo V2 transfers then
+  `sellBase`/`sellQuote` to `recipient`.
+  Dodo V1 `safeApproveIfBelow`s the
+  caller-chosen pair, sells base with
+  the pair’s own `minReceiveQuote`, or
+  quote-for-base after local curve math
+  and `buyBaseToken(buyAmount,
+  sellAmount)`. Slippage is checked
+  before the buy call.
+- Balancer V3 vault is hardcoded
+  (`0xbA13…9bA9`). Unlock uses the same
+  `_setOperatorAndCall` + notes pattern
+  as UniV4. Payer `address(this)`
+  transfers from Settler; payer `0` uses
+  Permit2. Wrap/unwrap bits are in the
+  signed fills. Global buy token is
+  `sendTo`’d to `recipient` against
+  `minBuyAmount`.
+
+Remaining 0x: EulerSwap, Curve,
+PancakeInfinity, Bebop, Renegade, Ekubo,
+Hanji, NucleusTeller. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -4955,12 +5004,12 @@ exhausted. 0x Settler execute / Permit2 /
 RFQ / UniV3 / AllowanceHolder / BridgeSettler
 plus UniV2 / Velodrome / Across /
 POSITIVE_SLIPPAGE, Stargate / LayerZero /
-CCIP / Mayan / DeBridge, and UniV4 /
-Relay / SETTLER_SWAP (`1df9087`) are
-logged; remaining 0x is other DEX mixins
-(Maverick, BalancerV3, Bebop, EulerSwap,
-Dodo, Curve, PancakeInfinity, Renegade,
-Ekubo, Hanji, NucleusTeller). Extra Finance LYF LendingPool +
+CCIP / Mayan / DeBridge, UniV4 / Relay /
+SETTLER_SWAP, and Maverick / Dodo /
+BalancerV3 (`1df9087`) are logged;
+remaining 0x is EulerSwap, Curve,
+PancakeInfinity, Bebop, Renegade, Ekubo,
+Hanji, NucleusTeller. Extra Finance LYF LendingPool +
 VeloPositionManager + RewardDistributor
 (Sourcify, 2024-08 verified) are logged;
 remaining Extra Finance is vault logic
