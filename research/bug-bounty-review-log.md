@@ -64990,3 +64990,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a degree-capped constraint algebra or an unsatisfiable invalid-opcode flag as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: airbender prover / verifier_generator / field, and `zksync_os` program (thin `run_proving` wrapper).
+
+## 2026-09-03: ZKsync OS leftover remaining airbender prover leftover (`6ec4ea7`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Official remaining listed after airbender CS leftover. Official clone `/tmp/zksync-airbender` `6ec4ea7` (sparse `prover` / `verifier_generator` / `field`) plus `/tmp/zksync-os` `9efc8bf` `zksync_os`. Opened `prover/src/prover_stages/mod.rs` `prove_configured`, `stage3.rs` term counts, `quotient_evaluator.rs` divisors, `verifier_generator` `generate_from_parts` / `generate_inlined`, `field` `base.rs` / `ops.rs`, and `zksync_os/src/main.rs`. Do not rematch CS, verifier, zkos-wrapper, bootloader, evm_interpreter, storage_models, proof_running_system, or zk_ee leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: prover omitting constraints so a false RISC-V execution still produces a verifier-accepted STARK; generated inlined quotient dropping a constraint class; M31 add/mul/inv that would make a failed FRI/quotient check compare equal.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `prove_configured` commits sequence / public inputs / setup caps, then stages 1–5. Stage 3 counts quotient terms from `as_verifier_compiled_artifact` and `assert_eq`s them against `num_stage_3_quotient_terms`. Divisors are inverses of `(x^n-1)` (everywhere except last / last two) and `1/(x-ω^k)` (first / last / last-and-zero). A prover bug that fails to prove is DoS, not theft. The verifier leftover independently re-evaluates quotient-at-z + FRI.
+- `generate_from_parts` embeds the compiled layout + degree-1/2 constraints as `VERIFIER_COMPILED_LAYOUT`. `generate_inlined` walks boolean columns, remaining degree-2, degree-1, range-check pairs, timestamps, first/last-row, and memory accumulators. `remainder_for_range_check_16` is `todo!()` — compile-fail, not a missing runtime check.
+- M31 `add_mod` / `mul_mod` fold `2^31`; `is_zero` treats `0` and `p` as zero; `PartialEq` / `Hash` use `to_reduced_u32`. Inverse is `a^{p-2}` and returns `None` at 0. This crate does not move ETH.
+- `zksync_os` program loads `.data` / `.rodata`, inits the allocator, and calls already-logged `proof_running_system::run_proving`.
+
+Do not file an honest STARK prover, codegen that copies the compiled circuit, or M31 reduction as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: airbender `verifier_common` (`fri_folding` / `proof_flattener`).
