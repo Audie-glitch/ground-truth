@@ -67780,3 +67780,20 @@ Do not file an admin-gated proxy upgrade as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: protocol-v2 LendingPool / configurator / collateral manager / v2 tokens.
 
+
+## 2026-09-03: Aave leftover remaining protocol-v2 AddressesProvider leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after upgradeability leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `contracts/protocol/configuration/LendingPoolAddressesProvider.sol`. Do not rematch v3 PoolAddressesProvider / ACL leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `setLendingPoolImpl` / `setAddress` without owner; `_updateImpl` letting a non-owner become proxy admin.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Every setter (`setAddress`, `setAddressAsProxy`, `setLendingPoolImpl`, `setLendingPoolConfiguratorImpl`, `setLendingPoolCollateralManager`, `setPoolAdmin`, `setEmergencyAdmin`, `setPriceOracle`, `setLendingRateOracle`, `setMarketId`) is `onlyOwner`.
+- `_updateImpl` deploys `InitializableImmutableAdminUpgradeabilityProxy` with `address(this)` as immutable admin, or `upgradeToAndCall`s `initialize(address)` on the existing proxy. Collateral manager is a hard address replace (not a proxy), still `onlyOwner`.
+- This registry does not move user tokens.
+
+Do not file an owner-gated address registry as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: protocol-v2 LendingPool / LendingPoolConfigurator / LendingPoolCollateralManager / v2 AToken / debt tokens / v2 AaveOracle.
+
