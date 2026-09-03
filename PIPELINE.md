@@ -197,6 +197,10 @@ asUSDFEarn / WithdrawVault) is logged
 (listed leftover that Sourcify opens is
 exhausted; remaining listed is the
 website).
+Gamma leftover (Sourcify ETH xGamma /
+Hypervisor / UniProxy) is logged
+(listed leftover that Sourcify opens is
+exhausted).
 Beefy Finance leftover (Sourcify Polygon
 `BeefyVaultV6` + common chef / DFYN /
 Curve / BIFI-maxi strategies) is logged.
@@ -602,6 +606,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Earn / USDFEarn / asUSDFEarn;
   listed leftover that
   Sourcify opens is
+  exhausted),
+  Gamma leftover (Sourcify ETH
+  xGamma / Hypervisor /
+  UniProxy; listed leftover
+  that Sourcify opens is
   exhausted),
   and
   Horizen ZenStaker (no submittable finding).

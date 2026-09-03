@@ -28058,6 +28058,108 @@ Sourcify opens is
 exhausted. Remaining
 listed: the website.
 
+## 2026-09-03: Gamma leftover (Sourcify)
+
+Immunefi program
+`Gamma` ($50,000,
+`kyc: false`). Unique
+no-KYC listed Ethereum
+slice (not GammaSwap).
+Sourcify `exact_match`
+`xGamma`
+`0x26805021988F1a45dC708B5FB75Fc75F21747D8c`
+and `match`
+`Hypervisor`
+`0xa8076ae31e4b6c64d07b1ed27889924a962a70d3`
++ `UniProxy`
+`0x83de646a7125ac04950fea7e322481d4be66c71d`.
+Extract `/tmp/gamma`.
+No mainnet interaction.
+
+Files:
+`xGamma/xGamma.sol`,
+`Hypervisor/Hypervisor.sol`,
+`UniProxy/UniProxy.sol`.
+
+Checked for: a stranger
+`deposit` that pulls a
+third party or mints
+without a matching pull;
+`withdraw` that burns
+another user's shares;
+`enter` / `leave` that
+pays a caller other than
+the staker.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Hypervisor `deposit`
+  requires
+  `msg.sender ==
+  whitelistedAddress`
+  (UniProxy). It
+  `transferFrom`s the
+  named `from` after
+  that gate. First mint
+  sizes shares from the
+  deposit and the live
+  tick price with no
+  `MINIMUM_LIQUIDITY`
+  lock.
+- Hypervisor `withdraw`
+  requires
+  `from == msg.sender`
+  and burns that sender
+  after sending the
+  proportional Uniswap
+  collect plus unused
+  balances to `to`.
+  Rebalance / compound /
+  `pullLiquidity` /
+  whitelist / fee are
+  owner.
+- UniProxy `deposit`
+  `transferFrom`s
+  `msg.sender` on
+  version < 3, then
+  calls Hypervisor with
+  `from` = proxy or
+  `msg.sender`. Version
+  ≥ 2 mints shares to
+  `msg.sender` (the
+  `to` argument is
+  unused). `addPosition`
+  infinite-approves the
+  hypervisor; owner
+  only.
+- xGamma `enter` mints
+  to `msg.sender` then
+  `transferFrom`s that
+  sender. `leave` burns
+  `msg.sender` and pays
+  that sender. SushiBar
+  first-deposit /
+  donation inflation
+  applies.
+
+Do not file first-
+depositor share
+inflation, owner
+rebalance / whitelist /
+fee, UniProxy ignoring
+`to` on version ≥ 2, or
+xGamma donation
+inflation as theft.
+
+Not submitted.
+Listed leftover that
+Sourcify opens is
+exhausted (all three
+listed addresses).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -29162,6 +29264,12 @@ WithdrawVault) is logged
 Sourcify opens is
 exhausted; remaining
 listed is the website);
+Gamma leftover (Sourcify
+ETH xGamma / Hypervisor /
+UniProxy) is logged
+(listed leftover that
+Sourcify opens is
+exhausted);
 Beefy Finance leftover
 (Sourcify Polygon
 `BeefyVaultV6` + common
