@@ -43598,9 +43598,15 @@ Aave leftover remaining StakeToken leftover (`5346765`)
 is logged.
 Filecoin leftover remaining lotus node leftover (`7740217`)
 is logged.
+Aave leftover remaining governance-v3 leftover (`497226e`)
+is logged.
+Aave leftover remaining governance voting leftover (`497226e`)
+is logged.
+Filecoin leftover remaining lotus vm leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: governance.
+Remaining listed Aave: VotingStrategy / CCIP GHO pools.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43627,6 +43633,7 @@ Do not rematch Filecoin lotus sync leftover.
 Do not rematch Filecoin lotus stmgr leftover.
 Do not rematch Filecoin lotus store leftover.
 Do not rematch Filecoin lotus node leftover.
+Do not rematch Filecoin lotus vm leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Filecoin lotus market leftover.
 Do not rematch Aave ACL + PoolConfigurator leftover.
@@ -43644,6 +43651,8 @@ Do not rematch Aave Gsm4626 leftover.
 Do not rematch Aave GHO DirectFacilitator leftover.
 Do not rematch Aave StakedAaveV3 leftover.
 Do not rematch Aave StakeToken leftover.
+Do not rematch Aave governance-v3 leftover.
+Do not rematch Aave governance voting leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -67439,3 +67448,20 @@ Do not file an origin-checked vote bridge or proven storage root as stranger the
 
 Not submitted. Payment requires user KYC. Remaining listed: VotingStrategy / CCIP GHO pools. Official PriceOracleSentinel + OwnableFacilitator 404.
 
+
+## 2026-09-03: Filecoin leftover remaining lotus vm leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus node leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/vm`. Opened `vm.go`, `runtime.go`, `fvm.go`, `invoker.go`, and `execution.go`. Message apply / transfer / invoke. Do not rematch FVM leftover or lotus stmgr leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `ApplyMessage` debiting a non-account `From`; `transfer` of a negative amount; `ApplyMessageSkipSenderValidation` persisting a simulated send; `Invoke` of an unregistered code CID.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `LegacyVM.ApplyMessage` requires `checkMessage`, an account-actor sender, matching nonce, and `Balance >= GasLimit * GasFeeCap`. It pulls that gas into a holder, increments nonce, snapshots, then `send`. On a non-zero exit it `Revert`s the snapshot. Gas leftover is burned / tipped / refunded until the holder is 0.
+- `transfer` rejects `amt < 0` and `Balance < amt`. Self-send after ID resolve is a noop. `Runtime.Send` snapshots and reverts a failed subcall; `StateTransaction` sets `allowInternal=false` so nested `Send` aborts.
+- `ApplyMessageSkipSenderValidation` is unsupported on LegacyVM. On FVM it is `ApplyImplicitMessage` for eth_call / estimate only (stmgr leftover already keeps that on a memory overlay). Consensus `ApplyMessage` serializes into leftover-logged FVM.
+- `ActorRegistry.Invoke` requires a registered code CID and a version predicate. `vmExecutor` is a lane token around the same Interface.
+
+Do not file an account-gated, snapshot-reverted apply as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
