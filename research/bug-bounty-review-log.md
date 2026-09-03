@@ -46856,3 +46856,153 @@ if a later pass
 wants proxies
 rather than
 impls.
+
+## 2026-09-03: Axelar leftover other-chain gateways + axlUSDC (Sourcify)
+
+Immunefi program
+`axelarnetwork`
+($500,000, `kyc: true`).
+Listed remaining after
+ETH gateway / ITS /
+ITF (`39948`). Not
+previously logged.
+Official clones
+`/tmp/axelar-cgp`
+`43ec407` and
+`/tmp/axelar-its`
+`ff21991`. ETH
+extract
+`/tmp/axelar-src`.
+Avalanche Sourcify
+`match` gateway
+`0x5029C0EFf6C34351a0CEc334542cDb22c7928f78`.
+Polygon Sourcify
+`match` gateway
+`0x6f015F16De9fC8791b234eF68D486d2bF203FBA8`
+and axlUSDC
+`0x750e4C4984a9e0f12978eA6742Bc1c5D248f40ed`.
+Moonbeam Sourcify
+`match` gateway
+`0x4F4495243837681061C4743b74B3eEdf548D56A5`.
+BSC Sourcify
+`match` gateway
+proxy
+`0x304acf330bbE08d1e512eefaa92F6a57871fD895`
+and axlUSDC
+`0x4268B8F0B87b6Eae5d897996E6b845ddbD99Adf3`.
+Fantom gateway and
+Avalanche axlUSDC
+are Sourcify 404.
+Extract
+`/tmp/axelar-other-src`.
+Avax / Polygon /
+Moonbeam
+`AxelarGateway.sol`
+and
+`AxelarGatewayMultisig.sol`
+hashes match the
+ETH extract
+(`e5d2f8fa62b565d8`
+/
+`4b2e8ff81137e79d`).
+No mainnet writes.
+
+Files:
+`AxelarGateway.sol`,
+`AxelarGatewayMultisig.sol`,
+`AxelarGatewayProxy.sol`,
+`BurnableMintableCappedERC20.sol`
+(gateway flatten +
+listed axlUSDC).
+
+Checked for: a
+chain-specific
+fork that lets
+`execute` mint
+without operator
+proof; proxy
+`setup` takeover;
+axlUSDC `mint` /
+`burn` /
+`burnFrom` that
+a stranger can
+call.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Avax / Polygon /
+  Moonbeam
+  verified trees
+  are the same
+  multisig
+  gateway already
+  opened on
+  Ethereum.
+  `execute`
+  recovers owner /
+  operator
+  quorum and
+  only then
+  self-calls mint
+  / burn /
+  deploy.
+- BSC verified
+  source is the
+  `AxelarGatewayProxy`
+  with
+  constructor
+  `setup`
+  delegatecall
+  and a public
+  `setup` no-op.
+  Fallback
+  delegatecalls
+  the stored
+  implementation.
+  `receive`
+  reverts
+  `NO_ETHER`.
+- Polygon and BSC
+  axlUSDC
+  `mint` /
+  `burn` /
+  `burnFrom` are
+  `onlyOwner`.
+
+Do not file
+quorum-signed
+gateway mint or
+owner-gated
+axlUSDC mint as
+stranger theft
+on another
+chain.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Axelar
+Avalanche /
+Polygon /
+Moonbeam
+gateways and
+Polygon / BSC
+axlUSDC leftover
+is exhausted at
+the opened-file
+level. Remaining
+listed: Fantom /
+Aurora gateways,
+Avalanche /
+Fantom /
+Moonbeam
+axlUSDC, ITS
+GitHub tree
+beyond the two
+entry contracts,
+and DLT
+axelar-core /
+tofnd.
