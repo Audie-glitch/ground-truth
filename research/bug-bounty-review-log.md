@@ -32984,6 +32984,16 @@ FBTC / FeeModel / Governor /
 LockedFBTC; KYC) is logged
 (remaining listed is other-
 chain twins);
+Gearbox leftover core-v3
+pool + credit leftover
+(`510fc65` PoolV3 /
+CreditFacadeV3 /
+CreditManagerV3 /
+CreditAccountV3; KYC) is
+logged (remaining listed is
+oracles-v3 / integrations /
+bots / permissionless /
+periphery);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
@@ -40954,3 +40964,182 @@ FireBridge /
 Minter / FBTC /
 FeeModel twins
 (same types).
+
+## 2026-09-03: Gearbox leftover core-v3 pool + credit leftover (`510fc65`)
+
+Immunefi program
+`gearbox` ($150,000,
+`kyc: true`). Unique
+unused standing
+program. Official
+scope is
+`Gearbox-protocol/security`
+`bug-bounty/v3_1-scope.md`.
+This slice is
+`core-v3` `510fc65`
+(`main`): PoolV3,
+CreditFacadeV3,
+CreditManagerV3,
+CreditAccountV3.
+AddressProvider
+`0xF7f0a609BfAb9a0A98786951ef10e5FE26cC1E38`
+is Sourcify `match`
+(not a proxy).
+Clone
+`/tmp/gearbox-core`.
+No mainnet writes.
+
+Files:
+`contracts/pool/PoolV3.sol`,
+`contracts/credit/CreditFacadeV3.sol`,
+`contracts/credit/CreditManagerV3.sol`,
+`contracts/credit/CreditAccountV3.sol`.
+
+Checked for: a
+stranger ERC-4626
+withdraw that
+burns another
+owner without
+allowance; pool
+`lendCreditAccount`
+from a non-manager;
+facade
+`multicall` /
+`closeCreditAccount`
+on a victim
+account;
+`addCollateral`
+that pulls a
+non-caller;
+CreditAccount
+`execute` /
+`safeTransfer`
+without the
+manager;
+liquidation of a
+healthy
+non-expired
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Pool
+  `deposit` /
+  `mint` pull
+  `msg.sender` and
+  mint `receiver`.
+  `withdraw` /
+  `redeem` burn
+  `owner` after
+  `_spendAllowance`
+  when
+  `msg.sender !=
+  owner`. First-
+  depositor note
+  in the header
+  requires dead
+  shares before
+  borrowing.
+- `lendCreditAccount`
+  transfers to the
+  named account
+  only if
+  `msg.sender` has
+  a credit-manager
+  debt slot under
+  its limit.
+  `repayCreditAccount`
+  reverts when
+  that slot's
+  `borrowed == 0`.
+- Facade
+  `closeCreditAccount`
+  /
+  `multicall`
+  require
+  `msg.sender ==
+  borrower`.
+  `botMulticall`
+  requires a
+  non-zero
+  approved bot
+  permission.
+  `openCreditAccount`
+  assigns
+  `onBehalfOf`
+  (degen-NFT mode
+  forces
+  `msg.sender`).
+- Manager
+  open / close /
+  liquidate /
+  addCollateral /
+  withdrawCollateral
+  /
+  `externalCall`
+  are
+  `creditFacadeOnly`.
+  `addCollateral`
+  pulls the facade-
+  supplied `payer`
+  (facade passes
+  `msg.sender`).
+  Adapter
+  `execute` /
+  `approveCreditAccount`
+  require a
+  registered
+  adapter and an
+  active account.
+- CreditAccount
+  `safeTransfer` /
+  `execute` are
+  manager-only.
+  `rescue` is
+  factory-only.
+- Liquidation
+  requires
+  unhealthy or
+  expired. Partial
+  liquidation
+  pulls the
+  liquidator's
+  underlying and
+  seizes
+  discounted
+  collateral to
+  `to`.
+
+Do not file
+opening an
+account
+`onBehalfOf`
+someone else,
+permissionless
+liquidation of an
+unhealthy /
+expired account,
+or ACL pause /
+configurator as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`core-v3` opens
+for these types
+is exhausted at
+the opened-file
+level. Remaining
+listed: oracles-v3,
+integrations-v3,
+bots-v3,
+permissionless,
+and periphery-v3
+emergency / kyc /
+migration.
