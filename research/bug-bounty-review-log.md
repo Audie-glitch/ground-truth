@@ -46314,6 +46314,10 @@ Jito leftover remaining jito-solana check_transactions leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana transaction_execution leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana stakes leftover (`d0e3a47`)
+is logged.
+Optimism leftover remaining PolicyEngineStaking leftover (`eea9542`)
+is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
 Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
@@ -46349,7 +46353,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`stakes` / `epoch_stakes` / `snapshot_*` / `bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`epoch_stakes` / `snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -46423,6 +46427,8 @@ Do not rematch Jito jito-solana remaining runtime leftover.
 Do not rematch Jito jito-solana partitioned epoch rewards leftover.
 Do not rematch Jito jito-solana check_transactions leftover.
 Do not rematch Jito jito-solana transaction_execution leftover.
+Do not rematch Jito jito-solana stakes leftover.
+Do not rematch Optimism leftover remaining PolicyEngineStaking leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -49189,8 +49195,12 @@ Jito leftover remaining jito-solana partitioned epoch rewards leftover
 Jito leftover remaining jito-solana check_transactions leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana transaction_execution leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana stakes leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-stakes / epoch_stakes / snapshot / bank if still unused);
+epoch_stakes / snapshot / bank / stake_weighted_timestamp if still unused);
+Optimism leftover remaining PolicyEngineStaking leftover
+(`eea9542`) is logged;
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
@@ -71436,3 +71446,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a read-only dispute-game monitor as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `op-node` / websites if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana stakes leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after transaction_execution leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/stakes.rs`, `runtime/src/stakes/serde_stakes.rs`, `runtime/src/stake_account.rs`, `runtime/src/stake_delegation.rs`, and `runtime/src/stake_utils.rs`. Do not rematch remaining runtime leftover, partitioned epoch rewards leftover, vote_reward leftover, or transaction_execution leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `upsert_stake_delegation` that adds a stranger voter's stake without subtracting the old voter; `load_from_deserialized_delegations` that accepts a snapshot Delegation that does not match accounts-db; `StakeAccount::try_from` that wraps a non-stake owner as a Delegation.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `StakesCache` is a validator cache, not a stranger IX. `check_and_store` evicts zero-lamport vote/stake accounts. Non-vote/non-stake owners are ignored. Invalid vote or stake state is removed from the cache.
+- `upsert_stake_delegation` inserts the new `StakeAccount`, then on replace `sub_delegated_stake` / `vote_accounts.sub_stake` the old voter and add the new voter only when voter or effective stake changed. `sub_delegated_stake` `checked_sub`s and panics if the cache is inconsistent.
+- `load_from_deserialized_delegations` reloads each stake from `get_account`, requires `StakeAccount::try_from`, and errors `InvalidDelegation` if the stored Delegation differs. Cached vote accounts must equal accounts-db or `VoteAccountMismatch`.
+- `StakeAccount::try_from` requires the stake program owner and a `StakeStateV2` with a Delegation. Serde writes Delegation/Stake only; it does not credit lamports.
+- `stake_delegation` is warmup/cooldown dispatch (`stake` vs `stake_v2`). `create_stake_account` is test/CLI only.
+
+Do not file a validator stake-cache upsert as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`epoch_stakes` / `snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
