@@ -71464,3 +71464,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator stake-cache upsert as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`epoch_stakes` / `snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+## 2026-09-03: Optimism leftover remaining op-node deposits + withdrawals leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining listed after op-dispute-mon leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `op-node/withdrawals/{proof,utils}.go`, `op-node/rollup/output_root.go`, and `op-node/rollup/derive/{deposit_log,deposits,deposit_source,attributes}.go`. Do not rematch L1 portal leftover or L2ToL1MessagePasser leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `UserDeposits` that accepts a log from a non-portal address; `UnmarshalDepositLogEvent` that lets a stranger set `From` / `Mint` without matching topics; `GetWithdrawalProof` that returns a storage proof for a hash that does not match the event.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `UserDeposits` skips failed receipts and requires `log.Address == DepositContractAddress` plus `Topics[0] == TransactionDeposited`. `UnmarshalDepositLogEvent` requires 4 topics, version 0, and a tightly packed opaqueData header. `From` / `To` come from indexed topics. `SourceHash` is keccak(domain 0 || keccak(L1 block hash || log index)).
+- `PreparePayloadAttributes` fetches receipts only when the L1 origin changes, requires parent-hash continuity, and treats deposit-decode failure as critical. Deposits are prepended after the L1-info tx; this helper does not send an L1 transaction.
+- `WithdrawalHash` ABI-encodes `(nonce, sender, target, value, gasLimit, data)`. `GetWithdrawalProof` requires that hash equals `ev.WithdrawalHash`, then `VerifyProof` against the L2 header state root for the MessagePasser slot. `ComputeL2OutputRoot` hashes version-0 `(stateRoot, messagePasserStorageRoot, blockHash)`.
+- This package builds proofs and payload attributes. On-chain prove/finalize lives in leftover-logged OptimismPortal2.
+
+Do not file a receipt-gated deposit decoder or MPT-verified withdrawal helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining `op-node` (engine / p2p / sequencing) / websites if still unused.
