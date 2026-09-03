@@ -221,10 +221,13 @@ is logged (listed leftover that a public
 tree would open is exhausted; remaining
 listed is the website).
 GMX leftover (Sourcify Arb Vault / Router
-/ GlpManager / RewardRouterV2) is logged
-(remaining listed is Avax V1 twins,
-trackers / vesters, and GMX V2
-ExchangeRouter / DepositVault rows).
+/ GlpManager / RewardRouterV2) is logged.
+GMX leftover V2 ExchangeRouter leftover
+(Sourcify Arb ExchangeRouter /
+DepositVault / DataStore) is logged
+(remaining listed is Avax twins, V1
+trackers / vesters, and V2 Oracle /
+Reader rows).
 CapyFi leftover (Sourcify Comptroller /
 CEther / CErc20; KYC) is logged
 (remaining listed is Unitroller Sourcify
@@ -683,7 +686,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   would open is exhausted),
   GMX leftover (Sourcify Arb
   Vault / Router / GlpManager /
-  RewardRouterV2),
+  RewardRouterV2) plus V2
+  ExchangeRouter leftover
+  (DepositVault / DataStore),
   CapyFi leftover (Sourcify
   Comptroller / CEther / CErc20;
   KYC),

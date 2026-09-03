@@ -28690,6 +28690,93 @@ DepositVault /
 DataStore / Oracle
 rows (Arb + Avax).
 
+## 2026-09-03: GMX leftover V2 ExchangeRouter leftover (Sourcify)
+
+Immunefi program
+`gmx` ($5,000,000,
+`kyc: false`). Sourcify
+Arbitrum `match`
+`ExchangeRouter`
+`0x674Ee2FFe588c4b1Fde6D5481c55Ef6133004cbA`
+and `exact_match`
+`DepositVault`
+`0xF89e77e8Dc11691C9e8757e84aaFbCD8A67d7A55`
++ `DataStore`
+`0xFD70de6b91282D8017aA4E741e9Ae325CAb992d8`.
+Extract `/tmp/gmx-v2`.
+No mainnet interaction.
+
+Files:
+`exRouter/contracts/router/ExchangeRouter.sol`,
+`exRouter/contracts/router/BaseRouter.sol`,
+`exRouter/contracts/router/Router.sol`,
+`exRouter/contracts/deposit/DepositUtils.sol`,
+`depositVault/contracts/bank/Bank.sol`,
+`depositVault/contracts/bank/StrictBank.sol`.
+
+Checked for: a stranger
+`createDeposit` that
+credits another
+account's vault
+transfer-in;
+`cancelDeposit` that
+refunds the caller
+instead of the
+depositor;
+unguarded
+`pluginTransfer`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- ExchangeRouter
+  `createDeposit` /
+  `createWithdrawal` /
+  `createOrder` /
+  `executeAtomicWithdrawal`
+  pass `account =
+  msg.sender`.
+  `cancelDeposit` /
+  `cancelWithdrawal`
+  require
+  `account ==
+  msg.sender`.
+- `sendTokens` pulls
+  `msg.sender` through
+  `Router.pluginTransfer`
+  (`onlyRouterPlugin`).
+- DepositUtils records
+  vault balance deltas
+  into a deposit owned
+  by that account.
+  Cancel refunds
+  `deposit.account()`.
+- DepositVault
+  `transferOut` /
+  `recordTransferIn`
+  are
+  `onlyController`.
+
+Do not file keeper
+execute / cancel of
+an aged request,
+controller vault
+sweeps, or leftover
+tokens sent to the
+vault without a
+matching create as
+theft.
+
+Not submitted.
+Remaining listed:
+Avalanche V1/V2 twins,
+V1 trackers / vesters,
+and V2 Oracle /
+Reader / GlvReader
+rows.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -29863,12 +29950,16 @@ website);
 GMX leftover (Sourcify Arb
 Vault / Router /
 GlpManager /
-RewardRouterV2) is logged
-(remaining listed is Avax
-V1 twins, trackers /
-vesters, and GMX V2
+RewardRouterV2) is logged.
+GMX leftover V2
+ExchangeRouter leftover
+(Sourcify Arb
 ExchangeRouter /
-DepositVault rows);
+DepositVault / DataStore)
+is logged (remaining listed
+is Avax twins, V1 trackers
+/ vesters, and V2 Oracle /
+Reader rows);
 CapyFi leftover (Sourcify
 Comptroller / CEther /
 CErc20; KYC) is logged
