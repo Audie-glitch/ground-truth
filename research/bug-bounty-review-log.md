@@ -46931,7 +46931,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`snapshot_bank_utils` / `bank.rs`) if still unused. Jito leftover remaining jito-solana snapshot_minimizer leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana snapshot_utils leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs`) if still unused. Jito leftover remaining jito-solana snapshot_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana snapshot_bank_utils leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official rust/op-reth leftover that listed trees still open (flashblocks / storage) if still unused. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining op-reth consensus + txpool leftover is logged.
 Remaining listed ZKsync OS: official GitHub leftover
@@ -47012,6 +47012,7 @@ Do not rematch Jito jito-solana serde_snapshot leftover.
 Do not rematch Jito jito-solana snapshot_controller leftover.
 Do not rematch Jito jito-solana snapshot_minimizer leftover.
 Do not rematch Jito jito-solana snapshot_utils leftover.
+Do not rematch Jito jito-solana snapshot_bank_utils leftover.
 Do not rematch Jito jito-solana snapshot_package leftover.
 Do not rematch Optimism leftover remaining op-node deposits + withdrawals leftover.
 Do not rematch Optimism leftover remaining PolicyEngineStaking leftover.
@@ -49811,8 +49812,10 @@ Jito leftover remaining jito-solana snapshot_controller leftover
 Jito leftover remaining jito-solana snapshot_minimizer leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana snapshot_utils leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana snapshot_bank_utils leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-snapshot_bank_utils / bank if still unused);
+bank if still unused);
 Optimism leftover remaining op-node deposits + withdrawals leftover
 (`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
@@ -72328,3 +72331,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file snapshot archive I/O as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`snapshot_bank_utils` / `bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+## 2026-09-03: Jito leftover remaining jito-solana snapshot_bank_utils leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after snapshot_utils leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/snapshot_bank_utils.rs`. Do not rematch snapshot_utils leftover, serde_snapshot leftover, or snapshot_controller leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `bank_from_snapshot_archives` that accepts a snapshot whose capitalization exceeds indexed lamports; status-cache deltas that mark a stranger tx executed; incremental load that skips slot-hash verify; `bank_to_*_snapshot_archive` that packs a caller-supplied storage set.
+
+Result: no user-exploitable finding. Not submitted.
+
+- This is validator snapshot load/pack around leftover-logged snapshot_utils + serde_snapshot reconstruct, not a stranger IX. Archive load unarchives then `reconstruct_bank_from_fields`. Dir load uses leftover-logged `rebuild_storages_from_snapshot_dir`.
+- After rebuild, `bank.capitalization()` must equal `generate_index` calculated capitalization unless `limit_load_slot_count_from_snapshot` is set. Tests show `good+1` fails `MismatchedCapitalization`.
+- `verify_epoch_stakes` rejects epochs above the leader-schedule epoch and requires current..=leader-schedule stakes. `verify_slot_deltas` requires roots, `slot <= bank`, unique entries, and a two-way match with SlotHistory. Archive load also checks snapshot slot+hash, then `verify_snapshot_bank` against the calculated lt hash (panic if fail).
+- Status cache is leftover-logged deserialize + append after those checks. `bank_to_full/incremental_snapshot_archive` is ledger-tool/tests: squash/rehash/clean, then leftover-logged serialize+archive. Incremental asserts `slot > full_snapshot_slot`. No credit path.
+
+Do not file a snapshot load verify helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
