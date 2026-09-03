@@ -13180,7 +13180,11 @@ plus
 `typescript` (not a
 Solidity money path).
 Next leftover: Pancake
-`pancake-v3-contracts` /
+`pancake-v3-contracts`
+MasterChef / LmPool
+(logged below) plus
+remaining V3 core /
+periphery fork and
 `pancake-swap-periphery`,
 or Twyne Sourcify-404
 vaults.
@@ -13249,6 +13253,101 @@ Pancake listed Solidity:
 v3-core pool/factory
 and v3-periphery NPM
 (same `9868479` tree).
+
+## 2026-09-03: Pancake MasterChefV3 + LmPool leftover (`9868479`)
+
+Immunefi program
+`pancakeswap` ($1,000,000,
+`kyc: false`). Remaining
+listed tree after
+Infinity:
+`pancake-v3-contracts`.
+This pass is the
+Pancake-specific farm
+layer only (not the
+Uniswap-V3-fork core
+math). Local clone
+`/tmp/pcs-v3` at
+`9868479`. Do not refile
+Infinity known issues
+1291 / 1298 / 1493. No
+mainnet interaction.
+
+Files:
+`masterchef-v3/contracts/{MasterChefV3,
+keeper/MasterChefV3KeeperV2,
+receiver/MasterChefV3ReceiverV2}.sol`,
+`v3-lm-pool/contracts/PancakeV3LmPool.sol`.
+
+Checked for: harvest of
+a stranger’s NFT;
+withdraw that sends the
+NFT to the caller;
+`increaseLiquidity` that
+steals the position;
+`sweepToken` /
+`unwrapWETH9` that takes
+reserved CAKE;
+permissionless upkeep
+that drains the
+receiver.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Deposit is
+  `onERC721Received`
+  from the official NPM
+  only. Position `user`
+  is `_from`. Harvest /
+  withdraw / collect /
+  decrease / burn
+  require
+  `positionInfo.user ==
+  msg.sender`.
+- `increaseLiquidity`
+  is permissionless on a
+  staked tokenId: the
+  caller pays and the
+  NFT owner keeps the
+  extra liquidity
+  (donation).
+- CAKE owed to the
+  chef is tracked in
+  `cakeAmountBelongToMC`.
+  `sweepToken` /
+  `transferToken` subtract
+  that reserve before
+  sending leftovers
+  (same Uniswap
+  periphery leftover
+  pattern for other
+  tokens). Collect with
+  `recipient == 0` parks
+  fees on the chef —
+  documented.
+- LmPool
+  `accumulateReward` /
+  `updatePosition` are
+  pool or MasterChef
+  only. Growth is Q128
+  inside-tick
+  accounting. Keeper V2
+  `performUpkeep` is
+  `onlyRegister`.
+- Emergency flag is
+  owner-only and skips
+  LM updates so users
+  can still withdraw
+  the NFT.
+
+Not submitted. Remaining
+Pancake listed Solidity:
+V3 core / periphery
+fork and
+`pancake-swap-periphery`
+(V2 router).
 
 ## Next candidates
 
@@ -13678,6 +13777,11 @@ cross-chain leftover
 (remaining Threshold is
 explorer addresses +
 keep-network typescript);
+Pancake MasterChefV3 +
+LmPool (`9868479`) is
+logged (remaining Pancake
+is V3 core/periphery
+fork + V2 periphery);
 Obyte Coop AA
 (`d7d5e57`), Friends AA
 (`45019f9`),

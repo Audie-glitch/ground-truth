@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~06:00 UTC. Dates verified against each
+Status as of 3 September 2026, ~06:05 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging), and Immunefi
@@ -13,8 +13,9 @@ unofficial mirror rechecked 3 Sep. KeeperHub #2105 is claimed by PR #2275.
 (search hit PR #2277 is #2247) — do not implement before 6 Sep. Lombard
 EVM 15 Jul strategy leftover (Shard / BlocklistOracle / merkle
 validator / converters) is logged. Listed Silo V3 GitHub Solidity
-is exhausted. PancakeSwap Infinity leftover is logged (remaining
-Pancake is listed V3 + V2 periphery). Mux3 core leftover is
+is exhausted. PancakeSwap Infinity leftover is logged. Pancake
+MasterChefV3 + LmPool leftover is logged (remaining Pancake is
+V3 core/periphery fork + V2 periphery). Mux3 core leftover is
 logged. Mux aggregator, degen pool, and protocol v1 core
 leftovers are logged (remaining Mux listed Solidity is
 mux-staking, GitHub 404 as of 3 Sep 2026). Threshold tBTC
