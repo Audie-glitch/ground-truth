@@ -44900,11 +44900,15 @@ Filecoin leftover remaining lotus lib rpcenc leftover (`7740217`)
 is logged.
 Filecoin leftover remaining lotus lib peermgr leftover (`7740217`)
 is logged.
+Filecoin leftover remaining lotus lib httpreader leftover (`7740217`)
+is logged.
+Rootstock leftover remaining rskj Bridge leftover (`161c3f105d18`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus lib (httpreader / addrutil) if still unused.
+Remaining listed Filecoin: remaining lotus lib (addrutil) if still unused.
 Remaining listed Aave: v3 logic libraries / primacy.
 Remaining listed Jito: `jito-solana` other crates (if still unused).
-Remaining listed Rootstock: `rskj` / `rsk-powhsm` (if still unused).
+Remaining listed Rootstock: `rsk-powhsm` (if still unused).
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -69388,3 +69392,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file the public peg-in registrar or empty-calldata peg-out as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `rsk-powhsm` (if still unused).
+
+## 2026-09-03: Filecoin leftover remaining lotus lib httpreader leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus lib peermgr leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `lib/httpreader`. Opened `httpreader.go` and `resumable.go`. Local HTTP GET readers. Do not rematch lotus lib rpcenc leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `HttpReader.Read` fetching an attacker URL as consensus input; `ResumableReader` following a redirect into a FIL-moving RPC; a stranger calling these without leftover-logged JWT.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `HttpReader` lazy-`http.Get`s `URL` on first `Read`, requires HTTP 200, then streams the body. Closing clears the URL. Used as leftover-logged `rpcenc` `HTTP` stream type (JWT-gated miner/node RPC).
+- `ResumableReader` GETs with `Range` after the first body drops, follows at most 10 redirects, and stops at `Content-Length`. It is a local piece/data helper.
+- Neither signs messages nor changes actor balances.
+
+Do not file an HTTP GET reader as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus lib (addrutil) if still unused.
