@@ -30983,10 +30983,19 @@ is other-chain vaults /
 factories);
 Acala leftover honzon / DEX /
 homa leftover (`cde2abf`) is
-logged (remaining listed is
-ORML / EVM / XCM /
-honzon-bridge /
-liquid-crowdloan / NFT);
+logged.
+Acala leftover EVM / XCM /
+bridge leftover (`cde2abf`)
+is logged (listed Acala
+runtime leftover exhausted
+at the opened pallet level;
+remaining listed is ORML);
+Ostium leftover vault /
+trading leftover (Sourcify;
+KYC) is logged (remaining
+listed is keepers /
+registry / routers /
+timelock / web);
 GMX leftover V2 AdlHandler leftover
 (Sourcify Arb AdlHandler /
 AdlUtils / GlpBalance /
@@ -36630,3 +36639,133 @@ pair/price
 routers, timelock,
 and the web /
 Telegram apps.
+
+## 2026-09-03: Acala leftover EVM / XCM / bridge leftover (`cde2abf`)
+
+Immunefi program
+`acala`
+($1,000, `kyc: false`).
+Honzon / DEX / homa
+leftover already
+logged. This slice
+is the remaining
+listed Acala
+runtime pallets:
+EVM, EVM-accounts,
+EVM-bridge,
+honzon-bridge,
+XCM interface,
+liquid-crowdloan,
+and NFT.
+Official clone
+`/tmp/acala` at
+`cde2abf`. No
+mainnet interaction.
+
+Files:
+`modules/evm/src/lib.rs`,
+`modules/evm-accounts/src/lib.rs`,
+`modules/evm-bridge/src/lib.rs`,
+`modules/honzon-bridge/src/lib.rs`,
+`modules/xcm-interface/src/lib.rs`,
+`modules/liquid-crowdloan/src/lib.rs`,
+`modules/nft/src/lib.rs`.
+
+Checked for: a
+stranger
+`eth_call` that
+spends another
+mapped account;
+`claim_account`
+that steals an
+unrelated padded
+balance without a
+signature;
+`to_bridged` that
+pays the caller
+from a third
+party; NFT
+`transfer` of a
+token the signer
+does not own;
+crowdloan `redeem`
+that burns someone
+else's LCDOT.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- EVM `call` /
+  `eth_call_v2`
+  map the signer to
+  an EOA and debit
+  that mapped
+  source.
+- `claim_account`
+  requires an
+  EIP-712 signature
+  over the signer
+  and merges only
+  the padded
+  address that
+  belongs to that
+  ETH key.
+- EVM-bridge is a
+  runtime helper
+  (ERC20 / liquidate
+  selectors). It
+  has no public
+  extrinsics.
+- Honzon-bridge
+  `to_bridged` /
+  `from_bridged`
+  pull the signer
+  and pay the
+  signer 1:1 from
+  the pallet
+  account. Address
+  set is
+  `UpdateOrigin`.
+- XCM interface
+  fee / weight
+  updates are
+  `UpdateOrigin`.
+- Liquid-crowdloan
+  `redeem` burns
+  the signer's
+  LCDOT and pays
+  that signer.
+  Redeem currency
+  set is
+  governance.
+- NFT `transfer` /
+  `burn` require
+  the signer to
+  own the token.
+  Mint is class
+  issuer.
+
+Do not file
+signed-key
+account merge,
+1:1 pallet
+stable swap, or
+governance XCM
+fee updates as
+stranger theft.
+
+Not submitted.
+Listed Acala
+runtime leftover
+that this clone
+opens is exhausted
+at the opened
+pallet level.
+Remaining listed:
+`open-runtime-module-library`
+(`33bc94a` clone
+present; tokens /
+xtokens not yet
+reviewed).

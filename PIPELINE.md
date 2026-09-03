@@ -4,11 +4,11 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~08:49 UTC. Dates verified against each
+Status as of 3 September 2026, ~08:51 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:49 UTC;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:51 UTC;
 246 programs; no Sep 2026 launches; Derive leftover
 PMRM + feeds leftover is logged;
 listed Derive leftover that official
@@ -23,7 +23,8 @@ GMX leftover V2 AdlHandler leftover is
 logged; Celer leftover is logged; Pyth EVM leftover is
 logged; Axelar leftover is logged; Kiln
 On-Chain v1 leftover is logged; Kiln DeFi
-leftover is logged; Acala leftover is logged). KeeperHub
+leftover is logged; Acala leftover is logged;
+Ostium leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -338,9 +339,14 @@ Kiln DeFi leftover ETH vault core (Sourcify;
 KYC) is logged (remaining listed is
 other-chain vaults / factories).
 Acala leftover honzon / DEX / homa leftover
-(`cde2abf`) is logged (remaining listed is
-ORML / EVM / XCM / honzon-bridge /
-liquid-crowdloan / NFT).
+(`cde2abf`) is logged.
+Acala leftover EVM / XCM / bridge leftover
+(`cde2abf`) is logged (listed Acala runtime
+leftover exhausted at the opened pallet
+level; remaining listed is ORML).
+Ostium leftover vault / trading (Sourcify;
+KYC) is logged (remaining listed is keepers
+/ registry / routers / timelock / web).
 GMX leftover V2 AdlHandler leftover
 (Sourcify Arb AdlHandler / AdlUtils /
 GlpBalance / Chainlink providers /
@@ -893,6 +899,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   core (Sourcify; KYC),
   Acala leftover honzon / DEX /
   homa leftover (`cde2abf`),
+  Acala leftover EVM / XCM /
+  bridge leftover (`cde2abf`),
+  Ostium leftover vault /
+  trading (Sourcify; KYC),
   GMX leftover V2 AdlHandler leftover
   (AdlUtils / GlpBalance /
   Chainlink providers /
