@@ -32764,3 +32764,166 @@ typescript, Starkscan
 Cairo, and Sui /
 Solana explorer
 rows.
+## 2026-09-03: Kelp DAO deposit / withdraw leftover (Sourcify)
+
+Immunefi program
+`Kelp DAO`
+($250,000, `kyc: true`).
+Unique unused standing
+program. Not previously
+logged. Ethereum
+Sourcify proxies are
+`TransparentUpgradeableProxy`
+(`match`). Implementations
+are `exact_match` /
+`match`: LRTConfig
+`0xd4F475A7DF199b3106F622A3A825Ff399D4dafCe`
+behind
+`0x947Cb49334e6571ccBFEF1f1f1178d8469D65ec7`,
+RSETH
+`0x7159107483e623707C18C6E06cBc095bd0717783`
+behind
+`0xA1290d69c65A6Fe4DF752f95823fae25cB99e5A7`,
+LRTDepositPool
+`0xEA38dFa108318288f36F13d06e821a64AcDA8320`
+behind
+`0x036676389e48133B63a802f8635AD39E752D375D`,
+LRTOracle
+`0xC59110239240761cCd3E670288443316e10Dd271`
+behind
+`0x349A73444b1a310BAe67ef67973022020d70020d`,
+EthXPriceOracle
+`0x3f258821a5ad28391e9Bb0B69A705fdf545BCab0`
+behind
+`0x3D08ccb47ccCde84755924ED6B0642F9aB30dFd2`,
+FeeReceiver
+`0x868ceF33E29bF3037b5d4CF5C408EAEF29d96b33`
+behind
+`0xdbc3363de051550d122d9c623cbaff441afb477c`,
+LRTConverter
+`0x70dAf8B0BFc846cc98b71D2F8FfdC91f4D2bbd51`
+behind
+`0x598dbcb99711e5577ff76ef4577417197b939dfa`,
+LRTWithdrawalManager
+`0x0eCde3F414D1A245246D121e37191d9a63684E19`
+behind
+`0x62De59c08eB5dAE4b7E6F7a8cAd3006d6965ec16`,
+LRTUnstakingVault
+`0x1fC8eEBd7E1E61cc2CCa005Ee0F0d08417E5a2a4`
+behind
+`0xc66830e2667bc740c0bed9a71f18b14b8c8184ba`,
+NodeDelegator
+`0x50F88fBbc50629b8B37F68C4dC28f712A8bf679b`
+behind
+`0x07b96cf1183c9bff2e43acf0e547a8c4e4429473`.
+No mainnet writes.
+Extract `/tmp/kelp-impl`.
+
+Files:
+`contracts/LRTDepositPool.sol`,
+`contracts/RSETH.sol`,
+`contracts/LRTWithdrawalManager.sol`,
+`contracts/LRTUnstakingVault.sol`,
+`contracts/LRTConverter.sol`,
+`contracts/NodeDelegator.sol`,
+`contracts/FeeReceiver.sol`,
+`contracts/LRTOracle.sol`,
+`contracts/LRTConfig.sol`.
+
+Checked for: a
+stranger deposit that
+mints rsETH without
+pulling the caller;
+`initiateWithdrawal`
+that burns another
+user's rsETH;
+`completeWithdrawal`
+that pays a stranger
+the queued amount;
+`redeem` of the
+unstaking vault by a
+random caller;
+`mint` / `burnFrom`
+without a role.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `depositETH` /
+  `depositAsset` pull
+  `msg.value` or
+  `safeTransferFrom`
+  `msg.sender`, then
+  `mint` rsETH to
+  `msg.sender`.
+  Transfers to NDC /
+  unstaking vault are
+  `onlyAssetTransferRole`.
+  Operator LST/ETH
+  swaps pull the
+  operator and pay
+  that operator.
+- rsETH `mint` is
+  `MINTER_ROLE` +
+  daily cap.
+  `burnFrom` is
+  `BURNER_ROLE`.
+- `initiateWithdrawal`
+  pulls rsETH from
+  `msg.sender` and
+  queues that sender.
+  `completeWithdrawal`
+  pays the named
+  request user after
+  unlock + delay.
+  `instantWithdrawal`
+  burns the caller's
+  rsETH and pays that
+  caller minus fee.
+- Vault `redeem` is
+  `onlyLRTWithdrawalManager`.
+  NodeDelegator
+  `completeUnstaking`
+  is `onlyLRTOperator`
+  and requires
+  `withdrawal.staker
+  == address(this)`.
+- Converter claims
+  are operator.
+  FeeReceiver
+  `sendFunds` forwards
+  ETH to the deposit
+  pool. Oracle asset
+  setters are admin.
+  `updateRSETHPrice`
+  is a computed
+  refresh.
+
+Do not file first-
+depositor share
+inflation, operator /
+manager privilege,
+the documented
+last-asset slash
+edge, manager-set
+instant-withdraw
+fee, or the ETH
+deposit-limit check
+that compares TVL
+without adding the
+current `msg.value`
+as stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Kelp DAO
+deposit / withdraw
+leftover is
+exhausted at the
+opened-contract
+level. Remaining
+listed: the website
+Restaking page.
