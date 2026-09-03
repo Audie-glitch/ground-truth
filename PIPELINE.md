@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~04:10 UTC. Dates verified against each
+Status as of 3 September 2026, ~04:28 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging), and Immunefi
@@ -143,10 +143,13 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   router, Yearn stYFI July leftover +
   February StakedYFI / LL depositor +
   leftover LL redemption / LL+veYFI
-  distributors, Twyne Aave V3
+  distributors + Vault / Strategy /
+  Factory V3.1.0, Twyne Aave V3
   operators (Sourcify), TermMax TMX
   OFT, Balancer V3
-  CompositeLiquidityRouter, and
+  CompositeLiquidityRouter +
+  ProtocolFeeController, Spark ALM
+  controller (`ce5cbd9`), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

@@ -6935,11 +6935,12 @@ finding. Not submitted.
   allowance. Leftover DAI
   dust is documented.
 
-Remaining SparkLend: the rest
-of the 359-asset table (ALM
-controllers, other-chain
-vaults, Robinhood / X Layer
-13 Jul rows). Not submitted.
+Remaining SparkLend after this
+slice: ALM controllers (logged
+below at `ce5cbd9`) plus
+other-chain vaults / PSM3 and
+Robinhood / X Layer 13 Jul
+rows. Not submitted.
 
 ## 2026-09-03: Twyne Aave V3 operators (Sourcify)
 
@@ -7480,6 +7481,230 @@ EclpLPOracleFactory,
 GyroECLPPoolFactory). Not
 submitted.
 
+## 2026-09-03: Spark ALM controller (`ce5cbd9`)
+
+Immunefi program `sparklend`
+($5,000,000, `kyc: false`).
+Listed GitHub rows
+[marsfoundation/spark-alm-controller](https://github.com/marsfoundation/spark-alm-controller)
+`MainnetController.sol`,
+`ForeignController.sol`,
+`ALMProxy.sol`,
+`RateLimitHelpers.sol`, plus
+live `ALM_CONTROLLER` /
+`ALM_PROXY` /
+`ALM_RATE_LIMITS` on
+Ethereum / Base / OP / Arb /
+Avalanche / Unichain /
+Robinhood / X Layer. Local
+clone `/tmp/spark-alm` at
+`ce5cbd9`. No mainnet
+interaction.
+
+Files:
+`src/{MainnetController,ForeignController,ALMProxy,ALMProxyFreezable,RateLimits,RateLimitHelpers,OTCBuffer,WEETHModule}.sol`,
+`src/libraries/{CCTPLib,ERC4626Lib,LayerZeroLib,PSMLib,AaveLib,ApproveLib}.sol`.
+
+Checked for: a relayer
+`transferAsset` to an
+unlisted destination; CCTP
+`mintRecipient` taken from
+the caller; 4626 deposit that
+mints to the relayer; LayerZero
+`to` override; OTC claim that
+unlocks a later send without
+returning value; `take` that
+pulls a user Spark vault;
+farm `stake` to an arbitrary
+farm without a rate-limit
+key.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `ALMProxy.doCall` /
+  `doCallWithValue` /
+  `doDelegateCall` are
+  `CONTROLLER` only.
+  `RateLimits` decrease /
+  increase is `CONTROLLER`
+  only. Unset keys revert
+  (`zero-maxAmount`).
+- `transferAsset` burns
+  `LIMIT_ASSET_TRANSFER(asset,
+  destination)` before the
+  proxy `transfer`. Same
+  pattern on
+  `ForeignController`.
+- CCTP uses
+  `mintRecipients[domain]`
+  (admin-set). Zero recipient
+  reverts. Dual global +
+  domain rate limits.
+- 4626 deposit mints shares
+  to the proxy, requires
+  `minSharesOut` and
+  `assets/shares <=
+  maxExchangeRates[token]`.
+  Unset max rate is 0, so
+  a deposit of assets > 0
+  reverts. Withdraw/redeem
+  restore the deposit key
+  using assets received.
+- LayerZero `to` is
+  `layerZeroRecipients[eid]`.
+  Comment on the wrapper:
+  keep the rate-limit key
+  at zero until OFTs are
+  integration-tested.
+  `minAmountLD` is filled
+  from `quoteOFT`.
+- OTC first send is allowed
+  because storage `sent18`
+  is still 0 at the ready
+  check. Later sends need
+  `claimed + recharge >=
+  sent * maxSlippage`.
+  Assets and the exchange
+  buffer are admin
+  whitelists. Compromised
+  relayer + junk whitelist
+  is their documented OTC
+  trust assumption.
+- Farm / Maple / Superstate
+  / Spark-vault `take` /
+  wstETH / weETH / Ethena
+  prepare-approve are
+  rate-limited (or
+  destination-keyed).
+  `setDelegatedSigner` is
+  relayer-callable;
+  SECURITY.md accepts
+  Ethena’s off-chain
+  checks. Dai↔USDS is 1:1
+  inside the proxy (no
+  rate limit; accepted
+  parity assumption).
+- `FREEZER` can
+  `removeRelayer`. Threat
+  model treats the relayer
+  as compromisable and
+  bounds loss by rate
+  limits. Users do not
+  call these entrypoints.
+
+Remaining SparkLend: other
+listed vaults / PSM3 /
+treasury controllers and
+the 13 Jul Robinhood /
+X Layer rows beyond this
+ALM tree. Not submitted.
+
+## 2026-09-03: Yearn Vault V3.1.0 (Sourcify)
+
+Immunefi program
+`yearnfinance` ($200,000,
+`kyc: false`). 23 Jun 2026
+rows: Vault V3.1.0
+`0xdD3F…7824` (Sourcify
+match, Vyper
+`YearnV3Vault`, verified
+2026-06-19), Tokenized
+Strategy V3.1.0
+`0x310f…1e76` (exact
+match, `TokenizedStrategy`),
+Vault V3.1.0 Factory
+`0x310a…bcAC` (match,
+`YearnVaultFactory`).
+Extracts under
+`/tmp/yearn/{vault310,strat310,vfact310}`.
+No mainnet interaction.
+
+Files:
+`YearnV3Vault.vy`,
+`src/TokenizedStrategy.sol`,
+`YearnVaultFactory.vy`.
+
+Checked for: first-depositor
+inflation via a 1-wei
+deposit plus a raw asset
+donation; redeem that pays
+`msg.sender` instead of
+`receiver` / burns a
+stranger; `process_report`
+that mints unlocked profit;
+factory fee unpack that
+points fees at the caller;
+strategy `MINIMUM_SUPPLY`
+bypass that lets a dust
+depositor steal a later
+deposit.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- Vault `total_assets` is
+  `total_idle + total_debt`,
+  not the ERC20 balance.
+  A raw donation does not
+  change PPS until
+  `process_report(self)`
+  (role-gated) accrues it
+  into idle. Empty supply
+  mints 1:1; `total_supply
+  > 0` and `total_assets
+  == 0` mints 0 shares
+  (`cannot mint zero`).
+- Deposit pulls
+  `msg.sender` and mints
+  to `recipient` (cannot
+  be `address(0)` or
+  `self`). Redeem burns
+  `owner` (allowance if
+  sender ≠ owner) and
+  pays `receiver`. Losses
+  from the withdraw queue
+  are capped by `max_loss`.
+- Profit is locked as
+  shares minted to the
+  vault and unlocked over
+  `profit_max_unlock_time`.
+  Fees go to the accountant
+  and the factory
+  `protocol_fee_config`
+  recipient.
+- Factory `deploy_new_vault`
+  is create2 + `initialize`.
+  Protocol fee bps ≤ 5000.
+  Custom vault fees still
+  pay the default
+  recipient. Governance
+  is two-step.
+- TokenizedStrategy 3.1.0
+  simulates constant
+  accrual for
+  `convertTo*` /
+  `totalAssets`.
+  `MINIMUM_SUPPLY` (1e3)
+  confiscates profit into
+  supply while under the
+  floor. Deposit transfers
+  first, then
+  `deployFunds`, then
+  mints. Withdraw
+  `freeFunds` then pays
+  `receiver`. `report` /
+  `tend` are keeper-only.
+
+Remaining Yearn listed
+Solidity after this slice:
+none of the 23 Jun V3.1.0
+trio. Older 3.0.4 vault /
+factory rows were already
+in the table and were not
+re-read here. Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -7579,12 +7804,18 @@ Sourcify), Magpie
 WombatPoolHelper (Sourcify), and
 SparkLend Ethereum sUSDC vault +
 PSM Variant1 actions (Sourcify)
+plus the Spark ALM controller
+tree (`ce5cbd9`: Mainnet /
+Foreign / proxy / rate limits)
 are logged. Listed Extra Finance
 and Hashflow Solidity are
 exhausted. Magpie leftover is
 Primacy of Impact only.
-Remaining SparkLend is the rest
-of the 359-asset table. Next
+Remaining SparkLend is other
+listed vaults / PSM3 /
+treasury controllers and the
+13 Jul Robinhood / X Layer
+rows beyond that ALM tree. Next
 unreviewed Immunefi
 GitHub-or-recent trees:
 Twyne June-2026 Aave V3
@@ -7603,9 +7834,10 @@ stYFIx / middleware / main
 RewardDistributor (Sourcify)
 and leftover LL redemption /
 LL+veYFI distributors
-(`69e262e`) are logged;
-remaining Yearn is Vault
-V3.1.0 if wanted. Balancer V3
+(`69e262e`) plus Vault /
+TokenizedStrategy /
+Factory V3.1.0 (Sourcify)
+are logged. Balancer V3
 Router + CompositeLiquidityRouter
 + ProtocolFeeController (23 Jun,
 Sourcify) are logged; remaining
