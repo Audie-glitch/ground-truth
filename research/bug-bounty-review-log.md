@@ -46259,6 +46259,108 @@ rust/op-reth
 (if still unused).
 
 
+## 2026-09-03: Optimism leftover remaining SystemConfig leftover
+
+Immunefi program
+`optimism`
+($2,000,042,
+`kyc: true`).
+Official unused
+listed SystemConfig
+after L2OutputOracle
+leftover.
+Sourcify ETH
+SystemConfig
+proxy
+`0x229047fed2591dbec1eF1118d64F7aF3dB9EB290`
+impl
+`0x42Ad0173051225Ac784100e9acD43349707F4db9`.
+Extract
+`/tmp/op-unused/SystemConfig/`.
+Do not rematch
+L2OutputOracle leftover,
+mintable factory leftover,
+or ETHLockbox leftover.
+No mainnet
+writes.
+
+Files:
+`src/L1/SystemConfig.sol`.
+
+Checked for:
+stranger
+`setBatcherHash`
+or
+`setUnsafeBlockSigner`;
+`setFeature`
+that flips
+ETHLockbox
+without
+ProxyAdmin;
+initialize
+that anyone
+can call.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `initialize`
+  is
+  `reinitializer`
+  and
+  `_assertOnlyProxyAdminOrProxyAdminOwner`.
+- Config
+  setters
+  (`setBatcherHash`,
+  gas, EIP-1559,
+  operator fee,
+  DA scalar,
+  unsafe
+  signer) are
+  `onlyOwner`.
+- `setFeature`
+  is ProxyAdmin
+  gated. ETH
+  lockbox
+  disable
+  reverts if
+  the portal
+  still has a
+  lockbox or
+  the system
+  is paused.
+- Getters
+  and `paused`
+  read
+  SuperchainConfig.
+  This
+  contract
+  does not
+  transfer
+  ETH or
+  tokens.
+
+Do not file
+an owner-
+gated system
+config as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+remaining
+op-node leftover
+(p2p /
+sequencing) /
+websites /
+rust/op-reth
+(if still unused).
+
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -46562,6 +46664,8 @@ Optimism leftover remaining mintable factory leftover (`eea9542`)
 is logged.
 Optimism leftover remaining L2OutputOracle leftover
 is logged.
+Optimism leftover remaining SystemConfig leftover
+is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
 Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
@@ -46599,7 +46703,7 @@ Remaining listed Filecoin: unused official leftover that listed trees open is ex
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
-Remaining listed Optimism: remaining official op-node leftover (p2p / sequencing) / SystemConfig / websites / rust/op-reth if still unused.
+Remaining listed Optimism: remaining official op-node leftover (p2p / sequencing) / websites / rust/op-reth if still unused.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -46684,6 +46788,7 @@ Do not rematch Optimism leftover remaining op-node deposits + withdrawals leftov
 Do not rematch Optimism leftover remaining op-node engine leftover.
 Do not rematch Optimism leftover remaining mintable factory leftover.
 Do not rematch Optimism leftover remaining L2OutputOracle leftover.
+Do not rematch Optimism leftover remaining SystemConfig leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -49473,9 +49578,11 @@ Optimism leftover remaining op-node engine leftover
 Optimism leftover remaining mintable factory leftover
 (`eea9542`) is logged;
 Optimism leftover remaining L2OutputOracle leftover
+is logged;
+Optimism leftover remaining SystemConfig leftover
 is logged (remaining listed is remaining
-op-node leftover (p2p / sequencing) / SystemConfig /
-websites / rust/op-reth);
+op-node leftover (p2p / sequencing) / websites /
+rust/op-reth);
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
