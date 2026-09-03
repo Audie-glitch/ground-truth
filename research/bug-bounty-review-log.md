@@ -46312,6 +46312,8 @@ Jito leftover remaining jito-solana partitioned epoch rewards leftover (`d0e3a47
 is logged.
 Jito leftover remaining jito-solana check_transactions leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana transaction_execution leftover (`d0e3a47`)
+is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
 Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
@@ -46319,6 +46321,10 @@ is logged.
 Filecoin leftover remaining go-state-types leftover (`a31d84b45e42`)
 is logged.
 Filecoin leftover remaining go-paramfetch leftover (`78a1658e6493`)
+is logged.
+Filecoin leftover remaining go-commp-utils leftover (`b487eb14c907`)
+is logged.
+Filecoin leftover remaining go-fil-commp-hashhash leftover (`256368516783`)
 is logged.
 Optimism leftover remaining dispute games leftover (`eea9542`)
 is logged.
@@ -46341,9 +46347,9 @@ is logged.
 Rootstock leftover remaining rsk-powhsm leftover (`82a12d44efec`)
 is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Remaining go-* (`go-commp-utils` if still unused). Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`stakes` / `epoch_stakes` / `snapshot_*` / `bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -46416,11 +46422,14 @@ Do not rematch Jito jito-solana vote_reward leftover.
 Do not rematch Jito jito-solana remaining runtime leftover.
 Do not rematch Jito jito-solana partitioned epoch rewards leftover.
 Do not rematch Jito jito-solana check_transactions leftover.
+Do not rematch Jito jito-solana transaction_execution leftover.
+Do not rematch Filecoin go-commp-utils leftover.
+Do not rematch Filecoin go-fil-commp-hashhash leftover.
+Do not rematch Optimism leftover remaining dispute games leftover.
+Do not rematch Filecoin go-jsonrpc leftover.
 Do not rematch Filecoin go-fil-markets leftover.
 Do not rematch Filecoin go-state-types leftover.
 Do not rematch Filecoin go-paramfetch leftover.
-Do not rematch Optimism leftover remaining dispute games leftover.
-Do not rematch Filecoin go-jsonrpc leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -49178,7 +49187,10 @@ Jito leftover remaining jito-solana remaining runtime leftover
 Jito leftover remaining jito-solana partitioned epoch rewards leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana check_transactions leftover
-(`d0e3a47`) is logged (remaining listed is exhausted on this pin);
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana transaction_execution leftover
+(`d0e3a47`) is logged (remaining listed is unused remaining-runtime
+stakes / epoch_stakes / snapshot / bank if still unused);
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
@@ -49187,6 +49199,10 @@ Filecoin leftover remaining go-state-types leftover
 (`a31d84b45e42`) is logged;
 Filecoin leftover remaining go-paramfetch leftover
 (`78a1658e6493`) is logged;
+Filecoin leftover remaining go-commp-utils leftover
+(`b487eb14c907`) is logged;
+Filecoin leftover remaining go-fil-commp-hashhash leftover
+(`256368516783`) is logged;
 Optimism leftover remaining dispute games leftover
 (`eea9542`) is logged (remaining listed is op-node /
 op-dispute-mon / L2 contracts / PolicyEngineStaking /
@@ -71354,3 +71370,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a messenger-gated ETH mint or recipient-only fee sweep as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `op-node` / `op-dispute-mon` / PolicyEngineStaking / websites if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana transaction_execution leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after check_transactions leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/transaction_execution.rs`, `runtime/src/transaction_batch.rs`, and `runtime/src/transaction_balances.rs`. Do not rematch remaining runtime leftover, check_transactions leftover, runtime fee leftover, or vote_reward leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `execute_batch` that commits a stranger tx after a processing error; `check_block_cost_limits` that skips executed cost so a block exceeds limits; `unlock_failures` that unlocks a still-locked account so a second batch writes the same keys.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `execute_batch` is a validator helper, not a stranger IX. `load_execute_and_commit_transactions_with_pre_commit_callback` runs `get_first_error` before commit. A processing error (for example `BlockhashNotFound`) cancels the commit; tests show `transaction_count` stays 0.
+- After a successful commit, `get_transaction_costs` uses executed CUs and loaded-account size only for `Ok` commit results. `None` costs are skipped. `check_block_cost_limits` `try_add`s those costs; exceeding the block limit fails the batch. Replay rejects the entry; this crate does not move lamports.
+- `find_and_send_votes` and `PrioritizationFeeCache::update` only see committed fee-paying txs. Status send is a channel for RPC/ledger metadata.
+- `TransactionBatch` locks match sanitized txs 1:1. `unlock_failures` asserts it cannot flip err→ok and only unlocks previously-ok locks that now failed. Drop unlocks remaining locked accounts.
+- `compile_collected_balances` rewrites SVM native/token snapshots into status structs. UI amount uses the raw token amount. No credit path.
+
+Do not file a validator batch-execute helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`stakes` / `epoch_stakes` / `snapshot_*` / `bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.

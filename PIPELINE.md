@@ -10,7 +10,10 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Optimism leftover remaining dispute games leftover is logged;
+246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana transaction_execution leftover is logged;
+Optimism leftover remaining dispute games leftover is logged;
+Filecoin leftover remaining go-fil-commp-hashhash leftover is logged;
+Filecoin leftover remaining go-commp-utils leftover is logged;
 Filecoin leftover remaining go-paramfetch leftover is logged;
 Filecoin leftover remaining go-state-types leftover is logged;
 Filecoin leftover remaining go-fil-markets leftover is logged;
@@ -1694,11 +1697,15 @@ jito-solana partitioned epoch rewards leftover
 (`d0e3a47`; KYC) is logged.
 Jito leftover remaining
 jito-solana check_transactions leftover
+(`d0e3a47`; KYC) is logged.
+Jito leftover remaining
+jito-solana transaction_execution leftover
 (`d0e3a47`; KYC) is logged
 (remaining listed is unused
-official leftover that listed
-trees open is exhausted on
-this pin).
+remaining-runtime slices
+`stakes` / `epoch_stakes` /
+`snapshot_*` / `bank.rs`
+if still unused).
 Filecoin leftover remaining
 go-jsonrpc leftover
 (`059363558429`; KYC) is logged.
@@ -1711,6 +1718,12 @@ go-state-types leftover
 Filecoin leftover remaining
 go-paramfetch leftover
 (`78a1658e6493`; KYC) is logged.
+Filecoin leftover remaining
+go-commp-utils leftover
+(`b487eb14c907`; KYC) is logged.
+Filecoin leftover remaining
+go-fil-commp-hashhash leftover
+(`256368516783`; KYC) is logged.
 Optimism leftover remaining
 dispute games leftover
 (`eea9542`; KYC) is logged
@@ -2790,6 +2803,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Jito leftover remaining
   jito-solana check_transactions leftover
   (`d0e3a47`; KYC),
+  Jito leftover remaining
+  jito-solana transaction_execution leftover
+  (`d0e3a47`; KYC),
   Filecoin leftover remaining
   go-jsonrpc leftover
   (`059363558429`; KYC),
@@ -2802,6 +2818,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Filecoin leftover remaining
   go-paramfetch leftover
   (`78a1658e6493`; KYC),
+  Filecoin leftover remaining
+  go-commp-utils leftover
+  (`b487eb14c907`; KYC),
+  Filecoin leftover remaining
+  go-fil-commp-hashhash leftover
+  (`256368516783`; KYC),
   Optimism leftover remaining
   dispute games leftover
   (`eea9542`; KYC),
