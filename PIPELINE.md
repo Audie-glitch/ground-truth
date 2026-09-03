@@ -30,10 +30,11 @@ DAO). Beanstalk Basin
 leftover (Pipeline / Depot / Well / Aquifer / CP2 /
 MultiFlowPump) is logged. Beanstalk L2 diamond +
 tokens leftover (`8e22cd2`, Sourcify
-`exact_match`) is logged (remaining Beanstalk
-is Junctions / UnwrapETH / LSD oracle /
-Fertilizer proxy Sourcify 404 / marketplace /
-season / pipeline-convert). Beets stS + token leftover
+`exact_match`) is logged. Beanstalk Junctions /
+UnwrapETH / LSD / marketplace leftover
+(`8e22cd2`) is logged (listed Beanstalk leftover
+exhausted aside from Fertilizer proxy Sourcify
+404). Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
 leftover is logged (yvUSD / Woofy still Sourcify 404).
 Benqi Dual Oracle leftover is logged. Benqi core

@@ -18949,6 +18949,130 @@ marketplace / season /
 pipeline-convert
 facets.
 
+## 2026-09-03: Beanstalk Junctions / UnwrapETH / LSD / marketplace leftover (`8e22cd2`)
+
+Immunefi program
+`beanstalk`
+($1,100,000, `kyc: false`).
+Basin and L2 diamond
++ tokens leftovers
+are already logged.
+This slice is the
+remaining listed
+Sourcify-open
+contracts plus the
+diamond marketplace /
+pipeline-convert /
+season leftover.
+Arbitrum Sourcify
+`exact_match`:
+Junctions
+`0x5A5A5ADe…E2cD`
+(`src/Junction.sol`,
+solc 0.8.26, verified
+2026-01-20),
+UnwrapAndSendETH
+`0xD6Fc4a63…A4749`,
+LSDChainlinkOracle
+`0xCCCCCC35…5626`.
+Official tree
+`8e22cd2`. No mainnet
+interaction.
+
+Files:
+`ecosystem/junction/Junction.sol`,
+`MathJunction.sol`,
+`LogicJunction.sol`,
+`pipeline/junctions/UnwrapAndSendETH.sol`,
+`ecosystem/oracles/LSDChainlinkOracle.sol`,
+`libraries/Oracle/LibChainlinkOracle.sol`,
+`market/MarketplaceFacet/MarketplaceFacet.sol`,
+`silo/PipelineConvertFacet.sol`,
+`sun/SeasonFacet/SeasonFacet.sol`.
+
+Checked for: Junction
+math that mints or
+moves tokens; UnwrapETH
+that takes a victim’s
+WETH approval; oracle
+that treats a stale or
+zero feed as live;
+marketplace fill that
+spends another
+farmer’s Beans or
+plots; pipeline
+convert that withdraws
+a stranger’s deposit;
+sunrise that pays user
+funds.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Junctions are
+  `pure` add/sub/mul/
+  div/cmp/`check`.
+  No storage, no
+  tokens.
+- UnwrapAndSendETH
+  unwraps WETH
+  already on this
+  helper and sends
+  ETH to `to`. Same
+  leftover-on-helper
+  pattern as Pipeline.
+  Do not file without
+  a proven official
+  park.
+- LSD oracle
+  multiplies two
+  Chainlink feeds
+  from caller `data`.
+  `LibChainlinkOracle`
+  returns 0 on
+  revert, round 0,
+  future/zero
+  timestamp, timeout,
+  or `answer <= 0`.
+  This is an oracle,
+  not a vault.
+- Marketplace
+  listings / orders
+  require
+  `lister`/`orderer ==
+  _user()`. Fill
+  transfers Beans
+  from `_user()` to
+  the lister. Plot
+  transfer spends
+  pod allowance
+  unless
+  `sender == _user()`.
+- `pipelineConvert`
+  withdraws and
+  redeposits
+  `_user()` only.
+  Pipe calls are the
+  already-logged
+  Pipeline sandbox.
+- `sunrise` is
+  permissionless and
+  `noOutFlow`.
+
+Do not file UnwrapETH
+leftover sweep or
+caller-supplied
+oracle feeds as
+theft of funds at
+rest.
+
+Not submitted.
+Listed Beanstalk
+leftover is exhausted
+aside from Fertilizer
+proxy (Sourcify 404).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -19466,13 +19590,16 @@ logged. Beanstalk L2
 diamond + tokens
 leftover (`8e22cd2`,
 Sourcify `exact_match`)
-is logged (remaining
-Beanstalk is Junctions /
-UnwrapETH / LSD oracle /
+is logged. Beanstalk
+Junctions / UnwrapETH /
+LSD / marketplace
+leftover (`8e22cd2`,
+Sourcify `exact_match`)
+is logged (listed
+Beanstalk leftover
+exhausted aside from
 Fertilizer proxy
-Sourcify 404 /
-marketplace / season /
-pipeline-convert);
+Sourcify 404);
 Beets stS
 (`877087b`) + token
 leftover is logged
