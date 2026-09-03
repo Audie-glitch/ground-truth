@@ -70864,3 +70864,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a certificate-gated credit increment as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` check_transactions / partitioned epoch rewards / remaining runtime if still unused.
+
+## 2026-09-03: Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus leftover (avoid lotus collision). Official `filecoin-project/go-jsonrpc` `059363558429`. Opened listed `auth/{auth,handler}.go`, `handler.go`, `server.go`, and `options_server.go`. Do not rematch lotus lib rpcenc leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger JSON-RPC that skips JWT and invokes a wallet method; `PermissionedProxy` calling a method without the required `perm` tag.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `auth.Handler` requires a `Bearer` token when one is present. `Verify` failure or a missing Bearer prefix returns 401. No token leaves default perms on the context and continues to `Next`.
+- `PermissionedProxy` panics at wrap time if a field lacks a known `perm` tag. At call time `HasPerm` must match or the method is not invoked and an error is returned.
+- `handler.handle` looks up the registered method (or alias) and rejects wrong param counts. This library does not hold FIL. Lotus wallet RPC permission tags live in leftover-logged `lib/rpcenc`.
+
+Do not file a permission-tagged JSON-RPC helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches.
