@@ -73476,3 +73476,37 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a genesis test helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`alpenglow_epoch_type` / `leader_schedule_utils` / `sysvar_account`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03 leftover: Chainlink Common Keystore (`smartcontractkit/chainlink-common` `keystore/`)
+
+Immunefi leftover **Common Keystore** (`https://github.com/smartcontractkit/chainlink-common/tree/main/keystore`). Official GitHub `GET /repos/smartcontractkit/chainlink-common/contents/keystore?ref=develop` **200** (16 entries). Pin `ef07b52` (`ef07b52a737d782d874d191763238420c96960f0`, committer `2026-09-03T14:18:29Z`). Local extract `/tmp/cl-cks/` via `git show <pin>:<path>`: `encryptor.go`, `signer.go`, `keystore.go`, `file.go`, `admin.go`, `memory.go`, `storage.go`, `reader.go`, plus `go.mod`/`go.sum`. **No live-contract testing. No exploit PoCs.**
+
+This is the **library** keystore used by the core node leftover (`731d82b` / `/tmp/cl-ks/`). Do not rematch core `core/services/keystore`.
+
+### What I actually read
+
+- `keystore.go` `LoadKeystore`: decrypts storage with `gethkeystore.DecryptDataV3` using the caller password; empty storage → empty in-memory map; wrong password fails. `save` proto-marshals keys then `EncryptDataV3` with the same password (scrypt N=1024, P=1).
+- `file.go` `FileStorage`: `atomicfile.WriteFile` mode `0600`. `MemoryStorage` is in-process only.
+- `admin.go` `ExportKeys`: each key is re-encrypted with **caller-supplied** `keyReq.Enc.Password` (`enc.Encrypt`); not returned as plaintext. `ImportKeys` decrypts with the import password then `Add`. `GetKeys` returns **KeyInfo** (name, type, pubkey, extra metadata) — not private key bytes. `GetAccount` / `GetPublicKey` are public material only.
+- `signer.go` / `encryptor.go`: `Sign` / `Decrypt` run in-process after a successful load. No HTTP surface in this package.
+- `storage.go`: `EncryptedKeystore` is a JSON blob (`{crypto, id, version}`) wrapping go-ethereum keystore V3.
+
+### Verdict
+
+**No finding.** Stranger theft of node keys still requires the node password or process memory. Export is re-encrypted to a password the admin supplies. File storage is `0600`. This library does not expose a public HTTP unlock. Out of Immunefi leftover remaining for Common Keystore.
+
+### Remaining listed (do not rematch)
+
+- VRF (`vrf/v08` / `vrf/v1`).
+- CCIP (`ccip/`) — EVM + Solana + Sui + Aptos leftovers logged.
+- Payments (`chainlink-evm/…/payments`).
+- Automation CRE (`chainlink-evm/…/automation/`).
+- Operator Forwarder (`chainlink-evm/…/operatorforwarder`).
+- LLO Feeds (`chainlink-evm/…/llo-feeds`).
+- Websites (`smartcontract.community` / `dev.chain.link` / `docs.chain.link`).
+- OCR (`libocr` `ocr2/`).
+- Core node transfers (`core/web` `/v2/transfers`).
+- Core keystore (`core/services/keystore`).
+- Common Keystore (`chainlink-common` `keystore/`) — this leftover.
+- evm txmgr package (under `chainlink-evm` / `chainlink-framework`, not `core/services`).
+- ocr2 services (`core/services/ocr2`).
