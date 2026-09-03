@@ -84,6 +84,38 @@ export async function GET() {
     /* none */
   }
 
+  let nextEarn: {
+    stage: string | null;
+    ready: boolean;
+    canSign: boolean;
+    baseUsdc: number | null;
+    baseEth: number | null;
+    bountyContract: string | null;
+  } = {
+    stage: null,
+    ready: false,
+    canSign: session,
+    baseUsdc: null,
+    baseEth: null,
+    bountyContract: "0x71b7b3a8ceb534ca904b8513987aa1f3bd6c3d91",
+  };
+  try {
+    const funded = JSON.parse(readFileSync("/tmp/funded-acquisition-status.json", "utf-8")) as {
+      stage?: string;
+      ready?: boolean;
+      canSign?: boolean;
+      baseUsdc?: number;
+      baseEth?: number;
+    };
+    nextEarn.stage = funded.stage ?? null;
+    nextEarn.ready = Boolean(funded.ready);
+    nextEarn.canSign = Boolean(funded.canSign);
+    nextEarn.baseUsdc = typeof funded.baseUsdc === "number" ? funded.baseUsdc : null;
+    nextEarn.baseEth = typeof funded.baseEth === "number" ? funded.baseEth : null;
+  } catch {
+    /* watcher has not written yet */
+  }
+
   return NextResponse.json({
     session,
     ethereum,
@@ -98,5 +130,6 @@ export async function GET() {
     kmsDetail: connect.detail ?? null,
     source: usePortal ? "portal-app" : "dcr",
     userInput,
+    nextEarn,
   });
 }

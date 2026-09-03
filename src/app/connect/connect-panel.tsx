@@ -30,6 +30,14 @@ type Status = {
     hasEthereum: boolean;
     ethereumAddress: string | null;
   };
+  nextEarn?: {
+    stage: string | null;
+    ready: boolean;
+    canSign: boolean;
+    baseUsdc: number | null;
+    baseEth: number | null;
+    bountyContract: string | null;
+  };
 };
 
 type Balances = {
@@ -239,6 +247,30 @@ export function ConnectPanel() {
             <p>
               This VM cannot sign for a personal MetaMask account. Use it to fund an agent address
               once Phantom Connect succeeds, or keep it here so balances can be checked.
+            </p>
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
+      {status?.nextEarn ? (
+        <Alert>
+          <AlertTitle>Next legal earn — Agent Bounties on Base</AlertTitle>
+          <AlertDescription className="space-y-2">
+            <p>
+              Standing parent {status.nextEarn.bountyContract} pays 2 USDC after a real 1 USDC
+              child is settled by a different participant. Need about 1.02 USDC plus Base gas.
+              Do not dual-wallet farm.
+            </p>
+            <p>
+              {status.nextEarn.ready
+                ? status.nextEarn.canSign
+                  ? "Readiness is green and a session file exists. The agent can prepare the child next."
+                  : "This address is funded enough to check readiness, but this VM still cannot sign. Finish Phantom Connect or paste a Portal App ID."
+                : status.nextEarn.stage === "address-unfunded"
+                  ? "An address is stored but Base USDC is below 1.02. Fund the agent address after it exists."
+                  : status.nextEarn.stage === "funded-no-signer"
+                    ? "Public Base balance looks high enough, but there is still no signable agent wallet."
+                    : "No agent address yet. Approve Connect, paste a Portal App ID, or share a MetaMask address."}
             </p>
           </AlertDescription>
         </Alert>
