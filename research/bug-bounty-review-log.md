@@ -17080,6 +17080,106 @@ inactive + MorphoVault
 V2 + polygon /
 arbitrum.
 
+## 2026-09-03: Marinade crank / withdraw-stake leftover (`b8fe3f8`)
+
+Immunefi program
+`marinade` ($250,000,
+`kyc: false`). User /
+LP leftover on the same
+pin `b8fe3f8` is
+already logged. This
+slice is the crank and
+`withdraw_stake_account`
+path. Local clone
+`/tmp/marinade-lsp`.
+No mainnet interaction.
+
+Files:
+`instructions/crank/stake_reserve.rs`,
+`deactivate_stake.rs`,
+`merge_stakes.rs`,
+`user/withdraw_stake_account.rs`,
+`admin/emergency_pause.rs`.
+
+Checked for: a crank
+that stakes reserve
+SOL to a stranger’s
+stake account; merge
+that sends active
+stake to
+`operational_sol`;
+withdraw-stake that
+pays more SOL than the
+burned mSOL; pause
+without the pause
+authority.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `stake_reserve` is
+  permissionless. The
+  new stake is
+  initialized with the
+  deposit / withdraw
+  PDAs. Reserve
+  transfers only to
+  that account and
+  only when the
+  validator is under
+  target and inside
+  the epoch stake-
+  delta window. Extra
+  same-epoch runs
+  consume
+  `extra_stake_delta_runs`.
+- `deactivate_stake`
+  checks the stake
+  list entry, vote, and
+  last-update
+  delegation. Split /
+  deactivate is signed
+  by the deposit PDA.
+- `merge_stakes` merges
+  two listed accounts
+  for the same
+  validator. Rent /
+  leftover SOL on the
+  source goes to
+  `operational_sol_account`
+  (the documented
+  ops wallet), not a
+  caller-chosen
+  destination.
+- `withdraw_stake_account`
+  is feature-gated.
+  It checks the token
+  source, burns the
+  caller’s mSOL (fee
+  slice to treasury),
+  splits
+  `msol_to_sol − fee`
+  with min-stake
+  remainder, then
+  authorizes the split
+  account’s staker and
+  withdrawer to
+  `beneficiary`.
+- Pause / resume
+  require
+  `pause_authority`.
+
+Not submitted. Remaining
+Marinade is admin
+config / authority,
+validator add-remove /
+score / emergency
+unstake, crank
+`update` /
+`create_canonical_stake`
+/ delinquent upgrade.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -17569,9 +17669,13 @@ leftover exhausted);
 Marinade liquid-staking
 leftover (`b8fe3f8`) is
 logged (remaining
-Marinade is crank /
-admin / validator
-management);
+Marinade is admin
+config / validator
+management / update /
+delinquent upgrade);
+Marinade crank /
+withdraw-stake leftover
+(`b8fe3f8`) is logged;
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
 dissolve / rewards /

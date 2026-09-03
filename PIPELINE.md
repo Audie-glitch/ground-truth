@@ -18,7 +18,9 @@ Operator / Fee / Market / LedgerImpl B/C/D). Raydium CLMM leftover
 (`ed7c84a`), classic AMM leftover (`27f461d`), and cp-swap
 leftover (`244e124`) are logged (listed Raydium GitHub leftover
 exhausted). Marinade liquid-staking leftover (`b8fe3f8`) is
-logged (remaining Marinade is crank / admin / validators).
+logged (remaining Marinade is admin config / validator
+management / update / delinquent upgrade). Marinade
+crank / withdraw-stake leftover is logged.
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool
 v1.4 listed GitHub leftover is exhausted (deposit /
