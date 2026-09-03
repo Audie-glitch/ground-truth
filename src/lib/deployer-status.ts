@@ -2,8 +2,8 @@ export const CREDITPASSPORT_DEPLOYER =
   "0x8F72A0f832068555C0edAf649b1F8A37d33bA14D";
 
 /** Same gates as creditpassport/scripts/wait-for-funds.sh */
-export const MIN_SEPOLIA_WEI = 10_000_000_000_000_000n;
-export const MIN_CTC_WEI = 50_000_000_000_000_000n;
+export const MIN_SEPOLIA_WEI = BigInt("10000000000000000");
+export const MIN_CTC_WEI = BigInt("50000000000000000");
 
 export const SEPOLIA_RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";
 export const CREDITCOIN_RPC_URL = "https://rpc.cc3-testnet.creditcoin.network";
@@ -34,8 +34,8 @@ export function parseHexWei(hex: string): bigint {
 }
 
 export function formatEther(wei: bigint, digits = 4): string {
-  const whole = wei / 1_000_000_000_000_000_000n;
-  const frac = wei % 1_000_000_000_000_000_000n;
+  const whole = wei / BigInt("1000000000000000000");
+  const frac = wei % BigInt("1000000000000000000");
   const fracStr = frac.toString().padStart(18, "0").slice(0, digits);
   return `${whole.toString()}.${fracStr}`;
 }

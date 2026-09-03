@@ -36,9 +36,9 @@ export function encodeBalanceOf(address: string): string {
 
 export function hexToDecimal(hex: string, decimals: number): string {
   const raw = hex.startsWith("0x") || hex.startsWith("0X") ? hex.slice(2) : hex;
-  const value = raw === "" ? 0n : BigInt(`0x${raw}`);
+  const value = raw === "" ? BigInt(0) : BigInt(`0x${raw}`);
   if (decimals === 0) return value.toString();
-  const base = 10n ** BigInt(decimals);
+  const base = BigInt(10) ** BigInt(decimals);
   const whole = value / base;
   const frac = (value % base).toString().padStart(decimals, "0").replace(/0+$/, "");
   return frac ? `${whole.toString()}.${frac}` : whole.toString();
