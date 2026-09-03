@@ -4,13 +4,13 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~07:58 UTC. Dates verified against each
+Status as of 3 September 2026, ~08:00 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~07:44 UTC;
-246 programs; no Sep 2026 launches; RootstockLabs
-RIF token leftover (Sourcify, KYC) is logged). KeeperHub
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~07:58 UTC;
+246 programs; no Sep 2026 launches; Pareto Credit leftover
+factory leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -247,10 +247,19 @@ Pareto Credit leftover epoch admin leftover
 depositDuringEpoch) is logged.
 Pareto Credit leftover queue leftover
 (`19e7cde` IdleCDOEpochQueue / Prefunded)
-is logged (listed leftover that a public
-tree would open is exhausted; remaining
-listed is proxy impls / other docs
-addresses).
+is logged.
+Pareto Credit leftover factory leftover
+(`19e7cde` factory / write-off escrow /
+orchestrator / implied price /
+programmable borrower) is logged
+(remaining listed is TrancheWrapper /
+wrappers / Keyring / proxy impls /
+other docs addresses).
+Synthetix deposit leftover (Blockscout
+`SynthetixDepositContract` / lens /
+PermissionsRegistry) is logged
+(listed leftover exhausted at the
+three Ethereum addresses).
 Puffer Finance leftover (Sourcify
 `PufferDepositor` / `PufferVaultV5`) is
 logged.
@@ -544,9 +553,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   depositDuringEpoch) plus
   queue leftover
   (IdleCDOEpochQueue /
-  Prefunded; listed leftover
-  that a public tree would
-  open is exhausted),
+  Prefunded) plus factory
+  leftover (write-off /
+  orchestrator / implied
+  price / programmable
+  borrower),
   Mars Ecosystem leftover
   timelock leftover
   (Sourcify BSC `Timelock`),

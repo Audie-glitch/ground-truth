@@ -28392,12 +28392,26 @@ Pareto Credit leftover
 queue leftover
 (`19e7cde`
 IdleCDOEpochQueue /
-Prefunded) is logged
-(listed leftover that a
-public tree would open
-is exhausted; remaining
-listed is proxy impls /
-other docs addresses).
+Prefunded) is logged.
+Pareto Credit leftover
+factory leftover
+(`19e7cde` factory /
+write-off escrow /
+orchestrator / implied
+price / programmable
+borrower) is logged
+(remaining listed is
+TrancheWrapper /
+wrappers / Keyring /
+proxy impls / other
+docs addresses).
+Synthetix deposit leftover
+(Blockscout
+`SynthetixDepositContract` /
+lens / PermissionsRegistry)
+is logged (listed leftover
+exhausted at the three
+Ethereum addresses).
 RootstockLabs RIF token leftover
 (Sourcify `match` `RIFToken`)
 is logged (KYC; remaining
@@ -28953,12 +28967,26 @@ Pareto Credit leftover
 queue leftover
 (`19e7cde`
 IdleCDOEpochQueue /
-Prefunded) is logged
-(listed leftover that a
-public tree would open
-is exhausted; remaining
-listed is proxy impls /
-other docs addresses);
+Prefunded) is logged;
+Pareto Credit leftover
+factory leftover
+(`19e7cde` factory /
+write-off escrow /
+orchestrator / implied
+price / programmable
+borrower) is logged
+(remaining listed is
+TrancheWrapper /
+wrappers / Keyring /
+proxy impls / other
+docs addresses);
+Synthetix deposit leftover
+(Blockscout
+`SynthetixDepositContract` /
+lens / PermissionsRegistry)
+is logged (listed leftover
+exhausted at the three
+Ethereum addresses);
 RootstockLabs RIF token leftover
 (Sourcify) is logged (KYC;
 remaining listed is PegIn /
@@ -30193,3 +30221,137 @@ deployments), DeGate
 and IDEX 2024 audit
 comps (testnet /
 closed window).
+
+## 2026-09-03: Pareto Credit leftover factory leftover (`19e7cde`)
+
+Immunefi program
+`Pareto Credit` ($50,000,
+`kyc: false`). IdleCDO
+request-claim, strategy,
+epoch admin, and queue /
+Prefunded leftovers are
+already logged. This
+slice is the remaining
+credit-vault factory,
+write-off escrow,
+manager orchestrator,
+implied-price helper,
+and programmable
+borrower on the official
+clone `/tmp/idle-tranches`
+at `19e7cde`. No mainnet
+interaction.
+
+Files:
+`contracts/IdleCreditVaultFactory.sol`,
+`contracts/IdleCreditVaultWriteOffEscrow.sol`,
+`contracts/IdleCreditVaultManagerOrchestrator.sol`,
+`contracts/IdleCreditVaultImpliedPrice.sol`,
+`contracts/strategies/idle/ProgrammableBorrower.sol`.
+
+Checked for: a
+stranger factory
+`deployCreditVault` that
+mints into an existing
+vault; write-off
+`fullfillWriteOffRequest`
+that pays another user's
+request without paying
+underlyings; orchestrator
+`startEpoch` /
+`stopEpochWithDuration`
+that drains to the
+caller; programmable
+`borrow` that sends
+funds to the caller
+instead of the borrower.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Factory
+  `deployCreditVault` /
+  `deployRevolvingCreditVault`
+  deploy new proxies
+  only. Strategy and
+  CDO ownership move
+  to `treasury`.
+  `setFeeSplit` is
+  treasury-only.
+  Factory never mints
+  strategy tokens.
+- Write-off
+  `createWriteOffRequest`
+  pulls the caller's
+  tranche tokens.
+  `deleteWriteOffRequest`
+  returns that
+  caller's tranches.
+  `fullfillWriteOffRequest`
+  pulls underlyings
+  from the fulfiller,
+  pays the listed
+  lender minus exit
+  fee, and sends
+  escrowed tranches
+  to the fulfiller.
+- Orchestrator
+  `startEpoch` /
+  `stopEpochWithDuration`
+  / queue process /
+  APR / transfer
+  flags are operator
+  or owner and only
+  for allowlisted
+  CDOs. No payout to
+  the caller.
+- Implied price is a
+  view helper.
+- Programmable
+  `onStartEpoch` /
+  `onStopEpoch` /
+  `settleBorrowerInterest`
+  / `onDefault` are
+  CDO-only. `borrow`
+  / `repay` are the
+  configured
+  borrower.
+  `executeBorrow` /
+  `executeRepay` are
+  authorized
+  executors but still
+  pay / pull the
+  borrower.
+
+Do not file
+permissionless new
+vault deploy, owner
+write-off
+`emergencyWithdraw`,
+operator epoch
+control, borrower
+draw of reserved
+liquidity, or
+Keyring allowlist as
+theft.
+
+Not submitted.
+Listed leftover is
+the factory /
+write-off /
+orchestrator /
+implied-price /
+programmable
+borrower slice.
+Remaining listed:
+`TrancheWrapper` /
+`IdleTokenWrapper` /
+Keyring whitelist,
+proxy
+implementations not
+independently
+Sourcify-fetched,
+and other docs
+addresses.
