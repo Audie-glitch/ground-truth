@@ -33783,10 +33783,14 @@ Remaining listed:
 Arbitrum
 HorizonStaking /
 PaymentsEscrow /
-L2 gateway;
+BillingConnector
+(now leftover-
+logged);
+L2 gateway
+404;
 Curation /
 DisputeManager /
-BillingConnector.
+SubgraphService.
 
 ## 2026-09-03: Kleidi leftover ETH Safe + timelock leftover (Sourcify)
 
@@ -34378,10 +34382,10 @@ Payment requires
 user KYC.
 Remaining listed:
 L2 dispensers /
-veOLAS
+veOLAS /
+Bridge2Burner
 (now leftover-
 logged);
-Bridge2Burner /
 marketplace /
 registries.
 
@@ -35021,7 +35025,9 @@ Not submitted.
 Payment requires
 user KYC.
 Remaining listed:
-Bridge2Burner /
+Bridge2Burner
+(now leftover-
+logged);
 marketplace /
 registries.
 
@@ -35118,6 +35124,443 @@ website
 is the
 marketing
 site).
+
+## 2026-09-03: Autonolas leftover remaining Bridge2Burner + BuyBack leftover (Sourcify)
+
+Immunefi program
+`autonolas`
+($5,000,
+`kyc: true`).
+Already leftover-
+logged as ETH
+Depository +
+Treasury and
+L2 dispenser +
+veOLAS.
+Sourcify
+Polygon
+Bridge2Burner
+`0xE6e03DD62D11f88A11D65663B398ED2B3Be2070c`,
+Optimism
+Bridge2Burner
+`0x820ca542d5876FDEf240584F6f3924852D527FED`,
+ETH Burner
+`0x51eb65012ca5cEB07320c497F4151aC207FEa4E0`,
+ETH
+BuyBackBurnerUniswap
+`0xCF05126771A21a93Da5A596d5CF67d8Ed9F5e6e5`.
+Extract
+`/tmp/olas-b2b-poly`,
+`/tmp/olas-b2b-op`,
+`/tmp/olas-burner`,
+`/tmp/olas-buyback`.
+No mainnet
+writes.
+
+Files:
+`contracts/Bridge2Burner.sol`,
+`contracts/Bridge2BurnerOptimism.sol`,
+`contracts/Burner.sol`,
+`contracts/BuyBackBurner.sol`.
+
+Checked for:
+permissionless
+relay of
+another
+account's
+OLAS;
+permissionless
+burn of
+another
+account's
+OLAS;
+permissionless
+buy-back that
+spends another
+account's
+tokens.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Polygon
+  `relayToL1Burner`
+  is
+  permissionless
+  after
+  `MIN_OLAS_BALANCE`
+  (100 ether)
+  and
+  `transfer`s
+  this
+  contract's
+  OLAS to the
+  L2 bridge
+  mediator
+  (`l2TokenRelayer`).
+- Optimism
+  `relayToL1Burner`
+  is
+  permissionless
+  after the
+  same minimum
+  and routes
+  this
+  contract's
+  OLAS to the
+  hardcoded L1
+  `OLAS_BURNER`
+  `0x51eb65012ca5cEB07320c497F4151aC207FEa4E0`.
+- `Burner.burn`
+  is
+  permissionless
+  and burns
+  this
+  contract's
+  OLAS via
+  `IToken(olas).burn`.
+- `BuyBackBurner.buyBack`
+  is
+  permissionless;
+  it swaps
+  this
+  contract's
+  second-token
+  balance for
+  OLAS then
+  `transfer`s
+  OLAS to
+  `bridge2Burner`.
+  It does not
+  pull user
+  tokens.
+
+Do not file
+permissionless
+`buyBack` of
+contract-owned
+tokens to
+`bridge2Burner`,
+permissionless
+`relayToL1Burner`
+of
+contract-owned
+OLAS above
+min balance,
+or
+permissionless
+`burn` of
+Burner-held
+OLAS.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+marketplace /
+registries
+(MechMarketplace /
+factories /
+Karma).
+Gnosis /
+Arbitrum
+Bridge2Burner
+and Polygon
+BuyBackBurnerBalancer
+are same-type
+twins of this
+leftover.
+
+## 2026-09-03: The Graph leftover remaining Arb Horizon + payments leftover (Sourcify)
+
+Immunefi program
+`thegraph`
+($50,000,
+`kyc: true`).
+Already leftover-
+logged as ETH
+L1 staking.
+Sourcify
+Arbitrum
+HorizonStaking
+proxy
+`0x00669A4CF01450B64E8A2A20E9b1FCB71E61eF03`
+(impl
+`0xD3Ba4a3BC240883A42819D0Fa662148f9f035Ea1`),
+PaymentsEscrow
+proxy
+`0xf6Fcc27aAf1fcD8B254498c9794451d82afC673E`
+(impl
+`0x59678950D4766f90C916A82E658B65781228609F`),
+GraphPayments
+proxy
+`0x7Aae8ae011927BC36Cb4d0d3e81f2E6E30daE06D`
+(impl
+`0x6BC86e5D64C6c4882670804ca7eE4919cCCca86a`),
+Billing
+`0x1B07D3344188908Fb6DEcEac381f3eE63C48477a`,
+ETH
+BillingConnector
+`0x8017B9AF3F199CC6b08A48DA3859410F20bbea72`,
+ETH
+L1GraphTokenGateway
+proxy
+`0x01cDC91B0A9bA741903aA3699BF4CE31d6C5cC06`
+(impl
+`0xD41ca6A1d034D178c196DFa916f22f7D1a1B8222`).
+Extract
+`/tmp/graph-horizon-impl`,
+`/tmp/graph-escrow-impl`,
+`/tmp/graph-payments-impl`,
+`/tmp/graph-billing`,
+`/tmp/graph-billconn`,
+`/tmp/graph-l1gw-impl`.
+No mainnet
+writes.
+
+Files:
+`contracts/HorizonStaking.sol`,
+`contracts/PaymentsEscrow.sol`,
+`contracts/GraphPayments.sol`,
+`contracts/Billing.sol`,
+`contracts/L1BillingConnector.sol`,
+`contracts/L1GraphTokenGateway.sol`.
+
+Checked for:
+stake that
+spends another
+account's
+GRT;
+withdraw of
+another
+account's
+stake;
+escrow
+collect of
+another
+collector's
+funds;
+gateway
+finalize to
+an
+attacker-chosen
+recipient.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `HorizonStaking.stake`
+  /
+  `stakeTo`
+  `_graphToken().pullTokens(msg.sender, tokens)`
+  then credit
+  the named
+  provider.
+  `unstake`
+  unstakes
+  `msg.sender`
+  idle stake
+  and pays
+  `msg.sender`.
+  `withdraw`
+  /
+  `forceWithdraw`
+  pay recorded
+  `__DEPRECATED_tokensLocked`
+  to the
+  service
+  provider
+  (legacy
+  pre-Horizon
+  thaw).
+- `PaymentsEscrow.deposit`
+  /
+  `depositTo`
+  `_deposit`
+  credits the
+  named payer
+  tuple but
+  `pullTokens(msg.sender)`.
+  `thaw`
+  /
+  `withdraw`
+  bind
+  `escrowAccounts[msg.sender]`.
+  `collect`
+  spends
+  `escrowAccounts[payer][msg.sender][receiver]`
+  (collector
+  is
+  `msg.sender`).
+- `GraphPayments.collect`
+  `pullTokens(msg.sender)`
+  then splits
+  protocol /
+  data-service /
+  delegation /
+  receiver.
+- `L1GraphTokenGateway.outboundTransfer`
+  `transferFrom(from, escrow)`
+  where `from`
+  is the
+  router-encoded
+  sender or
+  `msg.sender`.
+  `finalizeInboundTransfer`
+  is
+  `onlyL2Counterpart`
+  and pays
+  recorded
+  `_to`.
+- `Billing.addTo`
+  pulls
+  `msg.sender`.
+  `remove`
+  spends
+  `userBalances[msg.sender]`.
+  `removeFromL1`
+  is
+  `onlyL1BillingConnector`.
+  `BillingConnector.addToL2`
+  pulls
+  `msg.sender`.
+
+Do not file
+stake-to-named
+provider,
+permissionless
+`forceWithdraw`
+of recorded
+legacy thawed
+tokens to the
+service
+provider,
+collector-gated
+escrow
+`collect`,
+or
+counterpart-gated
+gateway
+finalize to
+recorded
+`_to`.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+L2GraphTokenGateway
+404 /
+Curation /
+DisputeManager /
+SubgraphService /
+L2GNS /
+AllocationExchange.
+
+## 2026-09-03: Serai leftover bitcoin-serai leftover (`4b89cf02`)
+
+Immunefi program
+`serai`
+($30,000,
+`kyc: true`).
+Unique unused
+standing program.
+Listed assets
+are crypto
+crates plus
+`networks/bitcoin`
+plus primacy
+of impact.
+Official
+`serai-dex/serai`
+`develop`
+HEAD
+`4b89cf0206184886e96d0663861596312e5b47d2`.
+Extract
+`/tmp/serai`
+(`networks/bitcoin/src/{lib,crypto,rpc,wallet/mod,wallet/send}.rs`).
+No mainnet
+writes.
+
+Files:
+`networks/bitcoin/src/lib.rs`,
+`networks/bitcoin/src/crypto.rs`,
+`networks/bitcoin/src/rpc.rs`,
+`networks/bitcoin/src/wallet/mod.rs`,
+`networks/bitcoin/src/wallet/send.rs`.
+
+Checked for:
+a stranger
+spending
+another
+account's
+Bitcoin
+without
+threshold
+key shares.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `wallet/send.rs`
+  `TransactionSignMachine::sign`
+  is FROST
+  threshold
+  signing of
+  a
+  constructed
+  Bitcoin tx;
+  `complete`
+  aggregates
+  shares.
+  No stranger
+  can spend
+  without
+  threshold
+  keys.
+- `rpc.rs`
+  `send_raw_transaction`
+  broadcasts
+  a signed tx
+  (library /
+  RPC helper
+  only).
+  There is no
+  on-chain
+  EVM money
+  path in
+  this
+  leftover.
+
+Do not file
+FROST
+threshold
+signing of a
+constructed
+Bitcoin tx.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+listed crypto
+crates
+(now leftover-
+logged after
+`## Next
+candidates`
+as Serai
+leftover listed
+crypto +
+bitcoin leftover);
+primacy of
+impact.
 
 ## Next candidates
 
@@ -36957,9 +37400,11 @@ Depository + Treasury leftover
 (Sourcify Depository /
 Treasury / OLAS / Dispenser;
 KYC) is logged (remaining
-listed is L2 dispensers /
-Bridge2Burner / veOLAS /
-marketplace / registries);
+listed is marketplace /
+registries after L2 /
+veOLAS / Bridge2Burner
+leftovers are
+leftover-logged);
 Zerion leftover ETH Premium
 Purchaser leftover (Sourcify
 PurchaserL1; KYC) is logged
@@ -36993,8 +37438,34 @@ L2 dispenser + veOLAS leftover
 (Sourcify Polygon / OP
 dispenser + ETH veOLAS; KYC)
 is logged (remaining listed
-is Bridge2Burner /
-marketplace / registries);
+is marketplace /
+registries);
+Autonolas leftover remaining
+Bridge2Burner + BuyBack leftover
+(Sourcify Polygon / OP
+Bridge2Burner + ETH Burner /
+BuyBackBurnerUniswap; KYC)
+is logged (remaining listed
+is marketplace /
+registries);
+The Graph leftover remaining
+Arb Horizon + payments leftover
+(Sourcify HorizonStaking /
+PaymentsEscrow /
+GraphPayments / Billing /
+BillingConnector /
+L1GraphTokenGateway; KYC)
+is logged (remaining listed
+is L2GraphTokenGateway 404 /
+Curation / DisputeManager /
+SubgraphService);
+Serai leftover bitcoin-serai
+leftover (`4b89cf02`; KYC)
+is logged (remaining listed
+is primacy of impact;
+listed crypto crates are
+leftover-logged after Next
+candidates);
 Pragma leftover cairo oracle
 leftover (`83094b9`; KYC) is
 logged (remaining listed is

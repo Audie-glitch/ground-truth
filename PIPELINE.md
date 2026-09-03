@@ -160,6 +160,11 @@ OpenZeppelin leftover Stellar
 packages leftover is logged;
 Autonolas leftover remaining
 L2 dispenser + veOLAS leftover is logged;
+Autonolas leftover remaining
+Bridge2Burner + BuyBack leftover is logged;
+The Graph leftover remaining
+Arb Horizon + payments leftover is logged;
+Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
@@ -712,10 +717,11 @@ staking leftover (Sourcify
 L1Staking / RewardsManager /
 GRT; KYC) is logged
 (remaining listed is
-Arbitrum HorizonStaking /
-PaymentsEscrow / L2 gateway /
+L2GraphTokenGateway 404 /
 Curation / DisputeManager /
-BillingConnector).
+SubgraphService after
+Horizon leftover is
+leftover-logged).
 Kleidi leftover ETH Safe +
 timelock leftover (Sourcify
 InstanceDeployer / Guard /
@@ -744,9 +750,11 @@ Depository + Treasury leftover
 (Sourcify Depository /
 Treasury / OLAS / Dispenser;
 KYC) is logged (remaining
-listed is L2 dispensers /
-Bridge2Burner / veOLAS /
-marketplace / registries).
+listed is marketplace /
+registries after L2 /
+veOLAS / Bridge2Burner
+leftovers are
+leftover-logged).
 Zerion leftover ETH Premium
 Purchaser leftover (Sourcify
 PurchaserL1; KYC) is logged
@@ -780,8 +788,34 @@ L2 dispenser + veOLAS leftover
 (Sourcify Polygon / OP
 dispenser + ETH veOLAS; KYC)
 is logged (remaining listed
-is Bridge2Burner /
-marketplace / registries).
+is marketplace /
+registries).
+Autonolas leftover remaining
+Bridge2Burner + BuyBack leftover
+(Sourcify Polygon / OP
+Bridge2Burner + ETH Burner /
+BuyBackBurnerUniswap; KYC)
+is logged (remaining listed
+is marketplace /
+registries).
+The Graph leftover remaining
+Arb Horizon + payments leftover
+(Sourcify HorizonStaking /
+PaymentsEscrow /
+GraphPayments / Billing /
+BillingConnector /
+L1GraphTokenGateway; KYC)
+is logged (remaining listed
+is L2GraphTokenGateway 404 /
+Curation / DisputeManager /
+SubgraphService).
+Serai leftover bitcoin-serai
+leftover (`4b89cf02`; KYC)
+is logged (remaining listed
+is primacy of impact;
+listed crypto crates are
+leftover-logged after Next
+candidates).
 Pragma leftover cairo oracle
 leftover (`83094b9`; KYC) is
 logged (remaining listed is
@@ -1468,6 +1502,14 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Autonolas leftover remaining
   L2 dispenser + veOLAS leftover
   (Sourcify; KYC),
+  Autonolas leftover remaining
+  Bridge2Burner + BuyBack leftover
+  (Sourcify; KYC),
+  The Graph leftover remaining
+  Arb Horizon + payments leftover
+  (Sourcify; KYC),
+  Serai leftover bitcoin-serai
+  leftover (`4b89cf02`; KYC),
   Pragma leftover cairo oracle
   leftover (`83094b9`; KYC),
   Axelar leftover Aurora/Fantom
