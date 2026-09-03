@@ -43990,9 +43990,14 @@ Filecoin leftover remaining lotus messagesigner leftover (`7740217`)
 is logged.
 Filecoin leftover remaining lotus exchange leftover (`7740217`)
 is logged.
+Jito leftover remaining mev-programs tip leftover (`ce1dfb6`)
+is logged.
+Filecoin leftover remaining lotus index leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus non-miner (actors wrappers / types / index / lib).
+Remaining listed Filecoin: remaining lotus non-miner (actors wrappers / types / lib).
 Remaining listed Aave: official protocol-v2 leftover that trees open is exhausted (PriceOracleSentinel + OwnableFacilitator 404).
+Remaining listed Jito: `jito-solana` / `priority-fee-distribution` (if still unused).
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -68244,3 +68249,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a configured-receiver tip drain as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` / `priority-fee-distribution` (if still unused).
+
+## 2026-09-03: Filecoin leftover remaining lotus index leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus exchange leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/index`. Opened `interface.go`, `indexer.go`, `api.go`, `reconcile.go`, `events.go`, `gc.go`, and `read.go`. Local SQLite message/event index. Do not rematch lotus events leftover, lotus store leftover, or lotus eth leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `Apply` / `ReconcileWithChain` writing a stranger tipset into consensus; `IndexSignedMessage` moving FIL; `ChainValidateIndex` treating a stale index as canonical; `gc` deleting chain store blocks.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `SqliteIndexer` writes only its local SQLite. `Apply` / `Revert` / `indexTipset` pull messages from leftover-logged `ChainStore.MessagesForTipset` / `MessagesForBlock`. `IndexSignedMessage` stores an ETH tx-hash → CID map for `SigTypeDelegated` only.
+- `ReconcileWithChain` walks the leftover-logged heaviest chain backwards, marks non-canonical DB rows reverted, then backfills from store tipsets. A gap larger than `maxReconcileTipsets` returns `ErrBackfillRequired` instead of inventing state.
+- `ChainValidateIndex` compares indexed counts and reconstructed events-AMT roots to store receipts. Mismatches error (or optional backfill). `GetCidFromHash` / `GetMsgInfo` / `GetEventsForFilter` are reads.
+- `gc` deletes old index rows / blooms / eth-hash mappings after `gcRetentionEpochs` (minimum one day). It does not `SetHead` or change actor balances.
+
+Do not file a local SQLite event index as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner (actors wrappers / types / lib).
