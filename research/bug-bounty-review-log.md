@@ -5254,10 +5254,13 @@ Result: no user-exploitable finding.
 - `balanceOf` is voting power, not an
   ERC-20 transferable balance.
 
-Remaining Extra Finance: vault position
-logic (registry ids 101–105, Sourcify
-404; vault 1 `0x2f8305…A33C` also 404).
-Not submitted.
+Remaining Extra Finance in the
+Immunefi assets table: Aave-fork
+ACL / PoolAddressProvider /
+PoolConfigurator / AToken /
+DebtToken / EXTRA. Vault registry
+ids 101–105 are not listed on the
+program. Not submitted.
 
 ## 2026-09-03: Lista DAO Moolah + PublicLiquidator (`ce72699`)
 
@@ -5704,10 +5707,238 @@ Result: no user-exploitable finding.
   supply; they say it is capped
   on credit markets. Not filed.
 
-Remaining Lista: strategy / OFT /
-distributors / `lista-new-contracts`
-(`fa5dfa5`). Extra Finance vault
-logic still Sourcify 404. Not
+Remaining Lista: providers
+(SlisBNB / BNB / ERC20-LP),
+MasterVault + yield strategies,
+OFT / distributors /
+`lista-new-contracts` (`fa5dfa5`).
+Extra Finance leftover that is
+actually in the Immunefi assets
+table is Aave-fork ACL /
+PoolAddressProvider /
+PoolConfigurator / AToken /
+DebtToken / EXTRA — not vault
+registry ids 101–105. Not
+submitted.
+
+## 2026-09-03: Lista SlisBNB / BNB / ERC20-LP providers (`ce72699` + Sourcify)
+
+Same Immunefi program `listadao`
+($1,000,000, `kyc: false`). In-scope
+BSC adds: slisBNBProvider
+`0xfD31…819b` (2024-12-04),
+ERC20TokenProvider
+`0x2725…aa57` (2025-04-29),
+BNBProvider
+`0x3673…5701` / `0x501b…35c9`
+and SlisBNBProvider
+`0x33f7…D5f` (2025-05-27).
+Moolah + vault + PSM leftover
+already logged. Official tree
+[lista-dao/moolah](https://github.com/lista-dao/moolah)
+at `ce72699`. ERC20TokenProvider
+live proxy is OZ ERC1967;
+implementation
+`0x946e5C3d32d33128543B785a446B81eedbe74C05`
+is Sourcify `ERC20LpTokenProvider`
+(`contracts/dao/erc20LpProvider/ERC20LpTokenProvider.sol`,
+verified 2026-05-20). No mainnet
+interaction.
+
+Files:
+`src/provider/{SlisBNBProvider,BNBProvider}.sol`
+(and `ETHProvider.sol` as the
+WETH twin — **not** an Immunefi
+asset),
+`src/moolah-vault/MoolahVault.sol`
+`withdrawFor` / `redeemFor` (already
+logged; re-read for the provider
+call), Sourcify
+`ERC20LpTokenProvider.sol`.
+
+Checked for: SlisBNBProvider
+withdraw of another user’s
+Moolah collateral; permissionless
+`syncUserLp` that mints unbacked
+clis; BNBProvider
+`withdraw`/`borrow` that unwraps
+to an unauthorized receiver;
+ERC20-LP deposit that mints clis
+to a stranger or withdraw that
+skips the distributor burn.
+
+Result: no user-exploitable finding.
+
+- SlisBNBProvider
+  `supplyCollateral` pulls
+  slisBNB from `msg.sender`,
+  supplies to Moolah `onBehalf`,
+  then `_syncPosition`.
+  `withdrawCollateral` requires
+  `_isSenderAuthorized`
+  (`msg.sender == onBehalf` or
+  Moolah allowance). `liquidate`
+  is `onlyMoolah`. LP rebalance
+  converts `userTotalDeposit`
+  through `STAKE_MANAGER` ×
+  `userLpRate` (MANAGER, ≤ 1e18)
+  and mints/burns via
+  `_mintToMPCs` / `_safeBurnLp`.
+  If `providers[id][TOKEN]` is
+  not this contract, recorded
+  collateral is treated as 0
+  (intended unbind).
+  `delegateAllTo` is disabled
+  once `slisBNBxMinter` is set.
+  Permissionless `syncUserLp`
+  only remints to the recorded
+  holder. Transferring clis away
+  leaves leftover tokens in
+  circulation (`_safeBurnLp`
+  burns `min(need, balance)`);
+  that is a receipt-token
+  footgun, not a steal of
+  slisBNB.
+- BNBProvider wraps `msg.value`
+  to WBNB and deposits only into
+  manager-whitelisted vaults
+  whose `MOOLAH()` / `asset()`
+  match. `withdraw`/`redeem`
+  call vault `withdrawFor` /
+  `redeemFor` (`msg.sender ==
+  provider`) with the
+  provider-supplied `sender` as
+  the ERC-4626 spender, then
+  unwrap to `receiver`.
+  `borrow` / `withdrawCollateral`
+  require `isSenderAuthorized`.
+  Excess BNB on `mint` / `repay`
+  is refunded to `msg.sender`.
+  `liquidate` is an empty
+  `onlyMoolah` hook.
+- ERC20LpTokenProvider
+  `deposit` / `withdraw` are
+  `msg.sender`-scoped.
+  `_deposit` transfers the LP
+  token, `depositFor`s the
+  distributor, then rebalances
+  clis to the chosen delegatee.
+  `withdraw` calls
+  `withdrawFor(_amount,
+  msg.sender)` before
+  rebalance. `syncUserLp` is
+  permissionless bookkeeping.
+  `initialize` compares
+  `_exchangeRate >= userLpRate`
+  against **storage** (still 0),
+  so a bad first-time pair of
+  rates can underflow
+  `newReservedLp` — that is
+  deploy/admin config, and
+  later `setUserLpRate`
+  requires `_userLpRate <=
+  exchangeRate`. Live proxy
+  has been serving since Apr
+  2025. Not filed.
+
+Remaining Lista: MasterVault +
+yield strategies, OFT /
+distributors /
+`lista-new-contracts`. Extra
+Finance in-scope leftover is
+Aave-fork ACL / config / aToken
+/ EXTRA, not vault 101–105.
+Not submitted.
+
+## 2026-09-03: Lista MasterVault + yield strategies (`3e120da`)
+
+Same program. Official
+[lista-dao/lista-dao-contracts](https://github.com/lista-dao/lista-dao-contracts)
+at `3e120da`. Immunefi lists
+Master Vault
+`0x986b…cc54` and
+Ceros / stkBNB / snBNB /
+bnbYieldConverter strategies
+(2024-02-22). PSM / clip-join
+already logged. No mainnet
+interaction.
+
+Files:
+`contracts/masterVault/MasterVault.sol`,
+`contracts/strategy/{BaseStrategy,SnBnbYieldConverterStrategy}.sol`,
+`contracts/old/strategy/{CerosYieldConverterStrategy,StkBnbStrategy}.sol`.
+
+Checked for: MasterVault mint
+without `onlyProvider`;
+`withdrawETH` that pays more
+BNB than burned shares;
+strategy `withdraw` callable
+by a stranger; FIFO
+distribute that pays the
+wrong recipient.
+
+Result: no user-exploitable
+finding.
+
+- `depositETH` /
+  `withdrawETH` /
+  `withdrawInTokenFromStrategy`
+  are `onlyProvider`.
+  Deposit mints `amount -
+  depositFee` ceToken to the
+  provider. Withdraw burns
+  `amount` from the provider,
+  pays `amount - withdrawalFee`
+  from idle BNB, then pulls
+  the shortfall from active
+  strategies (debt-capped).
+  `withdrawInTokenFromStrategy`
+  burns first, then
+  `withdrawInToken` on the
+  strategy. `allocate` /
+  `retireStrat` /
+  `migrateStrategy` are
+  manager.
+- `BaseStrategy` `deposit` /
+  `withdraw` are `onlyVault`.
+  `receive` accepts BNB only
+  from `destination` or
+  `strategist`.
+- SnBnb strategy `_withdraw`
+  records FIFO
+  `{recipient, amount}` and
+  batches `requestWithdraw`
+  permissionlessly (≥ 1h).
+  `_distributeFund` pays the
+  recorded recipient (5000
+  gas); failed sends go to
+  `manualWithdrawAmount`
+  (anyone can
+  `distributeManual` to that
+  recipient). `withdrawInToken`
+  transfers
+  `convertBnbToSnBnb(amount)`
+  and decrements
+  `bnbDepositBalance`.
+  Harvest is strategist-only
+  and sends surplus snBNB
+  (holding − queued unstake −
+  BNB-equivalent) to
+  `rewards`.
+- Ceros / StkBnb old
+  strategies are the same
+  `onlyVault` deposit/withdraw
+  pattern plus a strategist
+  panic that withdraws vault
+  debt to the vault.
+
+Remaining Lista: OFT /
+distributors /
+`lista-new-contracts`
+(`fa5dfa5`). Extra Finance
+in-scope leftover is the
+Aave-fork ACL / config /
+aToken / EXTRA set. Not
 submitted.
 
 ## Next candidates
@@ -5777,22 +6008,31 @@ VeloPositionManager + RewardDistributor
 factory / creators / live proxy, the
 Aave-fork Pool skim, and VeToken
 (`0xe0Be…1466`) are logged;
-remaining Extra Finance is vault logic
-(not Sourcify). Index Coop
+remaining Extra Finance in the
+Immunefi assets table is Aave-fork
+ACL / PoolAddressProvider /
+PoolConfigurator / AToken /
+DebtToken / EXTRA (stock Aave /
+token). Vault factory ids 101–105
+are **not** listed. Index Coop
 Set Protocol V2 (all five in-scope
 addresses) is logged. Lista DAO Moolah
 + PublicLiquidator (`ce72699`, newest
 2026-05-29 assets) plus leftover PSM /
 LisUSD / clip-join / slisBNB
-(`3e120da` + `67e524c`) are logged.
-Enzyme Blue BebopBlend / ThreeOneThird /
-SharesSplitter (`da3b870` + Sourcify) are
+(`3e120da` + `67e524c`), Moolah vault
++ Credit/Lending brokers, SlisBNB /
+BNB / ERC20-LP providers, and
+MasterVault + yield strategies
+are logged. Enzyme Blue BebopBlend /
+ThreeOneThird / SharesSplitter
+(`da3b870` + Sourcify) are
 logged. Next unreviewed Immunefi
 GitHub-or-recent trees: Extra Finance
-vault logic (Sourcify 404). Lista Moolah
-vault + Credit/Lending brokers (`ce72699`)
-are logged; remaining Lista is strategy /
-OFT / distributors / `lista-new-contracts`
+Aave-fork leftover (ACL / config /
+aToken / EXTRA). Remaining Lista is
+OFT / distributors /
+`lista-new-contracts`
 (`fa5dfa5`). Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /

@@ -132,6 +132,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Moolah + PublicLiquidator (`ce72699`)
   plus leftover PSM / LisUSD / clip-join /
   slisBNB (`3e120da` + `67e524c`),
+  Moolah vault / brokers, SlisBNB / BNB /
+  ERC20-LP providers, and MasterVault +
+  yield strategies,
   and Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.
