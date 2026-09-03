@@ -97,9 +97,16 @@ code written):
 - Arc track: USDC on Arc testnet through Circle's Agent Stack / Nanopayments;
   confirm the facilitator on Sep 4 from docs.arc.io.
 - Base Sepolia via the Coinbase facilitator as the universal fallback.
-- Server: Hono with the x402 middleware guarding `/v1/parse`; the price is
-  computed from the probe (pages), so the 402 quotes the exact amount. Accepted
-  networks are a list; the client picks one.
+- Server: Hono with `paymentMiddleware(routes, x402ResourceServer)` from
+  `@x402/hono` 2.24. Route prices are static strings (`price: "$0.10"`) with an
+  `accepts` array for multiple networks, so per-page pricing is implemented as
+  page-bucket routes the free probe points the client at:
+  `POST /v1/parse/s` (up to 2 pages, $0.10), `/v1/parse/m` (up to 7, $0.35),
+  `/v1/parse/l` (up to 20, $1.00). The server rejects a PDF that exceeds its
+  bucket before settlement. Client side: `wrapFetchWithPaymentFromConfig` from
+  `@x402/fetch` with `ExactEvmScheme` (viem account) and the Hedera scheme from
+  `@x402/hedera`. Facilitators: `https://x402.org/facilitator` for Base Sepolia
+  (`eip155:84532`), Blocky402 for `hedera:testnet`.
 - Client: a reference agent (TypeScript) that probes, pays, parses, and writes
   the CSV, runnable from a terminal by judges. A second example wires the same
   call into a Bazantic recipe.
