@@ -31367,3 +31367,152 @@ independently
 Sourcify-fetched,
 and other docs
 addresses.
+
+## 2026-09-03: RootstockLabs leftover PegIn / PegOut / Collateral (Blockscout)
+
+Immunefi program
+`RootstockLabs`
+($200,000, `kyc: true`).
+RIF token leftover is
+already logged. This
+slice is the remaining
+listed Flyover money
+path: PegIn /
+PegOut /
+CollateralManagement
+proxies plus
+FlyoverDiscovery /
+PauseRegistry /
+Quotes / BtcUtils /
+SignatureValidator.
+Sourcify has no
+match on the proxies.
+Rootstock Blockscout
+implementations:
+`PegInContract`
+`0x2aA0F7054066319A97E077Ab7Ce27B0f8b1dc002`
+behind
+`0x9270733402dc7c5730ea24268fc11039fd75e189`,
+`PegOutContract`
+`0xe8F4a2c1Db0B7E8081287aA42f37956dcea4B9a2`
+behind
+`0x9a0678742cfb567874eb4e99df2106bded78f5e4`,
+`CollateralManagementContract`
+`0xC9Aab2407E14d412d7aF35dfcb1360917551EC1F`
+behind
+`0xbe4d93b3afd9921cac66704ffd3caf662886fb73`,
+`FlyoverDiscovery`
+`0x1b5B100B7CaAca4E4eB56acF0290588bB887a495`
+behind
+`0x9a48c6b18aa000d0bd35d55616bcc98ad3553e7a`,
+`PauseRegistry`
+`0x179A7A091c43b272ec6a2270E1695aB91e70212F`
+behind
+`0xb2c65bbf276cc5ccae73c0ab29b609a129080639`.
+Libraries
+`Quotes`
+`0xAAFF2c6D3185ccd03d9781e689005c314b936AC1`,
+`BtcUtils`
+`0xd8D956312222d8acaBB58569cc960a93b1aa2f7a`,
+`SignatureValidator`
+`0xB0824559dF4a0872A61b228466bAd12E733f7dEC`.
+Extract `/tmp/rsk-impl`.
+No mainnet
+interaction.
+
+Files:
+`PegInContract`,
+`PegOutContract`,
+`CollateralManagementContract`.
+
+Checked for: a
+stranger
+`withdraw` that
+pays another
+provider's balance;
+`refundUserPegOut`
+that pays the
+caller; `registerPegIn`
+that mints without
+a bridge result;
+`slash*` by a
+non-slasher;
+collateral withdraw
+before resign delay.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- PegIn `deposit` /
+  `callForUser` are
+  registered LPs.
+  `withdraw` pays
+  `msg.sender` from
+  that sender's
+  `_balances`.
+  `registerPegIn`
+  requires a signed
+  quote and a
+  bridge register
+  result; slash
+  punisher is the
+  caller.
+- PegOut
+  `depositPegOut`
+  takes `msg.value`,
+  verifies the LP
+  EIP-712 signature,
+  and refunds change
+  to
+  `quote.rskRefundAddress`.
+  `refundPegOut`
+  pays
+  `quote.lpRskAddress`
+  after a validated
+  BTC proof.
+  `refundUserPegOut`
+  after expiry pays
+  `rskRefundAddress`,
+  not the caller.
+  `withdraw` debits
+  the caller.
+- Collateral
+  `slashPegIn` /
+  `slashPegOut` are
+  `COLLATERAL_SLASHER`.
+  Rewards / collateral
+  withdraw debit
+  `msg.sender` after
+  resign delay.
+- Quotes / BtcUtils /
+  SignatureValidator
+  are libraries.
+  PauseRegistry is
+  pause state.
+  FlyoverDiscovery
+  `register` is
+  provider onboarding.
+
+Do not file
+permissionless
+expired-quote
+refund (pays the
+quote refund
+address), LP
+`callForUser`, or
+slasher reward as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Rootstock
+Flyover leftover is
+exhausted at the
+opened-contract
+level. Remaining
+listed: GitHub DLT
+/ web assets
+(KYC).
