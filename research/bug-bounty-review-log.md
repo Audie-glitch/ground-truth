@@ -32459,6 +32459,136 @@ POL token,
 CometBFT / Bor
 / Heimdall.
 
+## 2026-09-03: Parallel leftover ETH savings + sPRL leftover (Sourcify)
+
+Immunefi program
+`parallel`
+($250,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+sUSDp
+`0x0d45b129dc868963025Db79A9074EA9c9e32Cae4`
+impl SavingsSunset
+`0xb6C4D50729C1563fbC8d83628F0EbBA6fF1F5bB1`,
+sPRL1
+`0xeAd729472f82E5eC2FF4e691d67633077C1B5901`,
+sPRL2
+`0xe8a2d848fe656e34a6caa35f375b42979e322135`,
+PRL
+`0x6c0aeceeDc55c9d55d8B99216a670D85330941c3`,
+PRL Lockbox
+`0xdE91eb8206c228f4208c34510cf0C61C9302a434`.
+USDp proxy
+`0x9B3a8f7CEC208e247d97dEE13313690977e24459`
+impl
+`0x83dE446e5076877263828E9120b0EA8B0BC0d0e4`
+Sourcify 404.
+Listed Parallelizer
+facets Sourcify 404.
+Extract
+`/tmp/par-susdp-impl`,
+`/tmp/par-sprl1`,
+`/tmp/par-sprl2`,
+`/tmp/par-prl`,
+`/tmp/par-lockbox`.
+No mainnet
+interaction.
+
+Files:
+`contracts/savings/Savings.sol`,
+`contracts/sPRL/sPRL1.sol`,
+`contracts/sPRL/sPRL2.sol`,
+`contracts/sPRL/TimeLockPenaltyERC20.sol`,
+`contracts/principal/LockBox.sol`.
+
+Checked for: a
+stranger
+4626 withdraw
+that burns
+another owner
+without
+allowance; sPRL
+deposit that
+pulls another
+account;
+withdraw of
+someone else's
+unlock request;
+Lockbox `send`
+of another
+user's PRL.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Savings
+  `deposit` /
+  `mint` pull
+  `_msgSender()`
+  and mint to
+  `receiver`.
+  `withdraw` /
+  `redeem` use
+  ERC-4626
+  owner /
+  allowance.
+- sPRL1
+  `deposit`
+  `safeTransferFrom`s
+  `msg.sender`.
+  `_withdraw`
+  reads
+  `userVsWithdrawals[msg.sender]`.
+- sPRL2
+  BPT / PRL /
+  WETH deposits
+  pull
+  `msg.sender`.
+  ETH deposit
+  charges
+  `msg.value`.
+- Lockbox
+  `send` is
+  OFT
+  `_debit` of
+  the caller.
+- PRL is a
+  standard
+  ERC-20.
+
+Do not file
+4626 deposit to
+a named
+receiver that
+pays the
+caller, or
+owner-only
+sPRL unlock
+that pays
+`msg.sender`.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH savings /
+sPRL / Lockbox
+types is
+exhausted.
+Remaining listed:
+Parallelizer
+facets
+(Sourcify 404),
+TokenP 404,
+other-chain
+twins.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -34083,6 +34213,12 @@ is logged (remaining listed
 is POS Bridge & Staking /
 sPOL / POL token / Bor /
 Heimdall);
+Parallel leftover ETH savings +
+sPRL leftover (Sourcify sUSDp /
+sPRL1 / sPRL2 / Lockbox; KYC)
+is logged (remaining listed
+is Parallelizer facets 404 /
+TokenP 404 / other-chain);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
