@@ -73268,3 +73268,22 @@ Result: no user-exploitable finding. Not submitted.
 Do not file leader fee distribution as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank.rs` money-path subset) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Chainlink leftover remaining websites leftover
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after llo-feeds leftover. Listed `websites_and_applications` assets. Live fetch 2026-09-03 via Firecrawl + HEAD. Do not rematch llo-feeds leftover or operatorforwarder leftover. No mainnet writes. No exploit PoCs.
+
+Opened: `https://faucets.chain.link/` (200), `https://data.chain.link/` (Firecrawl 200; this VM HEAD 429), `https://chain.link/` (200), `https://cre.chain.link/` (redirects to `login.chain.link` / `app.chain.link` Auth0 signup).
+
+Checked for: an official page that asks for a seed phrase or private key; a first-party wallet connect that signs a stranger transfer; a faucet that drips mainnet value to a connected wallet.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `faucets.chain.link` is labeled testnet only (Sepolia / Fuji / Shibuya and similar). Copy: connect MetaMask / WalletConnect / Coinbase Wallet, then receive test ETH/LINK/AVAX. No seed prompt. No mainnet drip.
+- `data.chain.link` is a feed / streams / Smart Data directory. Scraped copy has no seed, private key, or approve-to-spend flow.
+- `chain.link` is marketing (platform, TVE, news, contact). No wallet connect.
+- `cre.chain.link` is an Auth0 email + country + ToS signup (robots noindex). It does not custody funds or request keys.
+
+Do not file a testnet faucet or Auth0 signup as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink OCR / core node if still unused.
