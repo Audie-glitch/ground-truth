@@ -386,12 +386,50 @@ Result: no user-exploitable finding.
   not sweep from Emily rows; a fake withdrawal index entry cannot unlock
   BTC.
 
-Not submitted. Payment requires user KYC. Remaining sBTC slices: `wsts`,
-emily chainstate/reorg, signer DKG verification internals.
+Not submitted. Payment requires user KYC.
+
+## 2026-09-03: sBTC emily chainstate / reorg (`18caa9d`)
+
+Same Immunefi program. Impacts list includes “Emily API crash preventing
+correct processing of sBTC deposits/withdrawals,” so this slice checked
+whether an unauthenticated chain-tip write can rewind statuses or crash
+the API. No live Emily calls. No mainnet interaction.
+
+Files: `emily/handler/src/api/handlers/{chainstate,internal}.rs`,
+`emily/handler/src/api/routes/chainstate.rs`,
+`emily/handler/src/database/accessors.rs` (`add_chainstate_entry`),
+`emily/handler/src/database/entries/{chainstate,deposit,withdrawal}.rs`
+(`reorganize_around`), `emily/handler/src/common/mod.rs` (`NO_REORG_DEPTH`).
+
+Checked for: posting a fake older tip; skipping the 6-block bitcoin
+guard; Confirmed deposits reminted after a rewind; panic/crash on a large
+reorg.
+
+Result: no user-exploitable finding.
+
+- `POST`/`PUT /chainstate` are OpenAPI-key annotated but unauthenticated
+  in warp. Production is expected to sit behind API Gateway. A reachable
+  write would still only mutate Emily’s index; signers complete deposits
+  and accept withdrawals from bitcoin-core and Stacks, with on-chain
+  replay protection. A rewind to Pending cannot remint.
+- `NO_REORG_DEPTH` (6 bitcoin blocks) is skipped when
+  `bitcoin_block_height` is omitted. That is a defense-in-depth hole on
+  the notice board, not a peg break. Do not probe the live Emily host.
+- `reorganize_around` drops events at or after the new tip (unless the
+  hash matches) and synthesizes Pending if history is empty.
+  `synchronize_with_history` clears fulfillment unless the latest event
+  is still Confirmed.
+- `execute_reorg_handler` flips API status to Reorg, rewrites impacted
+  rows, then Stable. Version conflicts retry four times and then
+  continue; leftover stale rows are an index inconsistency, not a mint.
+  No panic path on the happy or conflict routes.
+
+Not submitted. Payment requires user KYC. Remaining sBTC slice: `wsts`.
 
 ## Next candidates
 
-sBTC `wsts` / emily reorg (KYC) or a later `gmsol_model`
-decrease/liquidation pass. Sherlock `/api/contests` returned no live
-items as of 01:28 UTC 3 Sep 2026. No KeeperHub implementation before
-the 6 Sep build window.
+Origin Protocol contracts added to Immunefi on **1 Sep 2026** (no KYC,
+$1M max) or sBTC `wsts`. Superteam `AGENT_ALLOWED` is still only Steve
+Arena and ZNS — do not execute. the402.ai still paused. Quantus audit
+comp submissions closed 25 Aug. No KeeperHub implementation before the
+6 Sep build window.
