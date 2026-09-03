@@ -127,10 +127,14 @@ Nexus Mutual governance leftover
 Mutual GitHub leftover exhausted).
 Hydration DCA leftover (`672e02f`) is logged.
 Hydration pool leftover (`672e02f`) is logged.
-Hydration staking leftover (`672e02f`) is logged.
-Hydration EVM leftover (`672e02f`) is logged
-(listed Hydration leftover in this pass is
-exhausted at the opened-pallet level).
+Hydration staking leftover (`672e02f`) is
+logged. Hydration EVM leftover (`672e02f`)
+is logged. Hydration leftover pallets leftover
+(`672e02f`) is logged (remaining listed is
+adapters / fees / oracle / tx-payment /
+xcm-rate-limiter).
+Beefy Finance leftover (Sourcify Polygon
+vault / strategy sample) is logged.
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis

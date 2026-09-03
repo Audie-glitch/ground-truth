@@ -25611,6 +25611,12 @@ Remaining Hydration
 listed GitHub:
 EVM leftover is
 logged.
+Leftover pallets leftover
+is logged.
+Remaining listed is
+adapters / fees /
+oracle / tx-payment /
+xcm-rate-limiter.
 
 ## 2026-09-03: Velvet Capital leftover (Sourcify)
 
@@ -25911,12 +25917,14 @@ submitted.
   changes.
 
 Not submitted.
-Listed Hydration
-GitHub leftover in
-this pass is
-exhausted at the
-opened-pallet
-level.
+Hydration leftover
+pallets leftover is
+logged.
+Remaining listed is
+adapters / fees /
+oracle / tx-payment /
+xcm-rate-limiter.
+
 ## 2026-09-03: Beefy Finance leftover (Sourcify)
 
 Immunefi program
@@ -26023,7 +26031,6 @@ other Polygon vaults
 Sourcify 404;
 unsampled addresses
 not fetched).
-
 
 ## Next candidates
 
@@ -26400,10 +26407,14 @@ Hydration pool leftover
 Hydration staking leftover
 (`672e02f`) is logged.
 Hydration EVM leftover
+(`672e02f`) is logged.
+Hydration leftover
+pallets leftover
 (`672e02f`) is logged
-(listed Hydration leftover
-exhausted at opened-pallet
-level).
+(remaining listed is
+adapters / fees /
+oracle / tx-payment /
+xcm-rate-limiter).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
@@ -26831,10 +26842,14 @@ Hydration pool leftover
 Hydration staking leftover
 (`672e02f`) is logged.
 Hydration EVM leftover
+(`672e02f`) is logged.
+Hydration leftover
+pallets leftover
 (`672e02f`) is logged
-(listed Hydration leftover
-exhausted at opened-pallet
-level).
+(remaining listed is
+adapters / fees /
+oracle / tx-payment /
+xcm-rate-limiter).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
@@ -27329,3 +27344,108 @@ Not submitted.
 Listed Nexus Mutual
 GitHub leftover is
 exhausted.
+
+## 2026-09-03: Hydration leftover pallets leftover (`672e02f`)
+
+Immunefi program
+`Hydration`
+($222,222, `kyc: false`).
+DCA, pool, staking,
+and EVM leftovers are
+already logged. This
+slice is leftover
+listed pallets:
+omnipool / XYK
+liquidity-mining,
+liquidation,
+otc-settlements,
+dispatcher, NFT,
+asset-registry, and
+collator-rewards.
+Local sparse clone
+`/tmp/hydration-node`
+at `672e02f`. No
+mainnet interaction.
+
+Files:
+`pallets/omnipool-liquidity-mining/src/lib.rs`,
+`pallets/xyk-liquidity-mining/src/lib.rs`,
+`pallets/liquidation/src/lib.rs`,
+`pallets/otc-settlements/src/lib.rs`,
+`pallets/dispatcher/src/lib.rs`,
+`pallets/nft/src/lib.rs`,
+`pallets/asset-registry/src/lib.rs`,
+`pallets/collator-rewards/src/lib.rs`,
+`pallets/broadcast/src/lib.rs`.
+
+Checked for: a
+stranger
+`claim_rewards` on
+someone else's
+deposit NFT;
+`liquidate` that
+pays the caller
+from a healthy
+position;
+`dispatch_as_treasury`
+from a random
+origin.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Omnipool / XYK
+  LM farm create is
+  `CreateOrigin`.
+  `deposit_shares`
+  locks the
+  signer's LP
+  position / shares.
+  `claim_rewards`
+  and withdraws
+  require
+  `ensure_nft_owner`.
+- Liquidation
+  `liquidate` is
+  permissionless
+  and runs the
+  money-market
+  liquidation path.
+  `set_borrowing_contract`
+  is
+  `AuthorityOrigin`.
+- `settle_otc_order`
+  fills through the
+  pallet account
+  and requires min
+  profit.
+- Dispatcher
+  treasury / Aave
+  / emergency
+  wrappers are
+  their matching
+  origins.
+- NFT `mint` is
+  the collection
+  owner.
+  `transfer` /
+  `burn` require
+  the item owner.
+- Asset-registry
+  `register` is
+  `RegistryOrigin`.
+- Collator-rewards
+  pays on session
+  rotation.
+  Broadcast is
+  event context
+  only.
+
+Not submitted.
+Remaining Hydration
+listed GitHub:
+adapters / fees /
+oracle / tx-payment /
+xcm-rate-limiter.
