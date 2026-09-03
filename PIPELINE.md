@@ -48,9 +48,11 @@ are logged; Penpie / Notional / StakeDAO / Yel,
 ZeroLend / CompoundV3 / Idle, and inactive /
 MorphoVault V2 / sDAI / StakeDAO lend / cvxCRV
 leftovers are logged; polygon CompoundBlue / chef
-leftover (`f24a06a`) is logged (remaining Harvest is
-polygon Aave / Aura / Balancer / Convex / Gamma /
-Idle plus arbitrum `125270d`). Hermetica hBTC
+leftover (`f24a06a`) and polygon Aave / Aura /
+Balancer / Convex / Idle leftover are logged
+(remaining Harvest is polygon Gamma / Pearl /
+Meshswap / Jarvis / Complifi / compound-v2 plus
+arbitrum `125270d`). Hermetica hBTC
 vault leftover is logged (listed Clarity exhausted).
 CoW GPv2 leftover (`6ebbd81`) is logged (listed CoW
 GitHub leftover exhausted). Stader ETHx leftover

@@ -17512,6 +17512,120 @@ Harvest listed tree is
 `harvest-strategy-arbitrum`
 `125270d`.
 
+## 2026-09-03: Harvest polygon Aave / Aura / Balancer / Convex / Idle leftover (`f24a06a`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Listed
+GitHub tree
+`harvestfi/harvest-strategy-polygon`
+(3 Apr 2023). CompoundBlue
+/ chef leftover on pin
+`f24a06a` is already
+logged. Local clone
+`/tmp/harvest-strategy-polygon`.
+No mainnet interaction.
+
+Files:
+`contracts/strategies/aave/AaveSupplyStrategy.sol`,
+`aura/AuraStrategy.sol`,
+`balancer/BalancerStrategyV3.sol`,
+`convex/base/ConvexStrategy.sol`,
+`idle/IdleFinanceStrategy.sol`.
+
+Checked for: a stranger
+redeeming aTokens /
+Aura BPT / Idle
+receipts; withdraw that
+pays more than idle
+plus staked; booster
+or Balancer pool that
+does not match
+`underlying`.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Aave supply requires
+  `aToken.UNDERLYING_ASSET_ADDRESS()`
+  = `underlying`.
+  Supply / withdraw
+  go to
+  `address(this)` via
+  `aToken.POOL()`.
+  Fee is a slice of
+  `current − stored`
+  aToken balance.
+  Withdraw /
+  hard-work are
+  `restricted`.
+  Transfer of the
+  requested amount
+  reverts if short.
+  Salvage refuses
+  underlying / aToken.
+- Aura requires
+  Balancer
+  `getPool` LPT and
+  Aura
+  `poolInfo` LPT both
+  equal `underlying`.
+  Deposit uses
+  `booster.depositAll`.
+  Partial unwrap is
+  capped at the Aura
+  balance; transfer
+  of the requested
+  amount reverts if
+  short. Reward swaps
+  and Balancer join
+  use `minOut = 1`
+  (known Harvest
+  keeper sandwich).
+- Balancer V3
+  `getPool(poolId)`
+  LPT must equal
+  `underlying`.
+  Same restricted
+  unwrap + exact
+  transfer. Swap
+  routes and Balancer
+  hop pool IDs are
+  governance-set.
+- Convex booster
+  `poolInfo` LP must
+  equal `underlying`.
+  Same restricted
+  unwrap + exact
+  transfer.
+- Idle is a
+  non-upgradeable
+  strategy. Withdraw
+  is `restricted`.
+  `protected` blocks
+  a falling Idle
+  price. Redeem
+  requires the
+  underlying received
+  ≥ requested (or ≥
+  idle × stored
+  virtual price on
+  full exit). Salvage
+  marks underlying
+  and idle receipts.
+
+Not submitted. Remaining
+Harvest polygon is
+Gamma / Quick Gamma /
+Pearl / Meshswap /
+Jarvis / Complifi /
+compound-v2 / Yel /
+Ape wrappers. Remaining
+listed tree is
+`harvest-strategy-arbitrum`
+`125270d`.
+
 ## 2026-09-03: Marinade crank / withdraw-stake leftover (`b8fe3f8`)
 
 Immunefi program
@@ -18755,12 +18869,15 @@ StakeDAO lend / cvxCRV
 leftover and polygon
 CompoundBlue / chef
 leftover (`f24a06a`)
-are logged
+and polygon
+Aave / Aura / Balancer /
+Convex / Idle leftover
+(`f24a06a`) are logged
 (remaining Harvest is
-polygon Aave / Aura /
-Balancer / Convex /
-Gamma / Idle plus
-arbitrum `125270d`);
+polygon Gamma / Pearl /
+Meshswap / Jarvis /
+Complifi / compound-v2
+plus arbitrum `125270d`);
 ICHI oneToken leftover
 (`4873873`) is logged;
 Yearn yCRV token +
