@@ -22,6 +22,7 @@ Ethena leftover remaining USDtb leftover is logged;
 Ethena leftover remaining USDeOFTAdapter leftover is logged;
 Ethena leftover remaining StakedUSDeOFTAdapter + ENAOFTAdapter leftover is logged;
 Ethena leftover remaining other-chain OFT twins leftover is logged;
+Ethena leftover remaining TON rows leftover is logged as unopened (no verified TVM source);
 LayerZero leftover remaining ULN301 leftover is logged;
 LayerZero leftover remaining ExecutorFeeLib leftover is logged;
 LayerZero leftover remaining OApp OFT leftover is logged;
@@ -946,8 +947,13 @@ KYC) is logged.
 Ethena leftover remaining USDtb leftover
 (Sourcify AnchorageTokenUSDtb; KYC) is logged.
 Ethena leftover remaining USDeOFTAdapter leftover
-(Sourcify USDeOFTAdapter; KYC) is logged
-(remaining listed is TON / other-chain OFT).
+(Sourcify USDeOFTAdapter; KYC) is logged.
+Ethena leftover remaining StakedUSDeOFTAdapter +
+ENAOFTAdapter leftover (Blockscout ETH; KYC) is logged.
+Ethena leftover remaining other-chain OFT twins leftover
+(Sourcify CREATE2 adapters; KYC) is logged.
+Ethena leftover remaining TON rows leftover is logged as
+unopened (no verified TVM source; KYC).
 Ether.fi leftover LiquidityPool leftover
 (Sourcify LiquidityPool / WeETH /
 Liquifier / Redemption / WRNFT; KYC)
