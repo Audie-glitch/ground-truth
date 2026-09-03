@@ -12023,6 +12023,144 @@ Mux `mux3-protocol` (`mux`, $100k, no
 KYC, GitHub leftover 28 Aug 2025) or
 Twyne Sourcify-404 vaults.
 
+## 2026-09-03: Obyte Coop AA leftover (`d7d5e57`)
+
+Immunefi program `obyte`
+($50,000, `kyc: false`).
+22 Jun 2026 leftover
+`byteball/coop-aa`
+(Autonomous Agent for
+Obyte Coop). Official
+clone `/tmp/obyte-coop-aa`
+at `d7d5e57` (“fix
+total_votes_bal
+accounting after
+partial withdrawal” —
+the whole tree, not a
+follow-up delta). Custom
+OOS: fund-loss under
+$1,000; attacker expense
+≥ 50% of damage. No
+mainnet interaction.
+
+Files: `coop.oscript`
+(deposit, withdraw, claim,
+vote, replace, `update_user`
+emission index,
+`check_attestation`) and
+`governance.oscript`
+(`commit` / vote / unvote /
+`update_user_balance`).
+
+Checked for: withdraw that
+leaves `total_votes_bal`
+high so later emissions
+overpay; claim that mints
+without a liquid accrual;
+deposit referral that
+credits a stranger; vote
+that adds strength without
+a 1-year lock; governance
+`commit` before the
+challenge window;
+`update_user` skipped on
+withdraw that lets an
+exited voter steal
+principal.
+
+Result: no
+user-exploitable finding.
+Not submitted.
+
+- Deposit requires a
+  messaging attestation
+  and either a real-name
+  attestation or
+  `min_balance_instead_of_real_name`.
+  AAs are refused. One
+  messaging / real-name id
+  per address. Unlock term
+  is 365–3650 days and
+  cannot move backward.
+  `total_votes_bal +=
+  amount * existing votes`
+  so new deposits
+  immediately scale prior
+  votes.
+- Referrer is first-deposit
+  only, must already exist,
+  and must unlock ≥ 1 year
+  out. The deposit-share
+  payment is
+  issued-by-definer. The
+  fixed `referral_reward`
+  is state inflation
+  capped by
+  `min(referral_reward,
+  user.total_balance,
+  referrer.total_balance)`
+  and added to both
+  balances.
+- Withdraw pays
+  `min(balance, 4e15)`
+  COOP plus all remaining
+  bytes and stored
+  `liquid_balance`. It
+  subtracts
+  `(total_balance -
+  new_balance) * votes`
+  from `total_votes_bal`
+  (the named partial-
+  withdraw fix). Votes
+  persist until 90-day
+  expiry (by design;
+  exited voters can still
+  accrue the vote-share of
+  *new* emissions, not
+  other users’ deposits).
+  Withdraw does **not**
+  call `$update_user`, so
+  unaccrued locked
+  emissions stay unminted
+  (self-loss, not theft).
+- Claim calls
+  `$update_user` first,
+  then mints stored
+  `liquid_balance` and
+  zeroes it. Restake folds
+  the remainder into
+  locked balance and
+  `total_locked` and can
+  extend unlock +1 year.
+- Vote strength is 0–3;
+  self-vote is
+  `3 * sqrt(balance)`.
+  Target and voter must
+  unlock ≥ 1 year out.
+  `delete_expired_votes`
+  only removes votes past
+  `$vote_lifetime`.
+- Governance names are a
+  fixed list. Daily
+  locked/liquid rewards
+  are capped at 0.1.
+  `commit` requires the
+  3-day
+  `challenging_period`.
+  Permissionless
+  `update_user_balance`
+  only rescales existing
+  support to current
+  `sqrt(total_balance)`.
+
+Next leftover: remaining
+Obyte `friend-aa` /
+`prediction-markets-aa` /
+`counterstake-bridge`, or
+Mux `mux3-protocol`, or
+Twyne Sourcify-404
+vaults. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -12429,6 +12567,12 @@ universal-router
 (remaining Pancake is
 listed V3 + V2
 periphery);
+Obyte Coop AA
+(`d7d5e57`) is logged;
+Twyne vaults / wrappers /
+EVC / factories still
+Sourcify 404 (lowercase
+recheck ~05:25 UTC);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
