@@ -4,11 +4,11 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~09:00 UTC. Dates verified against each
+Status as of 3 September 2026, ~09:10 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~09:00 UTC;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~09:10 UTC;
 246 programs; no Sep 2026 launches; Derive leftover
 PMRM + feeds leftover is logged;
 listed Derive leftover that official
@@ -25,7 +25,10 @@ logged; Axelar leftover is logged; Kiln
 On-Chain v1 leftover is logged; Kiln DeFi
 leftover is logged; Acala leftover is logged;
 Acala leftover ORML leftover is logged;
-Ostium leftover is logged; GMX leftover V2
+Ostium leftover is logged; Ostium leftover
+keepers / registry leftover is logged;
+Kamino leftover is logged;
+GMX leftover V2
 AdlHandler leftover is logged; GMX leftover
 V1 Avalanche twins leftover is logged;
 USDT0 leftover
@@ -363,6 +366,19 @@ traits / rate-limit support crates).
 Ostium leftover vault / trading (Sourcify;
 KYC) is logged (remaining listed is keepers
 / registry / routers / timelock / web).
+Ostium leftover keepers / registry leftover
+(Sourcify PriceUpKeep / PrivatePriceUpKeep /
+TradesUpKeep / PriceRouter / Verifier /
+OpenPnl / PairInfos / PairsStorage /
+Registry / Timelock / LockedDepositNft;
+KYC) is logged (listed leftover that
+Sourcify opens is exhausted; remaining
+listed is the web / Telegram apps).
+Kamino leftover klend + kvault leftover
+(`a087609` / `1d146d7`; KYC) is logged
+(remaining listed is Scope oracle,
+KFarms, Kamino Liquidity, and listed
+third-party oracles).
 GMX leftover V2 AdlHandler leftover
 (Sourcify Arb AdlHandler / AdlUtils /
 GlpBalance / Chainlink providers /
@@ -960,6 +976,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   twins leftover (Sourcify),
   Ostium leftover vault /
   trading (Sourcify; KYC),
+  Ostium leftover keepers /
+  registry leftover
+  (Sourcify; KYC),
+  Kamino leftover klend +
+  kvault leftover (KYC),
   GMX leftover V2 AdlHandler leftover
   (AdlUtils / GlpBalance /
   Chainlink providers /

@@ -31764,6 +31764,24 @@ KYC) is logged (remaining
 listed is keepers /
 registry / routers /
 timelock / web);
+Ostium leftover keepers /
+registry leftover (Sourcify
+PriceUpKeep /
+PrivatePriceUpKeep /
+TradesUpKeep / PriceRouter /
+Verifier / OpenPnl /
+PairInfos / PairsStorage /
+Registry / Timelock /
+LockedDepositNft; KYC) is
+logged (listed leftover that
+Sourcify opens is exhausted;
+remaining listed is the web /
+Telegram apps);
+Kamino leftover klend + kvault leftover
+(`a087609` / `1d146d7`; KYC) is logged
+(remaining listed is Scope oracle,
+KFarms, Kamino Liquidity, and listed
+third-party oracles);
 GMX leftover V2 AdlHandler leftover
 (Sourcify Arb AdlHandler /
 AdlUtils / GlpBalance /
@@ -38324,3 +38342,195 @@ perp / RedStone /
 Securitize /
 Switchboard /
 Adrena).
+
+## 2026-09-03: Ostium leftover keepers / registry leftover (Sourcify)
+
+Immunefi program
+`ostium`
+($200,000, `kyc: true`).
+Vault / trading leftover
+already logged. This
+slice is the remaining
+listed keepers,
+registry, routers,
+pair stores, verifier,
+timelock, and
+LockedDepositNft.
+Extract
+`/tmp/ostium-keep`.
+No mainnet writes.
+
+Sourcify (Arb
+`42161`):
+Registry
+`0x799a139aE56e11F0476aCE2f6118CfcAed9608d2`
+(`match`,
+`OstiumRegistry`);
+TimelockOwner
+`0xeB85dC6095c74D36500C9cdcaCc15EcDC223Bbf7`
+(`match`,
+`OstiumTimelockOwner`);
+LockedDepositNft
+`0xb4f1123BE58f5d69E1cf565ED8756C7fcf31c8D3`
+(`match`);
+Verifier
+`0xd456939e54F68Ef9B0BE62aBB2EC4A37397Cb814`
+(`exact_match`,
+`OstiumVerifier`);
+OpenPnlFeed proxy
+`0xE607aC9FF58697c5978AfA1Fc1C5C437a6D1858c`
+impl
+`0x2Ce8Cd263DDc784F554196840bb70AB3a2ffF969`
+(`OstiumOpenPnl`);
+PrivatePriceUpKeep
+proxy
+`0xB71ec9eBD8145daCaCF6724363143cb5667A3d36`
+impl
+`0x0aEBC4094B60Ea4E21E937E80DafDD58C07C5ebB`;
+TradesUpKeep proxy
+`0x959Da1452238F71F17f7DA5dbA2e9c04FEf57324`
+impl
+`0x49BcCc51fb6a80F86a5aaA9Bd7DF07040Dfb4CC2`;
+PriceUpKeep proxy
+`0x52B2a78E12b09B66C6c8ce291D653D40bAb77f0c`
+impl
+`0x95b0511e8FB69E9940d82fBdD186a41aeD9ffDd9`;
+PriceRouter proxy
+`0x52453FBC4A33F7A2A0a01d67B952625816f161b4`
+impl
+`0xb22d4f94194Bf9c932CF34605ba2D2E0075ecDE5`;
+PairInfos proxy
+`0x3890243a8fc091c626ed26c087a028b46bc9d66c`
+impl
+`0xAA87e13f153d417E6a613E103bfD9a14f07ecb74`;
+PairsStorage proxy
+`0x260E349F643f12797fDc6f8c9d3df211D5577823`
+impl
+`0x15b4b5A08a37fC9e0dc50550D1284a2aEEa081A6`.
+
+Files:
+`OstiumRegistry.sol`,
+`OstiumTimelockOwner.sol`,
+`OstiumLockedDepositNft.sol`,
+`src/OstiumVerifier.sol`,
+`src/OstiumOpenPnl.sol`,
+`src/OstiumPrivatePriceUpKeep.sol`,
+`src/OstiumTradesUpKeep.sol`,
+`src/OstiumPriceUpKeep.sol`,
+`src/OstiumPriceRouter.sol`,
+`src/OstiumPairInfos.sol`,
+`src/OstiumPairsStorage.sol`.
+
+Checked for: a
+stranger
+`performUpkeep` that
+settles without a
+forwarder; `getPrice`
+that is not
+router/trading-only;
+`verify` that accepts
+an unauthorized
+signer; OpenPnl /
+PairInfos writers
+callable by anyone;
+NFT `mint` not
+vault-only; registry
+`registerContract`
+without gov.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Price / private
+  price / trades
+  `performUpkeep`
+  require
+  `isForwarder`
+  (timelock
+  registers; gov
+  unregisters).
+  Price fulfill
+  needs a Chainlink
+  verifier report
+  whose feed id and
+  timestamp match
+  the router-created
+  order.
+  Private fulfill
+  needs
+  `OstiumVerifier`
+  `ecrecover` of an
+  authorized signer.
+- PriceRouter
+  `getPrice` is
+  `onlyTrading`.
+  PriceUpKeep
+  `getPrice` is
+  `onlyRouter`.
+- Verifier `verify`
+  is view-only and
+  rejects
+  non-authorized
+  signers. Signer
+  set is `onlyGov`.
+- OpenPnl
+  `updateAccTotalPnl`
+  / closed rollover
+  are
+  `onlyCallbacks`.
+  Acc rollover is
+  `onlyPairInfos`.
+- PairInfos fee
+  writes are gov /
+  manager.
+  `storeTradeInitialAccFees`
+  and
+  `updateDynamicSpreadState`
+  are
+  `onlyCallbacks`.
+- PairsStorage
+  add/update pair /
+  fee / leverage are
+  `onlyGov`.
+  `updateGroupCollateral`
+  is callbacks or
+  trading.
+- Registry
+  register / update
+  is `onlyGov`. Role
+  set is `onlyOwner`.
+- LockedDepositNft
+  `mint` / `burn`
+  are `onlyVault`.
+  Transfers are
+  standard ERC721
+  owner / approval.
+- Timelock is OZ
+  `TimelockController`
+  (schedule /
+  execute behind
+  roles).
+- PriceUpKeep
+  `withdrawEth` is
+  `onlyGov`.
+
+Do not file
+forwarder-gated
+settlement, trading-
+only price request,
+gov pair config, or
+vault-only NFT mint
+as stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Ostium leftover
+that Sourcify opens
+is exhausted at the
+opened-contract
+level. Remaining
+listed: the web /
+Telegram apps.
