@@ -89,6 +89,11 @@ leftover (`2da0f48`) is logged (remaining
 Lido is CSM / dual-governance /
 easy-track / L2 / circuit-breaker /
 oracle / 0.8.25 vaults).
+StakeWise Mainnet leftover (Sourcify
+Pool / sETH2 / rETH2 / Oracles /
+MerkleDistributor / Vesting / genesis
+vault migrate) is logged (remaining
+listed is DAO Module Sourcify 404).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /

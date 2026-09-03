@@ -21590,6 +21590,221 @@ oracle / 0.8.25 vaults
 and the other listed
 repos.
 
+## 2026-09-03: StakeWise Mainnet leftover (Sourcify)
+
+Immunefi program
+`StakeWise Mainnet`
+($200,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Ethereum
+proxies + impls
+Sourcify-open:
+Pool
+`0xC874b064f465bdD6411D45734b56fac750Cda29A`
+`exact_match`
+`AdminUpgradeabilityProxy`
+impl
+`0x481f28C0D733614aF87897E43d0D52C451799592`
+`Pool` (solc 0.7.5);
+PoolEscrow
+`0x2296e122c1a20Fca3CAc3371357BdAd3be0dF079`
+`match`;
+PoolValidators
+`0x002932e11E95DC84C17ed5f94a0439645D8a97BC`
+impl
+`0xfa00515082fe90430C80DA9B299f353929653d7B`;
+sETH2
+`0xFe2e637202056d30016725477c5da089Ab0A043A`
+impl
+`0x82FE8C78CaE0013471179e76224ef89941bAaa75`;
+rETH2
+`0x20BC832ca081b91433ff6c17f85701B6e92486c5`
+impl
+`0x01d34aeE72325F1d4A748f13C2169404523eCEE0`;
+SWISE
+`0x48C3399719B582dD63eB5AADf12A40B4C3f52FA2`
+impl
+`0xA28C2d79f0c5B78CeC699DAB0303008179815396`;
+Oracles
+`0x8a887282E67ff41d36C0b7537eAB035291461AcD`
+impl
+`0xF0C1670364d4b5c4e9dc8062cDd45068D9c678d6`;
+VestingEscrow
+`0xaE678D2A911400a55e06f4A1F0C0B363F3eE2e42`
+`match`;
+VestingEscrowFactory
+`0x7B910cc3D4B42FEFF056218bD56d7700E4ea7dD5`
+impl
+`0xbeE3Eb97Cfd94ace6B66E606B8088C57c5f78fBf`;
+MerkleDistributor
+`0xA3F21010e8b9a3930996C8849Df38f9Ca3647c20`
+impl
+`0x1d873651c38D912c8A7E1eBfB013Aa96bE5AACBC`;
+Roles
+`0xC486c10e3611565F5b38b50ad68277b11C889623`
+impl
+`0x584E5D4bD0AE1EEF838796aEe8fb805BbB82439C`;
+ProxyAdmin
+`0x3EB0175dcD67d3AB139aA03165e24AA2188A4C22`
+`exact_match`;
+Gnosis Safe
+`0x144a98cb1CdBb23610501fE6108858D9B7D24934`
+`match` proxy.
+rETH2 ctor vault
+`0xac0f906e433d58fa868f936e8a43230473652885`
+Sourcify
+`ERC1967Proxy`
+impl
+`0xf113BfD6423291b1dD2cA76f897bFf54456e7c88`
+`EthGenesisVault`
+(solc 0.8.26).
+Extract `/tmp/stakewise`.
+No mainnet
+interaction.
+
+Files:
+`Pool.sol`,
+`PoolEscrow.sol`,
+`PoolValidators.sol`,
+`StakedEthToken.sol`,
+`RewardEthToken.sol`,
+`Oracles.sol`,
+`MerkleDistributor.sol`,
+`VestingEscrow.sol`,
+`VestingEscrowFactory.sol`,
+`StakeWiseToken.sol`,
+`Roles.sol`,
+`EthGenesisVault.sol`.
+
+Checked for: a
+stranger mint of
+sETH2/rETH2; merkle
+claim paid to the
+caller; oracle root
+with one signature;
+`migrate` that burns
+another account;
+escrow `withdraw` by
+anyone; genesis
+`migrate` without
+the rETH2 caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Current Pool impl
+  is a post-v3 stub:
+  `receiveFees` and
+  permissionless
+  `transferToPoolEscrow`
+  (sweeps ETH to
+  escrow, not the
+  caller). No stake /
+  mint / 
+  `registerValidator`.
+- PoolValidators
+  `registerValidator`
+  is oracles-only
+  and merkle-checked;
+  the current Pool
+  no longer exposes
+  that function (dead
+  path).
+- PoolEscrow
+  `withdraw` is
+  owner-only
+  two-step
+  ownership.
+  Genesis vault
+  `_pullWithdrawals`
+  requires the vault
+  to be escrow
+  owner.
+- rETH2
+  `updateTotalRewards`
+  is the immutable
+  vault. `claim` is
+  MerkleDistributor.
+  `migrate` burns
+  `msg.sender` then
+  `vault.migrate`.
+  Transfers blocked
+  in the update
+  block.
+- sETH2 `burn` is
+  rETH2-only.
+  `toggleRewards` is
+  admin.
+- Oracles
+  `submitMerkleRoot`
+  needs `>2/3`
+  unique oracle
+  signatures plus
+  nonce. Distributor
+  `claim` pays
+  `account`, not
+  the caller.
+  Bitmap is per
+  root.
+- Vesting `claim`
+  is recipient-only.
+  `stop` is admin
+  and can pull
+  unvested (admin
+  trust). Factory
+  `deployEscrow` is
+  admin; listed
+  escrow impl
+  `initialize` is
+  7-arg vs factory
+  8-arg (admin path
+  would miss /
+  revert).
+- Roles is
+  event-only. SWISE
+  mints 1B once to
+  admin; no later
+  mint.
+- EthGenesisVault
+  `migrate` requires
+  `msg.sender ==
+  rETH2` and escrow
+  owner == vault.
+  `receive` deposits
+  unless the sender
+  is the escrow.
+
+Do not file admin
+pause / fee /
+escrow withdraw,
+oracle or Keeper
+harvest trust, or
+the vault owning
+PoolEscrow after
+migration.
+
+Not submitted.
+Listed leftover is
+the Sourcify-open
+v2 proxies + impls
++ PoolEscrow +
+Vesting + Safe +
+the linked genesis
+vault migrate hook.
+Remaining listed:
+DAO Module
+`0xb5cf5363c3e766e64b37b2fb9554bfe8d48ed1a0`
+Sourcify 404.
+Remaining unlisted:
+FeesEscrow storage
+slot and V3 Keeper /
+osToken / other
+vaults.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -21898,6 +22113,12 @@ whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
 (`58b8a42` / `0768267`) is logged
 (listed 1inch SmartContracts
 leftover exhausted).
+StakeWise Mainnet leftover
+(Sourcify Pool / sETH2 / rETH2 /
+Oracles / MerkleDistributor /
+Vesting / genesis vault migrate)
+is logged (remaining listed is
+DAO Module Sourcify 404).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -22210,6 +22431,14 @@ CSM / dual-governance /
 easy-track / L2 /
 circuit-breaker /
 oracle / 0.8.25 vaults);
+StakeWise Mainnet leftover
+(Sourcify Pool / sETH2 /
+rETH2 / Oracles /
+MerkleDistributor /
+Vesting / genesis vault
+migrate) is logged
+(remaining listed is DAO
+Module Sourcify 404);
 Beets stS
 (`877087b`) + token
 leftover is logged
