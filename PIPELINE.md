@@ -182,7 +182,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   RedemptionVault /
   Clearinghouse / Heart +
   Governor Bravo /
-  BondTeller / BondCallback
+  BondTeller / BondCallback +
+  CD Auctioneer / Cooler
+  leftovers / RANGE / YRF
   (`3f918a0`), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan

@@ -9417,13 +9417,15 @@ finding. Not submitted.
 
 Remaining Olympus leftover:
 CD Auctioneer / Limit
-Orders / CDEPO / CHREG /
-RGSTY, CoolerFactory +
-v2 LTV + Composites,
-RANGE v2 / YRF,
-Treasury Borrower,
-DLGTE, L2 RolesAdmin
-copies. Not submitted.
+Orders / CoolerFactory /
+LTV / TreasuryBorrower /
+Composites / RANGE / YRF
+/ CHREG / RGSTY / DLGTE /
+RolesAdmin (this pass
+below). CDEPO module
+`0x0233…9F1c` is still
+Sourcify 404. Not
+submitted.
 
 ## 2026-09-03: Spark UsdcVaultL2 (15 Jul L2 SUSDC_IMPL)
 
@@ -9505,6 +9507,162 @@ impl still unverified
 on Sourcify (treat as
 the same L2 vault).
 Not submitted.
+
+## 2026-09-03: Olympus CD Auctioneer + Cooler leftovers + RANGE/YRF (`3f918a0`)
+
+Same Immunefi program
+`olympus` ($3,333,333,
+`kyc: false`, critical
+only). Sourcify matches
+on ConvertibleDeposit
+Auctioneer
+`0xF351…E39a`,
+CDAuctioneerLimitOrders
+`0x7d8f…Fc2e`,
+CoolerFactory
+`0x30Ce…4216`,
+CoolerLtvOracle
+`0x9ee9…e8dc`,
+CoolerTreasuryBorrower
+`0xD58d…79B0`,
+CoolerComposites
+`0x6593…57Fd`,
+YieldRepurchaseFacility
+`0x271e…0692`,
+OlympusRange
+`0x399c…0fb5`,
+CHREG
+`0x69a3…43a4`,
+RGSTY
+`0x8963…de48`,
+DLGTE
+`0xD320…ad74`.
+RolesAdmin is
+`policies/RolesAdmin.sol`
+(L2 copies of the same
+tree). Official
+`olympus-v3` `3f918a0`.
+CDEPO `0x0233…9F1c`
+Sourcify 404. No
+state-changing txs.
+
+Files:
+`policies/deposits/{ConvertibleDepositAuctioneer,LimitOrders}.sol`,
+`external/cooler/CoolerFactory.sol`,
+`policies/cooler/{CoolerLtvOracle,CoolerTreasuryBorrower}.sol`,
+`periphery/CoolerComposites.sol`,
+`policies/{YieldRepurchaseFacility,RolesAdmin}.sol`,
+`modules/{RANGE/OlympusRange,CHREG/OlympusClearinghouseRegistry,RGSTY/OlympusContractRegistry,DLGTE/OlympusGovDelegation}.sol`.
+
+Checked for: a stranger
+`bid` that mints a
+receipt at a stale
+price below `minPrice`;
+limit-order `fillOrder`
+that spends another
+user’s sUSDS or sweeps
+principal as yield;
+CoolerFactory
+`generateCooler` that
+overwrites a victim’s
+escrow; LTV decrease;
+TreasuryBorrower
+`borrow` without the
+cooler role; composites
+that borrow against a
+stranger without a
+signature; YRF
+`endEpoch` by a
+non-heart; DLGTE
+withdraw across policy
+namespaces.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- Auctioneer `bid` is
+  `onlyEnabled` +
+  period-enabled +
+  `nonReentrant`. It
+  prices from the
+  decaying tick (floored
+  at `minPrice`) and
+  `createPosition`s at
+  the facility as
+  `ROLE_AUCTIONEER`.
+  Parameters are
+  `cd_emissionmanager` /
+  manager-or-admin.
+- Limit orders hold USDS
+  in sUSDS and track
+  `totalUsdsOwed`.
+  `fillOrder` withdraws
+  only `fill + incentive`,
+  bids with
+  `minOhmOut = preview`,
+  and sends the NFT +
+  receipts to the order
+  owner. `sweepYield`
+  transfers only shares
+  above
+  `previewWithdraw(totalUsdsOwed)`.
+  `cancelOrder` is the
+  owner and works while
+  disabled.
+- CoolerFactory clones
+  with immutable owner /
+  tokens / factory and
+  sets `created`. Events
+  are `onlyFromFactory`.
+- LTV
+  `setOriginationLtvAt`
+  is admin-only and
+  reverts
+  `CannotDecreaseLtv`.
+  Slope is capped.
+- TreasuryBorrower
+  `borrow` / `repay` /
+  `writeOffDebt` are
+  `treasuryborrower_cooler`.
+  `setDebt` is admin.
+- Composites pull
+  collateral / debt from
+  `msg.sender`, credit
+  `msg.sender` on MonoCooler,
+  and optionally
+  `setAuthorizationWithSig`.
+  Excess debt is refunded
+  to the caller.
+- YRF `endEpoch` is
+  `heart`. `initialize` /
+  `adjustNextYield` /
+  `shutdown` are
+  `loop_daddy`.
+- RANGE / CHREG / RGSTY
+  mutators are
+  `permissioned`.
+- DLGTE deposit / withdraw
+  / `applyDelegations`
+  are `permissioned`.
+  Withdraw is capped by
+  `_policyAccountBalances[msg.sender][onBehalfOf]`.
+- RolesAdmin
+  `grantRole` /
+  `revokeRole` are
+  `onlyAdmin` with a
+  two-step admin handoff.
+
+Remaining Olympus leftover:
+CDEPO module
+`0x0233…9F1c`
+(Sourcify 404). L2 OHM /
+gOHM token rows are
+standard tokens. 20 Feb
+money-moving leftovers
+that Sourcify or the
+public tree can open
+are exhausted. Not
+submitted.
 
 ## Next candidates
 
@@ -9660,14 +9818,19 @@ RedemptionVault /
 Clearinghouse / Heart +
 Governor Bravo / Timelock +
 BondTeller / BondCallback /
-BondManager (`3f918a0`)
-are logged; remaining
-Olympus leftover is CD
-Auctioneer / CoolerFactory /
-RANGE / YRF / L2 RolesAdmin
-copies. Spark 15 Jul
-Ethereum `UsdcVault` + L2
-`UsdcVaultL2` are logged. 
+BondManager + CD Auctioneer
+/ LimitOrders + Cooler
+factory / LTV / Treasury
+Borrower / Composites +
+RANGE / YRF / CHREG /
+RGSTY / DLGTE / RolesAdmin
+(`3f918a0`) are logged.
+Remaining Olympus leftover
+is CDEPO `0x0233…9F1c`
+(Sourcify 404). Spark 15
+Jul Ethereum `UsdcVault` +
+L2 `UsdcVaultL2` are
+logged. 
 Twyne June-2026 Aave V3
 operators (Sourcify) are logged;
 remaining Twyne vaults /
