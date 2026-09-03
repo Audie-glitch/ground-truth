@@ -73510,3 +73510,41 @@ This is the **library** keystore used by the core node leftover (`731d82b` / `/t
 - Common Keystore (`chainlink-common` `keystore/`) — this leftover.
 - evm txmgr package (under `chainlink-evm` / `chainlink-framework`, not `core/services`).
 - ocr2 services (`core/services/ocr2`).
+
+## 2026-09-03 leftover: Chainlink evm txmgr package (`chainlink-evm` `pkg/txmgr` + `chainlink-framework` `chains/txmgr`)
+
+Immunefi leftover **evm txmgr package** (under `chainlink-evm` / `chainlink-framework`, not `core/services`). Official GitHub:
+
+- `GET /repos/smartcontractkit/chainlink-evm/contents/pkg/txmgr?ref=develop` **200**. Pin `b274ca1` (`b274ca1ca00559ad434ca8f43026b16a6a196242`, committer `2026-09-03T14:00:35Z`).
+- `GET /repos/smartcontractkit/chainlink-framework/contents/chains/txmgr?ref=main` **200**. Pin `b5a88c1` (`b5a88c16af029c85b42d9aaa2bff0d86325102a7`, committer `2026-08-14T14:39:46Z`).
+
+Local extract `/tmp/cl-txmgr/evm/` and `/tmp/cl-txmgr/fw/` via raw GitHub at those pins: `txmgr.go`, `broadcaster.go`, `confirmer.go`, `reaper.go`, `resender.go`, `strategies.go`, `attempts.go`, `transmitchecker.go`, `stuck_tx_detector.go`, `finalizer.go`, `nonce_tracker.go`, `evm_tx_store.go`, `builder.go`, `client.go`, `models.go`. **No live-contract testing. No exploit PoCs.**
+
+Do not rematch core node transfers leftover (`7f8b636` / `afe53b6`) or Common/core keystore leftovers.
+
+### What I actually read
+
+- `CreateTransaction`: `keystore.CheckEnabled` on `FromAddress`; idempotency key returns the existing row; optional forwarder wraps payload and stores original dest in `Meta.FwdrDestAddress`; queue-capacity check; strategy prune of **unstarted** rows; insert; trigger Broadcaster. No public HTTP in this package.
+- `SendNativeToken`: rejects the zero `to`; inserts a native transfer then triggers broadcast. Does **not** re-check `CheckEnabled` here. Callers are in-process (core leftover already logged `/v2/transfers` as admin-gated). Not a stranger HTTP surface.
+- Broadcaster / Confirmer: sign via `keystore.SignTx` for `FromAddress` only. Gas bump / rebroadcast keep the stored dest, payload, and value except purge paths.
+- `NewPurgeTxAttempt`: empty payload, **value 0**, same nonce/from; `NewEmptyTxAttempt` is 0-value to `fromAddress` (self). ForceRebroadcast is the emergency empty/resend path.
+- Transmit checkers: Simulate fail-open on RPC errors (never fatal on insufficient ETH). VRF v1/v2 fail-open on parse/RPC errors and skip only when the coordinator reports already-fulfilled. Waste-gas / revert, not stranger theft of node keys.
+- Stuck detector: lowest-nonce unconfirmed per enabled address; heuristic / chain-specific overflow; purge is 0-value nonce unstick. Reaper deletes old **history**. Strategies prune **unstarted** queue rows.
+- Finalizer: receipt fetch + mark finalized / missing-receipt fatal. No send path. Nonce tracker uses mined `SequenceAt` then local increment.
+
+### Verdict
+
+**No finding.** This is an in-process tx lifecycle library. Stranger theft of node ETH still requires an enabled key, the node password / process, or an already-reviewed admin transfer API. Purge and empty attempts are 0-value nonce clears, not redirects. Out of Immunefi leftover remaining for the evm txmgr package.
+
+### Remaining listed (do not rematch)
+
+- VRF (`vrf/v08` / `vrf/v1`).
+- CCIP (`ccip/`) — EVM + Solana + Sui + Aptos leftovers logged.
+- Payments / Automation CRE / Operator Forwarder / LLO Feeds.
+- Websites (`smartcontract.community` / `dev.chain.link` / `docs.chain.link`).
+- OCR (`libocr` `ocr2/`).
+- Core node transfers (`core/web` `/v2/transfers`).
+- Core keystore (`core/services/keystore`).
+- Common Keystore (`chainlink-common` `keystore/`).
+- evm txmgr package (`chainlink-evm` `pkg/txmgr` + `chainlink-framework` `chains/txmgr`) — this leftover.
+- ocr2 services (`core/services/ocr2`).
