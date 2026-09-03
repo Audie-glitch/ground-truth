@@ -47578,7 +47578,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs` money-path subset) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`account_saver` / `bank_client` / `prioritization_fee`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed Arbitrum: websites if still unused. Official Arbitrum leftover that listed trees open is exhausted except unused official leftovers if still open. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged.
@@ -47668,6 +47668,7 @@ Do not rematch Jito jito-solana non_circulating_supply leftover.
 Do not rematch Jito jito-solana validated_reward_certificate leftover.
 Do not rematch Jito jito-solana validated_block_finalization leftover.
 Do not rematch Jito jito-solana fee_distribution leftover.
+Do not rematch Jito jito-solana bank money-path leftover.
 Do not rematch Chainlink leftover remaining CCIP Sui leftover.
 Do not rematch Chainlink leftover remaining CCIP Solana leftover.
 Do not rematch Jito jito-solana snapshot_package leftover.
@@ -50491,8 +50492,10 @@ Jito leftover remaining jito-solana validated_reward_certificate leftover
 Jito leftover remaining jito-solana validated_block_finalization leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana fee_distribution leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana bank money-path leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-bank.rs money-path subset if still unused);
+account_saver / bank_client / prioritization_fee if still unused);
 Optimism leftover remaining op-node deposits + withdrawals leftover
 (`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
@@ -73303,3 +73306,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an authorized-transmitter report or payee withdraw as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink core node if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana bank money-path leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after fee_distribution leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/bank.rs` money-path subset: `transfer`, `withdraw`, `test_utils::deposit`, `store_account` / `store_accounts`, `store_account_and_update_capitalization`, `burn_and_purge_account`, `calculate_capitalization_for_tests` / `set_capitalization_for_tests`. Do not rematch fee_distribution leftover, transaction_execution leftover, remaining runtime leftover, or snapshot_bank_utils leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `withdraw` that drains a stranger account; `test_utils::deposit` that mints to the caller; `store_account_and_update_capitalization` that inflates supply without a matching account; `transfer` that skips leftover-logged execution checks.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `transfer` is a test/client helper: signs a system transfer with the caller's keypair and `last_blockhash`, then leftover-logged `process_transaction` / transaction_execution leftover. Not a stranger credit.
+- `withdraw` `checked_sub`s from a named pubkey and keeps a nonce account's rent-exempt min. It uses `store_account` (no capitalization bump) so in-flight fees stay in the leftover-logged fee_distribution loop until burn. Missing account / underflow → `AccountNotFound` / `InsufficientFundsForFee`. Does not credit a destination.
+- `test_utils::deposit` is `pub mod test_utils` only. `checked_add_lamports` then `store_account`. Comment: rents are not collected here. Not a production IX.
+- `store_account` / `store_accounts` assert `!freeze_started()`, update leftover-logged stakes cache, then persist. `store_account_and_update_capitalization` adjusts the capitalization counter by the lamport diff (or the new account's balance on create). `burn_and_purge_account` zeros a program account and `fetch_sub`s its lamports. Ledger-tool / builtin replace paths, not a stranger mint.
+- `calculate_capitalization_for_tests` / `set_capitalization_for_tests` are ledger-tool/test only. Snapshot verify is leftover-logged in snapshot_bank_utils leftover.
+
+Do not file a bank test helper or capitalization counter as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`account_saver` / `bank_client` / `prioritization_fee`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
