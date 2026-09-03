@@ -68116,3 +68116,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a view-only HF/LTV gate as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: v2 ReserveLogic / DefaultReserveInterestRateStrategy / ReserveConfiguration / UserConfiguration (if still unused).
+
+## 2026-09-03: Aave leftover remaining protocol-v2 ReserveLogic + IR strategy leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after ValidationLogic leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `contracts/protocol/libraries/logic/ReserveLogic.sol` and `contracts/protocol/lendingpool/DefaultReserveInterestRateStrategy.sol`. Do not rematch v3 IR strategy leftover (`cff15de`) or v2 LendingPool leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `updateState` / `init` rewriting another reserve’s indexes; `_mintToTreasury` paying a caller-chosen recipient; `calculateInterestRates` moving underlying.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `init` requires `aTokenAddress == 0`. `getNormalizedIncome` / `getNormalizedDebt` are views (same-block stored index, else linear / compounded interest). `updateState` only writes this reserve’s liquidity / variable-borrow indexes and last timestamp, then `_mintToTreasury`.
+- `_mintToTreasury` mints `reserveFactor * accruedDebt` aTokens via `IAToken.mintToTreasury` (pool-gated in the leftover-logged AToken). `updateInterestRates` stores strategy quotes; it does not `transfer` underlying. `cumulateToLiquidityIndex` scales the liquidity index by `amount / totalLiquidity` (flashloan fee share).
+- `DefaultReserveInterestRateStrategy` is view-only. Utilization = debt / (available + debt). Below the immutable kink, variable = base + slope1 * util / optimal; above it, base + slope1 + slope2 * excess. Liquidity rate = overall borrow × util × (1 − reserveFactor). Slopes are constructor immutables.
+
+Do not file an index/rate helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: v2 ReserveConfiguration / UserConfiguration / math libs (if still unused).
