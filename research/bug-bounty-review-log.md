@@ -8274,7 +8274,82 @@ finding. Not submitted.
 
 Yearn 23 Jun + Jan 2026
 yYB leftovers are
-exhausted. Not submitted.
+exhausted. Auction /
+splitter / 3.0.4 factory
+rows (this pass below).
+Not submitted.
+
+## 2026-09-03: Yearn AuctionFactory leftover (Sourcify)
+
+Immunefi program
+`yearnfinance` ($200,000,
+`kyc: false`). 29 Oct 2025
+row: Auction Factory
+`0xbC58…7526`. Sourcify
+exact match, verified
+2025-11-26, `AuctionFactory`
+v1.0.3. Extract under
+`/tmp/yearn-leftover/auction_fact`.
+Splitter Factory
+`0xe28f…614D` is a flattened
+Vyper match; 3.0.4 Vault
+Factory `0x770D…812F` is
+`YearnVaultFactory.vy`
+(same pattern as the
+already-logged 3.1.0
+factory). No mainnet
+interaction.
+
+Files:
+`src/Auctions/{AuctionFactory,
+Auction}.sol`.
+
+Checked for: factory
+`create` that initializes
+to an attacker receiver;
+`take` that sends `from`
+without pulling `want`;
+CoW `isValidSignature`
+that accepts a stranger
+receiver; `kick` that
+restarts a live auction.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- Factory clones the
+  immutable `Auction`
+  original via create2 and
+  `initialize`s want /
+  receiver / governance /
+  starting price.
+- `take` is
+  `nonReentrant`. It
+  transfers `_from` to the
+  taker, optional callback,
+  then
+  `safeTransferFrom`
+  `want` from `msg.sender`
+  to `receiver`. A failed
+  pay reverts the take.
+- CoW signature requires
+  `receiver == receiver`,
+  `buyToken == want`,
+  `buyAmount >= needed`,
+  `feeAmount == 0`.
+- `kick` needs an enabled
+  auction past
+  `AUCTION_LENGTH` and a
+  non-zero balance.
+  `enable` / `disable` /
+  `sweep` / `forceKick`
+  are governance.
+
+Remaining Yearn: splitter
+factory flatten and 3.0.4
+vault factory if a later
+pass wants the Vyper
+bodies. Not submitted.
 
 ## Next candidates
 
@@ -8417,7 +8492,13 @@ plus leftover Jan 2026
 yYB token / operator /
 locker / staker /
 distributor (Sourcify)
-are logged. Balancer V3
+plus AuctionFactory
+`0xbC58…7526` (Sourcify)
+are logged. Remaining
+Yearn is splitter factory
+flatten and 3.0.4 vault
+factory if wanted.
+Balancer V3
 Router + CompositeLiquidityRouter
 + ProtocolFeeController +
 LBPoolFactory + ReClamm +
