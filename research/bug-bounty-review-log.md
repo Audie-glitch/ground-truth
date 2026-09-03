@@ -54446,3 +54446,261 @@ Remaining
 listed:
 Primacy of
 Impact.
+
+## 2026-09-03: OnRe leftover prop AMM + buffer + configurable vault (`f6a4c6e`)
+
+Immunefi program
+`onre`
+($100,000, `kyc: true`).
+Official clone
+`/tmp/onre-sol`
+`f6a4c6e`.
+Opened
+`programs/onreapp/src/instructions/prop_amm/buy.rs`,
+`sell.rs`,
+`validation.rs`,
+`buffer/deposit_reserve_vault.rs`,
+`withdraw_reserve_vault.rs`,
+`settle_buffer.rs`,
+`accrue_buffer.rs`,
+`burn_for_nav_increase.rs`,
+`set_buffer_fee_config.rs`,
+`configurable_vault/set_destination.rs`,
+`withdraw.rs`,
+`market_info/refresh_market_stats.rs`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+prop-AMM buy
+or sell that
+spends another
+user's ATA;
+permissionless
+configurable-vault
+withdraw that
+pays the
+caller;
+reserve-vault
+withdraw by a
+non-boss;
+buffer settle
+or accrue that
+mints to an
+attacker ATA.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `OpenSwapBuy`
+  /
+  `OpenSwapSell`
+  require
+  `user: Signer`.
+  User token
+  accounts are
+  `UncheckedAccount`
+  but
+  `get_associated_token_account`
+  /
+  `get_or_create_associated_token_account`
+  bind
+  `authority =
+  user`
+  and the
+  expected
+  mint /
+  token
+  program.
+  `token_in`
+  is pulled
+  from that
+  user ATA;
+  `token_out`
+  is minted
+  or paid
+  only to
+  that user's
+  ATA.
+  Pair
+  validation
+  requires
+  the
+  canonical
+  offer PDA
+  (`asset`,
+  `onyc`)
+  plus an
+  enabled
+  `PropAmmPairState`
+  for that
+  offer.
+  Kill
+  switch
+  blocks
+  both
+  sides.
+  Buy
+  proceeds
+  and fees
+  land in
+  seeded
+  configurable
+  vaults
+  (proceeds /
+  buy-fee);
+  sell
+  routes
+  through
+  redemption
+  ops into
+  proceeds /
+  sell-fee
+  vaults
+  and the
+  stored
+  user out
+  ATA.
+- Reserve
+  vault
+  deposit
+  is
+  `depositor: Signer`
+  pulling
+  the
+  depositor's
+  own ONyc
+  ATA.
+  Withdraw
+  is
+  `boss: Signer`
+  +
+  `has_one =
+  boss`
+  and pays
+  only the
+  boss ONyc
+  ATA via
+  the
+  reserve-vault
+  PDA.
+- `settle_buffer`
+  is
+  `worker: Signer`
+  +
+  `has_one =
+  worker`.
+  Accrual
+  mints
+  only to
+  reserve /
+  management-fee /
+  performance-fee
+  vault
+  ATAs
+  validated
+  by
+  `validate_buffer_onyc_vault_accounts`.
+  Fee
+  config
+  and
+  `burn_for_nav_increase`
+  are
+  boss-only.
+- Configurable
+  vault
+  `set_destination`
+  is
+  `boss: Signer`
+  +
+  `has_one =
+  boss`.
+  `withdraw`
+  is
+  permissionless
+  (`caller: Signer`)
+  but the
+  destination
+  account
+  must
+  equal
+  `configurable_vault.withdrawal_destination`
+  and
+  tokens
+  move
+  only to
+  that
+  ATA.
+  Amount
+  `0`
+  withdraws
+  the full
+  vault
+  balance
+  to the
+  stored
+  destination,
+  not the
+  caller.
+- Market-stats
+  refresh
+  is
+  permissionless
+  and only
+  recomputes
+  the
+  canonical
+  PDA
+  against
+  `state.main_offer`.
+  View
+  helpers
+  (`get_nav`,
+  `get_tvl`,
+  `get_apy`,
+  circulating
+  supply)
+  do not
+  move
+  tokens.
+
+Do not file
+boss-only
+reserve
+withdraw /
+fee-config /
+NAV burn,
+worker-only
+buffer
+settle, a
+user paying
+their own
+ATA into a
+priced
+prop-AMM
+swap, or
+permissionless
+withdraw-to-stored-destination
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub opens
+for OnRe
+prop AMM /
+buffer /
+configurable
+vault /
+market-stats
+is exhausted
+at the
+opened-file
+level.
+
