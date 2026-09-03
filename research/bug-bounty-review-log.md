@@ -2272,6 +2272,78 @@ Duplicates of SP-01–SP-24 were not re-filed.
 
 Not submitted. Payouts need Immunefi KYC.
 
+## 2026-09-03: Origin Aerodrome / Base Curve / Hydrex AMOs + OETH zapper + Safe modules (`4fa0602`)
+
+Immunefi program `originprotocol` ($1,000,000, `kyc: false`).
+superOETHb Sep-1 assets continue from the OUSD vault /
+Curve AMO and WOETH slices. Local clone `/tmp/origin-dollar`
+at `4fa0602`. No mainnet interaction.
+
+Files: `contracts/contracts/strategies/aerodrome/AerodromeAMOStrategy.sol`,
+`contracts/contracts/strategies/BaseCurveAMOStrategy.sol`,
+`contracts/contracts/strategies/hydrex/OETHbHydrexAMOStrategy.sol`,
+`contracts/contracts/strategies/algebra/StableSwapAMMStrategy.sol`,
+`contracts/contracts/zapper/{AbstractOTokenZapper,OETHZapper,OETHBaseZapper}.sol`,
+`contracts/contracts/automation/{AbstractSafeModule,CollectXOGNRewardsModule,ClaimStrategyRewardsSafeModule,ClaimBribesSafeModule}.sol`.
+
+Checked for: a user deposit that mints unbounded OETHb;
+withdraw that sends WETH off-vault; CL decrease with
+zero mins that a non-strategist can sandwich; zapper
+mint that credits more than ETH/WETH pulled; Safe
+module that moves tokens to a non-Safe address.
+
+Result: no user-exploitable finding.
+
+- Aerodrome AMO `deposit` / `withdraw` / `withdrawAll`
+  are `onlyVault` + `nonReentrant`. Withdraw recipient
+  must be the vault. `rebalance` is
+  `onlyGovernorOrStrategist`. `_addLiquidity` mints
+  OETHb via `mintForStrategy` to match the Sugar
+  estimate, then burns leftovers. Position is valued
+  at the 1:1 tick (`_wethAmount == 0`); leftover
+  WETH/OETHb on the strategy still count in vault
+  `totalValue`. DecreaseLiquidity uses
+  `amount0Min/amount1Min = 0` (trusted strategist);
+  `_checkForExpectedPoolPrice` gates ticks and the
+  configured WETH-share interval; `_solvencyAssert`
+  requires vault value / supply ≥ 99.8%.
+- Base Curve AMO is the WETH/OETH twin of
+  `CurveAMOStrategy`: vault-only deposit mints
+  between 1× and 2× OETH, `add_liquidity` with
+  `maxSlippage`, then gauge-stakes. Withdraw
+  computes LP from the pool WETH share, requires
+  `min[WETH] = amount`, burns leftover OETH,
+  transfers exactly `_amount`. Strategist one-sided
+  `mintAndAddOTokens` / `removeAndBurnOTokens` /
+  `removeOnlyAssets` use `improvePoolBalance` +
+  `_solvencyAssert`.
+- Hydrex AMO is a thin GaugeV2 `stakeToken()` wrapper
+  over `StableSwapAMMStrategy`. Vault-only deposit
+  mints OToken in pool-reserve proportion
+  (`nearBalancedPool` + `skimPool`), withdraw burns
+  leftover OToken and requires enough asset removed.
+  Same 99.8% solvency floor. `withdrawAll` skips
+  solvency for emergency gauge exit.
+- `OETHZapper` / `OETHBaseZapper` wrap ETH or pull
+  WETH, `vault.mint` the zapper’s full WETH balance,
+  require minted ≥ ETH/WETH in, then optionally
+  ERC-4626 wrap with `minReceived`. Leftover donated
+  WETH/ETH goes to the next caller, not an extract.
+- Safe modules: `DEFAULT_ADMIN_ROLE` is the Safe.
+  `transferTokens` is `onlySafe` and only pays the
+  Safe. `CollectXOGNRewardsModule` operator can only
+  `collectRewards` and send the OGN delta to a
+  hardcoded rewards source. Strategy/bribe claimers
+  only `execTransactionFromModule` collect selectors
+  on a Safe-owned veNFT / whitelisted strategy list.
+
+Remaining Origin Sep-1 / later: OETH CrossChain
+HyperEVM master/remote (Base CCTP already reviewed),
+WETH/USDC/Lido ARM adapters if they differ from
+Ethena/AbstractARM, xOGN token itself.
+
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
@@ -2279,18 +2351,21 @@ the full `diamond-pau` facet tree at `1b6743a`,
 Intuition MultiVault / AtomWallet / curves / emissions /
 registry / `TrustSwapAndBridgeRouter` (`bb34cc2`),
 Origin OUSD vault + Curve AMO + WOETH/WOUSD + Ethena ARM,
-Lombard SVM asset_router / bridge / bascule / mailbox
-deliver-handle, Leather extension RPC / PSBT approval,
-OZ Confidential v0.5.3 (`4a4f6c7`), and Money on Chain
-V2 core/queue/V4 swapper (`d770477`) are exhausted.
-Remaining Origin: other Sep-1 OUSD strategies (Morpho
-already reviewed). Remaining Lombard SVM:
-`lombard_token_pool`, `ratio_oracle`. Remaining MoC:
-governance machines and live Rootstock v1 proxies if a
-later pass wants addresses rather than the V2 tree.
-OZ confidential remaining: `ERC7984Hooked` / cap
-modules, `ERC7984Votes`, `ERC7984Omnibus`. Superteam
-API rechecked 03:20 UTC 3 Sep: still 28 open listings.
+Origin Aerodrome / Base Curve / Hydrex AMOs + OETH
+zapper + Safe modules, Lombard SVM asset_router /
+bridge / bascule / mailbox deliver-handle, Leather
+extension RPC / PSBT approval, OZ Confidential v0.5.3
+(`4a4f6c7`), and Money on Chain V2 core/queue/V4
+swapper (`d770477`) are exhausted. Remaining Origin:
+HyperEVM cross-chain master/remote, other ARM adapters
+if they differ from Ethena/AbstractARM, xOGN token.
+Remaining Lombard SVM: `lombard_token_pool`,
+`ratio_oracle`. Remaining MoC: governance machines and
+live Rootstock v1 proxies if a later pass wants
+addresses rather than the V2 tree. OZ confidential
+remaining: `ERC7984Hooked` / cap modules,
+`ERC7984Votes`, `ERC7984Omnibus`. Superteam API
+rechecked 03:20 UTC 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the
