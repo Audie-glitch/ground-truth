@@ -241,6 +241,15 @@ Withdrawal / Transfer / Trade / Matching
 + CashAsset) is logged (remaining listed
 is DutchAuction / SecurityModule /
 managers / assets / feeds).
+zerolend-boost leftover (`60d255a`
+locker / omnichain staking /
+VestedZeroNFT / AirdropRewarder /
+PoolVoter) is logged (ended
+2024-03-14 audit-comp; listed
+leftover that a public tree would
+open is exhausted; remaining listed
+is zkSync / Manta Aave-fork
+Sourcify 404).
 CapyFi leftover (Sourcify Comptroller /
 CEther / CErc20; KYC) is logged
 (remaining listed is Unitroller Sourcify
@@ -710,6 +719,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Derive leftover matching +
   cash leftover (`f6c20f4` /
   `96796a6`),
+  zerolend-boost leftover
+  (`60d255a` locker /
+  omnichain staking /
+  VestedZeroNFT /
+  AirdropRewarder / PoolVoter;
+  ended audit-comp),
   CapyFi leftover (Sourcify
   Comptroller / CEther / CErc20;
   KYC),

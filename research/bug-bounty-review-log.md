@@ -28777,6 +28777,136 @@ and V2 Oracle /
 Reader / GlvReader
 rows.
 
+## 2026-09-03: zerolend-boost leftover (`60d255a`)
+
+Immunefi program
+`zerolend-boost`
+($200,000, `kyc:
+false`). Ended 2024-03-14
+audit competition
+(`Audit Comp | ZeroLend`);
+logged so the custom
+governance tree is not
+re-opened. Public
+`zerolend/governance` at
+`60d255aca56f46fe9b26f012eee683e1aede2b33`.
+Extract `/tmp/zerolend-gov`.
+Sourcify 404 on zkSync
+chain 324 for sample Pool
+impl / proxy. No mainnet
+interaction.
+
+Files:
+`contracts/ZeroLend.sol`,
+`contracts/locker/BaseLocker.sol`,
+`contracts/locker/staking/OmnichainStakingBase.sol`,
+`OmnichainStakingToken.sol`,
+`OmnichainStakingLP.sol`,
+`contracts/vesting/VestedZeroNFT.sol`,
+`contracts/vesting/StakingBonus.sol`,
+`contracts/airdrop/AirdropRewarder.sol`,
+`contracts/voter/PoolVoter.sol`,
+`contracts/zaps/ZapLockerLP.sol`,
+`contracts/emissions/EmissionsMainnet.sol`.
+
+Checked for: a stranger
+`unstakeToken` /
+`unstakeAndWithdraw` that
+sends another staker's
+NFT or underlying to the
+caller; locker
+`withdraw` that pays a
+non-owner; vest `claim`
+that pays the caller;
+airdrop `claim` that
+pays the prover.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `_unstakeToken`
+  reverts
+  `InvalidUnstaker`
+  unless
+  `msg.sender ==
+  lockedByToken[tokenId]`.
+  `unstakeToken` then
+  transfers the NFT to
+  that sender.
+  `unstakeAndWithdraw`
+  withdraws the locker
+  NFT (staking is
+  owner) and pays
+  `locked.amount` to
+  `msg.sender`.
+- BaseLocker
+  `increaseAmount` /
+  `increaseUnlockTime` /
+  `withdraw(uint256)`
+  require owner or
+  approved.
+  `withdraw` pays
+  `msg.sender`.
+  `withdraw(address)`
+  still requires
+  authorization on
+  each token.
+  `depositFor` can
+  donate into an
+  existing lock.
+- VestedZeroNFT `mint`
+  pulls
+  `msg.sender` and
+  mints to `_who`.
+  `claim(uint256)`
+  pays `ownerOf(id)`.
+  `claimUnvested` is
+  `stakingBonus`-only.
+- AirdropRewarder
+  `claim` pays / locks
+  the merkle-proven
+  `_user`.
+- PoolVoter `vote`
+  binds to
+  `msg.sender`.
+  `reset` is self or
+  `votingPowerCombined`.
+- ZeroLend `mint` is
+  `MINTER_ROLE`.
+  Emissions `execute`
+  is owner.
+
+Do not file
+permissionless vest /
+airdrop poke that
+pays the owner, lock
+donations, public
+`ZapLockerLP.sweep`
+dust, owner
+emissions / bonus
+BPS, or Aave-fork
+first-depositor
+inflation on the
+listed zkSync / Manta
+markets.
+
+Not submitted.
+Listed leftover that
+a public tree would
+open is exhausted
+(ended audit-comp
+governance repo).
+Remaining listed:
+zkSync / Manta
+Aave-fork addresses
+(Sourcify 404 last
+check). Do not take
+remaining
+`zerolend-boost`
+Aave-fork rows.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -29981,6 +30111,20 @@ CashAsset) is logged
 DutchAuction /
 SecurityModule / managers /
 assets / feeds);
+zerolend-boost leftover
+(`60d255a` locker /
+omnichain staking /
+VestedZeroNFT /
+AirdropRewarder /
+PoolVoter) is logged
+(ended 2024-03-14
+audit-comp; listed
+leftover that a public
+tree would open is
+exhausted; remaining
+listed is zkSync /
+Manta Aave-fork
+Sourcify 404);
 CapyFi leftover (Sourcify
 Comptroller / CEther /
 CErc20; KYC) is logged
