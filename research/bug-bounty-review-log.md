@@ -28907,6 +28907,133 @@ remaining
 `zerolend-boost`
 Aave-fork rows.
 
+## 2026-09-03: GMX leftover V1 RewardTracker leftover (Sourcify)
+
+Immunefi program
+`gmx` ($5,000,000,
+`kyc: false`). Sourcify
+Arbitrum `exact_match`
+`RewardTracker`
+`0x4d268a7d4C16ceB5a606c173Bd974984343fea13`
++
+`0x0755D33e45eD2B874c9ebF5B279023c8Bd1e5E93`
++
+`0xd2D1162512F927a7e282Ef43a362659E4F2a728F`
++
+`0x4e971a87900b931fF39d1Aad67697F49835400b6`
++ `RewardDistributor`
+`0x5C04a12EB54A093c396f61355c6dA0B15890150d`
++ `Vester`
+`0x199070DDfd1CFb69173aa2F7e20906F26B363004`,
+and `match`
+`RewardTracker`
+`0x908C4D94D34924765f1eDc22A1DD098397c59dD4`
++
+`0x1aDDD80E6039594eE970E5872D247bf0414C8903`
++ `RewardDistributor`
+`0x23208B91A98c7C1CD9FE63085BFf68311494F193`
++ `BonusDistributor`
+`0x03F349b3CC4f200D7FAE4d8DdaF1507f5A40D356`
++ `EsGMX`
+`0xf42Ae1D54fd613C9bb14810b0588FaAa09a426cA`.
+Extract `/tmp/gmx-trackers`.
+No mainnet interaction.
+
+Files:
+`bonus-tracker/contracts/staking/RewardTracker.sol`,
+`fee-glp-dist/contracts/staking/RewardDistributor.sol`,
+`gmx-vester/contracts/staking/Vester.sol`,
+`bonus-dist/BonusDistributor.sol`,
+`esgmx/EsGMX.sol`,
+`staked-gmx-tracker/RewardTracker.sol`.
+
+Checked for: a stranger
+`unstake` /
+`unstakeForAccount`
+that sends another
+account's deposit
+tokens to the caller;
+`claim` /
+`claimForAccount`
+that pays the caller
+another account's
+rewards; Vester
+`withdraw` that
+releases another
+account's esGMX;
+distributor
+`distribute` that
+anyone can drain.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- RewardTracker
+  `stake` /
+  `unstake` bind
+  funding and
+  receiver to
+  `msg.sender`.
+  `stakeForAccount` /
+  `unstakeForAccount` /
+  `claimForAccount`
+  require
+  `isHandler`.
+  Public `claim`
+  pays a named
+  receiver from
+  `msg.sender`'s
+  `claimableReward`.
+- RewardDistributor
+  and
+  BonusDistributor
+  `distribute` require
+  `msg.sender ==
+  rewardTracker`.
+- Vester `deposit`
+  pulls `esToken`
+  (and pair token)
+  from `_account`.
+  Public `deposit` /
+  `claim` /
+  `withdraw` use
+  `msg.sender`.
+  `depositForAccount` /
+  `claimForAccount` /
+  `transferStakeValues`
+  are handler-only.
+- EsGMX `mint` /
+  `burn` are
+  `onlyMinter`.
+  `claim` asks each
+  yield tracker for
+  `msg.sender`.
+
+Do not file gov
+`withdrawToken`,
+handler-only
+`ForAccount` pulls,
+private staking /
+claiming mode,
+or admin
+`recoverClaim`.
+
+Not submitted.
+Remaining listed:
+Avalanche V1 twins
+(same RewardTracker /
+Vester / distributor
+types), Sourcify-404
+Glp Vester + Staked
+Glp Distributor, and
+V2 Oracle / Reader /
+GlvReader rows.
+Do not re-review
+same-bytecode Avax
+twins.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -30134,6 +30261,27 @@ exhausted; remaining
 listed is zkSync /
 Manta Aave-fork
 Sourcify 404);
+GMX leftover V1
+RewardTracker leftover
+(Sourcify Arb
+RewardTracker /
+RewardDistributor /
+BonusDistributor /
+Vester / EsGMX) is
+logged (remaining listed
+is Avax twins,
+Sourcify-404 Glp Vester
+/ Staked Glp
+Distributor, and V2
+Oracle / Reader rows);
+SSV Network leftover
+(Sourcify Network /
+Views / Clusters /
+Operators / Staking;
+KYC) is logged
+(listed leftover
+exhausted at the
+opened-contract level);
 CapyFi leftover (Sourcify
 Comptroller / CEther /
 CErc20; KYC) is logged

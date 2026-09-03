@@ -256,6 +256,18 @@ leftover that a public tree would
 open is exhausted; remaining listed
 is zkSync / Manta Aave-fork
 Sourcify 404).
+GMX leftover V1 RewardTracker leftover
+(Sourcify Arb RewardTracker /
+RewardDistributor / BonusDistributor /
+Vester / EsGMX) is logged (remaining
+listed is Avax twins, Sourcify-404 Glp
+Vester / Staked Glp Distributor, and
+V2 Oracle / Reader rows).
+SSV Network leftover (Sourcify Network /
+Views / Clusters / Operators / Staking;
+KYC) is logged (listed leftover
+exhausted at the opened-contract
+level).
 CapyFi leftover (Sourcify Comptroller /
 CEther / CErc20; KYC) is logged
 (remaining listed is Unitroller Sourcify
@@ -737,6 +749,15 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   VestedZeroNFT /
   AirdropRewarder / PoolVoter;
   ended audit-comp),
+  GMX leftover V1
+  RewardTracker leftover
+  (RewardDistributor /
+  BonusDistributor / Vester /
+  EsGMX),
+  SSV Network leftover
+  (Sourcify Network / Views /
+  Clusters / Operators /
+  Staking; KYC),
   CapyFi leftover (Sourcify
   Comptroller / CEther / CErc20;
   KYC),
