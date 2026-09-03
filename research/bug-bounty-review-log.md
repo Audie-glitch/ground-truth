@@ -66246,3 +66246,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an in-memory eth_call / gas-estimate helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Aave leftover remaining ACL + PoolConfigurator leftover (`cff15de`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after AaveOracle leftover. Official `aave-dao/aave-v3-origin` `cff15de`. Opened listed `ACLManager.sol` and `PoolConfigurator.sol`. Do not rematch Pool / Oracle leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `addPoolAdmin` / `grantRole` without DEFAULT_ADMIN; `initReserves` or `configureReserveAsCollateral` without ACL.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ACLManager` constructor `_setupRole(DEFAULT_ADMIN_ROLE, provider.getACLAdmin())` (non-zero). `addPoolAdmin` / `addRiskAdmin` / `addAssetListingAdmin` call OZ `grantRole`, which is `onlyRole(getRoleAdmin(role))` (default `DEFAULT_ADMIN_ROLE`). `setRoleAdmin` is `onlyRole(DEFAULT_ADMIN_ROLE)`.
+- `PoolConfigurator` `initReserves` is `onlyAssetListingOrPoolAdmins`. Collateral / caps / eMode / IR data are `onlyRiskOrPoolAdmins`. Pause / freeze mix emergency. aToken / vDebt upgrades are `onlyPoolAdmin`. LTV must be `<=` threshold; bonus checks prevent instant under-collateralized listing. This contract does not move user tokens itself.
+
+Do not file an ACL-gated configurator as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: periphery / rewards.
