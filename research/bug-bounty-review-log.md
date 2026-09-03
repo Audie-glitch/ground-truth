@@ -27823,6 +27823,9 @@ Threshold Bridge leftover
 Threshold leftover gov /
 relay leftover
 (`502cd39`) is logged.
+Threshold leftover
+wallet registry leftover
+(Sourcify) is logged.
 Arkadiko leftover (Hiro vaults /
 tokens / liq-pool) is logged
 (remaining listed is the website).
@@ -28003,11 +28006,14 @@ Threshold Bridge leftover
 (`502cd39`) is logged;
 Threshold leftover gov /
 relay leftover
-(`502cd39`) is logged
-(listed Threshold
-explorer leftover
-exhausted; remaining is
-keep-network typescript);
+(`502cd39`) is logged;
+Threshold leftover
+wallet registry leftover
+(Sourcify) is logged
+(remaining Threshold is
+keep-network typescript
+and Starknet / Sui /
+Solana explorer rows);
 Pancake MasterChefV3 +
 LmPool + V2 periphery
 and v3-core / v3-periphery
@@ -29265,3 +29271,124 @@ addresses Sourcify
 404; unsampled
 vaults of already-
 reviewed types.
+
+## 2026-09-03: Threshold leftover wallet registry leftover (Sourcify)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+Bank / vault / watchtower /
+Wormhole / RebateStaking /
+validator / ReimbursementPool /
+Bridge / gov-relay leftovers
+are already logged. This
+slice is listed Ethereum
+Sourcify `WalletRegistry`
+impl (`match`
+`0xfbae130e06bbc8ca198861beecae6e2b830398fb`;
+`0x46d52E41C2F300BC82217Ce22b920c34995204eb`
+is the transparent proxy),
+`SortitionPool`
+(`exact_match`
+`0xc2731fb2823af3Efc2694c9bC86F444d5c5bb4Dc`),
+`EcdsaDkgValidator`
+(`exact_match`
+`0x0125c8977a02b2Fa3970b1ED9AF02f5Bedd4eF27`),
+and
+`WalletRegistryGovernance`
+(`exact_match`
+`0x6aed6cC30D1b2770771052555d257Da86eD47fe8`).
+Extract
+`/tmp/threshold-wallet`.
+No mainnet interaction.
+
+Files:
+`contracts/WalletRegistry.sol`,
+`contracts/WalletRegistryGovernance.sol`,
+`contracts/EcdsaDkgValidator.sol`,
+`contracts/libraries/EcdsaAuthorization.sol`,
+`@keep-network/sortition-pools/contracts/SortitionPool.sol`.
+
+Checked for: a
+stranger
+`withdrawRewards` that
+pays the caller;
+`seize` without the
+wallet owner;
+`insertOperator` on
+the pool without
+being owner;
+`registerOperator`
+for another staking
+provider.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `registerOperator`
+  binds
+  `msg.sender` as
+  the staking
+  provider.
+  `joinSortitionPool`
+  is the registered
+  operator.
+- `withdrawRewards`
+  pays the staking
+  provider's
+  beneficiary, not
+  the caller.
+  `withdrawIneligibleRewards`
+  is governance.
+- SortitionPool
+  insert / update /
+  lock / withdraw
+  are `onlyOwner`
+  (WalletRegistry).
+  `receiveApproval`
+  pulls the reward
+  token from the
+  sender.
+- `requestNewWallet`
+  /
+  `closeWallet` /
+  `seize` are
+  `onlyWalletOwner`.
+  Authorization
+  increase / decrease
+  are
+  `onlyStakingContract`.
+- DKG submit /
+  challenge /
+  approve complete
+  the stored result.
+  Inactivity notify
+  verifies a majority
+  claim.
+- WalletRegistryGovernance
+  begin / finalize
+  writes are
+  `onlyOwner` and
+  wait the stored
+  delay.
+
+Do not file
+permissionless
+`withdrawRewards`
+(pays the
+beneficiary),
+governance
+ineligible sweep,
+or DKG timeout
+refund as theft.
+
+Not submitted.
+Remaining Threshold
+listed leftover:
+`keep-network/tbtc-v2`
+typescript and
+Starknet / Sui /
+Solana explorer
+rows.

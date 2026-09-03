@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~07:50 UTC. Dates verified against each
+Status as of 3 September 2026, ~07:55 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
@@ -210,9 +210,15 @@ JustLend leftover governance leftover
 (`f28f3b4` GovernorBravo / WJST / Timelock /
 PriceOracleProxy) is logged.
 Threshold validator + ReimbursementPool leftover
-(`502cd39`) is logged (remaining Threshold is
-Bridge / BridgeGovernance / LightRelay /
-TokenholderGovernor + keep-network typescript).
+(`502cd39`) is logged.
+Threshold leftover gov / relay leftover
+(`502cd39`) is logged.
+Threshold leftover wallet registry leftover
+(Sourcify WalletRegistry / SortitionPool /
+EcdsaDkgValidator / WalletRegistryGovernance)
+is logged (remaining Threshold is
+keep-network typescript and Starknet / Sui /
+Solana explorer rows).
 JustLend leftover rewards leftover
 (`f28f3b4` ComptrollerLegacy JST /
 PriceOracleV1 / rate models) is logged
