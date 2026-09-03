@@ -17303,6 +17303,110 @@ exhausted (remaining
 row is Primacy of
 Impact).
 
+## 2026-09-03: Symbiosis MetaRouter leftover (Sourcify)
+
+Immunefi program
+`symbiosis`
+($100,000, `kyc: false`).
+Listed leftover is
+MetaRouter +
+MetaRouterGateway on
+Ethereum, BSC,
+Avalanche, and Polygon
+(2022 explorer rows).
+Ethereum Sourcify
+`exact_match` on
+MetaRouter
+`0xf621Fb08BBE51aF70e7E0F4EA63496894166Ff7F`
+and Gateway
+`0xfCEF2Fe72413b65d3F393d278A714caD87512bcd`
+(solc 0.8.7, verified
+2024-08-08). Other
+chains returned
+Sourcify 400; same
+type labels. Extract
+`/tmp/symbiosis`. No
+mainnet interaction.
+
+Files:
+`contracts/synth-core/metarouter/MetaRouter.sol`,
+`MetaRouterGateway.sol`,
+`MetaRouteStructs.sol`.
+
+Checked for: a stranger
+using someone else’s
+Gateway approval;
+arbitrary DEX /
+relay calldata that
+spends a victim’s
+tokens; leftover on
+the router that a
+stranger can take as
+user funds at rest.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Gateway
+  `claimTokens` is
+  `onlyMetarouter` and
+  `transferFrom`s
+  `_from`. `metaRoute`
+  always claims
+  `_msgSender()`. A
+  Gateway approval
+  cannot be spent by a
+  third party.
+- `metaRoute` then
+  `call`s user-chosen
+  DEX / relay
+  contracts (not the
+  Gateway) and
+  patches swap /
+  other-side amounts
+  from this
+  contract’s
+  `balanceOf`. That is
+  the caller’s own
+  route.
+- `externalCall`,
+  `returnSwap`, and
+  `metaMintSwap` are
+  permissionless and
+  only move tokens
+  already on the
+  router. Comments say
+  Portal / Synthesis
+  call them; there is
+  no caller gate.
+  Failed
+  `externalCall`
+  refunds `_amount` to
+  `_to`. That can
+  sweep leftover
+  sitting on the
+  router. Do not file
+  without a proven
+  official flow that
+  parks user funds on
+  MetaRouter across
+  transactions.
+- `metaMintSwap`
+  leftover of the last
+  `swapTokens` entry
+  is sent to `to`.
+
+Do not file leftover
+sweep or user-supplied
+router calldata as
+theft of funds at
+rest.
+
+Not submitted. Listed
+Symbiosis leftover is
+exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -17876,6 +17980,13 @@ leftover is logged
 (listed Stader leftover
 exhausted; remaining row
 is Primacy of Impact);
+Symbiosis MetaRouter +
+Gateway leftover
+(Sourcify Ethereum
+`exact_match`) is
+logged (listed
+Symbiosis leftover
+exhausted);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;

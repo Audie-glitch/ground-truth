@@ -42,8 +42,9 @@ GitHub leftover exhausted). Stader ETHx leftover
 (`9d4a921`) now includes Penalty / PoolSelector /
 PoolUtils / Config (listed Stader leftover exhausted;
 remaining row is Primacy of Impact). ICHI oneToken
-leftover (`4873873`) is logged. Twyne vaults still
-Sourcify 404.
+leftover (`4873873`) is logged. Symbiosis MetaRouter
+leftover is logged (listed leftover exhausted).
+Twyne vaults still Sourcify 404.
 
 ## Opportunities, ranked by expected payout per unit of work
 
