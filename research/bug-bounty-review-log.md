@@ -27869,6 +27869,106 @@ RedSnwapper. Remaining
 listed: CPAMM and CLAMM
 docs deployments.
 
+## 2026-09-03: SushiSwap leftover CPAMM / CLAMM leftover (Sourcify)
+
+Immunefi program
+`SushiSwap` ($200,000,
+`kyc: false`). RedSnwapper
+is already logged. Docs
+CPAMM / CLAMM deployments
+resolve via sushi@7.3.1
+to Ethereum
+`UniswapV2Factory`
+`0xC0AEe4…f2Ac`
+(`exact_match`),
+`UniswapV2Router02`
+`0xd9e1cE…8B9F`
+(`match`),
+`UniswapV3Factory`
+`0xbACEB8…29C4F`
+(`match`), and
+`NonfungiblePositionManager`
+`0x2214A4…A432`
+(`match`). Extract
+`/tmp/sushi-v2factory`,
+`/tmp/sushi-v2router`,
+`/tmp/sushi-v3factory`,
+`/tmp/sushi-v3npm`. No
+mainnet interaction.
+
+Files:
+`UniswapV2Factory` /
+`UniswapV2Pair`,
+`UniswapV2Router02`,
+`UniswapV3Factory`,
+`NonfungiblePositionManager`
+/ `LiquidityManagement`.
+
+Checked for: a stranger
+router `transferFrom` of
+another user's tokens;
+pair `mint` that credits
+the caller without
+deposits; NPM `collect`
+without NFT
+authorization.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Router add / remove /
+  swap pull from
+  `msg.sender` (or
+  `msg.value` for ETH),
+  enforce deadline and
+  `amountMin` /
+  `amountOutMin`, and
+  mint or pay `to`.
+- Pair first mint locks
+  `MINIMUM_LIQUIDITY`
+  unless `msg.sender` is
+  the factory migrator
+  (`feeToSetter`). Burn
+  pays `to` for LP
+  sitting on the pair.
+  Swap keeps K after
+  0.3% fee.
+- V3 factory
+  `createPool` is
+  permissionless.
+  `setOwner` /
+  `enableFeeAmount` are
+  owner.
+- NPM mint callback
+  pays the recorded
+  payer through a
+  factory-verified
+  pool. Decrease /
+  collect / burn require
+  `isAuthorizedForToken`.
+
+Do not file first-
+depositor
+`MINIMUM_LIQUIDITY`,
+`feeToSetter` migrator /
+feeTo, public `skim` of
+surplus, owner V3 fee
+tiers, or Uniswap-style
+slippage as theft.
+
+Not submitted.
+Listed leftover is the
+Sourcify-open Ethereum
+CPAMM factory / pair /
+router and CLAMM factory
+/ NPM. Remaining listed:
+V3 TickLens / Quoter /
+PositionHelper (view /
+helper) and same-bytecode
+other-chain factories.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -28307,9 +28407,14 @@ is logged (remaining listed is
 `0x7859B01B…B576` Sourcify 404).
 SushiSwap leftover RedSnwapper
 leftover (Sourcify `exact_match`
-`0xAC4c6e21…80b75`) is logged
-(remaining listed is CPAMM / CLAMM
-docs deployments).
+`0xAC4c6e21…80b75`) is logged.
+SushiSwap leftover CPAMM / CLAMM
+leftover (Sourcify ETH V2 factory
+/ router + V3 factory / NPM) is
+logged (remaining listed is V3
+TickLens / Quoter /
+PositionHelper and same-bytecode
+other-chain factories).
 Beefy Finance leftover (Sourcify
 Polygon `BeefyVaultV6` + common
 chef / DFYN / Curve / BIFI-maxi
@@ -28897,9 +29002,17 @@ SushiSwap leftover
 RedSnwapper leftover
 (Sourcify `exact_match`
 `0xAC4c6e21…80b75`) is
-logged (remaining listed
-is CPAMM / CLAMM docs
-deployments);
+logged;
+SushiSwap leftover
+CPAMM / CLAMM leftover
+(Sourcify ETH V2 factory
+/ router + V3 factory /
+NPM) is logged
+(remaining listed is V3
+TickLens / Quoter /
+PositionHelper and
+same-bytecode other-chain
+factories);
 Beefy Finance leftover
 (Sourcify Polygon
 `BeefyVaultV6` + common

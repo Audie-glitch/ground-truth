@@ -185,8 +185,12 @@ Mars Ecosystem leftover timelock leftover
 Sourcify 404).
 SushiSwap leftover RedSnwapper leftover
 (Sourcify `exact_match` `0xAC4c6e21…80b75`)
-is logged (remaining listed is CPAMM /
-CLAMM docs deployments).
+is logged.
+SushiSwap leftover CPAMM / CLAMM leftover
+(Sourcify ETH V2 factory / router + V3
+factory / NPM) is logged (remaining listed
+is V3 TickLens / Quoter / PositionHelper
+and same-bytecode other-chain factories).
 Beefy Finance leftover (Sourcify Polygon
 `BeefyVaultV6` + common chef / DFYN /
 Curve / BIFI-maxi strategies) is logged.
@@ -563,7 +567,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (Sourcify BSC `Timelock`),
   SushiSwap leftover
   RedSnwapper leftover
-  (Sourcify `0xAC4c6e21…80b75`),
+  (Sourcify `0xAC4c6e21…80b75`)
+  plus CPAMM / CLAMM leftover
+  (ETH V2 factory / router +
+  V3 factory / NPM),
   and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
