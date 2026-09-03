@@ -71419,3 +71419,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a portal-gated ETH lockbox as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `op-node` / `op-dispute-mon` / websites if still unused.
+
+## 2026-09-03: Optimism leftover remaining op-dispute-mon leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining listed after PolicyEngineStaking leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `op-dispute-mon/monitor.go`, `op-dispute-mon/mon/{service,monitor,withdrawals,resolve,claims}.go`, and `op-dispute-mon/mon/bonds/{monitor,collateral}.go`. Do not rematch dispute games leftover (on-chain `FaultDisputeGame` / `DelayedWETH`). No mainnet writes. No exploit PoCs.
+
+Checked for: monitor that submits `claimCredit` for a stranger recipient; `Resolve` that writes a game status on-chain; bond collateral helper that transfers WETH.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `WithdrawalMonitor.CheckWithdrawals` and `Bonds.CheckBonds` only compare in-memory `Credits` / `WithdrawalRequests` / DelayedWETH balances and record metrics. There is no `Transact` / `claimCredit` call.
+- `Resolve` walks a bidirectional claim tree in memory and returns `GameStatus`. It does not send a transaction.
+- `CalculateRequiredCollateral` sums unresolved bonds plus unclaimed credits per DelayedWETH address. It does not move ETH.
+- `Service` wires L1/rollup RPC readers, pprof, and the monitor loop. This binary is observational.
+
+Do not file a read-only dispute-game monitor as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `op-node` / websites if still unused.
