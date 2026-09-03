@@ -45472,6 +45472,10 @@ Aave leftover remaining v3 ValidationLogic + GenericLogic leftover (`cff15de`)
 is logged.
 Aave leftover remaining v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover (`cff15de`)
 is logged.
+Aave leftover remaining v3 ReserveLogic leftover (`cff15de`)
+is logged.
+Jito leftover remaining jito-solana banking_stage leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45492,8 +45496,8 @@ Rootstock leftover remaining rsk-powhsm leftover (`82a12d44efec`)
 is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
-Remaining listed Aave: primacy.
-Remaining listed Jito: `jito-solana` other crates (if still unused).
+Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
+Remaining listed Jito: `jito-solana` other crates (proxy / forwarding / replay) if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45546,6 +45550,8 @@ Do not rematch Aave GhoOracle leftover.
 Do not rematch Aave v3 money-path logic leftover.
 Do not rematch Aave v3 ValidationLogic + GenericLogic leftover.
 Do not rematch Aave v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover.
+Do not rematch Aave v3 ReserveLogic leftover.
+Do not rematch Jito jito-solana banking_stage leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -70083,3 +70089,23 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator banking pipeline as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` other crates (proxy / forwarding / replay) if still unused.
+
+## 2026-09-03: Aave leftover remaining v3 ReserveLogic leftover (`cff15de`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after v3 supporting-logic leftovers. Official `aave-dao/aave-v3-origin` `cff15de`. Opened listed `src/contracts/protocol/libraries/logic/ReserveLogic.sol` via raw.githubusercontent.com at that pin. Do not rematch protocol-v2 ReserveLogic leftover (`ce53c4a`) or v3 money-path / ValidationLogic / PoolLogic leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `updateState` skipping index growth so variable debt stays cheap; `updateInterestRatesAndVirtualBalance` inflating `virtualUnderlyingBalance` so a stranger can borrow unbacked; `_accrueToTreasury` over-minting aTokens to a caller; `init` overwriting an existing reserve's aToken.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `getNormalizedIncome` / `getNormalizedDebt` return the stored indexes when `lastUpdateTimestamp == block.timestamp`. Otherwise linear (liquidity) / compounded (variable debt) interest is `rayMul`'d onto the stored index.
+- `updateState` no-ops in the same block. Else `_updateIndexes` then `_accrueToTreasury`, then stamps `lastUpdateTimestamp` on storage and the cache.
+- `init` requires `aTokenAddress == address(0)` and sets both indexes to `RAY`.
+- `updateInterestRatesAndVirtualBalance` asks the leftover-logged IR strategy with `unbacked: reserve.deficit` and `usingVirtualBalance: true`. Virtual balance `+=` liquidity added / `-=` taken (`SafeCast` to `uint128`).
+- `_accrueToTreasury` no-ops at reserve factor 0. Accrued debt is `currScaledVariableDebt.rayMulFloor(nextVarIndex - currVarIndex)` (rounds down to keep the invariant), then `percentMul` reserve factor, then a scaled mint into `accruedToTreasury`.
+- `_updateIndexes` grows the liquidity index only when `currLiquidityRate != 0`, and the variable borrow index only when `currScaledVariableDebt != 0`.
+- `cache` snapshots configuration, indexes, rates, token addresses, and `scaledTotalSupply` of the variable debt token. This library does not `transfer` underlying.
+
+Do not file index / treasury accrual helpers as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: primacy. Unused official Aave v3 logic leftover that listed trees open is exhausted on this pin.

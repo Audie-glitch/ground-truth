@@ -4,13 +4,15 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~13:02 UTC. Dates verified against each
+Status as of 3 September 2026, ~12:55 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~13:02 UTC;
-246 programs; no Sep 2026 launches; Aave leftover remaining v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover is logged;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
+246 programs; no Sep 2026 launches; Aave leftover remaining v3 ReserveLogic leftover is logged;
+Jito leftover remaining jito-solana banking_stage leftover is logged;
+Aave leftover remaining v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover is logged;
 Aave leftover remaining v3 ValidationLogic + GenericLogic leftover is logged;
 Aave leftover remaining v3 money-path logic leftover is logged;
 Rootstock leftover remaining rsk-powhsm leftover is logged;
@@ -1605,9 +1607,21 @@ v3 ValidationLogic + GenericLogic leftover
 (`cff15de`; KYC) is logged.
 Aave leftover remaining
 v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover
+(`cff15de`; KYC) is logged.
+Aave leftover remaining
+v3 ReserveLogic leftover
 (`cff15de`; KYC) is logged
 (remaining listed is
-primacy).
+primacy; unused official v3
+logic leftover that listed
+trees open is exhausted).
+Jito leftover remaining
+jito-solana banking_stage leftover
+(`d0e3a47`; KYC) is logged
+(remaining listed is
+`jito-solana` other crates
+(proxy / forwarding / replay)
+if still unused).
 Rootstock leftover remaining
 powpeg-node pegout leftover
 (`254fb3d`; KYC) is logged.
@@ -2620,6 +2634,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Aave leftover remaining
   v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover
   (`cff15de`; KYC),
+  Aave leftover remaining
+  v3 ReserveLogic leftover
+  (`cff15de`; KYC),
+  Jito leftover remaining
+  jito-solana banking_stage leftover
+  (`d0e3a47`; KYC),
   Rootstock leftover remaining
   rsk-powhsm leftover
   (`82a12d44efec`; KYC),
