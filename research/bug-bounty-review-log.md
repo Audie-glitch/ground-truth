@@ -71080,3 +71080,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a permission-tagged JSON-RPC helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches.
+
+## 2026-09-03: Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after go-jsonrpc leftover (avoid lotus collision). Official `filecoin-project/go-fil-markets` `6e1b1dc05c39` (`6e1b1dc05c39ea26ecd23c0b245b56c2b9325a9a`, merge `release/v1.28.3`). Opened listed `storagemarket/impl/requestvalidation/{unified_request_validator,common}.go`, `storagemarket/impl/providerstates/provider_states.go`, `storagemarket/impl/providerutils/providerutils.go`, `retrievalmarket/impl/requestvalidation/requestvalidation.go`, `retrievalmarket/impl/providerstates/provider_states.go`, `retrievalmarket/impl/provider.go`, and `retrievalmarket/types.go` (`OutstandingBalance` / `NextInterval`). Do not rematch lotus market leftover or go-data-transfer leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger storage deal that locks another user's market escrow; provider collateral reserved from a non-miner address; retrieval voucher redeem that credits FIL without a paych voucher; data-transfer restart that resumes another peer's deal.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ValidateDealProposal` calls `VerifyProposal`, which CBOR-dumps `ClientDealProposal.Proposal` and verifies `ClientSignature` against `Proposal.Client`. Provider must equal `environment.Address()`. PieceCID prefix, duration, collateral bounds, ask price, and piece-size gates reject before accept. Client market-balance and verified DataCap checks are filters only; on-chain lock still happens in `PublishDeals`.
+- `ReserveProviderFunds` looks up the miner worker and calls `ReserveFunds(waddr, Proposal.Provider, ProviderCollateral)`. It does not touch `Proposal.Client` escrow.
+- Storage DT `ValidatePush` / `ValidatePull` bind a `StorageDataTransferVoucher` and require that proposal CID in the local deal store, matching root CID, and an acceptable deal state. Sender/receiver peer IDs are unused; a guessed proposal CID can only disrupt an in-progress transfer (CommP mismatch / deal fail), not move FIL.
+- Retrieval `ValidatePush` is rejected. `validatePull` requires payload CID + selector match, a known piece, `CheckDealParams` against the ask, and optional custom decisioning. Accept is `ForcePause` with `DataLimit = NextInterval(0)` and unseal status when `UnsealPrice > 0`. Restart keys the deal as `{DealID, OtherPeer}`.
+- `savePayment` forwards `DealPayment.PaymentVoucher` to `Node.SavePaymentVoucher`. Interval math is `OutstandingBalance(fundsReceived, queued, inFinalization)` plus `DataLimit`. This crate does not redeem paych or add market escrow; lotus paych leftover already covers voucher save.
+
+Do not file a signed-proposal storage FSM or interval-gated retrieval voucher as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches (`go-state-types` / `go-paramfetch` / `go-commp-utils` if still unused).
