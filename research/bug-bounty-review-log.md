@@ -44896,8 +44896,10 @@ Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
 is logged.
 Filecoin leftover remaining lotus lib backupds leftover (`7740217`)
 is logged.
+Filecoin leftover remaining lotus lib rpcenc leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus lib (rpcenc / peermgr) if still unused.
+Remaining listed Filecoin: remaining lotus lib (peermgr) if still unused.
 Remaining listed Aave: v3 logic libraries / primacy.
 Remaining listed Jito: `jito-solana` other crates (if still unused).
 Remaining listed Rootstock: `rskj` / `rsk-powhsm` (if still unused).
@@ -69336,3 +69338,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a local DS dump helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus lib (rpcenc / peermgr) if still unused.
+
+## 2026-09-03: Filecoin leftover remaining lotus lib rpcenc leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus lib backupds leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `lib/rpcenc`. Opened `reader.go`. JSON-RPC `io.Reader` stream encoder/decoder. Do not rematch lotus node leftover or miner leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: a stranger POSTing a UUID that becomes an unauthenticated `io.Reader` into a FIL-moving RPC; `HTTP` stream type making the node fetch an attacker URL as consensus input; `redirect` sending another node's wallet key.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ReaderParamEncoder` turns a client `io.Reader` into `ReaderStream`. `NullReader` is a byte count. `HttpReader` is a URL string. Otherwise the client HEADs, then POSTs the body to `{addr}/{uuid}`. Redirects (`302`) are followed by the client (`CheckRedirect = ErrUseLastResponse`).
+- `ReaderParamDecoder` registers a push handler. Path UUID must parse; only HEAD/POST; 30s timeout. `Null` builds a local `NullReader`. `HTTP` wraps `httpreader.HttpReader{URL}`. `push` waits on the matching UUID channel.
+- This is a stream helper for leftover-logged miner/node RPC (JWT-gated). It does not sign messages or change actor balances. `MustRedirect` / `redirect` only retarget the push URL.
+
+Do not file an `io.Reader` RPC codec as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus lib (peermgr) if still unused.
