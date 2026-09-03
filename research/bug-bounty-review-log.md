@@ -43976,9 +43976,21 @@ Filecoin leftover remaining lotus beacon leftover (`7740217`)
 is logged.
 Filecoin leftover remaining lotus net leftover (`7740217`)
 is logged.
+Aave leftover remaining protocol-v2 ValidationLogic + GenericLogic leftover (`ce53c4a`)
+is logged.
+Aave leftover remaining protocol-v2 ReserveLogic + IR strategy leftover (`ce53c4a`)
+is logged.
+Aave leftover remaining protocol-v2 ReserveConfiguration + UserConfiguration leftover (`ce53c4a`)
+is logged.
+Aave leftover remaining protocol-v2 math libs leftover (`ce53c4a`)
+is logged.
+Aave leftover remaining protocol-v2 upgradeability leftover (`ce53c4a`)
+is logged.
+Filecoin leftover remaining lotus messagesigner leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: v2 GenericLogic / ValidationLogic / ReserveLogic / IR strategy.
+Remaining listed Filecoin: remaining lotus non-miner (exchange / actors wrappers / types / index / lib).
+Remaining listed Aave: official protocol-v2 leftover that trees open is exhausted (PriceOracleSentinel + OwnableFacilitator 404).
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -68179,3 +68191,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an admin-gated v2 proxy as stranger theft.
 
 Not submitted. Payment requires user KYC. Official Aave protocol-v2 listed copies on this pin are exhausted (PriceOracleSentinel + OwnableFacilitator 404). Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Filecoin leftover remaining lotus messagesigner leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus net leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/messagesigner`. Opened `messagesigner.go` and `messagesigner_test.go`. Local nonce + wallet sign helper. Do not rematch lotus wallet leftover, lotus mpool leftover, or lotus node leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `SignMessage` signing a stranger `From` without a local key; `SaveNonce` advancing after a failed callback so a later message reuses a spent nonce; `GetSignedMessage` / `StoreSignedMessage` exposing another node's signed messages; `SigningBytes` hashing a Delegated message as a Filecoin CID.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `SignMessage` holds `lk`, assigns `NextNonce(msg.From)`, then `wallet.WalletSign` on `msg.From` with `MTChainMsg` and the serialized message bytes. The leftover-logged wallet only signs keys it holds. `spec` is unused here; gas / UUID live in leftover-logged `MpoolPushMessage`.
+- The callback must succeed before `SaveNonce`. `MpoolPushMessage` uses that callback to `MpoolPush` the signed message. A failed push leaves the datastore nonce unchanged (covered by `recover from callback error`).
+- `NextNonce` starts from `mpool.GetNonce` (actor nonce by default). If the datastore has a CBOR unsigned-int nonce, it takes `max(mpool, ds)`. A higher mempool nonce is used and logged; it is not silently ignored.
+- `SaveNonce` stores `nonce+1` under `/message-signer/ActorNextNonce/<addr>`. `GetSignedMessage` / `StoreSignedMessage` are local UUID keys in the same namespaced datastore. They do not gossip or move FIL.
+- `SigningBytes` for `address.Delegated` rebuilds an EIP-1559 RLP via `Eth1559TxArgsFromUnsignedFilecoinMessage`. Other protocols sign `msg.Cid().Bytes()`. This package does not broadcast.
+
+Do not file a local-wallet nonce helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner (exchange / actors wrappers / types / index / lib).
