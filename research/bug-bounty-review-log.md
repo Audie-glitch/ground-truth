@@ -51548,3 +51548,154 @@ listed:
 Hyperliquid ITS
 if a live deploy
 is in scope.
+
+## 2026-09-03: Axelar leftover Hyperliquid ITS live (`ff21991`)
+
+Immunefi program
+`axelarnetwork`
+($500,000, `kyc: true`).
+Listed remaining after
+tofnd
+(`41f3059`). Official
+clone `/tmp/axelar-its`
+`ff21991` (ITS
+`2.2.0`). Official
+deploy config
+`axelar-contract-deployments`
+mainnet
+`chains.hyperliquid`.
+Live HyperEVM
+RPC
+`https://rpc.hyperliquid.xyz/evm`
+(chain `999`).
+Opened
+`contracts/hyperliquid/HyperliquidInterchainTokenService.sol`,
+`HyperliquidInterchainToken.sol`,
+`HyperliquidDeployer.sol`,
+`IHyperliquidDeployer.sol`,
+and
+`InterchainToken.sol`
+mint / burn.
+No mainnet writes.
+No exploit PoCs.
+
+Live addrs:
+ITS proxy
+`0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C`
+impl
+`0x4Aca663c242D31F85b77bf27d5D7dA4cF69fa7bd`
+(runtime sha256
+`c0901b8f1dc0a03bcc77a1003e1ccf28e489784ac2386538e18376952af8dc63`,
+contains
+`updateTokenDeployer`
+selector
+`9ef650e5`);
+interchain token
+impl
+`0x5756160f4ffBCD119D8F547CDE52d68B33083286`
+(runtime sha256
+`e3e131eb120bb0812edc4685ad2e03cd6f2f6796ccf626c5ff25161098324589`,
+contains
+`updateDeployer`
+`4d413e7d`,
+`deployer()`
+`d5f39488`,
+and
+`keccak256('HyperCore deployer')`
+slot);
+factory impl
+`0x6977477Bd4C053E1BfD0B6F287060c2A4E5E1aA1`;
+token handler
+`0x79aE65Ea16E88D3a7303A7FF019353140B06F39B`;
+token manager
+`0x2be6F57fb0E69D26F8c8FbbebD8403d88fbAc09c`.
+Sourcify chain
+`999` 404.
+Routescan
+`999` unsupported.
+
+Checked for: a
+stranger
+`updateTokenDeployer`
+that retakes
+mint rights;
+`updateDeployer`
+callable
+outside ITS;
+HyperCore
+deployer slot
+aliasing ERC20
+balances or
+roles.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Live ITS impl
+  is the
+  Hyperliquid
+  subclass, not
+  vanilla ITS.
+  Extra method
+  is
+  `updateTokenDeployer`
+  gated
+  `onlyOperatorOrOwner`.
+  It reads
+  `registeredTokenAddress`
+  then calls
+  `IHyperliquidDeployer.updateDeployer`.
+- Token
+  `updateDeployer`
+  is
+  `onlyService`.
+  It writes
+  only slot
+  `keccak256('HyperCore deployer')`
+  for Core /
+  EVM spot
+  linking.
+  It does not
+  change minter
+  roles or
+  balances.
+- Inherited
+  `mint` / `burn`
+  stay
+  `onlyRole(MINTER)`.
+  ITS is added
+  as minter at
+  token setup.
+- TokenHandler /
+  TokenManager /
+  InterchainToken
+  token-moving
+  tree already
+  reviewed in
+  `fbe0017`.
+
+Do not file
+operator-gated
+HyperCore
+deployer-slot
+writes as
+stranger theft
+of ITS
+balances.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Axelar
+Hyperliquid ITS
+leftover is
+exhausted at the
+opened-file /
+live-addr
+level. Remaining
+listed: historic
+Fantom gateway
+proxy if source
+opens.
