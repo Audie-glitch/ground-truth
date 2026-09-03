@@ -26032,6 +26032,96 @@ Sourcify 404;
 unsampled addresses
 not fetched).
 
+## 2026-09-03: Orca leftover (`3b47341` / `05fe66b`)
+
+Immunefi program
+`Orca` ($500,000,
+`kyc: false`). Unique
+no-KYC listed slice.
+Listed `xORCA`
+`StaKE6XNKVVhG8Qu9hDJBqCW3eRe7MDGLz17nJZetLT`
+and `Orca Whirlpools`
+`whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc`.
+Official clones
+`/tmp/xorca` at
+`05fe66b` and
+`/tmp/whirlpools` at
+`3b47341`. No mainnet
+interaction.
+
+Files:
+`solana-program/src/instructions/{stake,unstake,withdraw,set,initialize}.rs`,
+`programs/whirlpool/src/instructions/{swap,increase_liquidity,decrease_liquidity,collect_fees,close_position}.rs`
+plus v2 variants.
+
+Checked for: stranger
+xORCA `withdraw` of
+another unstaker's
+pending; Whirlpool
+`collect_fees` /
+`decrease_liquidity`
+without the position
+NFT; `swap` that
+pulls a non-signer
+ATA.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- xORCA `stake`
+  transfers ORCA
+  from the signer ATA
+  and mints xORCA to
+  that signer.
+  `unstake` burns the
+  signer xORCA and
+  writes a pending
+  PDA seeded with
+  that unstaker.
+  `withdraw` verifies
+  that PDA against
+  the signer and pays
+  the signer ATA
+  after cooldown.
+  `set` is the stored
+  update authority.
+- Whirlpool
+  `collect_fees` /
+  `decrease_liquidity`
+  /
+  `increase_liquidity`
+  /
+  `close_position`
+  call
+  `verify_position_authority`
+  (owner or
+  delegate of the
+  position NFT).
+- `swap` /
+  `swap_v2` transfer
+  as `token_authority`
+  from the supplied
+  owner ATAs; SPL
+  requires that
+  signer.
+
+Do not file first-
+depositor vault
+inflation (xORCA
+virtual-assets math
+and tests
+disincentivize it),
+authority cooldown
+updates, or swap
+slippage as a
+stranger drain.
+
+Not submitted.
+Listed leftover is
+exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -26468,6 +26558,10 @@ Polygon `BeefyVaultV6` + common
 chef / DFYN / Curve / BIFI-maxi
 strategies) is logged (remaining
 listed is other Polygon vaults).
+Orca leftover (`3b47341` /
+`05fe66b` xORCA + Whirlpools) is
+logged (listed leftover
+exhausted).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -26919,6 +27013,11 @@ chef / DFYN / Curve /
 BIFI-maxi strategies) is
 logged (remaining listed
 is other Polygon vaults);
+Orca leftover (`3b47341` /
+`05fe66b` xORCA +
+Whirlpools) is logged
+(listed leftover
+exhausted);
 Beets stS
 (`877087b`) + token
 leftover is logged

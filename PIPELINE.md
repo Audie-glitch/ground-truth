@@ -175,6 +175,9 @@ Beefy Finance leftover (Sourcify Polygon
 `BeefyVaultV6` + common chef / DFYN /
 Curve / BIFI-maxi strategies) is logged
 (remaining listed is other Polygon vaults).
+Orca leftover (`3b47341` / `05fe66b` xORCA
++ Whirlpools) is logged (listed leftover
+exhausted).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /
