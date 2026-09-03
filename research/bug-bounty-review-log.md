@@ -37658,3 +37658,245 @@ distributors, Arb
 Sourcify-404 Staked
 Glp Distributor, and
 same-type V2 utils.
+## 2026-09-03: Kiln On-Chain v2 leftover (Sourcify)
+
+Immunefi program
+`kiln` / Kiln
+On-Chain v2
+($500,000, `kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Official
+`kilnfi` staking
+repos are 404.
+Ethereum Sourcify
+`match` on every
+probed listed
+hatcher, cub, and
+implementation.
+Nexus
+`0x8a113da63f02811e63c1e38ef615df94df5d9e70`
+is an ERC1967
+proxy to
+`Nexus`
+`0x0a08355d39a964010f1c23dd9791ec99a0131048`.
+Hatchers are
+`PluggableHatcher`
+beacons. Live
+impls: vFactory
+`0x06beba9903cdb7b4806e2958581653c145a7e8d7`,
+vTreasury
+`0xa06634ed78c5121c2a3702b90b6e3926c7b2a641`,
+vPool
+`0xa4c04e7598c5147113b7b03f606b524c630143ce`,
+vWithdrawalRecipient
+`0x4b7f5f03f2624e120e5934b3b45fa328af610183`,
+vExecLayerRecipient
+`0xe2b0ae1eaddc234e36bc6f3af09f49905b1c8efe`,
+vCoverageRecipient
+`0x6cd5ddecb0caa51b8026c4ceaf06f3323210a903`,
+vOracleAggregator
+`0xe4dfefaff7f92c86c08107b3201270fa78885319`,
+vExitQueue
+`0xc57a4b65fc95befb4f29e81a03ff3feb037d3b0d`.
+Kiln factory cub
+and Coinbase
+Cloud cub share
+`factoryHatcher`.
+Kiln / Coinbase
+pools share
+`poolHatcher`.
+Branded LSTs
+(owsETH, ocsETH,
+and the other
+listed *ETH
+wrappers) are
+ERC1967 proxies
+to Sourcify
+`exact_match`
+`Native20`
+`0x0843359cae1187b432eeb26e1b40c3a2b2374d7e`.
+No mainnet writes.
+Extract
+`/tmp/kiln-v2`.
+
+Files:
+`src/PluggableHatcher.sol`,
+`lib/utils.sol/src/Hatcher.sol`,
+`lib/utils.sol/src/Cub.sol`,
+`src/vFactory.sol`,
+`src/vPool.sol`,
+`src/vExitQueue.sol`,
+`src/vOracleAggregator.sol`,
+`src/vWithdrawalRecipient.sol`,
+`src/vExecLayerRecipient.sol`,
+`src/vCoverageRecipient.sol`,
+`src/vTreasury.sol`,
+`src/Nexus.sol`,
+`src/Native20.sol`,
+`src/MultiPool20.sol`,
+`src/MultiPool.sol`.
+
+Checked for: a
+stranger deposit
+that sets another
+owner; factory
+`withdraw` /
+`setOwner` without
+the current owner;
+pool share mint
+to the caller on
+someone else's
+ETH; first-depositor
+donation inflation
+via `injectEther`;
+exit-queue `claim`
+that pays the
+caller; recipient
+`pull` to a
+non-pool; oracle
+`submitReport` by
+a non-member;
+Native20 `stake` /
+`requestExit`
+mis-attribution;
+Nexus `spawnPool`
+by a stranger;
+Cub
+`___initializeCub`
+hijack.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- vFactory
+  `deposit` is
+  `onlyDepositor(wc)`
+  and writes
+  `owner` from the
+  calldata of that
+  allowed depositor
+  (the pool passes
+  `address(this)`).
+  `setOwner` /
+  `setFeeRecipient`
+  / `exit` /
+  `_withdraw`
+  require
+  `d.owner ==
+  msg.sender`.
+  Dedicated-channel
+  withdraw deploys
+  the CREATE2
+  minimal recipient
+  and pays
+  `recipient` from
+  the owner call.
+- vPool `deposit`
+  is `onlyDepositor`
+  and mints to
+  `msg.sender`.
+  First
+  `0.1 ether` of
+  underlying mints
+  1:1, then
+  `mulDiv`.
+  `injectEther` is
+  recipient / exit
+  queue only.
+  `transferShares`
+  moves
+  `msg.sender`.
+  `purchaseValidators`
+  is permissionless
+  but spends the
+  pool's committed
+  ETH into the
+  factory.
+- vExitQueue
+  `claim` is
+  permissionless
+  and pays
+  `ownerOf(ticket)`.
+  Tickets mint to
+  the share sender
+  or a packed
+  20-byte
+  recipient the
+  sender chose.
+  `pull` is
+  `onlyPool`.
+- Recipients
+  `pull` /
+  `cover` /
+  `requestTotalExits`
+  are `onlyPool`.
+  Coverage
+  `removeEther` /
+  `removeShares`
+  are admin.
+  Treasury
+  `withdraw` is
+  operator or
+  global recipient.
+- Oracle
+  `submitReport`
+  is
+  `onlyOracleMember`
+  and needs
+  quorum before
+  `vPool.report`.
+- Nexus
+  `spawnFactory` /
+  `spawnPool` /
+  hatcher replace
+  are `onlyAdmin`.
+- Native20
+  `stake` mints
+  wrapper shares
+  to `msg.sender`.
+  `requestExit`
+  burns
+  `msg.sender` and
+  prints exit
+  tickets to
+  `msg.sender`.
+- Cub
+  `___initializeCub`
+  is same-tx after
+  CREATE2 from the
+  hatcher.
+  `hatch` /
+  `plug` are
+  admin / nexus.
+  Upgrade / global
+  fix
+  `delegatecall`
+  is hatcher
+  admin.
+
+Do not file
+admin / operator /
+oracle-quorum /
+treasury
+commission, or
+permissionless
+`purchaseValidators`
+/ `claim` of a
+correctly-owned
+ticket, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Kiln
+On-Chain v2
+smart-contract
+leftover is
+exhausted at the
+opened-contract
+level.
