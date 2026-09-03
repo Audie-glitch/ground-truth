@@ -3006,6 +3006,76 @@ Origin Sep-1 Solidity named on Immunefi, including the
 CoW harvester and governance/timelock wrappers, is
 exhausted. Not submitted.
 
+## 2026-09-03: 1inch Aqua solidity-utils mixins + libraries (`5b597e4`)
+
+Same Immunefi program `1inch-aqua` ($100k, KYC). Local clone
+`/tmp/reviews/1inch-solidity-utils` at `5b597e4`. No
+mainnet interaction. Aqua opcodes / core already logged.
+
+Files: `contracts/mixins/{Simulator,Multicall,Rescuable,
+EthReceiver,OnlyWethReceiver}.sol`,
+`contracts/libraries/{SafeERC20,ECDSA,UniERC20,
+TransientLock,Transient,Calldata,CalldataPtr,
+RevertReasonForwarder,StringUtil}.sol`.
+
+Composition on this program: `AquaRouter` is
+`Aqua + Simulator + Multicall + Rescuable`.
+`AquaSwapVMRouter` is `Simulator + SwapVM + AquaOpcodes`
+(`SwapVM` is `OnlyWethReceiver + Rescuable`).
+
+Checked for: `simulate` that persists a drain if a
+later revert is swallowed; `multicall` msg.value
+reuse against a payable Aqua path; `rescueFunds` that
+pulls a maker’s shipped allowance; permit assembly
+that approves a third-party spender; ECDSA recover
+that accepts a high-`s` malleable signature;
+transient lock that unlocks a different slot.
+
+Result: no user-exploitable finding.
+
+- `Simulator.simulate` always `revert Simulated(...)`
+  after the delegatecall. A parent `try/catch` still
+  reverts that frame, so token/ETH moves inside the
+  simulation unwind. Empty storage on the mixin;
+  no collision with Aqua `_balances` or Ownable.
+- `Multicall` delegatecalls `address(this)` and
+  bubbles the first revert. Aqua `ship` / `dock` /
+  `pull` / `push` are not payable. Sending ETH with
+  `multicall` can only donate to the router; the
+  owner can `rescueFunds` it. Not an extract.
+- `Rescuable.rescueFunds` is `onlyOwner` and
+  `uniTransfer`s the router’s own balance. Aqua
+  accounting is virtual; makers keep tokens and
+  grant allowance. Owner cannot pull a shipped
+  maker inventory.
+- `SafeERC20.tryPermit` dispatches by length
+  (compact/full ERC-2612, DAI, Permit2, ERC-7597
+  default). Owner/spender are taken from the
+  Solidity arguments, not from attacker-controlled
+  permit body on the compact paths. Compact
+  deadline/expiry are documented as `stored - 1`.
+- `ECDSA.recover` rejects `s >= n/2 + 1` and leaves
+  `signer == 0`. `recoverOrIsValidSignature`
+  refuses `address(0)` before EIP-1271. Compact vs
+  65-byte malleability is documented; Aqua order
+  hashes are not invalidated by raw signature
+  bytes (Aqua mode hashes the order; signed mode
+  uses EIP-712).
+- `TransientLib` tstore/tload at `slot + OFFSET`.
+  `TransientLock.lock` requires `inc() == 1`.
+  `Calldata.slice` unchecked variants are
+  caller-gated; the bounds-checked overloads
+  revert on `end > length`.
+- `EthReceiver` rejects EOA `tx.origin` deposits.
+  `OnlyWethReceiver` accepts only the constructor
+  WETH. `UniERC20` treats `address(0)` and
+  `0xEeee…` as native; `uniTransferFrom` refunds
+  excess `msg.value` to `from` and forbids
+  `from != msg.sender`.
+
+Aqua-listed solidity-utils files treated as
+exhausted. Do not submit. Payment requires user KYC.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3028,16 +3098,17 @@ Alchemix V3 alchemist + transmuter + alUSD +
 token-vault + MYT adapter / allocator / router / fee
 vaults + concrete strategies / Euler adapter /
 `StakingGraph`, and Horizen ZenStaker +
-RewardAccumulator (`ab92502`) are exhausted. Origin
-in-scope Solidity listed as remaining is exhausted
-(including CoW `HarvestingEIP1271`, live
+RewardAccumulator (`ab92502`), 1inch Aqua
+solidity-utils mixins / libraries (`5b597e4`) are
+exhausted. Origin in-scope Solidity listed as remaining
+is exhausted (including CoW `HarvestingEIP1271`, live
 `FixedRateRewardsSource`, and the OZ Governor wrapper).
 Remaining Alchemix: none of the previously listed
 leftover `src/` files. Remaining MoC: governance
 machines and live Rootstock v1 proxies if a later
 pass wants addresses rather than the V2 tree. 1inch
-Aqua opcode set already logged; remaining Aqua-listed
-files are solidity-utils mixins. Superteam API
+Aqua opcode set and Aqua-listed solidity-utils mixins
+/ libraries (`5b597e4`) are exhausted. Superteam API
 rechecked 03:40 UTC 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
