@@ -40645,12 +40645,16 @@ logged. Hedera leftover remaining cryptography leftover
 leftover (`5b785ed`) is logged. Hedera leftover remaining
 mirror-node leftover (`abfc59f`) is logged.
 Hedera leftover hiero-mirror-node importer leftover
-(`abfc59f`) is logged. Filecoin leftover remaining boost
-leftover (`240aa6e`) is logged. Remaining listed Hedera:
-`hiero-sdk-java` / `hiero-sdk-go`, transaction-tool
-website. Do not rematch consensus-node handlers,
-json-rpc-relay, cryptography, Node handlers, sdk-js,
-or mirror-node Rosetta / web3 `/call` / importer.
+(`abfc59f`) is logged. Hedera leftover remaining SDK-java
+leftover (`eedd4b3`) is logged. Hedera leftover remaining
+SDK-go leftover (`029d087`) is logged. Filecoin leftover
+remaining boost leftover (`240aa6e`) is logged. Filecoin
+leftover remaining go-f3 leftover (`5f2c984`) is logged.
+Remaining listed Hedera: hashed transaction-tool website.
+Remaining listed Filecoin: lotus / proofs / FVM /
+filecoin.io. Do not rematch Hedera consensus-node,
+json-rpc-relay, cryptography, SDKs, or mirror-node.
+Do not rematch Filecoin builtin-actors, boost, or go-f3.
 Do not loop `reffinance` 404s or mux-staking auth.
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -63552,3 +63556,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file client-side builders or operator-only signing as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: the hashed transaction-tool website leftover.
+
+## 2026-09-03: Filecoin leftover remaining go-f3 leftover (`5f2c984`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Listed remaining after builtin-actors and boost leftovers. Official clone `/tmp/filecoin-gof3` at `5f2c984` (`chore: bump go-f3 version to v0.8.14`). Opened `gpbft/validator.go`, `blssig/verifier.go`, `blssig/aggregation.go`, `certs/certs.go`. Do not rematch market / paych / miner / evm / reward / power / datacap / verifreg / boost leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `ValidateMessage` accepting an unsigned GPBFT vote; a justification with below-quorum power; `ValidateFinalityCertificates` accepting an aggregate that does not match the power table.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `cachingValidator.ValidateMessage` verifies the sender BLS signature via `verifier.Verify(senderPubKey, sigPayload, msg.Signature)` and requires justification phase/round/value consistency. Justification signers must reach `IsStrongQuorum` of scaled power, then `AggregateVerifier.VerifyAggregate`.
+- `blssig.Verifier.Verify` rejects a non-48-byte / null G1 public key and delegates to kyber BDN `scheme.Verify`. Aggregate verify uses the same scheme over the signer mask.
+- `ValidateFinalityCertificates` requires strong-quorum signer power and `aggregate.VerifyAggregate` over the certificate payload.
+
+Do not file BLS-verified GPBFT votes or quorum-gated finality certs as stranger theft. go-f3 does not move FIL by itself.
+
+Not submitted. Payment requires user KYC. Remaining listed: lotus / proofs / FVM / filecoin.io.
