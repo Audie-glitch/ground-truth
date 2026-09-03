@@ -1945,15 +1945,68 @@ and forbids theoretical reports.
 
 Not submitted.
 
+## 2026-09-03: Origin WOETH / WOUSD + Ethena ARM (`4fa0602` / `2322537`)
+
+Immunefi program `originprotocol` ($1,000,000, `kyc: false`).
+Wrapped Super OETH (Base `wsuperOETHb`) and Ethena ARM /
+Aave market / Unstaker were added Jul–Aug 2026. Local
+clones `/tmp/origin-dollar` `4fa0602` and `/tmp/arm-oeth`
+`2322537`. No mainnet interaction.
+
+Files: `contracts/contracts/token/{WOETH,WOETHBase,WrappedOusd}.sol`,
+`src/contracts/{AbstractARM,EthenaARM,EthenaUnstaker}.sol`,
+`src/contracts/adapters/EthenaAssetAdapter.sol`,
+`src/contracts/markets/Abstract4626MarketWrapper.sol`.
+
+Checked for: a WOETH donation that inflates
+`convertToAssets`; wrapping that ignores the rebase
+adjuster; an ARM swap of an unlisted pair; claiming
+another LP's redeem; adapter `redeem` that sends USDe
+off-ARM; a non-ARM deposit into the Aave 4626 wrapper.
+
+Result: no user-exploitable finding.
+
+- WOETH is ERC-4626 over rebasing OETH. `totalAssets` /
+  `convertToShares` / `convertToAssets` use
+  `adjuster` and `rebasingCreditsPerTokenHighres()`,
+  not the live OETH balance, so later donations are
+  ignored. `initialize2` snapshots `adjuster` once
+  (`1e27` if supply is 0). Governor
+  `transferToken` cannot collect the core asset.
+  `WOETHBase` / `WrappedOusd` only change name/symbol.
+- ARM swaps are USDe ↔ a configured base (sUSDe) with
+  operator prices and remaining-liquidity caps.
+  `nonReentrant` + `whenNotPaused`. Output is paid
+  after `transferFrom`. Buy-side fees accrue from
+  realized gain × `fee`. Two-token Uniswap-v2 path
+  only.
+- LP `deposit` pulls USDe then mints
+  `assets * supply / netAssets`. Floor + live LPs
+  reverts `Insolvent`. Redeem escrows shares, FIFO
+  `queued <= claimable()`, delay, min(request-time,
+  claim-time) assets. Operator may claim for the
+  requester. Dead shares + `MIN_LIQUIDITY` block
+  empty-supply donation.
+- `EthenaAssetAdapter.requestRedeem` / `redeem` are
+  `onlyARM`. Cooldowns rotate across 42 unstakers;
+  `claimUnstake` sends USDe to the ARM. The 4626
+  market wrapper `deposit`/`withdraw` require
+  `msg.sender == receiver == arm`. `allocate()` is
+  permissionless but only moves USDe between the ARM
+  and that wrapper.
+
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
 the full `diamond-pau` facet tree at `1b6743a`,
 Intuition MultiVault / AtomWallet / curves / emissions /
 registry / `TrustSwapAndBridgeRouter` (`bb34cc2`), and
-Origin OUSD vault + Curve AMO (`4fa0602`) are exhausted.
-Remaining Origin: Ethena ARM / Wrapped Super OETH / other
-Sep-1 OUSD strategies. Superteam API rechecked 03:06 UTC
+Origin OUSD vault + Curve AMO + WOETH/WOUSD + Ethena ARM
+are exhausted. Remaining Origin: other Sep-1 OUSD
+strategies (Morpho already reviewed). Superteam API
+rechecked 03:06 UTC
 3 Sep: still 28 open listings. `AGENT_ALLOWED` is still
 only Steve Arena and ZNS — do not execute. Mermail skill
 is built (`mermail-onchain-receipts/`); remaining work is
