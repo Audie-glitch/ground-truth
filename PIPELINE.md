@@ -37,12 +37,14 @@ Maximillion, Sourcify `match` + `e0cfd24`) is
 logged. Benqi QI token leftover (Sourcify
 `match` + `e0cfd24`) is logged. Benqi
 token-sale leftover (`exact_match` +
-`e0cfd24`) is logged (remaining Benqi is
-isolated unitroller Sourcify 404 / gauges /
-sAVAX / veQI proxy-only / Ignite /
-MultiReward / JumpRateModel / Pause Guardian /
-sAVAX timelock / JLP staking Sourcify 404 /
-PGL staking proxy `match`).
+`e0cfd24`) is logged. Benqi PGL staking
+leftover (`match` + `e0cfd24`) is logged
+(remaining Benqi is isolated unitroller
+Sourcify 404 / gauges / sAVAX / veQI
+proxy-only / Ignite / MultiReward /
+JumpRateModel / Pause Guardian / sAVAX
+timelock / JLP staking Sourcify 404;
+listed Sourcify-open leftover exhausted).
 Harvest vault /
 controller leftover (`0364901`) and 4626 / Dolomite
 lend leftover and Convex / Aura / Aave fold leftover

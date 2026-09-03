@@ -18404,6 +18404,89 @@ timelock / JLP staking
 staking proxy
 (`match`).
 
+## 2026-09-03: Benqi PGL staking leftover (`e0cfd24`)
+
+Immunefi program
+`benqi`
+($500,000, `kyc: false`).
+Token-sale leftover is
+already logged. This
+slice is
+PglStakingContractProxy
+`0x784DA19e61cf348a8c54547531795ECfee2AfFd1`.
+Avalanche Sourcify
+`match` (solc 0.5.17,
+`PglStakingContractProxy.sol`).
+Official tree
+`pgl_staking/` at
+`e0cfd24`. No mainnet
+interaction.
+
+Files:
+`pgl_staking/PglStakingContract.sol`,
+`PglStakingContractProxy.sol`,
+`PglStakingContractStorage.sol`.
+
+Checked for: a
+stranger redeeming
+another staker’s PGL;
+claim that pays more
+reward than accrued;
+deposit that credits
+more shares than
+tokens received.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `deposit` measures
+  `balanceOf` before /
+  after `transferFrom`
+  and credits
+  `msg.sender` with
+  the received amount.
+- `redeem` requires
+  `pglAmount <=
+  supplyAmount[msg.sender]`
+  and transfers PGL
+  to `msg.sender`.
+- `claimRewards` only
+  pays
+  `accruedReward[msg.sender][QI]`
+  via `claimErc20`.
+  AVAX claimable is
+  hardcoded 0 (comment:
+  erroneously emitted
+  AVAX). Do not file
+  stuck AVAX as theft.
+- Reward speeds and
+  token addresses are
+  `adminOnly`. Proxy
+  implementation swap
+  is admin / pending
+  implementation.
+
+Do not file admin
+token-address changes
+or the AVAX-zero
+view as a user
+finding.
+
+Not submitted.
+Remaining Benqi
+listed: isolated
+unitroller (Sourcify
+404), gauges / sAVAX /
+veQI (proxy-only),
+Ignite / MultiReward /
+JumpRateModel / Pause
+Guardian / sAVAX
+timelock / JLP staking
+(Sourcify 404). Listed
+Sourcify-open Benqi
+leftover is exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -18939,6 +19022,9 @@ Benqi QI token leftover
 is logged. Benqi token-
 sale leftover
 (`exact_match` +
+`e0cfd24`) is logged.
+Benqi PGL staking
+leftover (`match` +
 `e0cfd24`) is logged
 (remaining Benqi is
 isolated unitroller
@@ -18948,8 +19034,9 @@ sAVAX / veQI proxy-only
 JumpRateModel / Pause
 Guardian / sAVAX
 timelock / JLP staking
-Sourcify 404 / PGL
-staking proxy `match`);
+Sourcify 404; listed
+Sourcify-open leftover
+exhausted);
 Harvest vault / controller
 leftover (`0364901`) and
 4626 / Dolomite lend
