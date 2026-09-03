@@ -73231,3 +73231,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an authorized-node fulfill or expired requester cancel as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink llo-feeds / OCR / core node / websites if still unused.
+
+## 2026-09-03: Chainlink leftover remaining chainlink-evm llo-feeds leftover (`b274ca1`)
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after operatorforwarder leftover. Official `smartcontractkit/chainlink-evm` `b274ca1` (`b274ca1ca00559ad434ca8f43026b16a6a196242`). Opened listed `contracts/src/v0.8/llo-feeds/v0.5.1/{FeeManager,RewardManager,VerifierProxy}.sol`. Extract `/tmp/cl-llo/`. Do not rematch operatorforwarder leftover, payments leftover, or VRF leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `processFee` that bills a stranger; `claimRewards` that pays the caller a recipient's share; `withdraw` that drains without owner; `onFeePaid` that credits a self-chosen pot.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `VerifierProxy.verify` / `verifyBulk` pass `msg.sender` as `subscriber` into `FeeManager.processFee` (`onlyProxy`). Fees are LINK or native from that subscriber; v1 reports are free. Expired reports revert. Discounts / surcharge / recipients are owner (or proxy) gated. `withdraw` / `payLinkDeficit` are `onlyOwner`. Surplus native is refunded to the subscriber.
+- `RewardManager.onFeePaid` is `onlyFeeManager` and `transferFrom`s the payer. `claimRewards` pays `msg.sender` their stored weight of pot growth since last claim. `payRecipients` is owner or an existing pool recipient and pays the named addresses, not the caller. `setRewardRecipients` is once-per-pool and weights must sum to 1e18. `updateRewardRecipients` / `setFeeManager` are owner-only.
+- Proxy verifier routing uses the report config digest; access controller and fee-manager setters are owner-only.
+
+Do not file a subscriber-paid verify or weighted recipient claim as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink OCR / core node / websites if still unused.
