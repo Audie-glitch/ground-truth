@@ -64364,3 +64364,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a pairing library that subgroup-checks affine decode as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner / go-data-transfer.
+
+## 2026-09-03: Wormhole leftover remaining wormchain leftover (`c58827e`)
+
+Immunefi program `wormhole` ($1,000,000, `kyc: true`). Official remaining listed after CosmWasm leftovers. Official clone `/tmp/wormhole` `c58827e` (sparse `wormchain`). Opened `x/tokenfactory` msg_server / bankactions / wasm bindings, `x/wormhole` `VerifyGovernanceVAA` / `ExecuteGovernanceVAA`, `x/ibc-hooks` `OnRecvPacketOverride`, and `x/ibc-composability-mw` `OnRecvPacket`. No mainnet writes. No exploit PoCs.
+
+Checked for: non-admin tokenfactory mint/burn/force-transfer; wasm bindings minting as a stranger; governance VAA without quorum; IBC memo hijack paying an attacker.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Tokenfactory `Mint` / `Burn` / `ChangeAdmin` require `msg.Sender == denom admin`. `CreateDenom` sets the creator as admin. `ForceTransfer` / `BurnFrom` / `SetDenomMetadata` are capability-gated; `app.go` passes `tokenFactoryCapabilities = []string{}` so `IsCapabilityEnabled` is false. Wasm bindings dispatch as `contractAddr` through the same msg server, then `SendCoins` from the contract to the mint recipient.
+- `ExecuteGovernanceVAA` calls `VerifyGovernanceVAA` (quorum signatures, replay index, governance emitter/chain, Core module, target chain 0 or this chain) and only applies `ActionGuardianSetUpdate`.
+- IBC hooks wasm memo overrides the ICS20 receiver to a channel+sender derived intermediate, then executes the memo contract as that sender with those funds. Composability MW only rewrites gateway memos to PFM or ibc-hooks targeting the stored translator contract.
+
+Do not file admin-gated factory mint or a derived-sender IBC hook as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / algorand / aptos / near, and Relayer Sourcify 404.
