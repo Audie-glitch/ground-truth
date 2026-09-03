@@ -72289,3 +72289,22 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a test-only snapshot shrinker as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`snapshot_utils` / `snapshot_bank_utils` / `bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Optimism leftover remaining websites leftover
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining listed after op-reth consensus leftover. Listed `websites_and_applications` assets. Live fetch 2026-09-03 via Firecrawl + HEAD. Do not rematch op-reth leftover or L1 portal leftover. No mainnet writes. No exploit PoCs.
+
+Opened: `https://app.optimism.io/` (serves `/bridge/deposit`), `https://www.optimism.io/`, `https://console.optimism.io/`, `https://docs.optimism.io/`, plus HEAD of `community.optimism.io` (→ docs governance), `specs.optimism.io`, `gateway.optimism.io` (→ app.optimism.io), `jobs.optimism.io` (→ careers), `enterprise.optimism.io`.
+
+Checked for: an official page that asks for a seed phrase or private key; a first-party wallet connect that signs a stranger transfer; a faucet or bridge UI that drains a connected mainnet wallet.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `app.optimism.io` is a terms gate plus a link to Superbridge (`superbridge.app/optimism`). Copy says they will never ask for keys. Third-party bridges are labeled as independent. `gateway.optimism.io` redirects here.
+- `www.optimism.io` is marketing / enterprise scheduling. No wallet connect.
+- `console.optimism.io` is a developer console (faucet, relayer, templates). Sign-in is Privy. Faucet is test ETH. Superchain Safe is a separate welcome URL. Docs and specs are documentation.
+- These pages do not custody user funds or submit L1 withdrawals.
+
+Do not file a third-party Superbridge link as an official first-party drain.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused official leftovers on other standing programs if still open.
