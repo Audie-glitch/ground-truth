@@ -28613,6 +28613,10 @@ WithdrawVault) is logged (listed
 leftover that Sourcify opens is
 exhausted; remaining listed is
 the website).
+Gamma leftover (Sourcify ETH
+xGamma / Hypervisor / UniProxy)
+is logged (listed leftover that
+Sourcify opens is exhausted).
 Beefy Finance leftover (Sourcify
 Polygon `BeefyVaultV6` + common
 chef / DFYN / Curve / BIFI-maxi
@@ -28730,10 +28734,16 @@ wrappers leftover
 (`19e7cde` TrancheWrapper /
 IdleTokenWrapper /
 wstETH Balancer /
-Keyring) is logged
+Keyring) is logged.
+Pareto Credit leftover
+Fulcrum leftover (Sourcify
+`IdleFulcrumV2` plus live
+CDO / queue / strategy
+impls of already-reviewed
+types) is logged
 (remaining listed is
-proxy impls / other
-docs addresses).
+Sourcify 404 docs
+addresses).
 Synthetix deposit leftover
 (Blockscout
 `SynthetixDepositContract` /
@@ -28743,10 +28753,13 @@ exhausted at the three
 Ethereum addresses).
 RootstockLabs RIF token leftover
 (Sourcify `match` `RIFToken`)
-is logged (KYC; remaining
-listed is PegIn / PegOut /
-Collateral / Flyover rows
-plus GitHub DLT / web).
+is logged (KYC).
+RootstockLabs leftover PegIn /
+PegOut / Collateral (Blockscout)
+is logged (KYC; Flyover leftover
+exhausted at the opened-contract
+level; remaining listed is
+GitHub DLT / web).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -29350,10 +29363,16 @@ wrappers leftover
 (`19e7cde` TrancheWrapper /
 IdleTokenWrapper /
 wstETH Balancer /
-Keyring) is logged
+Keyring) is logged;
+Pareto Credit leftover
+Fulcrum leftover (Sourcify
+`IdleFulcrumV2` plus live
+CDO / queue / strategy
+impls of already-reviewed
+types) is logged
 (remaining listed is
-proxy impls / other
-docs addresses);
+Sourcify 404 docs
+addresses);
 Synthetix deposit leftover
 (Blockscout
 `SynthetixDepositContract` /
@@ -29362,10 +29381,13 @@ is logged (listed leftover
 exhausted at the three
 Ethereum addresses);
 RootstockLabs RIF token leftover
-(Sourcify) is logged (KYC;
-remaining listed is PegIn /
-PegOut / Collateral / Flyover
-rows plus GitHub DLT / web);
+(Sourcify) is logged (KYC).
+RootstockLabs leftover PegIn /
+PegOut / Collateral (Blockscout)
+is logged (KYC; Flyover leftover
+exhausted at the opened-contract
+level; remaining listed is
+GitHub DLT / web);
 Beets stS
 (`877087b`) + token
 leftover is logged
@@ -31624,3 +31646,111 @@ level. Remaining
 listed: GitHub DLT
 / web assets
 (KYC).
+
+## 2026-09-03: Pareto Credit leftover Fulcrum leftover (Sourcify)
+
+Immunefi program
+`Pareto Credit` ($50,000,
+`kyc: false`). Official
+clone leftovers through
+wrappers are already
+logged. This slice is
+the remaining listed
+docs vault-address
+page: EIP-1967 impls
+behind live Ethereum
+vault / queue /
+strategy proxies, plus
+the one Sourcify-open
+docs address that is
+not that family.
+Read-only
+`eth_getStorageAt` for
+impl slots. No other
+mainnet interaction.
+Extract
+`/tmp/idle-fulcrum`.
+
+Live impls Sourcify-
+open as already-
+reviewed types:
+`IdleCDOEpochVariant`
+(`0xdd59…a18d`,
+`0x6de6…a53f`,
+`0xf70e…8754`),
+`IdleCreditVault`
+(`0x5557…a4a7`,
+`0x6256…e489`,
+`0xc499…855a`),
+`IdleCDOEpochQueue`
+(`0x49ba…1933`,
+`0xc05b…14e4`,
+`0x420d…2057`),
+and `IdleCDOTranche`
+(`0x4505…85bE` and
+siblings). Unique
+new file is
+`IdleFulcrumV2`
+`0x463465c334742D72907CA5fB97db44688B4EC3dC`
+(Sourcify `match`).
+
+Files:
+`IdleFulcrumV2.sol`.
+
+Checked for: a
+stranger `mint` that
+credits the caller
+without being
+IdleToken; `redeem`
+that pays an
+arbitrary account
+without `onlyIdle`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `mint` /
+  `redeem` are
+  `onlyIdle`.
+  `mint` spends
+  this contract's
+  underlying and
+  Fulcrum-mints
+  iTokens to
+  `msg.sender`
+  (IdleToken).
+  `redeem` burns
+  this contract's
+  iTokens to
+  `_account`.
+- `setIdleToken`
+  is `onlyOwner`
+  and once.
+  Remaining
+  methods are
+  views.
+
+Do not file owner
+IdleToken bind,
+Fulcrum liquidity
+require, or same-
+bytecode live CDO /
+queue / strategy
+impls as a new
+finding.
+
+Not submitted.
+Listed leftover is
+the docs-page
+Fulcrum adapter and
+the confirmation
+that live vault
+proxy impls match
+already-reviewed
+types. Remaining
+listed: Sourcify
+404 docs addresses
+and other docs
+rows.

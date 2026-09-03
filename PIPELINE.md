@@ -4,13 +4,13 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~08:10 UTC. Dates verified against each
+Status as of 3 September 2026, ~08:13 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:07 UTC;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:10 UTC;
 246 programs; no Sep 2026 launches; Pareto Credit leftover
-wrappers leftover is logged). KeeperHub
+Fulcrum leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -281,8 +281,12 @@ programmable borrower) is logged.
 Pareto Credit leftover wrappers leftover
 (`19e7cde` TrancheWrapper /
 IdleTokenWrapper / wstETH Balancer /
-Keyring) is logged (remaining listed is
-proxy impls / other docs addresses).
+Keyring) is logged.
+Pareto Credit leftover Fulcrum leftover
+(Sourcify `IdleFulcrumV2` plus live CDO /
+queue / strategy impls of already-reviewed
+types) is logged (remaining listed is
+Sourcify 404 docs addresses).
 Synthetix deposit leftover (Blockscout
 `SynthetixDepositContract` / lens /
 PermissionsRegistry) is logged
@@ -292,8 +296,11 @@ Puffer Finance leftover (Sourcify
 `PufferDepositor` / `PufferVaultV5`) is
 logged.
 RootstockLabs RIF token leftover (Sourcify,
-KYC) is logged (remaining listed is PegIn /
-PegOut / Collateral / Flyover rows plus
+KYC) is logged.
+RootstockLabs leftover PegIn / PegOut /
+Collateral (Blockscout) is logged (KYC;
+Flyover leftover exhausted at the
+opened-contract level; remaining listed is
 GitHub DLT / web).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
