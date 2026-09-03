@@ -44898,8 +44898,10 @@ Filecoin leftover remaining lotus lib backupds leftover (`7740217`)
 is logged.
 Filecoin leftover remaining lotus lib rpcenc leftover (`7740217`)
 is logged.
+Filecoin leftover remaining lotus lib peermgr leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus lib (peermgr) if still unused.
+Remaining listed Filecoin: remaining lotus lib (httpreader / addrutil) if still unused.
 Remaining listed Aave: v3 logic libraries / primacy.
 Remaining listed Jito: `jito-solana` other crates (if still unused).
 Remaining listed Rootstock: `rskj` / `rsk-powhsm` (if still unused).
@@ -69354,3 +69356,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an `io.Reader` RPC codec as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus lib (peermgr) if still unused.
+
+## 2026-09-03: Filecoin leftover remaining lotus lib peermgr leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus lib rpcenc leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `lib/peermgr`. Opened `peermgr.go`. Local Filecoin peer-set expander. Do not rematch lotus net leftover or lotus exchange leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `AddFilecoinPeer` moving FIL; `doExpand` rewriting chain state; `Disconnect` signing a message.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `PeerMgr` tracks a local `peers` map (min 12 / max 32). `AddFilecoinPeer` / `SetPeerLatency` / `GetPeerLatency` only touch that map and emit `FilPeerEvt`. `Disconnect` deletes a peer when libp2p reports `NotConnected`.
+- `Run` ticks every 5s. Below `minFilPeers`, `expandPeers` either `Connect`s configured bootstrappers (if the set is empty) or `dht.Bootstrap`. It does not sign, does not `SetHead`, and does not change actor balances.
+
+Do not file a libp2p peer expander as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus lib (httpreader / addrutil) if still unused.
