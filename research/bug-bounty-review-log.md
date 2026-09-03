@@ -73627,3 +73627,20 @@ Do not rematch leftover-logged epoch_stakes leftover or genesis_utils leftover. 
 **No finding.** Schedule construction and slot-window arithmetic only. Leader identity comes from leftover-logged epoch vote accounts. Downstream pay is leftover-logged fee_distribution leftover / vote_reward leftover. Out of Immunefi leftover remaining for this slice.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`sysvar_account`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Jito leftover remaining jito-solana sysvar_account leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after leader_schedule leftover. Official `jito-foundation/jito-solana` `d0e3a47` (`d0e3a47ff0bd4da4994504c9628d5aa702156922`). Opened listed `runtime/src/sysvar_account.rs`. Official GitHub `GET /repos/jito-foundation/jito-solana/contents/runtime/src/sysvar_account.rs?ref=d0e3a47` **200**. Extract `/tmp/jito-alpenglow/sysvar_account.rs`. Do not rematch leftover-logged genesis_utils leftover, alpenglow_epoch_type leftover, or epoch_stakes leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `create_account` that mints a stranger-owned sysvar; `to_account` that overwrites clock/rent so a later reward overpays; `from_account` that deserializes attacker bytes as a paid sysvar.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Bank-internal sysvar serializer, not a stranger IX. It does not move live lamports. `new_account` builds `AccountSharedData::new(lamports, data_len, &sysvar::id())` with caller-supplied `InheritableAccountFields` (lamports, rent_epoch). Owner is the sysvar program.
+- `canonical_data_len` maps known sysvar IDs (clock, epoch_rewards, epoch_schedule, fees, last_restart_slot, recent_blockhashes, rent, rewards, slot_hashes, slot_history, stake_history) to their SIZE constants. Unknown IDs have no canonical size. `required_data_len` is `max(canonical, serialized)`.
+- `create_account` / `create_account_with_bincode` serialize into that buffer (`wincode` / `bincode`). `from_account` / `to_account` deserialize / overwrite the data slice. They do not store into the bank and do not credit anyone.
+- Callers (leftover-logged bank / genesis helpers) choose the lamports. This crate only packs bytes.
+
+Do not file a sysvar serializer as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused official leftover that listed remaining-runtime trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
