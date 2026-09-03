@@ -32912,6 +32912,126 @@ stacks-signer;
 stacks-common;
 Clarity VM.
 
+## 2026-09-03: Boba Network leftover ETH LightBridge leftover (Sourcify)
+
+Immunefi program
+`bobanetwork`
+($100,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+proxy
+`0x2dE73Bd1660Fbf4D521a52Ec2a91CCc106113801`
+is
+`Lib_ResolvedDelegateProxy`.
+Impl
+`0x3f7Da9C51138E0475aA26E80677d27A568cFD6b9`
+is
+`LightBridge`
+exact_match
+(same source on
+Arb 42161 and
+OP 10). Boba
+288
+`0x670b130112C6f03E17192e63c67866e67D77c3ee`
+is the same
+`LightBridge`;
+`0x0dfFd3Efe9c3237Ad7bf94252296272c96237FF5`
+resolves to
+that impl.
+Extract
+`/tmp/boba-impl`.
+Official
+`bobanetwork/boba`
+HEAD
+`a004def`
+no longer
+ships
+`LightBridge.sol`.
+No mainnet
+writes.
+
+Files:
+`contracts/LightBridge.sol`,
+`contracts/Lib_ResolvedDelegateProxy.sol`.
+
+Checked for: a
+stranger
+`teleportAsset`
+that pulls
+another
+account; a
+permissionless
+`disburseAsset`
+that pays the
+caller; a
+stranger
+`retryDisburseNative`
+or
+`withdrawBalance`
+that drains
+the lock.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `teleportAsset`
+  pulls ERC20
+  from
+  `msg.sender`
+  or requires
+  `_amount ==
+  msg.value`.
+  The
+  `AssetReceived`
+  emitter is
+  `msg.sender`.
+- `disburseAsset`
+  /
+  `retryDisburseNative`
+  are
+  `onlyDisburser`.
+  Native retry
+  pays the
+  recorded
+  `addr`.
+  `withdrawBalance`
+  /
+  token support
+  / pause are
+  `onlyOwner`.
+- Proxy
+  `setTargetContract`
+  /
+  `transferProxyOwnership`
+  are
+  owner-only
+  (`proxyCallIfNotOwner`).
+
+Do not file
+disburser-gated
+release of a
+backend-attested
+deposit to the
+recorded
+`addr`.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens is
+exhausted at
+this money-path
+level.
+Remaining listed:
+RPC / gateway /
+websocket.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -34600,6 +34720,13 @@ costs.clar / lockup if a
 later SHA opens; stacks-node /
 stackslib / stacks-signer;
 stacks-common; Clarity VM);
+Boba Network leftover ETH
+LightBridge leftover
+(Sourcify LightBridge /
+ResolvedDelegateProxy; KYC)
+is logged (remaining listed
+is RPC / gateway /
+websocket);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

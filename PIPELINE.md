@@ -84,7 +84,8 @@ Parallel leftover ETH savings +
 sPRL leftover is logged;
 Avail leftover ETH bridge leftover is logged;
 Chainlink leftover remaining VRF leftover is logged;
-Stacks leftover pox-5 leftover is logged).
+Stacks leftover pox-5 leftover is logged;
+Boba Network leftover ETH LightBridge leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -587,6 +588,12 @@ costs.clar / lockup if a later
 SHA opens; stacks-node /
 stackslib / stacks-signer;
 stacks-common; Clarity VM).
+Boba Network leftover ETH
+LightBridge leftover (Sourcify
+LightBridge /
+ResolvedDelegateProxy; KYC) is
+logged (remaining listed is
+RPC / gateway / websocket).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1213,6 +1220,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`c75c193`; KYC),
   Stacks leftover pox-5 leftover
   (`1aa80f89`; KYC),
+  Boba Network leftover ETH
+  LightBridge leftover
+  (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover
