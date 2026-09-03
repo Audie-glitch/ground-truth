@@ -7081,10 +7081,154 @@ finding. Not submitted.
   pattern).
 
 Remaining Yearn stYFI Feb:
-liquid-locker middleware /
-redemption / veYFI
-distributors if a later pass
-wants them. Not submitted.
+stYFIx / middleware / main
+RewardDistributor (this pass
+below). Not submitted.
+
+## 2026-09-03: Yearn stYFI leftover stYFIx / middleware / main distributor (Sourcify)
+
+Same Immunefi program
+`yearnfinance` ($200,000,
+`kyc: false`). February rows
+not in the prior StakedYFI /
+LL / StakingRewardDistributor
+pass: stYFIx
+`0x9C42…9d79`
+(`DelegatedStakedYFI`,
+Sourcify match, verified
+2026-02-07), Staking
+Middleware
+`0xc32b…4C020`
+(verified 2026-02-18),
+Reward Claimer
+`0xA824…5e50`
+(verified 2026-02-22), and
+stYFI Main Reward Distributor
+`0xd319…5934`
+(`RewardDistributor`,
+verified 2026-02-18). Extract
+under `/tmp/yearn/{styfix,
+styfi_mw,styfi_claimer,
+styfi_maindist}`. Official
+tree still `69e262e`. No
+mainnet interaction.
+
+Files:
+`contracts/{DelegatedStakedYFI,
+StakingMiddleware,RewardClaimer,
+RewardDistributor}.vy`.
+
+Checked for: stYFIx withdraw
+that pulls stYFI without the
+instant-whitelist assumption
+failing closed; middleware
+that lets a stranger set
+`instant_withdrawal`; main
+distributor `claim` by a
+non-component; RewardClaimer
+that claims a stranger’s
+components into the caller.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- DelegatedStakedYFI is 1:1
+  over YFI and deposits into
+  StakedYFI. `unstake` burns
+  the caller and
+  `staking.withdraw`s to
+  itself (needs the stYFI
+  instant-withdrawal
+  whitelist). User assets
+  then stream 14 days.
+  `sweep` cannot take `asset`
+  or `staking`.
+- StakingMiddleware hooks
+  require `msg.sender ==
+  upstream`. Instant
+  whitelist and transfer
+  blacklist are management.
+- RewardClaimer `claim`
+  calls each component
+  `claim(msg.sender)` and
+  forwards tokens to
+  `_recipient`.
+- RewardDistributor `claim`
+  is `nonreentrant` and only
+  pays `msg.sender` when that
+  address is a packed
+  component whose synced
+  epoch is behind current.
+
+Remaining Yearn stYFI Feb:
+veYFI / stYFIx / LL reward
+distributors and Vault V3.1.0
+(23 Jun) if wanted. Not
+submitted.
+
+## 2026-09-03: Balancer V3 Router (Sourcify)
+
+Immunefi program `balancer`
+($1,000,000, `kyc: false`).
+23 Jun 2026 add: V3 Router
+(V2) `0xAE56…8Ea2`. Sourcify
+v2 exact match, verified
+2025-04-29. Contract name
+`Router`. Extract under
+`/tmp/balancer/router`. No
+mainnet interaction.
+
+Files: `contracts/{Router,
+RouterCommon,SenderGuard,
+VaultGuard}.sol`.
+
+Checked for: a hook that
+pulls Permit2 from a
+stranger; remove-liquidity
+that sends tokens to the
+caller instead of
+`params.sender`; swap that
+skips `onlyVault`; query
+path that mutates balances.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- External API functions
+  `saveSender(msg.sender)`
+  then `_vault.unlock` into
+  the matching hook.
+  Hooks are `onlyVault` +
+  `nonReentrant`.
+- `addLiquidityHook` /
+  `initializeHook` pull
+  `params.sender` via
+  Permit2 (or wrap `msg.value`
+  when `wethIsEth`) and
+  `settle` the Vault. BPT is
+  minted `to: params.sender`.
+- `removeLiquidityHook`
+  burns BPT `from:
+  params.sender` and
+  `_vault.sendTo` /
+  unwraps WETH to that
+  sender. Recovery hook is
+  the same.
+- `swapSingleTokenHook`
+  takes `tokenIn` from
+  `params.sender` and sends
+  `tokenOut` to them.
+  Deadline is
+  `block.timestamp`.
+- Queries are separate
+  `query*` entrypoints; they
+  do not settle.
+
+Remaining Balancer 23 Jun
+rows: CompositeLiquidityRouter,
+ProtocolFeeController, and the
+V3 factory / oracle factory
+set. Not submitted.
 
 ## Next candidates
 
@@ -7202,10 +7346,18 @@ token (24 Aug leftover after V2
 core). Yearn stYFI
 July leftover + February
 StakedYFI / LL depositor
-(`69e262e`) are logged;
-remaining Yearn stYFI Feb is
-LL middleware / redemption /
-veYFI distributors. Remaining
+(`69e262e`) plus leftover
+stYFIx / middleware / main
+RewardDistributor (Sourcify)
+are logged; remaining Yearn
+is veYFI / stYFIx / LL
+reward distributors and Vault
+V3.1.0 if wanted. Balancer V3
+Router (23 Jun, Sourcify) is
+logged; remaining Balancer is
+CompositeLiquidityRouter /
+ProtocolFeeController /
+factories. Remaining
 Lista leftover slices (new-contracts
 oracles / VeLista lock / airdrop /
 CDP ResilientOracle + pips at
