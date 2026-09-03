@@ -30242,11 +30242,19 @@ CashAsset) is logged.
 Derive leftover auction +
 security leftover
 (`96796a6` DutchAuction /
-SecurityModule) is logged
+SecurityModule) is logged.
+Derive leftover assets leftover
+(`96796a6` WrappedERC20 /
+Option / Perp) is logged
 (remaining listed is
 StandardManager / PMRM /
-Option / Perp / BaseAsset /
 feeds);
+Royco leftover (Sourcify
+factory + Makina strategy;
+KYC) is logged (remaining
+listed is srRoyUSDC /
+Multisig Strategy Sourcify
+404);
 zerolend-boost leftover
 (`60d255a` locker /
 omnichain staking /
@@ -33860,3 +33868,104 @@ Multisig Strategy
 (Sourcify 404),
 the Safe, and the
 website.
+
+## 2026-09-03: Derive leftover assets leftover (`96796a6`)
+
+Immunefi program
+`derive`
+($50,000, `kyc: false`).
+Matching / cash /
+auction leftovers
+are already logged.
+This slice is listed
+`BaseAsset` /
+`OptionAsset` /
+`PerpAsset`.
+Official clone
+`/tmp/derive-v2-core`
+at `96796a6`.
+No mainnet interaction.
+
+Files:
+`src/assets/WrappedERC20Asset.sol`,
+`src/assets/WLWrappedERC20Asset.sol`,
+`src/assets/OptionAsset.sol`,
+`src/assets/PerpAsset.sol`.
+
+Checked for: a
+stranger
+`WrappedERC20`
+withdraw that pays
+the caller; option
+`handleAdjustment`
+that skips
+allowance; perp
+`settleRealizedPNLAndFunding`
+by a non-manager;
+whitelist deposit
+that credits a
+blocked account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `WrappedERC20Asset.deposit`
+  pulls
+  `wrappedAsset`
+  from `msg.sender`
+  and credits the
+  named account
+  (donation).
+  `withdraw` is
+  `ownerOf(accountId)`
+  only and pays
+  `recipient`.
+  `handleAdjustment`
+  is `onlyAccounts`,
+  rejects a
+  negative balance,
+  and always needs
+  allowance.
+- `WLWrappedERC20Asset.deposit`
+  also requires a
+  whitelisted
+  recipient when
+  `wlEnabled`.
+- `OptionAsset.handleAdjustment`
+  is `onlyAccounts`
+  and always needs
+  allowance.
+  `calcSettlementValue`
+  is a view; owner
+  sets the
+  settlement feed.
+- `PerpAsset.handleAdjustment`
+  is `onlyAccounts`
+  and always needs
+  allowance.
+  `settleRealizedPNLAndFunding`
+  is
+  `onlyManagerForAccount`.
+  `realizeAccountPNL`
+  only updates
+  stored pnl /
+  funding, not cash.
+
+Do not file
+permissionless
+donation deposit,
+owner feed /
+whitelist setters,
+or manager-only
+perp cash settle
+as stranger theft.
+
+Not submitted.
+Listed leftover is
+Base / Option /
+Perp assets.
+Remaining listed:
+StandardManager /
+PMRM / feeds.
