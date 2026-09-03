@@ -60120,3 +60120,245 @@ Not submitted. Payment requires user KYC. Remaining listed: evm_interpreter,
 zk_ee, zksync_os program, storage_models, crypto, oracles, proof_running_system,
 airbender CS / prover / verifier, and zkos-wrapper circuits.
 
+
+## 2026-09-03: Lombard leftover StakeAndBake + NativeLBTC + AssetRouter leftover (`7fe83e5`)
+
+Immunefi program
+`lombard-finance`
+($250,000, `kyc: true`).
+Follow-on leftover
+after BARD
+(`a23f3e9`)
+and EVM
+strategy shard
+(`7fe83e5`).
+Official clone
+`/tmp/lombard-evm`
+`7fe83e5`.
+Opened
+`contracts/stakeAndBake/StakeAndBake.sol`,
+`depositor/erc4626/ERC4626Depositor.sol`,
+`LBTC/NativeLBTC.sol`,
+`StakedLBTC.sol`,
+`AssetRouter.sol`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+StakeAndBake
+that stakes
+another
+user's mint
+without
+permit;
+NativeLBTC
+`mintV1`
+that mints
+to the
+caller;
+AssetRouter
+`deposit` /
+`redeem`
+that burns
+a victim;
+`redeemForBtc`
+that spends
+another
+holder;
+minter-less
+`burn(from)`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `StakeAndBake.stakeAndBake`
+  is
+  `CLAIMER_ROLE`.
+  It mints
+  via
+  `lbtc.mint(payload,
+  proof)`
+  (recipient
+  from the
+  consortium
+  payload),
+  then
+  `permit` +
+  `transferFrom`
+  that
+  owner for
+  `data.amount`,
+  takes a
+  fee to
+  treasury
+  (`fee <=
+  100000`
+  units),
+  and
+  `depositor.deposit(owner,
+  …)`.
+  `ERC4626Depositor`
+  is
+  `onlyStakeAndBake`
+  and
+  `vault.deposit`
+  mints
+  shares to
+  `owner`.
+  Batch
+  path is
+  self-call
+  with a
+  gas cap.
+
+- `NativeLBTC.mint(to,amount)`
+  is
+  `MINTER_ROLE`.
+  `mintV1`
+  is
+  permissionless
+  but
+  requires
+  a
+  consortium
+  `checkProof`
+  over
+  `sha256(payload)`,
+  one-shot
+  `usedPayloads`,
+  optional
+  Bascule
+  `validateWithdrawal`,
+  and mints
+  to the
+  payload
+  `recipient`.
+  `mintV1WithFee`
+  is
+  `CLAIMER_ROLE`
+  and needs
+  the
+  recipient's
+  EIP-712
+  fee
+  approval.
+  `burn(amount)`
+  burns
+  `msg.sender`.
+  `burn(from,amount)`
+  is
+  `MINTER_ROLE`.
+  `redeemForBtc`
+  forwards
+  `_msgSender()`
+  to the
+  router.
+
+- `StakedLBTC`
+  proof
+  mint /
+  redeem /
+  deposit
+  go
+  through
+  `AssetRouter`
+  with
+  `_msgSender()`
+  as the
+  account.
+  Role
+  mint /
+  burn
+  match
+  NativeLBTC.
+
+- `AssetRouter.deposit`
+  /
+  `_redeem`
+  require
+  `msg.sender
+  ==
+  fromAddress`
+  or
+  `msg.sender
+  ==
+  token`.
+  They
+  burn
+  `fromAddress`
+  via the
+  token's
+  minter
+  burn
+  (router
+  holds
+  `MINTER_ROLE`).
+  Proof
+  mint is
+  `mailbox.deliverAndHandle`
+  and
+  pays the
+  decoded
+  recipient.
+  Fee mint
+  burns
+  from
+  that
+  recipient
+  after
+  their
+  EIP-712
+  approval.
+
+Do not file
+consortium-
+signed mints
+to the
+payload
+recipient,
+claimer
+paths that
+need a user
+permit or
+fee
+signature,
+minter-role
+burn, or
+router
+self-or-token
+caller
+checks as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub opens
+for Lombard
+StakeAndBake /
+NativeLBTC /
+StakedLBTC /
+AssetRouter
+is exhausted
+at the
+opened-file
+level.
+Remaining
+listed:
+BridgeV2 /
+token pools,
+Bascule V1/V2
++ GMP,
+Mailbox,
+Sui move
+packages,
+and Starknet
+cairo
+packages.
+
