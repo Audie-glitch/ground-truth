@@ -2544,6 +2544,98 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Origin ARM CapManager + Morpho/Silo 4626 wrappers (`2322537`)
+
+Immunefi program `originprotocol` ($1,000,000, `kyc: false`).
+USDC ARM CapManager, WETH/Lido ARM Morpho markets, and
+USDC ARM Aave market (same 4626 wrapper) continue the
+ARM adapter slice. Local clone `/tmp/arm-oeth` at
+`2322537`. No mainnet interaction.
+
+Files: `src/contracts/CapManager.sol`,
+`src/contracts/markets/{Abstract4626MarketWrapper,MorphoMarket,SiloMarket}.sol`.
+
+Checked for: a non-ARM deposit/withdraw that mints
+market shares to a third party; CapManager hook that
+a user can skip or raise their own cap; reward collect
+that sends MORPHO/Silo incentives off-harvester;
+`transferTokens` of the market share token.
+
+Result: no user-exploitable finding.
+
+- `CapManager.postDepositHook` is ARM-only. It checks
+  `totalAssetsCap >= arm.totalAssets()` after the
+  deposit and, when account caps are on, decrements
+  the LP’s remaining cap (`oldCap >= assets`). Caps
+  and the total cap are operator/owner. Setting the
+  total cap to 0 only blocks further deposits.
+- `Abstract4626MarketWrapper.deposit` /
+  `withdraw` / `redeem` require
+  `msg.sender == receiver == owner == arm`. Shares
+  are minted to the wrapper, assets return to the ARM.
+  `balanceOf` / `maxWithdraw` / `maxRedeem` report 0
+  for any other owner. `collectRewards` is
+  harvester-only. `merkleClaim` is permissionless but
+  always claims for `address(this)`.
+  `transferTokens` is owner-only, cannot move the
+  market share token, and can only pay owner or
+  harvester.
+- `MorphoMarket` only forwards MORPHO balance to the
+  harvester. `SiloMarket` claims gauge rewards to the
+  harvester. USDC ARM “AAVE Market” is this same
+  wrapper over a 4626 Aave market.
+
+Remaining Origin in-scope: xOGN token
+(`0x63898b3b6Ef3d39332082178656E9862bee45C57`) is not
+in origin-dollar or arm-oeth.
+
+Not submitted.
+
+## 2026-09-03: Origin xOGN ExponentialStaking (`eff0d3d`)
+
+Immunefi program `originprotocol` ($1,000,000, `kyc: false`).
+xOGN (`0x63898b3b6Ef3d39332082178656E9862bee45C57`) is
+Staked OGN. Source is `OriginProtocol/ousd-governance`,
+not origin-dollar. Local clone `/tmp/ousd-governance`
+at `eff0d3d`. No mainnet interaction.
+
+Files: `contracts/ExponentialStaking.sol`,
+`contracts/RewardsSource.sol`.
+
+Checked for: unstaking another account’s lockup;
+gifting a stake that also restakes the recipient’s
+rewards; collecting rewards for a third party;
+transferring xOGN voting points; RewardsSource mint
+to a non-target.
+
+Result: no user-exploitable finding.
+
+- `transfer` / `transferFrom` revert. Points are
+  soulbound. `stake` always `transferFrom`s
+  `msg.sender`. Gifting (`to != msg.sender`) forbids
+  `stakeRewards` and lockup extension. `_collectRewards`
+  for the recipient pays that user’s pending OGN to
+  them, then mints only the new points.
+- `unstake` reads `lockups[msg.sender]`. Early-exit
+  penalty goes to `rewardsSource`; remainder to the
+  staker. Lockup slots are deleted, indexes stay
+  stable.
+- `collectRewards` is `msg.sender` only. Global
+  `accRewardPerShare` is updated from the
+  `rewardsSource` delta before the user’s debt is
+  settled. `rewardsSource.collectRewards` is
+  try/catch so a rewards failure does not brick
+  staking.
+- `RewardsSource.collectRewards` requires
+  `msg.sender == rewardsTarget` (the xOGN contract).
+  Inflation slopes and the target are governor-only.
+  Rate is capped at 5M OGN/day.
+
+Origin Sep-1 / ARM / xOGN smart-contract trees that
+were listed as remaining are now exhausted.
+
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
@@ -2553,20 +2645,21 @@ registry / `TrustSwapAndBridgeRouter` (`bb34cc2`),
 Origin OUSD vault + Curve AMO + WOETH/WOUSD + Ethena ARM,
 Origin Aerodrome / Base Curve / Hydrex AMOs + OETH
 zapper + Safe modules, Origin WETH/USDC/Lido ARM
-adapters + zappers, Origin CrossChain master/remote
+adapters + zappers, Origin ARM CapManager + Morpho/Silo
+4626 wrappers, Origin xOGN ExponentialStaking
+(`eff0d3d`), Origin CrossChain master/remote
 (`4fa0602`), Lombard SVM asset_router / bridge /
 bascule / mailbox / `lombard_token_pool` /
 `ratio_oracle` (`09d5e76`), Leather extension RPC /
 PSBT approval, OZ Confidential v0.5.3 including
 hooked/votes/omnibus/observer/cap modules (`4a4f6c7`),
 and Money on Chain V2 core/queue/V4 swapper
-(`d770477`) are exhausted. Remaining Origin: xOGN
-token (separate repo); CapManager / Morpho market if
-they differ from the Ethena 4626 wrapper. Remaining
-MoC: governance machines and live Rootstock v1
-proxies if a later pass wants addresses rather than
-the V2 tree. Superteam API rechecked 03:25 UTC 3 Sep:
-still 28 open listings.
+(`d770477`) are exhausted. Origin in-scope Solidity
+listed as remaining is exhausted. Remaining MoC:
+governance machines and live Rootstock v1 proxies if
+a later pass wants addresses rather than the V2 tree.
+Superteam API rechecked 03:25 UTC 3 Sep: still 28
+open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the
