@@ -53280,3 +53280,160 @@ composite
 price feeds,
 and Primacy
 of Impact.
+
+## 2026-09-03: OnRe leftover Solana program money path (`f6a4c6e`)
+
+Immunefi program
+`onre`
+($100,000, `kyc: true`).
+Unique unused
+standing program.
+Official clone
+`/tmp/onre-sol`
+`f6a4c6e`. Default
+program id
+`onreuGhHHgVzMWSkj2oQDLDtvvGvoepBPkqyaubFcwe`
+matches the listed
+Solscan account.
+Opened
+`programs/onreapp/src/lib.rs`,
+`instructions/offer/take_offer.rs`,
+`take_offer_permissionless.rs`,
+`offer_utils.rs`,
+`make_offer.rs`,
+`mint_authority/mint_to.rs`,
+`redemption/create_redemption_request.rs`,
+`fulfill_redemption_request.rs`,
+`cancel_redemption_request.rs`,
+`vault_operations/offer_withdraw.rs`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+`take_offer`
+that spends
+another user's
+ATA; `mint_to`
+that credits a
+non-boss;
+redemption
+fulfill that
+pays the
+caller instead
+of the stored
+redeemer;
+vault withdraw
+by a
+non-boss.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `take_offer`
+  /
+  `take_offer_permissionless`
+  require
+  `user: Signer`
+  and ATAs
+  `authority =
+  user`.
+  `token_in`
+  is pulled
+  from that
+  user; `token_out`
+  is minted /
+  transferred
+  to that
+  user's ATA.
+  Offer PDA
+  seeds are
+  the two
+  mints.
+  `needs_approval`
+  offers check
+  an ed25519
+  approval
+  for that
+  user against
+  `approver1` /
+  `approver2`.
+  Kill switch
+  blocks takes.
+- `mint_to`
+  is
+  `boss: Signer`
+  +
+  `has_one =
+  boss` and
+  mints only
+  to the
+  boss ONyc
+  ATA.
+- Create
+  redemption
+  locks the
+  signer's
+  `token_in`
+  and stores
+  `redeemer =
+  signer`.
+  Fulfill
+  requires
+  `redeemer.key()
+  ==
+  request.redeemer`
+  and pays
+  that ATA.
+  Cancel
+  returns the
+  unfulfilled
+  remainder
+  to the
+  stored
+  redeemer
+  (signer may
+  be redeemer
+  / worker /
+  boss).
+- Offer vault
+  withdraw is
+  `boss`
+  signer +
+  `has_one =
+  boss`.
+
+Do not file
+boss-only
+mint /
+vault
+withdraw,
+or a user
+paying their
+own ATA
+into a
+priced offer
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub opens
+for OnRe take /
+mint / redeem
+is exhausted at
+the opened-file
+level. Remaining
+listed:
+prop AMM,
+buffer /
+reserve vault,
+configurable
+vault, and
+market-stats
+views.
