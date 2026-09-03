@@ -6201,7 +6201,11 @@ Enzyme Blue BebopBlend / ThreeOneThird /
 SharesSplitter (`da3b870` + Sourcify) are
 logged. Next unreviewed Immunefi
 GitHub-or-recent trees: Extra Finance
-EXTRA token. Remaining Lista is
+EXTRA token; Twyne June-2026 wrappers
+(`aPT22Oct2026`, EVC) $50k no KYC;
+Hashflow factory/pool/router (8 Jun);
+Yearn stYFI (1 Jul, $200k, no KYC).
+Remaining Lista is
 oracles / VeLista lock / airdrop /
 `lista-new-contracts` RWA /
 slisXAUE / LisAster. Jito `jito-solana` /
