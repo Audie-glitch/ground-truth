@@ -45852,6 +45852,8 @@ Jito leftover remaining jito-solana vote leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana bpf leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana compute-budget leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45873,7 +45875,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` compute-budget / zk-elgamal-proof / remaining runtime if still unused.
+Remaining listed Jito: `jito-solana` zk-elgamal-proof / remaining runtime if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45940,6 +45942,7 @@ Do not rematch Jito jito-solana runtime fee leftover.
 Do not rematch Jito jito-solana programs leftover.
 Do not rematch Jito jito-solana vote leftover.
 Do not rematch Jito jito-solana bpf leftover.
+Do not rematch Jito jito-solana compute-budget leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -48685,8 +48688,10 @@ Jito leftover remaining jito-solana programs leftover
 Jito leftover remaining jito-solana vote leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana bpf leftover
-(`d0e3a47`) is logged (remaining listed is compute-budget /
-zk-elgamal-proof / remaining runtime);
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana compute-budget leftover
+(`d0e3a47`) is logged (remaining listed is zk-elgamal-proof /
+remaining runtime);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover
@@ -70676,3 +70681,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a signed upgrade-authority deploy or an unpaid ELF rewrite as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` compute-budget / zk-elgamal-proof / remaining runtime if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana compute-budget leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after bpf leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `programs/compute-budget/src/lib.rs`, `compute-budget/src/compute_budget.rs`, `compute-budget/src/compute_budget_limits.rs`, `compute-budget-instruction/src/compute_budget_instruction_details.rs`, and `compute-budget-instruction/src/compute_budget_program_id_filter.rs`. Do not rematch bpf leftover, vote leftover, or runtime fee leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: a no-op compute-budget program that still mints CUs; duplicate `SetComputeUnitLimit` / `SetComputeUnitPrice` that underpays priority fee; `RequestHeapFrame` that exceeds `MAX_HEAP_FRAME_BYTES`; `get_prioritization_fee` that truncates instead of rounding up.
+
+Result: no user-exploitable finding. Not submitted.
+
+- The native program entrypoint is a no-op. The runtime parses compute-budget IXs before invoke.
+- `ComputeBudgetProgramIdFilter` only matches `compute_budget::id()`. Duplicate RequestHeapFrame / SetComputeUnitLimit / SetComputeUnitPrice / SetLoadedAccountsDataSizeLimit return `DuplicateInstruction`.
+- Heap size must be in `[MIN_HEAP_FRAME_BYTES, MAX_HEAP_FRAME_BYTES]` and a multiple of 1024. CU limit and loaded-account bytes are capped. A zero loaded-account limit is rejected.
+- Default CU when unset is builtin-count × `MAX_BUILTIN_ALLOCATION_COMPUTE_UNIT_LIMIT` plus non-builtin × `DEFAULT_INSTRUCTION_COMPUTE_UNIT_LIMIT`. Migrating builtins switch after their feature activates.
+- `get_prioritization_fee` multiplies price × limit in u128, rounds up to the next lamport, and saturates at `u64::MAX`. Zero price is zero fee.
+
+Do not file a signed compute-budget CU request as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` zk-elgamal-proof / remaining runtime if still unused.
