@@ -47167,3 +47167,173 @@ client, babylon
 node, and the
 website /
 toolkit rows.
+
+## 2026-09-03: Pyth leftover Solana receiver + Sui contracts (`4dd956e`)
+
+Immunefi program
+`pythnetwork`
+($250,000, `kyc: true`).
+Listed remaining after
+EVM leftover
+(`39935`). Not
+previously logged.
+Official sparse
+clone
+`/tmp/pyth-crosschain`
+`4dd956e`. Opened
+`target_chains/solana`
+(`pyth-solana-receiver`,
+`pyth-push-oracle`,
+`pyth-price-store`)
+and
+`target_chains/sui/contracts`.
+`programs/core-bridge`
+is the vendored
+Wormhole core
+bridge, not a
+Pyth fee path.
+No mainnet writes.
+
+Files:
+`programs/pyth-solana-receiver/src/lib.rs`,
+`programs/pyth-push-oracle/src/lib.rs`,
+`programs/pyth-price-store/src/processor/submit_prices.rs`,
+`sources/pyth.move`,
+`sources/price_info.move`,
+`sources/governance/governance.move`,
+`sources/governance/set_fee_recipient.move`.
+
+Checked for: a
+stranger
+`post_update`
+that spends
+someone else's
+lamports; treasury
+withdraw; rent
+reclaim of
+another writer's
+price account;
+Sui
+`update_single_price_feed`
+that takes a
+victim's `Coin`;
+governance fee /
+recipient change
+without a
+governance VAA.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Solana
+  `post_update` /
+  `post_update_atomic` /
+  `post_twap_update`
+  charge
+  `pay_single_update_fee`
+  from the signer
+  `payer` into a
+  treasury PDA.
+  Comments state
+  there is
+  currently no
+  withdraw from
+  that PDA.
+  `set_fee` /
+  data sources /
+  wormhole /
+  minimum
+  signatures are
+  `Governance`
+  (`payer ==
+  governance_authority`).
+  Authority
+  transfer is
+  two-step
+  request /
+  accept.
+- `reclaim_rent` /
+  `reclaim_twap_rent`
+  close the
+  update account
+  to `payer` only
+  when
+  `write_authority
+  == payer`.
+  `init_if_needed`
+  requires the
+  same write
+  authority once
+  initialized.
+- Push oracle
+  CPI-signs as
+  the price-feed
+  PDA and still
+  pays the
+  receiver fee
+  from `payer`.
+- Price-store
+  `submit_prices`
+  only writes the
+  publisher's own
+  buffer after
+  PDA + buffer
+  key checks. No
+  token movement.
+- Sui
+  `update_single_price_feed`
+  requires
+  `coin::value(&fee)
+  >=
+  base_update_fee`
+  and
+  `deposit_fee_coins`
+  into that
+  shared
+  `PriceInfoObject`.
+  There is no
+  withdraw of
+  those coins.
+  `set_fee_recipient`
+  is
+  governance-VAA
+  only and is
+  documented as
+  unused leftover
+  state.
+  `execute_governance_instruction`
+  verifies a
+  governance data
+  source VAA and
+  rejects stale
+  sequence
+  numbers.
+
+Do not file
+payer-paid update
+fees, write-
+authority rent
+reclaim, or
+Wormhole-
+governed fee
+config as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Pyth
+Solana receiver +
+Sui contract
+leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+governance
+staking program
+(`pyth-network/governance`),
+Lazer Solana /
+Sui / Cardano.
