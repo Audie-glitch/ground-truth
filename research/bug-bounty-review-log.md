@@ -9064,6 +9064,99 @@ the 6 Sep window; #2240
 remains the other
 track.
 
+## 2026-09-03: Spark X Layer SavingsVaultIntents leftover (Sourcify)
+
+Immunefi program `sparklend`
+($5,000,000, `kyc: false`).
+18 Mar 2026 leftover:
+SPARK_SAVINGS_INTENTS
+`0x5bCD…1865` on X Layer
+(chain 196). Sourcify
+exact match, verified
+2026-08-11,
+`SavingsVaultIntents`
+solc 0.8.27. Ctor admin
+`0x23d4…5FB3`, relayer
+`0x8a25…39ab`,
+`maxDeadlineDuration`
+604800. Extract under
+`/tmp/spark-leftover/intents`.
+No mainnet interaction.
+
+Files:
+`src/SavingsVaultIntents.sol`,
+`src/interfaces/{ISavingsVaultIntents,IERC4626Like}.sol`.
+
+Checked for: `request`
+that binds a stranger’s
+shares; `fulfill` that
+redeems to an attacker
+or after the deadline;
+overwrite of another
+account’s request; a
+non-relayer fulfill;
+admin-less vault swap
+mid-flight.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `request` is
+  permissionless for the
+  caller’s own
+  `(account, vault)` slot.
+  Vault must be
+  whitelisted. Recipient
+  cannot be `0`. Assets
+  from
+  `convertToAssets(shares)`
+  must sit in
+  `[min, max]`. Deadline
+  must be in
+  `(now, now +
+  maxDeadlineDuration]`.
+  Caller must hold the
+  shares and have
+  approved this contract.
+  Shares are not pulled
+  at request time.
+- A second `request` for
+  the same vault
+  overwrites the caller’s
+  pending intent only.
+- `cancel` deletes the
+  caller’s slot.
+- `fulfill` is `RELAYER`.
+  It requires a matching
+  non-zero `requestId`,
+  rejects after
+  `deadline`, deletes,
+  then
+  `redeem(shares,
+  recipient, account)`.
+  The relayer cannot
+  change shares or
+  recipient. A later
+  allowance revoke or
+  share transfer makes
+  redeem revert (user
+  self-lock, not theft).
+- Admin sets whitelist /
+  bounds /
+  `maxDeadlineDuration`
+  (`!= 0`). Relayer is
+  granted in the
+  constructor.
+
+Spark leftover oracle
+rows and 15 Jul sUSDC /
+`UsdcVault` were logged
+in a parallel pass.
+Listed Spark leftover
+addresses after this
+slice are exhausted.
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -9190,7 +9283,10 @@ plus 15 Jul sUSDC /
 already-logged Aave V3 price
 oracle. Listed Spark leftover
 oracle rows are exhausted.
-GammaSwap May
+X Layer
+`SPARK_SAVINGS_INTENTS`
+`0x5bCD…1865` (Sourcify)
+is logged. GammaSwap May
 2026 vault + PositionManager
 are logged; remaining
 GammaSwap is the 2024 factory
