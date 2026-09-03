@@ -47575,7 +47575,7 @@ Remaining listed Rootstock: unused official leftover that listed trees open is e
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted at leftover-heading level. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining SuperchainConfig leftover is logged. Optimism leftover remaining LegacyMessagePasser leftover is logged. Optimism leftover remaining L2ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Ethena leftover remaining USDtb leftover is logged. Ethena leftover remaining USDeOFTAdapter leftover is logged. Remaining listed is TON / other-chain OFT rows if still unused.
 Remaining listed LayerZero: unused official leftovers if still open. LayerZero leftover remaining ULN301 leftover is logged. LayerZero leftover remaining ExecutorFeeLib leftover is logged. LayerZero leftover remaining OApp OFT leftover is logged. Remaining listed is other-chain twins if still unused.
-Remaining listed Ether.fi: unused official leftovers if still open. Ether.fi leftover remaining Auction leftover is logged. Remaining listed is OFT / bridge adapters / other-chain weETH if still unused.
+Remaining listed Ether.fi: unused official leftovers if still open. Ether.fi leftover remaining Auction leftover is logged. Ether.fi leftover remaining bridge adapters leftover is logged. Remaining listed is other-chain weETH / RoleRegistry / TopUpSourceFactory / PixWalletAutoTopup / Scroll Cash modules if still unused.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -47714,6 +47714,7 @@ Do not rematch LayerZero leftover remaining ULN301 leftover.
 Do not rematch LayerZero leftover remaining ExecutorFeeLib leftover.
 Do not rematch LayerZero leftover remaining OApp OFT leftover.
 Do not rematch Ether.fi leftover remaining Auction leftover.
+Do not rematch Ether.fi leftover remaining bridge adapters leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
 Do not rematch Arbitrum leftover remaining governance leftover.
@@ -74019,3 +74020,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a rate-limited OFT adapter lock or a peer-gated mint as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: TON / other-chain OFT rows if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Ether.fi leftover remaining bridge adapters leftover (`1f502e1`)
+
+Immunefi program `etherfi` ($500,000, `kyc: true`). Official remaining unused leftover after Auction leftover. Listed Immunefi ETH bridge adapters (added 15 Dec 2025): NTTAdapter `0x16B4AE4D4c96793524084A22E6f4c160cad08975`, EtherFiOFTBridgeAdapter `0x3E0ccbce6c3beC4826397005c877BE66C39D9912`, ScrollERC20BridgeAdapter `0x319a33b9A3080c17A825E3A539c49A60bbB2E793`, EtherFiLiquidBridgeAdapter `0x86016539796E660d4cD333459378763FaFFa6Eee`, StargateAdapter `0xeb39db7a020DB2ac0890d51F9d5b817e7ef2b1A3`. Official `etherfi-protocol/cash-v3` `1f502e1` (`1f502e1aad29fec9c133c9a17fa37f186cb852e4`). Opened listed `src/top-up/bridge/{BridgeAdapterBase,EtherFiOFTBridgeAdapter,NTTAdapter,ScrollERC20BridgeAdapter,EtherFiLiquidBridgeAdapter,StargateAdapter}.sol` plus delegatecall caller `src/top-up/TopUpFactory.sol` (`bridge`). Sourcify **404** on all five listed adapter addresses (chain 1). Official raw GitHub **200**. Local extract `/tmp/ef-bridge-adapters/` (56 / 80 / 75 / 75 / 82 / 116 / 864 lines). Do not rematch LiquidityPool / WeETH / Liquifier leftover or Auction leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: permissionless `bridge` that pulls another user's ERC-20 from TopUpFactory without `TOPUP_FACTORY_BRIDGER_ROLE`; delegatecall adapter that lets a stranger set `destRecipient`; OFT / Stargate / NTT send that credits the executor instead of the configured recipient; Scroll `depositERC20` that routes L2 credit to `msg.sender`; Liquid teller `bridge` with a mismatched vault that drains unrelated tokens; direct adapter calls that steal factory custody when adapters are invoked outside TopUpFactory.
+
+Result: no user-exploitable finding. Not submitted.
+
+- TopUpFactory `bridge(token, amount, destChainId)` is `whenNotPaused` + `onlyRole(TOPUP_FACTORY_BRIDGER_ROLE)`, requires configured `tokenChainConfig`, checks factory balance `>= amount`, and delegatecalls the configured adapter with fixed `config.recipientOnDestChain` (not caller-supplied). Bridge fee must be passed as `msg.value`.
+- Adapters are written for delegatecall: `address(this)` is TopUpFactory, so `forceApprove` / WETH unwrap / native fee checks operate on factory balances only when invoked through the factory path.
+- EtherFiOFTBridgeAdapter quotes LayerZero OFT `send`, enforces `minAmountLD` slippage, and refunds excess native to `address(this)` (factory). StargateAdapter rejects pools whose `token()` != input token (`InvalidStargatePool`) and revalidates quoted receive amount vs slippage. NTTAdapter strips transfer dust before `transfer`. ScrollERC20BridgeAdapter pays Scroll L1 gateway fee from factory ETH and deposits to the configured L2 recipient. EtherFiLiquidBridgeAdapter requires `teller.vault() == token` (`InvalidTeller`) before `teller.bridge`.
+- Direct external calls to standalone adapter bytecode only move tokens/ETH already held by the adapter contract itself; they cannot reach TopUpFactory custody without the bridger role path above.
+
+Do not file a bridger-role gated factory bridge or a direct-call adapter balance move as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: other-chain weETH (`weETH-cross-chain`) / RoleRegistry / TopUpSourceFactory / PixWalletAutoTopup / Scroll Cash modules if still unused. Next unused leftover is a different Immunefi program, not a rematch.

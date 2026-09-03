@@ -24,6 +24,7 @@ LayerZero leftover remaining ULN301 leftover is logged;
 LayerZero leftover remaining ExecutorFeeLib leftover is logged;
 LayerZero leftover remaining OApp OFT leftover is logged;
 Ether.fi leftover remaining Auction leftover is logged;
+Ether.fi leftover remaining bridge adapters leftover is logged;
 Jito leftover remaining jito-solana runtime_config leftover is logged;
 Jito leftover remaining jito-solana static_ids leftover is logged;
 Jito leftover remaining jito-solana read_optimized_dashmap leftover is logged;
@@ -937,9 +938,15 @@ Liquifier / Redemption / WRNFT; KYC)
 is logged.
 Ether.fi leftover remaining Auction leftover
 (`b4a0968` AuctionManager / EtherFiOracle;
-KYC) is logged
-(remaining listed is OFT / bridge adapters /
-other-chain weETH; eETH impl still 404).
+KYC) is logged.
+Ether.fi leftover remaining bridge adapters leftover
+(`1f502e1` cash-v3 NTT / OFT / Scroll /
+Liquid / Stargate adapters + TopUpFactory
+bridge path; KYC) is logged
+(remaining listed is other-chain weETH /
+RoleRegistry / TopUpSourceFactory /
+PixWalletAutoTopup / Scroll Cash modules;
+eETH impl still 404).
 Compound leftover Comet leftover
 (Sourcify cUSDCv3 / cWETHv3 / Rewards /
 Bulker; KYC) is logged (remaining listed
@@ -2653,6 +2660,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Ether.fi leftover remaining
   Auction leftover
   (`b4a0968`; KYC),
+  Ether.fi leftover remaining
+  bridge adapters leftover
+  (`1f502e1` cash-v3; KYC),
   Compound leftover Comet leftover
   (Sourcify; KYC),
   Maple leftover Pool leftover
