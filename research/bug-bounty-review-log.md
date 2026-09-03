@@ -31759,6 +31759,143 @@ remaining 404s /
 listed types not
 these views.
 
+## 2026-09-03: Chainlink leftover CCIP EVM leftover (`f0eda24`)
+
+Immunefi program
+`chainlink`
+($3,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`smartcontractkit/chainlink-ccip`
+HEAD
+`f0eda24`.
+Extract
+`/tmp/cl-ccip`
+via jsDelivr.
+No mainnet
+interaction.
+
+Files:
+`chains/evm/contracts/Router.sol`,
+`chains/evm/contracts/onRamp/OnRamp.sol`,
+`chains/evm/contracts/offRamp/OffRamp.sol`,
+`chains/evm/contracts/pools/TokenPool.sol`,
+`chains/evm/contracts/pools/LockReleaseTokenPool.sol`,
+`chains/evm/contracts/pools/BurnMintTokenPoolAbstract.sol`.
+
+Checked for: a
+stranger
+`ccipSend` that
+pulls another
+account's tokens
+or fee; OnRamp
+`forwardFromRouter`
+from a non-router;
+pool
+`lockOrBurn` /
+`releaseOrMint`
+without a ramp;
+OffRamp `execute`
+that mints to the
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Router
+  `ccipSend`
+  `safeTransferFrom`s
+  fee and token
+  amounts from
+  `msg.sender`,
+  then
+  `forwardFromRouter`
+  with
+  `originalSender
+  = msg.sender`.
+- OnRamp
+  `forwardFromRouter`
+  requires
+  `msg.sender ==
+  destChainConfig.router`
+  and a non-zero
+  `originalSender`.
+- TokenPool
+  `lockOrBurn`
+  is
+  `_onlyOnRamp`.
+  `releaseOrMint`
+  is
+  `_onlyOffRamp`
+  plus remote-pool
+  and RMN curse
+  checks.
+- LockRelease
+  deposits /
+  withdraws the
+  lock box after
+  those gates.
+  BurnMint mints
+  to
+  `receiver`.
+- OffRamp
+  `execute` is
+  permissionless
+  after CCV
+  quorum, allowed
+  onRamp, unused
+  or failed
+  state, and
+  dest-chain
+  match. Tokens
+  go to
+  `tokenReceiver`.
+- `withdrawFeeTokens`
+  is
+  permissionless
+  and pays only
+  `feeAggregator`.
+- `recoverTokens`
+  is owner.
+
+Do not file
+permissionless
+execute of a
+CCV-verified
+message to the
+recorded
+receiver, or
+permissionless
+fee sweep to
+the configured
+aggregator.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+CCIP EVM Router
+/ OnRamp /
+OffRamp / TokenPool
+opens is
+exhausted at
+this money-path
+level.
+Remaining listed:
+CCIP Solana /
+Sui / Aptos,
+chainlink-evm,
+OCR plugins,
+core node,
+LibOCR, owner
+contracts,
+websites.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -33316,6 +33453,14 @@ ComplianceGMView; KYC) is
 logged (remaining listed is
 other-chain oracles /
 remaining 404s);
+Chainlink leftover CCIP EVM leftover
+(`f0eda24` Router / OnRamp /
+OffRamp / TokenPool; KYC) is
+logged (remaining listed is
+CCIP Solana / Sui / Aptos /
+chainlink-evm / OCR plugins /
+core node / LibOCR / owner
+contracts / websites);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

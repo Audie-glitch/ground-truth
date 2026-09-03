@@ -55,7 +55,8 @@ Aave leftover is logged;
 Wormhole leftover ETH core +
 TokenBridge leftover is logged;
 Ondo Finance leftover
-remaining oracles leftover is logged).
+remaining oracles leftover is logged;
+Chainlink leftover CCIP EVM leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -500,6 +501,13 @@ OndoOracle / OUSG comparison /
 ComplianceGMView; KYC) is logged
 (remaining listed is other-chain
 oracles / remaining 404s).
+Chainlink leftover CCIP EVM leftover
+(`f0eda24` Router / OnRamp /
+OffRamp / TokenPool; KYC) is logged
+(remaining listed is CCIP Solana /
+Sui / Aptos / chainlink-evm / OCR
+plugins / core node / LibOCR /
+owner contracts / websites).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1105,6 +1113,8 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Ondo Finance leftover
   remaining oracles leftover
   (Sourcify; KYC),
+  Chainlink leftover CCIP EVM leftover
+  (`f0eda24`; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover
