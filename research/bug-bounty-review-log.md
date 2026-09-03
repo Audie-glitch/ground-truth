@@ -19754,6 +19754,98 @@ is Fluid dex /
 dexLite / steth and
 `inst-governance`.
 
+## 2026-09-03: Instadapp Fluid DEX T1 leftover (`a9949b4`)
+
+Immunefi program
+`instadapp` ($500,000,
+`kyc: false`). Fluid
+liquidity / fToken
+and vault leftovers
+on pin `a9949b4` are
+already logged. This
+slice is DexT1 swap
+and col / debt
+operations. Same
+clone
+`/tmp/instadapp-fluid`.
+No mainnet
+interaction.
+
+Files:
+`protocols/dex/poolT1/coreModule/core/main.sol`,
+`colOperations.sol`,
+`debtOperations.sol`,
+`protocols/dex/factory/main.sol`.
+
+Checked for: a
+callback swap that
+pulls a victim’s
+tokens; withdraw /
+borrow of another
+user’s DEX shares;
+admin fallback
+without auth.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `swapIn` /
+  `swapOut` are
+  permissionless
+  AMM paths with
+  `amountOutMin` /
+  `amountInMax`.
+  Liquidity
+  `operate` for the
+  in-leg encodes
+  `(amount,
+  isCallback,
+  msg.sender)`.
+  `liquidityCallback`
+  is LIQUIDITY-only,
+  reentrancy-on, 96
+  bytes: callback
+  hits
+  `from_.dexCallback`
+  or
+  `transferFrom`
+  `from_`. Out-leg
+  withdraw / borrow
+  goes to `to_`
+  (msg.sender if
+  unset).
+- Col deposit /
+  withdraw and debt
+  borrow / payback
+  delegatecall
+  implementations.
+  `_userSupplyData`
+  / `_userBorrowData`
+  first bit must be
+  on (allow-listed
+  protocols, e.g.
+  vaults).
+  Withdraw / borrow
+  send to
+  caller-chosen
+  `to_` from that
+  caller’s shares.
+- Admin fallback
+  requires factory
+  global or per-dex
+  auth. Factory
+  deploy /
+  deployer / auth
+  writes are owner.
+
+Not submitted.
+Remaining Instadapp
+is Fluid dexLite /
+steth and
+`inst-governance`.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -20262,10 +20354,11 @@ liquidity + fToken leftover
 Instadapp Fluid vault T1 leftover
 (`a9949b4`) is logged;
 Instadapp Fluid vault T2–T4 leftover
+(`a9949b4`) is logged;
+Instadapp Fluid DEX T1 leftover
 (`a9949b4`) is logged
 (remaining Instadapp is
-Fluid dex / dexLite /
-steth and
+Fluid dexLite / steth and
 `inst-governance`);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
