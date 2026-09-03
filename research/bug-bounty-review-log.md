@@ -46433,6 +46433,10 @@ Jito leftover remaining jito-solana transaction_execution leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana stakes leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana epoch_stakes leftover (`d0e3a47`)
+is logged.
+Optimism leftover remaining op-node deposits + withdrawals leftover (`eea9542`)
+is logged.
 Optimism leftover remaining PolicyEngineStaking leftover (`eea9542`)
 is logged.
 Optimism leftover remaining L2 ETH liquidity leftover (`eea9542`)
@@ -46478,7 +46482,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`epoch_stakes` / `snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official op-node leftover that listed trees still open after this deposit/withdrawal helper slice (batch / channel / p2p / driver) / websites / rust/op-reth if still unused.
 
@@ -46554,6 +46558,8 @@ Do not rematch Jito jito-solana partitioned epoch rewards leftover.
 Do not rematch Jito jito-solana check_transactions leftover.
 Do not rematch Jito jito-solana transaction_execution leftover.
 Do not rematch Jito jito-solana stakes leftover.
+Do not rematch Jito jito-solana epoch_stakes leftover.
+Do not rematch Optimism leftover remaining op-node deposits + withdrawals leftover.
 Do not rematch Optimism leftover remaining PolicyEngineStaking leftover.
 Do not rematch Optimism leftover remaining L2 ETH liquidity leftover.
 Do not rematch Optimism leftover remaining ETHLockbox leftover.
@@ -49327,8 +49333,12 @@ Jito leftover remaining jito-solana check_transactions leftover
 Jito leftover remaining jito-solana transaction_execution leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana stakes leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana epoch_stakes leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-epoch_stakes / snapshot / bank / stake_weighted_timestamp if still unused);
+snapshot / bank / stake_weighted_timestamp if still unused);
+Optimism leftover remaining op-node deposits + withdrawals leftover
+(`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
 (`eea9542`) is logged;
 Optimism leftover remaining L2 ETH liquidity leftover
@@ -71635,3 +71645,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an engine-API payload inserter as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining `op-node` (p2p / sequencing) / websites if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana epoch_stakes leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after stakes leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/epoch_stakes.rs` and `runtime/src/stake_history.rs`. Do not rematch stakes leftover, remaining runtime leftover, partitioned epoch rewards leftover, or vote_reward leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `parse_epoch_vote_accounts` that attributes another node's stake; `BLSPubkeyToRankMap` that ranks a duplicate BLS key as a stranger validator; snapshot deserialize that injects leftover-ignored delegations as extra vote weight.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `VersionedEpochStakes` is a validator epoch snapshot, not a stranger IX. `new` copies vote accounts from leftover-logged `StakesCache` and sums delegated stake. Zero-stake vote accounts are skipped for node/voter maps. Authorized voters come from `vote_state.get_authorized_voter(leader_schedule_epoch)`.
+- `BLSPubkeyToRankMap` keeps only `NonZero` stake, a unique BLS pubkey, and a unique node pubkey. Duplicates are dropped. Rank is stake descending then compressed BLS key. PoP is assumed already verified on the vote state (`new_unchecked`).
+- `set_total_stake` is `dev-context-only-utils`. Snapshot serde writes an empty `stake_delegations` list; deserialize visits and discards that sequence.
+- `StakeHistory` is a clone-on-write wrapper around the SDK type. It does not credit lamports.
+
+Do not file an epoch vote-weight snapshot as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
