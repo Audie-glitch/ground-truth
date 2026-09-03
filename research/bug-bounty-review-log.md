@@ -43449,6 +43449,139 @@ stk /
 StakeToken /
 governance.
 
+## 2026-09-03: Aave leftover remaining StakeToken leftover (`5346765`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after StakedAaveV3
+leftover.
+Official
+`bgd-labs/stake-token`
+`5346765`.
+Extract
+`/tmp/stake-token.sol`.
+Do not rematch
+StakedAaveV3 leftover.
+Do not rematch
+DirectFacilitator leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/StakeToken.sol`.
+
+Checked for:
+a
+stranger
+`slash`
+or
+`redeemOnBehalf`
+without
+the
+admin
+/
+claim
+helper;
+`returnFunds`
+that
+inflates
+shares
+for
+the
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `stake`
+  /
+  `stakeWithPermit`
+  pull
+  `STAKED_TOKEN`
+  from
+  `msg.sender`
+  and
+  mint
+  shares
+  at
+  `_currentExchangeRate`.
+  Permit
+  is
+  try/catch;
+  pull
+  still
+  needs
+  allowance.
+- `redeem`
+  is
+  cooldown
+  +
+  unstake-
+  window
+  gated
+  unless
+  `inPostSlashingPeriod`.
+  On-behalf
+  redeem
+  /
+  claim
+  /
+  cooldown
+  are
+  `onlyClaimHelper`.
+- `slash`
+  /
+  `settleSlashing`
+  /
+  `setMaxSlashablePercentage`
+  are
+  `onlySlashingAdmin`.
+  Slash
+  keeps
+  `balance - amount >= LOWER_BOUND`.
+- `returnFunds`
+  is
+  permissionless
+  but
+  `safeTransferFrom`s
+  `amount >= LOWER_BOUND`
+  from
+  `msg.sender`
+  and
+  only
+  raises
+  the
+  exchange
+  rate
+  for
+  existing
+  shares.
+
+Do not file
+an
+admin-
+gated
+slash
+or
+a
+paid
+exchange-rate
+top-up
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+governance.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43592,9 +43725,13 @@ Filecoin leftover remaining lotus store leftover (`7740217`)
 is logged.
 Aave leftover remaining GHO DirectFacilitator leftover (`23859bb`)
 is logged.
+Aave leftover remaining StakedAaveV3 leftover (`0c4cb0b`)
+is logged.
+Aave leftover remaining StakeToken leftover (`5346765`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: stk / StakeToken / governance.
+Remaining listed Aave: governance.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43635,6 +43772,8 @@ Do not rematch Aave GHO FixedFeeStrategy leftover.
 Do not rematch Aave GHO FlashMinter leftover.
 Do not rematch Aave Gsm4626 leftover.
 Do not rematch Aave GHO DirectFacilitator leftover.
+Do not rematch Aave StakedAaveV3 leftover.
+Do not rematch Aave StakeToken leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -46268,6 +46407,9 @@ stk / StakeToken / OwnableFacilitator / governance);
 Aave leftover remaining GHO DirectFacilitator leftover
 (`23859bb`) is logged (remaining listed is
 stk / StakeToken / governance);
+Aave leftover remaining StakeToken leftover
+(`5346765`) is logged (remaining listed is
+governance);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
