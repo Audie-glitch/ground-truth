@@ -41293,3 +41293,212 @@ listed: none on
 the unofficial
 dump (single
 NEAR contract).
+
+## 2026-09-03: Decentraland leftover MANA, LAND, and ESTATE
+
+Immunefi program
+`decentraland`
+($500,000, `kyc: true`).
+Marketplace / bid /
+rentals leftover
+already logged.
+This slice is
+listed MANA +
+LAND / ESTATE
+proxies. Official
+clone
+`/tmp/dcl-land`
+`c820aa1`. MANA
+Sourcify `match`
+`/tmp/dcl-src/mana/MANAToken.sol`.
+LAND proxy
+`0xF87E31492Faf9A91B02Ee0dEAAd50d51d56D5d4d`
+(`LANDProxy.sol`,
+Sourcify `match`).
+Live LAND
+application
+`0x554BB6488bA955377359bED16b84Ed0822679CDC`
+(Sourcify `match`,
+flatten
+`/tmp/dcl-src/land-impl`).
+Estate proxy
+`0x959e104E1a4dB6317fA58F8295F586e1A978c297`
+(ZeppelinOS,
+impl
+`0xDCF39b96B4DF02FF98fC6f3916D41f782ff59f7f`,
+Sourcify
+`exact_match`,
+`/tmp/dcl-src/estate-live`).
+erc821
+`FullAssetRegistry` /
+`ERC721Base`
+transfer path
+from official
+`decentraland/erc821`.
+No mainnet writes.
+
+Files:
+`MANAToken.sol`,
+`LANDRegistry.sol`,
+`EstateRegistry.sol`,
+`ERC721Base.sol`.
+
+Checked for: a
+stranger `mint` of
+MANA; `transferFrom`
+that spends without
+allowance; LAND
+`assignNewParcel` by
+a non-deployer;
+`transferLand` /
+`transferFrom` of
+someone else's
+parcel; Estate
+`mint` /
+`onERC721Received`
+from a non-LAND
+registry; Estate
+`transferLand` by a
+non-owner; XOR
+fingerprint collision
+used as stranger
+theft against a
+marketplace bid.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- MANA
+  `mint` is
+  `onlyOwner`.
+  `burn` subtracts
+  the caller's own
+  balance.
+  `transfer` /
+  `transferFrom`
+  are
+  `whenNotPaused`.
+  `transferFrom`
+  deducts
+  `allowed[from][msg.sender]`.
+  `approve` requires
+  a zero reset
+  (known ERC20
+  race, not
+  stranger theft).
+- LAND
+  `assignNewParcel`
+  is
+  `onlyDeployer`.
+  `transferFrom`
+  forbids
+  `to == estateRegistry`
+  (must use
+  `transferLandToEstate`).
+  Overridden
+  `_doTransferFrom`
+  clears
+  `updateOperator`
+  then calls
+  erc821
+  `onlyAuthorized`
+  (owner, token
+  approval, or
+  operator).
+  `transferLandToEstate`
+  also requires
+  `estateRegistry.ownerOf(estateId) == msg.sender`.
+  `updateLandData`
+  is metadata
+  only.
+  `registerBalance`
+  is the caller's
+  own MiniMe
+  accounting
+  token.
+- Estate
+  `mint` and
+  `onERC721Received`
+  are
+  `onlyRegistry`.
+  `_transferLand`
+  is
+  `canTransfer`
+  (owner or
+  approved).
+  `transferFrom`
+  rejects an
+  empty Estate
+  and updates
+  MiniMe then
+  `super.transferFrom`.
+  Live
+  `verifyFingerprint`
+  accepts
+  `getFingerprintV2`
+  first. Legacy
+  XOR
+  `getFingerprint`
+  is fallback
+  only before
+  `1795705200`
+  and only for
+  estates with
+  fewer than 19
+  LANDs. XOR
+  collision is
+  documented in
+  the live
+  implementation
+  as unsafe.
+
+Do not file
+owner-gated MANA
+mint / pause,
+known ERC20
+approve-zero
+reset, deployer
+LAND assign,
+update-operator
+metadata edits,
+own-account
+MiniMe register,
+or XOR
+fingerprint
+fallback during
+the documented
+transition
+window (seller-
+controlled
+composition),
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed
+Decentraland
+MANA / LAND /
+ESTATE leftover
+is exhausted at
+the opened-contract
+level. Remaining
+listed: name
+registrar /
+controller
+(`DCLRegistrar`
+`0x2A1874…ACb8`,
+`DCLController`
+`0x684329…0772`),
+Collections
+V1/V2
+(`ERC721Collection`
+`0xc04528…5CDd` /
+`0xeCf073…01b1`),
+vesting
+factories, and
+Polygon MANA /
+collections.
