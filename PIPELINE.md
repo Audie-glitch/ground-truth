@@ -27,6 +27,7 @@ Ether.fi leftover remaining Auction leftover is logged;
 Ether.fi leftover remaining bridge adapters leftover is logged;
 Ether.fi leftover remaining weETH-cross-chain leftover is logged;
 Ether.fi leftover remaining RoleRegistry TopUpSourceFactory leftover is logged;
+Ether.fi leftover remaining Scroll Cash modules leftover is logged;
 Jito leftover remaining jito-solana runtime_config leftover is logged;
 Jito leftover remaining jito-solana static_ids leftover is logged;
 Jito leftover remaining jito-solana read_optimized_dashmap leftover is logged;
@@ -953,9 +954,13 @@ Ether.fi leftover remaining RoleRegistry
 TopUpSourceFactory leftover
 (`1f502e1` RoleRegistry / TopUpFactory /
 TopUp / SettlementDispatcherV2 PIX wiring;
+KYC) is logged.
+Ether.fi leftover remaining Scroll Cash modules leftover
+(`1f502e1` Scroll DebtManager /
+EtherFiLiquidModule / LiquidUSDLiquifierModule /
+SettlementDispatcherCardOrder; Sourcify 534352;
 KYC) is logged
-(remaining listed is Scroll Cash modules;
-eETH impl still 404).
+(remaining listed is eETH impl 404).
 Compound leftover Comet leftover
 (Sourcify cUSDCv3 / cWETHv3 / Rewards /
 Bulker; KYC) is logged (remaining listed
@@ -2678,6 +2683,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Ether.fi leftover remaining
   RoleRegistry TopUpSourceFactory leftover
   (`1f502e1` cash-v3; KYC),
+  Ether.fi leftover remaining
+  Scroll Cash modules leftover
+  (`1f502e1` Scroll 534352; Sourcify; KYC),
   Compound leftover Comet leftover
   (Sourcify; KYC),
   Maple leftover Pool leftover
