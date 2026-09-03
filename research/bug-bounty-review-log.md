@@ -66973,3 +66973,20 @@ Do not file immutable bps fee quotes as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: PriceOracleSentinel / stk / StakeToken / GHO remaining (flash minter / Gsm4626 / OwnableFacilitator) / governance.
 
+
+## 2026-09-03: Aave leftover remaining GHO FlashMinter leftover (`23859bb`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after FixedFee leftover. Official `aave-dao/gho-origin` `23859bb`. Opened listed `src/contracts/facilitators/flashMinter/GhoFlashMinter.sol`. Do not rematch GhoToken facilitator-bucket leftover or GSM leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `flashLoan` leaving minted GHO with the receiver; a non-GHO token mint; `updateFee` / `updateGhoTreasury` without pool admin.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `flashLoan` requires `token == address(GHO_TOKEN)`. It `mint`s `amount` to `receiver`, requires `onFlashLoan` to return `CALLBACK_SUCCESS`, then `transferFrom`s `amount + fee` and `burn`s `amount`. Fee GHO stays on the minter until `distributeFeesToTreasury`. A failed repay reverts the mint.
+- Fee is `_fee` bps (`percentMul`) unless `ACL_MANAGER.isFlashBorrower(msg.sender)`, then 0. `maxFlashLoan` is this facilitator’s remaining GHO bucket (`capacity - level`).
+- `updateFee` / `updateGhoTreasury` are `onlyPoolAdmin` (`ACL_MANAGER.isPoolAdmin`). Constructor and setter cap fee at `MAX_FEE` (10000 bps). `distributeFeesToTreasury` is permissionless and only forwards the minter’s GHO balance to `_ghoTreasury`.
+
+Do not file an EIP-3156 GHO flash mint that pulls `amount + fee` as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: PriceOracleSentinel / stk / StakeToken / Gsm4626 / OwnableFacilitator / governance.
+
