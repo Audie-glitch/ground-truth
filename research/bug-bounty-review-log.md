@@ -2826,6 +2826,52 @@ were listed as remaining are now exhausted.
 
 Not submitted.
 
+## 2026-09-03: Horizen ZenStaker + RewardAccumulator (`ab92502`)
+
+Immunefi program Horizen ($10,000, `kyc: true`). GitHub
+assets added 20 Jul 2026 at the testnet merge commit.
+Local clone `/tmp/horizen-staker` at `ab92502`. No
+mainnet or testnet interaction.
+
+Files: `src/{ZenStaker,Staker,RewardAccumulator,DelegationSurrogate}.sol`,
+`src/extensions/StakerPermitAndStake.sol`.
+
+Checked for: withdrawing another account’s deposit;
+claiming another deposit’s rewards; `notifyRewardAmount`
+from a non-notifier; RewardAccumulator notify that
+credits more than transferred; stake/reward token
+commingling (ZEN-on-ZEN).
+
+Result: no user-exploitable finding.
+
+- `ZenStaker` inherits Tally `Staker` unchanged for
+  writes. Stake pulls ZEN from the caller into a
+  per-delegatee `ZenDelegationSurrogate` (max-approve
+  back to the staker). Withdraw/claim require owner
+  (and claimer for rewards). Payouts go to owner /
+  caller. Claim fee is hardcoded 0; `maxBumpTip` is
+  constructor-set (Phase 1: 0).
+- `notifyRewardAmount` is notifier-only. It
+  checkpoints, stretches the remaining stream over
+  `REWARD_DURATION`, and reverts if
+  `rate * duration > this.balance`. Staked ZEN lives
+  on surrogates, so the balance check sees only
+  reward inventory on the staker.
+- `RewardAccumulator.transferAndNotifyRewards` /
+  `notifyAlreadyTransferredRewards` are whitelist-
+  gated (or open if whitelist is off). Notify of
+  already-transferred tokens requires
+  `balance - accumulated >= amount`.
+  `sendRewardsToStaker` is permissionless after the
+  window, transfers `accumulatedRewards`, then
+  `notifyRewardAmount`. Un-notified donations stay
+  stuck; they are not an extract.
+- `permitAndStake` swallows a failed permit then
+  `transferFrom` (standard). Surrogate holds tokens
+  with no extra functions.
+
+Not submitted. Payouts need Immunefi KYC.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -2843,16 +2889,19 @@ bascule / mailbox / token_pool / ratio_oracle / valset
 (`09d5e76`), Leather extension RPC / PSBT approval, OZ
 Confidential v0.5.3 including hooked/votes/omnibus/
 observer/cap modules (`4a4f6c7`), Money on Chain V2
-core/queue/V4 swapper (`d770477`), Sky FarmOwner, and
-Alchemix V3 alchemist + transmuter + alUSD + token-vault
-+ MYT adapter / allocator / router / fee vaults are
-exhausted. Origin in-scope Solidity listed as remaining
-is exhausted. Remaining Alchemix: concrete protocol
-strategies, Euler adapter, `StakingGraph`.
-Remaining MoC: governance machines and live Rootstock
-v1 proxies if a later pass wants addresses rather than
-the V2 tree. Superteam API rechecked 03:25 UTC 3 Sep:
-still 28 open listings.
+core/queue/V4 swapper (`d770477`), Sky FarmOwner,
+Alchemix V3 alchemist + transmuter + alUSD +
+token-vault + MYT adapter / allocator / router / fee
+vaults, and Horizen ZenStaker + RewardAccumulator
+(`ab92502`) are exhausted. Origin in-scope Solidity
+listed as remaining is exhausted. Remaining Alchemix:
+concrete protocol strategies, Euler adapter,
+`StakingGraph`. Remaining MoC: governance machines and
+live Rootstock v1 proxies if a later pass wants
+addresses rather than the V2 tree. 1inch Aqua opcode
+set already logged; remaining Aqua-listed files are
+solidity-utils mixins. Superteam API rechecked
+03:25 UTC 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the
