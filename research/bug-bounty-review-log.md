@@ -33452,7 +33452,9 @@ Payment requires
 user KYC.
 Remaining listed:
 circle-integration
-`2342025`;
+`2342025`
+(now leftover-
+logged);
 other-chain NTT
 (Solana /
 Sui);
@@ -33785,6 +33787,469 @@ L2 gateway;
 Curation /
 DisputeManager /
 BillingConnector.
+
+## 2026-09-03: Kleidi leftover ETH Safe + timelock leftover (Sourcify)
+
+Immunefi program
+`kleidi`
+($50,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+InstanceDeployer
+`0xE138136bFF8c6A9337805DE19177E3b29fef2783`,
+Guard
+`0xFE49DD6d0CD41C4EC8F151C79f2d4019f5C5AD18`,
+TimelockFactory
+`0xCe90BA68BbcdCCe9aed1fCDDcb114d1DCdBc68C9`,
+RecoverySpellFactory
+`0x56b6d03b995022A612aF6a212C74902f233F52Cc`.
+Same addresses
+on Base and
+Optimism. Extract
+`/tmp/kleidi-deployer`,
+`/tmp/kleidi-guard`,
+`/tmp/kleidi-tl`,
+`/tmp/kleidi-rec`.
+No mainnet
+writes.
+
+Files:
+`src/InstanceDeployer.sol`,
+`src/Guard.sol`,
+`src/Timelock.sol`,
+`src/TimelockFactory.sol`,
+`src/RecoverySpell.sol`,
+`src/RecoverySpellFactory.sol`.
+
+Checked for: a
+stranger
+`createSystemInstance`
+that steals the
+Safe; a
+permissionless
+`schedule` of an
+unscheduled op;
+a stranger
+`executeWhitelisted`
+without the hot
+signer role; a
+stranger
+`executeRecovery`
+without owner
+sigs.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `createSystemInstance`
+  CREATE2 salt
+  is bound to
+  instance
+  params. A
+  front-run of
+  the same salt
+  lands the same
+  Safe with the
+  factory as
+  owner; the
+  factory
+  asserts
+  `isOwner(address(this))`.
+- Timelock
+  `schedule` /
+  `scheduleBatch`
+  / `cancel` are
+  `onlySafe`.
+  `execute` /
+  `executeBatch`
+  are
+  permissionless
+  after the
+  delay of a
+  Safe-scheduled
+  op.
+- `executeWhitelisted`
+  /
+  `executeWhitelistedBatch`
+  are
+  `onlyRole(HOT_SIGNER_ROLE)`
+  after
+  `checkCalldata`.
+- Guard
+  `checkTransaction`
+  blocks
+  self-calls
+  with payload
+  or value and
+  blocks
+  delegatecall.
+- `RecoverySpell.executeRecovery`
+  is
+  permissionless
+  after delay +
+  `recoveryThreshold`
+  unique owner
+  ECDSA sigs;
+  then rewrites
+  Safe owners
+  via module
+  calls.
+
+Do not file
+permissionless
+execute of a
+Safe-scheduled
+timelock op or
+permissionless
+recovery after
+valid owner
+sigs + delay.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+none at the
+opened-contract
+level (same
+bytecode on
+Base / OP);
+AddressCalculation
+if not covered.
+
+## 2026-09-03: Wormhole leftover remaining circle-integration leftover (`2342025`)
+
+Immunefi program
+`wormhole`
+($1,000,000,
+`kyc: true`).
+Already leftover-
+logged as ETH
+core + TokenBridge
+and remaining NTT.
+Official
+`wormhole-foundation/wormhole-circle-integration`
+HEAD
+`2342025`.
+jsDelivr extract
+`/tmp/wh-circ`.
+No mainnet
+writes.
+
+Files:
+`CircleIntegration.sol`,
+`CircleIntegrationImplementation.sol`,
+`CircleIntegrationGovernance.sol`,
+`CircleIntegrationGetters.sol`,
+`CircleIntegrationSetters.sol`,
+`CircleIntegrationMessages.sol`.
+
+Checked for: a
+stranger
+`transferTokensWithPayload`
+that pulls
+another
+account; a
+permissionless
+`redeemTokensWithPayload`
+that mints to
+the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `transferTokensWithPayload`
+  requires
+  `msg.value ==
+  wormholeFee`.
+  `custodyTokens`
+  `safeTransferFrom`
+  `msg.sender`.
+  Then Circle
+  `depositForBurnWithCaller`
+  to recorded
+  `mintRecipient`.
+- `redeemTokensWithPayload`
+  verifies a
+  Wormhole VAA
+  + registered
+  emitter +
+  unused hash;
+  requires
+  `msg.sender ==
+  mintRecipient`;
+  then Circle
+  `receiveMessage`
+  to mint to
+  that
+  recipient.
+
+Do not file
+permissionless
+redeem of a
+VAA + Circle-
+attested burn
+to the
+recorded
+`mintRecipient`
+(caller must
+be that
+recipient).
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+Relayer 404 /
+other-chain NTT
+(Solana / Sui).
+
+## 2026-09-03: Ante Finance leftover ETH pool leftover (Sourcify)
+
+Immunefi program
+`antefinance`
+($25,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+factory
+`0xa03492a9a663f04c51684a3c172fc9c4d7e02edc`
+is
+`AntePoolFactory`.
+Pool
+`0xE48f6A36f3712E389ce666BCEcD88BA60c30aE50`
+is
+`AntePool`.
+Other listed
+pools are the
+same
+`AntePool`
+bytecode.
+Extract
+`/tmp/ante-factory`,
+`/tmp/ante-pool`.
+No mainnet
+writes.
+
+Files:
+`contracts/AntePoolFactory.sol`,
+`contracts/AntePool.sol`.
+
+Checked for: a
+stranger
+`stake` that
+credits
+another
+account; a
+`withdrawStake`
+that pays the
+caller someone
+else's delayed
+ETH; a
+stranger
+`checkTest`
+without being
+a challenger;
+a
+permissionless
+`claim` of
+another
+challenger's
+payout.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `stake`
+  credits
+  `msg.value`
+  to
+  `side.userInfo[msg.sender]`.
+- `unstake` /
+  `unstakeAll` /
+  `withdrawStake`
+  /
+  `cancelPendingWithdraw`
+  bind
+  `msg.sender`.
+  `withdrawStake`
+  pays
+  `msg.sender`
+  after a 24h
+  delay.
+- `checkTest`
+  is
+  challenger-
+  only after a
+  12-block
+  delay; on
+  failure sets
+  `verifier =
+  msg.sender`
+  and
+  `pendingFailure`.
+- `claim`
+  requires
+  `pendingFailure`
+  and
+  challenger
+  `startAmount`;
+  pays
+  `_calculateChallengerPayout`
+  to
+  `msg.sender`.
+
+Do not file
+challenger-
+claimed payout
+after a failed
+Ante test or
+stake of
+`msg.value`.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+other listed
+Ante Pool
+addresses
+(same type).
+
+## 2026-09-03: YO Protocol leftover yoVault leftover (Sourcify)
+
+Immunefi program
+`yo-protocol`
+($10,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify Base
+8453 yoVault
+impl
+`0xfd62e454a75357b039fed34a0c92b60ef115c713`
+is
+`yoVault`.
+YOGateway impl
+`0x0cf9a84bb9e916229f3037dc079ef418b97bb0cf`
+is
+`YoGateway`.
+Proxies: yoETH
+`0x3a43aec53490cb9fa922847385d82fe25d0e9de7`,
+yoBTC
+`0xbCbc8cb4D1e8ED048a6276a5E94A3e952660BcbC`,
+yoUSD
+`0x0000000f2eb9f69274678c76222b35eec7588a65`,
+YOGateway
+`0xF1EeE0957267b1A474323Ff9CfF7719E964969FA`.
+Extract
+`/tmp/yo-vault`,
+`/tmp/yo-gw`.
+No mainnet
+writes.
+
+Files:
+`src/yoVault/yoVault.sol`,
+`src/YoGateway.sol`.
+
+Checked for: a
+stranger
+`deposit` that
+pulls another
+account; a
+`withdraw` /
+`redeem` that
+pays the
+caller someone
+else's shares;
+a stranger
+`requestRedeem`
+of another
+owner; a
+stranger
+`fulfillRedeem`
+without auth.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `yoVault.deposit`
+  / `mint` are
+  stock 4626 +
+  pause;
+  `_deposit`
+  takes a fee
+  to
+  `feeRecipient`.
+- `withdraw` /
+  `redeem`
+  revert
+  `UseRequestRedeem()`.
+- `requestRedeem`
+  requires
+  `owner ==
+  msg.sender`
+  and
+  `balanceOf(owner)
+  >= shares`.
+  Instant
+  redeem when
+  the vault has
+  enough
+  assets;
+  otherwise
+  shares move
+  to the vault
+  and a pending
+  request is
+  stored for
+  `receiver`.
+- `fulfillRedeem`
+  /
+  `cancelRedeem`
+  /
+  `onUnderlyingBalanceUpdate`
+  are
+  `requiresAuth`.
+- `YoGateway.deposit`
+  `safeTransferFrom`
+  `msg.sender`
+  then vault
+  `deposit` to
+  `receiver`.
+- `YoGateway.redeem`
+  pulls shares
+  from
+  `msg.sender`
+  then
+  `requestRedeem(shares,
+  receiver,
+  address(this))`.
+
+Do not file
+4626 deposit
+to a named
+receiver or
+owner-only
+`requestRedeem`.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+multisig /
+website.
 
 ## Next candidates
 
@@ -35517,7 +35982,8 @@ NTT leftover (`250d810`
 NttManager /
 WormholeTransceiver; KYC) is
 logged (remaining listed is
-circle-integration /
+circle-integration
+(now leftover-logged) /
 other-chain NTT / Relayer
 404);
 Metronome leftover ETH
@@ -35542,6 +36008,29 @@ Arbitrum HorizonStaking /
 PaymentsEscrow / L2 gateway /
 Curation / DisputeManager /
 BillingConnector);
+Kleidi leftover ETH Safe +
+timelock leftover (Sourcify
+InstanceDeployer / Guard /
+Timelock / RecoverySpell;
+KYC) is logged (remaining
+listed is AddressCalculation
+if not covered);
+Wormhole leftover remaining
+circle-integration leftover
+(`2342025`; KYC) is logged
+(remaining listed is Relayer
+404 / other-chain NTT);
+Ante Finance leftover ETH
+pool leftover (Sourcify
+AntePoolFactory / AntePool;
+KYC) is logged (remaining
+listed is other listed Ante
+Pool addresses, same type);
+YO Protocol leftover yoVault
+leftover (Sourcify yoVault /
+YoGateway; KYC) is logged
+(remaining listed is
+multisig / website);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
