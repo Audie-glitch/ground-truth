@@ -34135,10 +34135,19 @@ adapters leftover
 (`39e70f0` Pendle /
 Balancer V3 / Convex /
 Lido / Sky / Uniswap V4;
+KYC) is logged.
+Gearbox leftover
+permissionless governor +
+configurator leftover
+(`b1b5e5b` MarketConfigurator
+/ TreasurySplitter /
+Governor / CrossChainMultisig
+/ BytecodeRepository / ACL;
 KYC) is logged (remaining
-listed is other
-integrations adapters /
-helpers / permissionless /
+listed is factories /
+InstanceManager /
+PriceFeedStore / helpers /
+other integrations adapters /
 periphery-v3);
 Burrow leftover
 `contract.main.burrow.near`
@@ -44614,3 +44623,202 @@ them, and other
 oracle node
 types if still
 unused.
+
+## 2026-09-03: Gearbox leftover permissionless governor + configurator leftover (`b1b5e5b`)
+
+Immunefi program
+`gearbox` ($150,000,
+`kyc: true`). Official
+scope is
+`Gearbox-protocol/security`
+`bug-bounty/v3_1-scope.md`:
+`permissionless`
+everything in
+`contracts/` except
+`contracts/test/`. This
+slice is `main` `b1b5e5b`
+money-path /
+privilege core:
+MarketConfigurator,
+TreasurySplitter,
+Governor, CrossChainMultisig,
+BytecodeRepository, ACL.
+Clone `/tmp/gearbox-pl`.
+No mainnet writes.
+
+Files:
+`contracts/market/MarketConfigurator.sol`,
+`contracts/market/TreasurySplitter.sol`,
+`contracts/market/Governor.sol`,
+`contracts/global/CrossChainMultisig.sol`,
+`contracts/global/BytecodeRepository.sol`,
+`contracts/market/ACL.sol`.
+
+Checked for: a
+stranger
+`createMarket` /
+`configurePool` on
+an existing suite;
+a treasury
+`distribute` or
+`withdrawToken` to
+the caller; a
+governor execute
+of an unqueued
+tx; a
+cross-chain batch
+with forged
+signatures; a
+bytecode
+`deploy` of
+unallowed init
+code; an ACL
+`grantRole` by a
+non-owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- MarketConfigurator
+  create /
+  configure /
+  shutdown /
+  factory upgrade
+  / periphery add
+  are
+  `onlyAdmin`.
+  Emergency
+  configure /
+  role revoke are
+  `onlyEmergencyAdmin`.
+  Factory
+  authorize is
+  `onlySelf`.
+- TreasurySplitter
+  `distribute` /
+  `configure` are
+  admin or
+  treasury proxy.
+  Configure needs
+  both admins
+  then a
+  `onlySelf`
+  setter.
+  Proportions
+  must sum to
+  1e4. Splitter
+  cannot be a
+  receiver.
+  `withdrawToken`
+  is `onlySelf`.
+- Governor queue
+  is
+  `queueAdminOnly`.
+  Execute is
+  `executionAdminOnly`
+  unless
+  permissionless
+  execution was
+  already
+  allowed (after
+  delay). Veto
+  is
+  `vetoAdminOnly`.
+  Admin changes
+  are
+  `timeLockOnly`.
+  Ownership
+  cannot be
+  renounced.
+- CrossChainMultisig
+  `submitBatch`
+  is owner +
+  mainnet.
+  `signBatch`
+  needs an
+  approved
+  signer and
+  threshold
+  before
+  execute.
+  Off-mainnet
+  `executeBatch`
+  checks
+  `prevHash`,
+  unique
+  signers, and
+  threshold.
+  Signer /
+  threshold
+  changes are
+  `onlySelf`.
+- BytecodeRepository
+  `uploadBytecode`
+  is public but
+  author-signed
+  (author-only
+  on mainnet)
+  and does not
+  allow deploy.
+  `deploy` uses
+  only an
+  allowed
+  `(cType, ver)`
+  hash. System
+  allow is
+  `onlyOwner`.
+  Public allow
+  needs an
+  audited
+  bytecode in a
+  public domain
+  with the
+  author as
+  type owner.
+- ACL
+  `grantRole` /
+  `revokeRole`
+  are
+  `onlyOwner`.
+
+Do not file
+admin market
+create,
+two-admin
+splitter
+moves,
+queued
+timelock
+execute,
+or DAO-signed
+cross-chain
+batches as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`permissionless`
+opens for this
+governor +
+configurator
+core is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+factories,
+InstanceManager,
+AddressProvider,
+PriceFeedStore,
+helpers; other
+integrations
+adapters /
+helpers;
+periphery-v3
+emergency / kyc /
+migration.
