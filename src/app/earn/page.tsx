@@ -153,7 +153,9 @@ export default async function EarnPage() {
         <ul className="list-disc space-y-1 pl-5">
           <li>Confirm you are 18+ and not in a sanctioned location.</li>
           <li>
-            DoraHacks, ETHGlobal, Devpost, and GitHub accounts you control.
+            DoraHacks, ETHGlobal, Devpost, Superteam, and GitHub accounts you
+            control. Mermail also needs a console workspace and an X post
+            tagging @Mermailapp.
           </li>
           <li>
             A payout address you already control. Never a seed phrase or private

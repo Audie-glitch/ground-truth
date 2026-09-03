@@ -2,7 +2,8 @@ export type OpportunityId =
   | "buidl-ctc"
   | "keeperhub-feature"
   | "ethonline"
-  | "third-web-hack";
+  | "third-web-hack"
+  | "mermail-skill";
 
 export type WindowState = "not-yet" | "open" | "closed";
 
@@ -70,6 +71,18 @@ const WINDOWS: Omit<OpportunityWindow, "state">[] = [
     closesAt: "2026-09-27T23:59:59Z",
     nextAction:
       "Built. Needs your Devpost registration and a demo-video upload.",
+  },
+  {
+    id: "mermail-skill",
+    title: "mermail-onchain-receipts",
+    event: "Superteam Earn — Mermail agent skill",
+    pays: "$500 USDC (250 / 100 / 50 + 50 innovative + 50 best video)",
+    href: "https://superteam.fun/earn/listing/build-and-demo-a-mermail-agent-skill",
+    repoPath: "mermail-onchain-receipts/",
+    opensAt: "2026-08-01T00:00:00Z",
+    closesAt: "2026-09-23T13:59:59Z",
+    nextAction:
+      "Skill and patch are ready. Fork mermail-skills, open the PR, connect Mermail MCP, and post a 2–5 minute X demo tagging @Mermailapp.",
   },
 ];
 

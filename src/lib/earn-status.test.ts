@@ -47,4 +47,16 @@ describe("earning windows", () => {
     );
     expect(ranked.some((row) => row.state === "open")).toBe(true);
   });
+
+  it("treats the Mermail Superteam skill as open through 23 Sep 13:59 UTC", () => {
+    expect(
+      windowFor("mermail-skill", new Date("2026-09-03T02:34:00Z")).state,
+    ).toBe("open");
+    expect(
+      windowFor("mermail-skill", new Date("2026-09-23T13:59:59Z")).state,
+    ).toBe("open");
+    expect(
+      windowFor("mermail-skill", new Date("2026-09-23T14:00:00Z")).state,
+    ).toBe("closed");
+  });
 });

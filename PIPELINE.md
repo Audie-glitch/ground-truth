@@ -4,8 +4,9 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, 02:46 UTC. Dates verified against each
-organizer's own page on 2–3 Sep; Immunefi unofficial mirror rechecked 3 Sep.
+Status as of 3 September 2026, 02:52 UTC. Dates verified against each
+organizer's own page on 2–3 Sep; Superteam listings and Immunefi unofficial
+mirror rechecked 3 Sep.
 
 ## Opportunities, ranked by expected payout per unit of work
 
@@ -18,6 +19,7 @@ organizer's own page on 2–3 Sep; Immunefi unofficial mirror rechecked 3 Sep.
 | 5 | ETHOnline 2026, Arc (Circle) agentic and DeFi bounties | $1,667 x 3 tracks, plus $3,500 mainnet-readiness | USDC | Sep 4-16 | Requires frontend + backend + architecture diagram + video | Stretch: only if the KeeperHub work can be pointed at Arc (KeeperHub issue #2230 adds Arc testnet). |
 | 6 | KeeperHub main track, Best Integration into a Live Project | $2,000 / $1,200 / $800 | Stablecoins | Sep 6-18 | Needs a KeeperHub account, a funded testnet wallet, and a real third-party project on the other side | Plan: `plugin-keeperhub` for elizaOS (KeeperHub as the execution layer for Eliza agents: dry run, idempotent execute, status, balances). See `keeperhub/main-track-plan.md`. Needs your KeeperHub API key by Sep 9. |
 | 7 | [3rd-Web-Hack](https://3rd-web-hack.devpost.com/) (Devpost) | $500 / $200 / $50 | USDT | Deadline Sep 27 | 86 participants, tiny pool, low bar | Rules require a project "original and developed for the hackathon," so no re-entry of CreditPassport. **Built 3 Sep: SignLens** (`signlens/`), a pre-signature inspector for wallet requests; MVP, 23 tests, README, presentation. Needs your Devpost registration and a demo video upload; see `signlens/SUBMISSION.md`. |
+| 7b | [Build and Demo a Mermail Agent Skill](https://superteam.fun/earn/listing/build-and-demo-a-mermail-agent-skill) | $500 USDC (250 / 100 / 50 + 50 innovative + 50 best video) | USDC | Due 23 Sep 13:59 UTC | `HUMAN_ONLY`; PR into [mermail-skills](https://github.com/Nudgen-Marketing/mermail-skills) plus a live X demo | **Built 3 Sep:** `mermail-onchain-receipts/`. Official-format skill, `upstream.patch` (`npm test`: 16 skills), live Sepolia lookup. You fork, open the PR, connect Mermail, record the X video tagging @Mermailapp. |
 | 8 | [Arbitrum Open House Singapore buildathon](https://web3voyager.com/event/arbitrum-open-house-singapore-online-buildathon) | $115,000 pool | Not stated | Sep 13 - Oct 4; existing projects allowed | Large field | Re-target the ETHOnline or CTC project after Sep 16. |
 | 9 | [Monad Metropolis](https://www.monad.xyz/developers/hackathons/metropolis) | Four tracks at $30,000 each split evenly between 3 teams ($10,000 per winning team), $25,000 grand champion, sponsor bounties (Kuru $5k x2, Dynamic $5k, Perpl $5k, Chainlink CRE $3k, CVI $2k, Envio $1k) | Not stated | Sep 1 - Oct 13; judging Oct 14-27; winners Nov 3 | Very large field; judged by Monad founders; "what you show on Oct 13 should have been built during the six weeks"; existing projects allowed if the work is new | Track 1's own example list includes "undercollateralised lending priced on onchain credit history": CreditPassport's thesis. Plan after Sep 18: a Monad-native passport (payment history from Monad events via Envio, Chainlink CRE underwriting workflow) for Track 1, stacking Envio and CRE bounties; SignLens for Track 4 (Trust, Identity & AI) if capacity. Decide Sep 19. |
 
@@ -73,6 +75,10 @@ share the username.
   `research/ethonline-start-checklist.md`: the ETHOnline entry (still design-only).
 - `/earn` on the Ground Truth app: dated open/closed windows for every live path.
 - `signlens/`: the 3rd-Web-Hack entry, working with live on-chain checks; demo video recorded.
+- `mermail-onchain-receipts/`: Superteam Mermail skill ($500 USDC, due 23 Sep).
+  Official-format `SKILL.md`, `upstream.patch` against mermail-skills (`npm test`
+  green: 16 skills), live Sepolia receipt lookup. Needs your fork/PR, Mermail
+  MCP, and an X demo tagging @Mermailapp; see `mermail-onchain-receipts/SUBMISSION.md`.
 - `research/bug-bounty-review-log.md`: Immunefi target selection method and
   time-boxed reviews through Sky PAS / SBEBeam and Intuition MultiVault,
   AtomWallet, curves, and emissions mint/bridge (no submittable finding).
@@ -147,6 +153,15 @@ Ordered by urgency. Each is a few minutes.
    with testnet HBAR, USDC `0.0.429274` associated, testnet USDC from
    faucet.circle.com; store as secrets `HEDERA_ACCOUNT_ID` and
    `HEDERA_PRIVATE_KEY` (testnet only). Details in `x402-api/DESIGN.md`.
+11. For the Mermail Superteam bounty: fork
+    [Nudgen-Marketing/mermail-skills](https://github.com/Nudgen-Marketing/mermail-skills),
+    apply `mermail-onchain-receipts/upstream.patch`, `npm test`, open a PR titled
+    `add mermail-onchain-receipts skill`, create a Mermail workspace, send one
+    explorer-link email to the agent mailbox, record 2–5 minutes on X tagging
+    [@Mermailapp](https://x.com/Mermailapp), and submit the Superteam form.
+    Optional: store a fine-grained PAT on that fork as `GITHUB_FORK_TOKEN` so I
+    can push the branch and open the PR. Exact answers are in
+    `mermail-onchain-receipts/SUBMISSION.md`.
 
 ## Rules I am respecting
 

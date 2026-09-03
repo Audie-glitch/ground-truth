@@ -1,0 +1,11 @@
+interface:
+  display_name: "Mermail On-chain Receipts"
+  short_description: "File and verify blockchain payment receipts from the inbox"
+  default_prompt: "Use $mermail-onchain-receipts when the job is filing explorer links or 0x payment hashes from Mermail, looking them up on public RPCs, and drafting a receipt card without sending or paying."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "mermail"
+      description: "Mermail workspace and mailbox MCP server"
+      transport: "streamable_http"
+      url: "https://console.mermail.app/mcp"

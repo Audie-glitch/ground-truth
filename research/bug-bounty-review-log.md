@@ -1512,17 +1512,22 @@ Not submitted.
 
 Sky PAS / SBEBeam and Intuition MultiVault / AtomWallet /
 curves / utilization / emissions mint-bridge / registry
-solvency are exhausted at these commits. Remaining Sky
-slices (`diamond-pau` facets, `dss-emergency-spells`) are
-large and older. Superteam `AGENT_ALLOWED` is still only
-Steve Arena and ZNS — do not execute. All other open
-Superteam listings are `HUMAN_ONLY`. the402.ai still
-paused. 1inch Fusion settlement / whitelist / PowerPod /
-KycNFT and FeeTaker are exhausted. Remaining OZ hooks:
-none of the money-moving general/fee/base files.
-Sherlock `/api/contests` has 301 historical items; the only
-non-FINISHED row as of 02:46 UTC 3 Sep is contest `1234`
-in `SHERLOCK_JUDGING` (not open for reports).
-Hedera Harness #8 still `open`, 0 comments, 0 HOL-Guard
-PRs. No KeeperHub implementation before the 6 Sep build
-window. No ETHOnline project code before 4 Sep 16:00 UTC.
+solvency are exhausted at these commits. Remaining Intuition
+slice: `TrustSwapAndBridgeRouter` (Base asset, not in the v2
+repo) plus periphery. Remaining Sky slices (`diamond-pau`
+facets, `dss-emergency-spells`) are large and older. Superteam
+API rechecked 02:50 UTC 3 Sep: 28 open listings.
+`AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
+execute. Mermail skill is built (`mermail-onchain-receipts/`);
+remaining work is the participant's PR, Mermail MCP, and X
+demo. T3N still needs Terminal 3 SSO. NectarFi is a creator
+campaign. the402.ai still paused. 1inch Fusion settlement /
+whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
+Remaining OZ hooks: none of the money-moving general/fee/base
+files. Leather ($5k, wallet/web) is the next unread Immunefi
+program if we want a web2 target. Sherlock `/api/contests` has
+301 historical items; the only non-FINISHED row as of 02:46 UTC
+3 Sep is contest `1234` in `SHERLOCK_JUDGING` (not open for
+reports). Hedera Harness #8 still `open`, 0 comments, 0
+HOL-Guard PRs. No KeeperHub implementation before the 6 Sep
+build window. No ETHOnline project code before 4 Sep 16:00 UTC.
