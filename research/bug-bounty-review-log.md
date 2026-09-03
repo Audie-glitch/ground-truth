@@ -40751,6 +40751,11 @@ Immunefi leftover ETH Splitter leftover (Sourcify) is logged
 + Primacy of Impact);
 Enzyme Onyx leftover ValuationHandler + trackers leftover
 (`7b48d24`) is logged;
+ZKsync OS leftover bootloader + system hooks leftover
+(`9efc8bf`) is logged (remaining listed is interpreter /
+zk_ee / airbender / wrapper);
+Lombard leftover BARD token + TokenDistributor leftover
+(`f79d6f6`) is logged;
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub
@@ -59854,7 +59859,6 @@ opens for Immunefi smart contracts is exhausted at the opened-file level.
 Remaining listed: immunefi.com / bugs.immunefi.com / shieldmybags.immunefi.com
 websites and Primacy of Impact placeholders (out of this SC track).
 
-
 ## 2026-09-03: Lombard leftover BARD token + TokenDistributor leftover (`f79d6f6`)
 
 Immunefi program
@@ -60067,4 +60071,52 @@ packages,
 and Starknet
 cairo
 packages.
+
+## 2026-09-03: ZKsync OS leftover bootloader + system hooks leftover (`9efc8bf`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Unique unused standing
+DLT program (updated 2026-09-02). Official clone `/tmp/zksync-os` at listed
+commit `9efc8bf70ae77d1d4df67eff5c60c8a8cfc21268`. No mainnet writes. No
+exploit PoCs.
+
+Opened `basic_bootloader` transaction flow (L2 EOA validation / fee
+precharge / refund, L1 priority mint from treasury, Ethereum withdrawals
+list) and `system_hooks` (`mint_base_token`, `l1_messenger`,
+`set_bytecode_on_address`) plus `runner.rs` CALL-value transfer.
+
+Checked for: a user L2 tx that mints another account's ETH; mint-hook
+call from a stranger; fee refund to the executor; CALL value that
+debits a victim; L1-messenger / set-bytecode privilege bypass.
+
+Result: no user-exploitable finding. Not submitted.
+
+- L2 mint hook `0x7100` returns as an empty account unless
+  `caller == L2_BASE_TOKEN_ADDRESS` (`0x800a`). Successful mint credits
+  that caller, not an arbitrary `to`. Delegate / callcode / value /
+  static fail.
+- L2 EOA path recovers secp256k1, rejects code-bearing senders
+  (EIP-3607), requires `required_balance`, then
+  `update_account_nominal_token_balance(..., from, fee, subtract)`.
+  Unused gas refunds `transaction.from()`. Operator payment credits
+  `coinbase`, not the executor.
+- L1 priority / upgrade txs mint from treasury (`0x10011`) to
+  `tx.from` (deposit minus max fee, inside a revert frame), then to
+  coinbase (used fee) and `reserved[1]` (refund). Those txs are
+  L1-enqueued, not user L2 forgery.
+- CALL value uses `transfer_nominal_token_value(caller, target, value)`.
+  Insufficient balance is a failing call (EVM) or top-level error, not
+  a debit of a third party.
+- Consensus withdrawals credit listed `address` from the block
+  withdrawals list, not from an L2 caller.
+- L1 messenger hook and set-bytecode hook pretend empty unless called
+  by `0x8008` / (`0x8006` or `0x800f`).
+
+Do not file stranger calls to `0x7100` / `0x7001` / `0x7002` looking
+like empty accounts, L1-queue mints, Cancun `BLOBHASH`/`PREVRANDAO`
+behavior listed in `docs/not-a-bug.md`, or fee refund to the signer as
+stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: evm_interpreter,
+zk_ee, zksync_os program, storage_models, crypto, oracles, proof_running_system,
+airbender CS / prover / verifier, and zkos-wrapper circuits.
 
