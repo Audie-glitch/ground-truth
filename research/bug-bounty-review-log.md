@@ -42644,6 +42644,10 @@ Filecoin leftover remaining lotus mpool leftover (`7740217`)
 is logged.
 Filecoin leftover remaining lotus wallet leftover (`7740217`)
 is logged.
+Filecoin leftover remaining lotus sync leftover (`7740217`)
+is logged.
+Aave leftover remaining GHO token leftover (`23859bb`)
+is logged.
 Aave leftover remaining StableDebtToken leftover (`782f519`)
 is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
@@ -42670,6 +42674,7 @@ Do not rematch Filecoin neptune-triton leftover.
 Do not rematch Filecoin lotus paych leftover.
 Do not rematch Filecoin lotus mpool leftover.
 Do not rematch Filecoin lotus wallet leftover.
+Do not rematch Filecoin lotus sync leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
@@ -66172,3 +66177,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a bucket-capped facilitator mint as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: PoolConfigurator / ACL / oracles / periphery / rewards / GSM.
+
+## 2026-09-03: Filecoin leftover remaining lotus sync leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus wallet leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain` sync + `chain/consensus`. Opened `sync.go` `ValidateMsgMeta` / `ValidateBlock` and `consensus/filcns/filecoin.go` `ValidateBlock` plus `consensus/signatures.go`. Do not rematch lotus miner / paych / mpool / wallet leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: a full block whose message CIDs do not match the header `Messages` root still validating; a block from a non-winner or slashed miner accepted; `AuthenticateMessage` verifying a delegated signature against a reconstructed message that does not equal the signed FIL message.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ValidateMsgMeta` rebuilds the BLS/secp message AMT in a temp store and requires the CID equal `Header.Messages`. `ValidateBlock` delegates to `FilecoinEC.ValidateBlock`.
+- `ValidateBlock` sanity-checks election proof / ticket / block sig / BLS aggregate / ID miner, parent height+timestamp, parent weight, `minerIsValid`, worker-signed election VRF + ticket VRF, `WinCount`, slashed-miner reject, WinningPoSt, beacon, and `verifyBlockSignature` of the worker. Bad blocks are denylisted.
+- `AuthenticateMessage` for delegated txs reconstructs the ETH tx, requires a Filecoin-message roundtrip `Equals`, then `sigs.Verify`s the RLP digest. Default path verifies `Message.Cid()` against the signer.
+
+Do not file a worker-VRF + message-root + signature-bound block validator as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
