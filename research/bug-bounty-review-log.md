@@ -47578,7 +47578,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs` money-path subset / `bank/fee_distribution`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs` money-path subset) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana non_circulating_supply leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_reward_certificate leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana validated_block_finalization leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed Arbitrum: websites if still unused. Official Arbitrum leftover that listed trees open is exhausted except unused official leftovers if still open. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged.
@@ -47667,6 +47667,7 @@ Do not rematch Jito jito-solana bank_forks leftover.
 Do not rematch Jito jito-solana non_circulating_supply leftover.
 Do not rematch Jito jito-solana validated_reward_certificate leftover.
 Do not rematch Jito jito-solana validated_block_finalization leftover.
+Do not rematch Jito jito-solana fee_distribution leftover.
 Do not rematch Chainlink leftover remaining CCIP Sui leftover.
 Do not rematch Chainlink leftover remaining CCIP Solana leftover.
 Do not rematch Jito jito-solana snapshot_package leftover.
@@ -50488,8 +50489,10 @@ Jito leftover remaining jito-solana non_circulating_supply leftover
 Jito leftover remaining jito-solana validated_reward_certificate leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana validated_block_finalization leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana fee_distribution leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-bank.rs money-path subset / bank/fee_distribution if still unused);
+bank.rs money-path subset if still unused);
 Optimism leftover remaining op-node deposits + withdrawals leftover
 (`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
@@ -73247,3 +73250,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a subscriber-paid verify or weighted recipient claim as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink OCR / core node / websites if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana fee_distribution leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after validated_block_finalization leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/bank/fee_distribution.rs`. Do not rematch runtime fee leftover, bundle + fee leftover, vote_reward leftover, or remaining runtime leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `distribute_transaction_fee_details` that pays `msg.sender`; `deposit_fees` that credits a stranger collector; `deposit_delegator_fees` that overflows pending rewards into extra vote lamports.
+
+Result: no user-exploitable finding. Not submitted.
+
+- End-of-slot validator helper, not a stranger IX. Fees already sit in leftover-logged `collector_fee_details`. Burn is statically 50% of the transaction fee. Deposit is `priority_fee + (transaction_fee - burn)`.
+- `deposit_or_burn_fee` reads the scheduled leader's vote from leftover-logged epoch stakes. SIMD-0232 collector is `block_revenue_collector` (fallback `leader.id`); commission is clamped to `MAX_BPS`. Validator share is `deposit * commission / MAX_BPS` in u128; the rest is delegator share. Failed deposits return the amount to burn.
+- `deposit_fees` `checked_add`s to the collector. Custom-collector path runs `collector_type_checked` unless the collector is the leader vote: system owner, not reserved, rent-exempt after deposit (incinerator skips rent). Legacy path requires system owner and a rent-state transition check. Overflow / rent / reserved → burn, not wrap.
+- `deposit_delegator_fees` requires an existing vote-program account, then `increment_pending_delegator_rewards_checked` and `checked_add_lamports`. Missing / wrong owner / overflow → burn.
+- Capitalization subtracts the burned remainder. Tests cover overflow, reserved collector, non-rent-exempt create, and zero fees.
+
+Do not file leader fee distribution as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank.rs` money-path subset) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
