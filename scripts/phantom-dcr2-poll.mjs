@@ -77,7 +77,8 @@ const stamper = new Auth2Stamper(new FileStorage(), {
 await stamper.init();
 writeStatus({ ok: true, stage: "waiting", user_code: device.user_code, url: device.url });
 
-const deadline = Date.now() + (device.expires_in || 600) * 1000;
+const mintedMs = fs.statSync(deviceFile).mtimeMs;
+const deadline = mintedMs + (device.expires_in || 600) * 1000;
 let interval = Math.max(device.interval || 5, 45);
 while (Date.now() < deadline) {
   await new Promise((r) => setTimeout(r, interval * 1000));
