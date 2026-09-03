@@ -71787,3 +71787,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an epoch vote-weight snapshot as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Optimism leftover remaining op-node p2p leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining listed after op-node engine leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `op-node/p2p/{gossip,signer,sync,filter,node}.go`. Extract `/tmp/op-p2p/`. Do not rematch deposits leftover, withdrawals leftover, or engine leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: gossip that accepts an unsigned or stranger-signed payload as the next unsafe head; snappy that expands into a zip-bomb; req/resp sync that inserts a peer-supplied payload as safe; a self-published loop that re-ingests our own gossip as a new tip.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `BuildBlocksValidator` rejects invalid snappy, decoded length above `maxGossipSize` (10 MiB) or below `minGossipSize` (66), then requires a compact secp256k1 signature over the remaining bytes via `verifyBlockSignature`. Current sequencer address must verify; previous signer is allowed only during the rotation grace period. Empty current sequencer address is `IGNORE`, not accept.
+- After signature, SSZ decode is version-gated. Timestamp must be within the configured past threshold and no more than 5 seconds in the future. `CheckBlockHash` must match. Topic versions reject mismatched withdrawals / blob-gas / parent-beacon-root / withdrawals-root. LRU `seenBlocks` ignores a duplicate hash and rejects more than 5 distinct hashes at the same height.
+- `FilterSelf` drops gossip whose `from` is this host. `signer.go` is a thin `BlockSigner` wrapper and does not publish.
+- Req/resp client insert is gone. `NewNodeP2P` only registers a serving handler when `ReqRespSyncEnabled` and an `L2Chain` source exist. `handleSyncRequest` rate-limits globally and per peer, rejects numbers before genesis or after `TargetBlockNumber(now)`, and serves `PayloadByNumber` from the local chain. It does not insert the request body as a payload.
+- This package does not send L1 transactions or mutate balances.
+
+Do not file a gossip or req/resp handler as stranger theft of L2 ETH.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining `op-node` sequencing (`rollup/sequencing`) / websites if still unused.
