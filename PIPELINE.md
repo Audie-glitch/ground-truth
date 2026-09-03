@@ -20,6 +20,7 @@ Optimism leftover remaining L2ProxyAdmin leftover is logged;
 Ethena leftover remaining StakedENA leftover is logged;
 Ethena leftover remaining USDtb leftover is logged;
 LayerZero leftover remaining ULN301 leftover is logged;
+Ether.fi leftover remaining Auction leftover is logged;
 Jito leftover remaining jito-solana runtime_config leftover is logged;
 Jito leftover remaining jito-solana static_ids leftover is logged;
 Jito leftover remaining jito-solana read_optimized_dashmap leftover is logged;
@@ -926,8 +927,12 @@ TON / other-chain).
 Ether.fi leftover LiquidityPool leftover
 (Sourcify LiquidityPool / WeETH /
 Liquifier / Redemption / WRNFT; KYC)
-is logged (remaining listed is eETH
-impl 404 / Auction / Oracle / adapters).
+is logged.
+Ether.fi leftover remaining Auction leftover
+(`b4a0968` AuctionManager / EtherFiOracle;
+KYC) is logged
+(remaining listed is OFT / bridge adapters /
+other-chain weETH; eETH impl still 404).
 Compound leftover Comet leftover
 (Sourcify cUSDCv3 / cWETHv3 / Rewards /
 Bulker; KYC) is logged (remaining listed
@@ -2629,6 +2634,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Ether.fi leftover
   LiquidityPool leftover
   (Sourcify; KYC),
+  Ether.fi leftover remaining
+  Auction leftover
+  (`b4a0968`; KYC),
   Compound leftover Comet leftover
   (Sourcify; KYC),
   Maple leftover Pool leftover

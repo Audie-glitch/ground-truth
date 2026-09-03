@@ -47575,6 +47575,7 @@ Remaining listed Rootstock: unused official leftover that listed trees open is e
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted at leftover-heading level. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining SuperchainConfig leftover is logged. Optimism leftover remaining LegacyMessagePasser leftover is logged. Optimism leftover remaining L2ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Ethena leftover remaining USDtb leftover is logged. Remaining listed is other OFT adapters / TON / other-chain rows if still unused.
 Remaining listed LayerZero: unused official leftovers if still open. LayerZero leftover remaining ULN301 leftover is logged. Remaining listed is ExecutorFeeLib / PriceFeed / OApp examples / other-chain if still unused.
+Remaining listed Ether.fi: unused official leftovers if still open. Ether.fi leftover remaining Auction leftover is logged. Remaining listed is OFT / bridge adapters / other-chain weETH if still unused.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -47709,6 +47710,7 @@ Do not rematch Optimism leftover remaining L2ProxyAdmin leftover.
 Do not rematch Ethena leftover remaining StakedENA leftover.
 Do not rematch Ethena leftover remaining USDtb leftover.
 Do not rematch LayerZero leftover remaining ULN301 leftover.
+Do not rematch Ether.fi leftover remaining Auction leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
 Do not rematch Arbitrum leftover remaining governance leftover.
@@ -73949,3 +73951,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file endpoint-gated send or executor-gated commit as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: ExecutorFeeLib / PriceFeed / OApp examples / other-chain twins if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Ether.fi leftover remaining Auction leftover (`b4a0968`)
+
+Immunefi program `etherfi` ($500,000, `kyc: true`). Official remaining unused leftover after LiquidityPool leftover. Official `etherfi-protocol/smart-contracts` `b4a0968` (`b4a0968087b178bc346cdf6bee6c0597bf4c42c7`). Opened listed `src/staking/AuctionManager.sol` and `src/oracle/EtherFiOracle.sol`. Official raw GitHub **200**. Local extract `/tmp/ef-auction/` (365 / 496 lines). Official `src/core/eETH.sol` **404** (same as prior leftover). Do not rematch LiquidityPool / WeETH / Liquifier leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `cancelBid` that refunds another bidder’s ETH; `updateSelectedBidInformation` that forwards a stranger bid to the caller; `submitReport` that publishes without committee membership or quorum.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `createBid` requires exact `msg.value == _bidSize * _bidAmountPerBid` within min/max (and whitelist when enabled). Each bid records `bidderAddress = msg.sender`.
+- `_cancelBid` requires `bid.bidderAddress == msg.sender` and `isActive`, then refunds `bid.amount` to `msg.sender`. `updateSelectedBidInformation` is `onlyStakingManagerContract`; it deactivates the bid and sends ETH to immutable `treasury`, not the caller.
+- Bid-price / whitelist admin functions are `onlyOperatingMultisig`. Upgrade is `onlyUpgradeTimelock`.
+- `EtherFiOracle.submitReport` requires `shouldSubmitReport(msg.sender)` (registered + enabled committee member, finalized slot, last report handled). Consensus publishes only after `support >= quorumSize`. Unpublish / committee changes are timelock or operating-multisig. No ETH transfer in the oracle.
+
+Do not file a bidder-only refund or a committee-quorum report as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: OFT / bridge adapters / other-chain weETH if still unused. Next unused leftover is a different Immunefi program, not a rematch.
