@@ -12161,6 +12161,138 @@ Mux `mux3-protocol`, or
 Twyne Sourcify-404
 vaults. Not submitted.
 
+## 2026-09-03: Obyte Friends AA leftover (`45019f9`)
+
+Immunefi program `obyte`
+($50,000, `kyc: false`).
+3 Mar 2026 leftover
+`byteball/friend-aa`
+(Autonomous Agent for
+Obyte Friends). Official
+clone `/tmp/obyte-friend-aa`
+at `45019f9` (“higher
+limit when resetting
+votes”). Custom OOS:
+fund-loss under $1,000;
+attacker expense ≥ 50%
+of damage. No mainnet
+interaction.
+
+Files: `friend.oscript`
+(deposit, connect /
+followup, withdraw,
+replace, ghost admin),
+`rewards.oscript` /
+`rewards2.oscript`
+(library-only getters),
+`governance.oscript`.
+
+Checked for: friendship
+handshake that mints
+against another user’s
+principal; followup that
+pays twice; deposit-asset
+oracle that overvalues
+and inflates rewards;
+withdraw that leaves
+`total_locked` high;
+governance `commit` of a
+malicious `rewards_aa`
+without a challenge;
+user2 always-eligible
+path that drains the AA.
+
+Result: no
+user-exploitable finding.
+Not submitted.
+
+- Deposit requires
+  messaging attestation
+  plus real-name or
+  `min_balance_instead_of_real_name`
+  (default 5e9 FRD). AAs
+  are refused. Term
+  365–3650 days, cannot
+  move backward. Max 3
+  extra deposit assets.
+  Referrer deposit-share
+  is issued-by-definer
+  and requires unlock ≥
+  1 year.
+- Connect is a two-sided
+  handshake inside a
+  10-minute window. One
+  new friend per address
+  per calendar day. Both
+  unlock dates must be
+  ≥ 1 year (ghosts
+  excepted). Rewards are
+  1% locked / 0.1%
+  liquid of
+  reducer-adjusted
+  balance (`rewards2`
+  doubles those shares).
+  Non-new-user balances
+  cap at 200e9. New-user
+  and referral bonuses
+  are
+  `min(10e9, balances)`.
+  Followups use the
+  friendship’s frozen
+  `followup_reward_share`
+  (default 0.1) and a
+  10-day claim window.
+- `$are_eligible` treats
+  user2 as eligible when
+  `in_friend_price > 0`
+  (commented: they will
+  not complete if they
+  do not want to pay).
+  That is issuance
+  policy, not a drain of
+  other users’ deposits.
+- Hardcoded `$ghost_admin`
+  can add ghost accounts
+  with 100e9 FRD **not**
+  in `total_locked`
+  (admin trust). Ghost
+  connect resets the
+  caller’s streak.
+- Withdraw after unlock
+  pays FRD, all bytes,
+  and up to 3 deposit
+  assets, then zeroes
+  `balances`.
+  `total_locked` only
+  tracks FRD.
+- Replace uses
+  `ceiling_price` for
+  bytes and
+  `exchange_rates.max`
+  for deposit assets
+  (conservative out).
+  Pool rates come from
+  an oswap AA’s
+  `recent.current/prev`
+  pmin/pmax.
+- Governance names are
+  a fixed list.
+  `rewards_aa` must be
+  an AA. `commit` needs
+  the 3-day
+  `challenging_period`.
+  Permissionless
+  `update_user_balance`
+  only rescales support.
+
+Next leftover: remaining
+Obyte
+`prediction-markets-aa` /
+`counterstake-bridge`, or
+Mux `mux3-protocol`, or
+Twyne Sourcify-404
+vaults. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -12568,7 +12700,9 @@ universal-router
 listed V3 + V2
 periphery);
 Obyte Coop AA
-(`d7d5e57`) is logged;
+(`d7d5e57`) and Friends
+AA (`45019f9`) are
+logged;
 Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase

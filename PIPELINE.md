@@ -15,7 +15,8 @@ EVM 15 Jul strategy leftover (Shard / BlocklistOracle / merkle
 validator / converters) is logged. Listed Silo V3 GitHub Solidity
 is exhausted. PancakeSwap Infinity leftover is logged (remaining
 Pancake is listed V3 + V2 periphery). Obyte Coop AA leftover
-(`d7d5e57`) is logged. Twyne vaults still Sourcify 404.
+(`d7d5e57`) and Friends AA leftover (`45019f9`) are
+logged. Twyne vaults still Sourcify 404.
 
 ## Opportunities, ranked by expected payout per unit of work
 
