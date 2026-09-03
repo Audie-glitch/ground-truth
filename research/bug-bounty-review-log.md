@@ -3478,6 +3478,53 @@ Liquity / CurveUsd swappers / …) and `tx-saver`
 beyond the gas-cost hook already read here. Not
 submitted.
 
+## 2026-09-03: DeFi Saver Morpho Blue actions (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction.
+
+Files: `contracts/actions/morpho-blue/{MorphoBlueBorrow,
+MorphoBlueSupply,MorphoBlueWithdraw,MorphoBluePayback,
+MorphoBlueSupplyCollateral,MorphoBlueWithdrawCollateral,
+MorphoBlueSetAuth,MorphoBlueSetAuthWithSig,
+MorphoBlueReallocateLiquidity,MorphoBlueClaim,
+MorphoTokenWrap}.sol`,
+`helpers/MorphoBlueHelper.sol`.
+
+Checked for: borrow/withdraw `onBehalf` of a third
+party without Morpho authorization; SetAuth that a
+bot can flip on a wallet the user did not sign;
+claim that pulls another account’s merkle rewards;
+reallocate that drains a user’s Morpho position.
+
+Result: no user-exploitable finding.
+
+- Actions run via wallet delegatecall, so Morpho
+  sees `msg.sender` as the wallet. `onBehalf == 0`
+  defaults to the wallet. Borrow / withdraw /
+  withdrawCollateral against another `onBehalf`
+  require Morpho `isAuthorized`. Tokens go to the
+  recipe’s `to`.
+- `SetAuth` calls `setAuthorization` as the wallet
+  (user-signed recipe or official strategy).
+  `SetAuthWithSig` only relays a valid Morpho
+  authorization signature.
+- `Payback` accrues, caps at current debt, and
+  repays shares on max so leftover loan tokens are
+  not over-pulled past debt (pull is the capped
+  amount).
+- `ReallocateLiquidity` is a thin
+  `PublicAllocator.reallocateTo` loop. That path is
+  permissionless on Morpho vaults; it does not
+  touch the wallet’s position.
+- `Claim` claims `address(this)` then
+  `withdrawTokens` to `to`. Wrap deposits legacy
+  MORPHO into the hardcoded wrapper for `to`.
+
+Remaining DFS protocol actions: Aave / Liquity /
+CurveUsd / Fluid / Euler / … Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3517,8 +3564,9 @@ exhausted. 1inch Aqua opcode set and Aqua-listed
 solidity-utils mixins / libraries (`5b597e4`) are
 exhausted. DeFi Saver V3 executor + FL + auth
 (`e623f20`) and exchangeV3 + sell actions (`e623f20`)
-are logged; remaining DFS is protocol `actions/*`
-(Aave / Morpho / Liquity / CurveUsd swappers) and
+are logged; Morpho Blue actions (`e623f20`) are
+logged. Remaining DFS is protocol `actions/*`
+(Aave / Liquity / CurveUsd / Fluid / Euler) and
 the rest of `tx-saver`. Next unreviewed Immunefi
 GitHub-or-recent trees: DeFi Saver protocol actions,
 Jito restaking `restaking_*` / `vault_*`
