@@ -71388,3 +71388,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator batch-execute helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`stakes` / `epoch_stakes` / `snapshot_*` / `bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+## 2026-09-03: Optimism leftover remaining PolicyEngineStaking leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining listed after L2 ETH liquidity leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `packages/contracts-bedrock/src/periphery/staking/PolicyEngineStaking.sol`. Do not rematch L1 portal / StandardBridge leftover, dispute games leftover, or L2 ETH liquidity leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `unstake` that transfers another account's OP; `stake` that attributes tokens pulled from a non-sender; `setAllowedStaker` that moves `stakedAmount` to the caller.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `stake` / `changeBeneficiary` / `unstake` all key `stakingData[msg.sender]`. `safeTransferFrom` pulls `_amount` from `msg.sender`. `unstake` `safeTransfer`s only to `msg.sender` and reverts on `InsufficientStake`.
+- A non-self beneficiary requires `allowlist[_beneficiary][msg.sender]`. `setAllowedStaker` writes `allowlist[msg.sender][_staker]` only. Disallowing a delegated staker moves PE `effectiveStake` back to that staker; it does not transfer tokens. Documented trust: the beneficiary can reset the staker's `lastUpdate` (ordering-weight grief, not theft).
+- `pause` is `onlyOwner` and gates stake / beneficiary change. Unstake stays available. `uint128` add/sub reverts on overflow/underflow.
+
+Do not file a self-keyed stake/unstake periphery as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `op-node` / `op-dispute-mon` / websites if still unused.
