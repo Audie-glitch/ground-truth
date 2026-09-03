@@ -1,5 +1,12 @@
 # Design proposal for keeperhub/keeperhub #2240: threshold-over-state trigger
 
+Environment baseline (2 Sep 2026, this VM): `staging` clone at /tmp/keeperhub,
+Node 24.20 via nvm, pnpm 10 via `npx pnpm@10`. Root `pnpm install
+--frozen-lockfile` succeeds; `keeperhub-events` is its own workspace whose
+lockfile config needs `--no-frozen-lockfile` locally (do not commit the
+lockfile). `keeperhub-events/event-tracker`: `pnpm test:unit` passes, 10 files,
+192 tests, 2.3s. Implementation starts Sep 6 against that suite.
+
 Paste the section below the line as a comment on
 https://github.com/keeperhub/keeperhub/issues/2240 so maintainers can agree or
 redirect before code lands. Implementation is planned for the Sep 6-18 build
