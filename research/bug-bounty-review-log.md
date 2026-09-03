@@ -41168,6 +41168,8 @@ Filecoin leftover remaining paired leftover
 (`80b765c`) is logged.
 Filecoin leftover remaining go-data-transfer leftover
 (`8a94d94`) is logged.
+Filecoin leftover remaining go-crypto leftover
+(`91b77aa`) is logged.
 Wormhole leftover remaining CosmWasm token-bridge leftover
 (`c58827e`) is logged.
 Wormhole leftover remaining CosmWasm core leftover
@@ -41177,6 +41179,8 @@ Wormhole leftover remaining CosmWasm IBC leftover
 Wormhole leftover remaining CosmWasm accountant leftover
 (`c58827e`) is logged.
 Wormhole leftover remaining wormchain leftover
+(`c58827e`) is logged.
+Wormhole leftover remaining node leftover
 (`c58827e`) is logged.
 Remaining listed Hedera: hashed transaction-tool website.
 Remaining listed Filecoin: remaining go-* / lotus non-miner.
@@ -41188,8 +41192,8 @@ json-rpc-relay, cryptography, SDKs, or mirror-node.
 Do not rematch Filecoin builtin-actors, boost, go-f3,
 lotus miner, FVM, proofs-api, proofs-ffi, or proofs.
 Do not rematch filecoin.io website leftover.
-Do not rematch filecoin-ffi, go-graphsync, paired, or
-go-data-transfer leftover.
+Do not rematch filecoin-ffi, go-graphsync, paired,
+go-data-transfer, or go-crypto leftover.
 Do not rematch ZKsync bootloader, interpreter,
 storage_models, proof_running_system, zk_ee,
 zkos-wrapper, or airbender verifier.
@@ -64417,3 +64421,19 @@ Result: no user-exploitable finding. Not submitted.
 This node signs observations; it does not hold or pay user tokens. Do not file quorum-gated signing of a locally observed digest as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `wormhole` algorand / aptos / near, and Relayer Sourcify 404.
+
+## 2026-09-03: Filecoin leftover remaining go-crypto leftover (`91b77aa`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after go-data-transfer leftover. Official clone `/tmp/filecoin-gocrypto` at `91b77aa` (`Fix go ethereum incompatibility (#5)`). Opened `crypto.go`. secp256k1 helpers only. Does not move FIL. Do not rematch go-f3 / proofs leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `Verify` accepting a signature that recovers a different pubkey; `EcRecover` hashing a non-32-byte message.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Verify` recovers the pubkey via `EcRecover` and requires it equal the supplied `pk`. False on recover error.
+- `EcRecover` rejects `len(msg) != 32`, parses a 65-byte compact recoverable signature, and `RecoverPublicKey`s. `Sign` uses `EncodingCompactRecoverable` and `RejectMalleable`.
+
+Do not file a secp256k1 recover-and-compare helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner.
+>>>>>>> d25b66d (Log Filecoin leftover remaining go-crypto review.)
