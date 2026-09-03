@@ -26913,6 +26913,81 @@ CToken / CErc20 /
 CEther / Delegator
 bytecode).
 
+## 2026-09-03: Threshold validator + ReimbursementPool leftover (`502cd39`)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+RebateStaking leftover
+is already logged.
+This slice is listed
+Ethereum Sourcify
+`WalletProposalValidator`
+(`0x30019D85a86ABD3cDA1167F4C052690c32FBDEc2`)
+and `ReimbursementPool`
+(`0x8adF3f35dBE4026112bCFc078872bcb967732Ea8`).
+Local clone
+`/tmp/threshold-tbtc`
+at `502cd39` plus Sourcify
+`exact_match` for the
+pool. No mainnet
+interaction.
+
+Files:
+`solidity/contracts/bridge/WalletProposalValidator.sol`,
+Sourcify
+`contracts/ReimbursementPool.sol`.
+
+Checked for: a
+write path on the
+validator that
+moves Bank / TBTC;
+`refund` from an
+unauthorized
+caller; `withdraw`
+to a stranger.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- WalletProposalValidator
+  has no write
+  functions. Sweep /
+  redemption /
+  moving-funds /
+  heartbeat helpers
+  are `view` and
+  revert on invalid
+  proposals. They
+  do not submit
+  proofs or change
+  Bridge state.
+- ReimbursementPool
+  `refund` is
+  `nonReentrant` and
+  requires
+  `isAuthorized[msg.sender]`.
+  Authorize /
+  unauthorize /
+  `setStaticGas` /
+  `setMaxGasPrice` /
+  `withdraw` /
+  `withdrawAll` are
+  owner.
+
+Not submitted.
+Remaining Threshold
+listed leftover:
+Bridge /
+BridgeGovernance /
+LightRelay /
+TokenholderGovernor,
+and
+`keep-network/tbtc-v2`
+typescript.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -27366,6 +27441,9 @@ Wormhole L1 leftover
 (`502cd39`) is logged.
 Threshold RebateStaking leftover
 (`502cd39`) is logged.
+Threshold validator +
+ReimbursementPool leftover
+(`502cd39`) is logged.
 Arkadiko leftover (Hiro vaults /
 tokens / liq-pool) is logged
 (remaining listed is the website).
@@ -27518,14 +27596,15 @@ Threshold watchtower +
 Wormhole L1 leftover
 (`502cd39`) is logged;
 Threshold RebateStaking leftover
+(`502cd39`) is logged;
+Threshold validator +
+ReimbursementPool leftover
 (`502cd39`) is logged
 (remaining Threshold is
 Bridge /
 BridgeGovernance /
-WalletProposalValidator /
 LightRelay /
-TokenholderGovernor /
-ReimbursementPool +
+TokenholderGovernor +
 keep-network typescript);
 Pancake MasterChefV3 +
 LmPool + V2 periphery
