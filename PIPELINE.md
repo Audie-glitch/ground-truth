@@ -89,7 +89,8 @@ share the username.
 - `research/bug-bounty-review-log.md`: Immunefi target selection method and
   time-boxed reviews through Sky PAS / SBEBeam, Intuition money paths,
   Sky diamond-pau, Origin OUSD / WOETH / Ethena ARM / AMOs /
-  CrossChain master-remote, Lombard SVM mint/GMP + token pool +
+  WETH-USDC-Lido ARM adapters / CrossChain master-remote,
+  Lombard SVM mint/GMP + token pool +
   ratio oracle, Leather extension RPC (`eca229c`), OZ Confidential
   v0.5.3 including leftover ERC7984 modules (`4a4f6c7`), and Money
   on Chain V2 core/queue/V4 swapper (`d770477`) (no submittable
