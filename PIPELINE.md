@@ -4,8 +4,8 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~07:00 UTC. Dates verified against each
-organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
+Status as of 3 September 2026, ~07:15 UTC. Dates verified against each
+organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep. KeeperHub
@@ -102,9 +102,11 @@ easy-track leftover (`3183d1f`) is
 logged. Lido governance-crosschain-
 bridges leftover (`659e236`) is
 logged. Lido aragon-apps leftover
-(`e44f928`) is logged (remaining
-Lido is aave-delivery-infrastructure
-/ mev-boost-relay-allowed-list).
+(`e44f928`) is logged. Lido
+aave-delivery-infrastructure leftover
+(`27e7d4e`) is logged (remaining
+Lido is leftover aave-delivery
+adapters / mev-boost-relay-allowed-list).
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis

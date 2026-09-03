@@ -23969,6 +23969,184 @@ open / close service
 implementations are
 not listed assets.
 
+## 2026-09-03: Lido aave-delivery-infrastructure leftover (`27e7d4e`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Core,
+L2, easy-track, CSM,
+dual-governance,
+governance-crosschain-bridges,
+and aragon-apps
+leftovers are already
+logged. This slice is
+`aave-delivery-infrastructure`.
+Local clone
+`/tmp/lido-adi` at
+`27e7d4e`. No
+mainnet interaction.
+
+Files:
+`src/Lido/contracts/{CrossChainExecutor,BridgeExecutorBase}.sol`,
+`src/contracts/{CrossChainReceiver,CrossChainForwarder,BaseCrossChainController,CrossChainController,CrossChainControllerWithEmergencyMode}.sol`,
+`src/contracts/adapters/BaseAdapter.sol`,
+`src/contracts/adapters/optimism/OpAdapter.sol`,
+`src/contracts/adapters/arbitrum/ArbAdapter.sol`,
+`src/contracts/adapters/sameChain/SameChainAdapter.sol`,
+`src/contracts/emergency/{EmergencyConsumer,EmergencyRegistry}.sol`,
+`src/contracts/libs/EncodingUtils.sol`.
+
+Checked for: a
+stranger
+`receiveCrossChainMessage`
+that queues attacker
+targets; CCC
+`forwardMessage`
+without an approved
+sender; an adapter
+that registers a
+payload without a
+trusted remote; SameChain
+shortcut that
+impersonates the
+Ethereum Agent.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Lido
+  `CrossChainExecutor.receiveCrossChainMessage`
+  is
+  `onlyCrossChainController`
+  and requires
+  `originSender ==
+  GOVERNANCE_EXECUTOR`
+  and
+  `originChainId ==
+  GOVERNANCE_CHAIN_ID`
+  before `_queue`.
+  `execute` is
+  permissionless
+  after the delay
+  and only while
+  `Queued`.
+  `cancel` is
+  guardian-only.
+  Delay / guardian
+  updates and
+  `executeDelegateCall`
+  are `onlyThis`.
+  `receiveFunds` is
+  a donation.
+- CCC
+  `receiveCrossChainMessage`
+  is
+  `onlyApprovedBridges(originChainId)`.
+  Envelope origin /
+  dest chain must
+  match. Delivery
+  waits for
+  `requiredConfirmation`
+  distinct adapters.
+  `deliverEnvelope`
+  is permissionless
+  only after
+  `Confirmed` (failed
+  first delivery).
+  Confirmations /
+  adapters /
+  validity
+  timestamps are
+  owner-only.
+- `forwardMessage`
+  is
+  `onlyApprovedSenders`
+  and stamps
+  `origin =
+  msg.sender`.
+  Retry envelope /
+  transaction is
+  owner or guardian.
+  Adapter
+  `forwardMessage`
+  is
+  `delegatecall`ed
+  from the CCC.
+- OpAdapter
+  `ovmReceive` is
+  messenger-only
+  and
+  `xDomainMessageSender
+  == trusted remote`.
+  ArbAdapter
+  `arbReceive`
+  requires
+  `undoL1ToL2Alias(msg.sender)
+  == trusted remote`.
+  `BaseAdapter._registerReceivedMessage`
+  forbids
+  delegatecall.
+- SameChainAdapter
+  calls the
+  destination
+  directly. A
+  stranger call
+  hits
+  `InvalidCaller`
+  on the executor
+  (msg.sender is
+  not the CCC).
+  The intended
+  path is CCC
+  `delegatecall`
+  so the executor
+  still sees the
+  CCC and the
+  stamped Agent
+  origin.
+- Emergency
+  `solveEmergency`
+  is guardian +
+  Chainlink
+  emergency oracle
+  (`answer >
+  emergencyCount`).
+  `EmergencyRegistry.setEmergency`
+  is owner-only.
+
+Do not file
+permissionless
+`execute` after
+the delay,
+guardian cancel,
+owner / guardian
+retry or
+invalidation,
+approved-sender
+forward, or
+oracle /
+guardian
+emergency
+reconfig.
+
+Not submitted.
+Remaining Lido
+listed GitHub:
+leftover
+aave-delivery
+adapters /
+mev-boost-relay-allowed-list.
+Remaining
+aave-delivery:
+CCIP / LayerZero /
+Wormhole / Polygon
+/ HyperLane /
+zkEVM / Scroll /
+Metis / Gnosis /
+CBase adapters.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -24302,9 +24480,11 @@ Lido easy-track leftover
 Lido governance-crosschain-bridges
 leftover (`659e236`) is logged.
 Lido aragon-apps leftover
-(`e44f928`) is logged
-(remaining Lido is
-aave-delivery-infrastructure /
+(`e44f928`) is logged.
+Lido aave-delivery-infrastructure
+leftover (`27e7d4e`) is logged
+(remaining Lido is leftover
+aave-delivery adapters /
 mev-boost-relay-allowed-list).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
@@ -24660,9 +24840,11 @@ Lido easy-track leftover
 Lido governance-crosschain-bridges
 leftover (`659e236`) is logged.
 Lido aragon-apps leftover
-(`e44f928`) is logged
-(remaining Lido is
-aave-delivery-infrastructure /
+(`e44f928`) is logged.
+Lido aave-delivery-infrastructure
+leftover (`27e7d4e`) is logged
+(remaining Lido is leftover
+aave-delivery adapters /
 mev-boost-relay-allowed-list);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
