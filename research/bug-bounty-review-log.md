@@ -34257,12 +34257,22 @@ AccountMigratorBot; KYC)
 is logged (listed
 periphery-v3 emergency /
 migration leftover
-exhausted; remaining
-listed is permissionless
-factories / InstanceManager
-/ PriceFeedStore / helpers
-and other integrations
-adapters);
+exhausted).
+Gearbox leftover
+integrations-v3 leftover
+adapters leftover
+(`39e70f0` Camelot / Fluid /
+Infinifi / Mellow / Midas /
+Securitize / TraderJoe /
+Upshift / Velodrome; KYC)
+is logged (listed
+integrations-v3 leftover
+adapters exhausted;
+remaining listed is
+integrations helpers and
+permissionless factories /
+InstanceManager /
+PriceFeedStore / helpers);
 Burrow leftover
 `contract.main.burrow.near`
 leftover (`0dbfa18`
@@ -45091,4 +45101,175 @@ PriceFeedStore /
 helpers; other
 integrations
 adapters /
+helpers.
+
+## 2026-09-03: Gearbox leftover integrations-v3 leftover adapters leftover (`39e70f0`)
+
+Immunefi program
+`gearbox` ($150,000,
+`kyc: true`). Official
+scope is
+`Gearbox-protocol/security`
+`bug-bounty/v3_1-scope.md`.
+Prior adapter leftovers
+already logged Uniswap /
+Curve / ERC-4626 / Pendle /
+Balancer / Convex / Lido /
+Sky. This slice is the
+remaining `integrations-v3`
+`39e70f0` adapters:
+Camelot V3, FluidDex,
+Infinifi, Mellow, Midas,
+Securitize, TraderJoe,
+Upshift, Velodrome V2.
+Clone `/tmp/gearbox-int`.
+No mainnet writes.
+
+Files:
+`contracts/adapters/camelot/CamelotV3Adapter.sol`,
+`contracts/adapters/fluid/FluidDexAdapter.sol`,
+`contracts/adapters/velodrome/VelodromeV2RouterAdapter.sol`,
+`contracts/adapters/traderjoe/TraderJoeRouterAdapter.sol`,
+`contracts/adapters/infinifi/InfinifiGatewayAdapter.sol`,
+`contracts/adapters/mellow/Mellow4626VaultAdapter.sol`,
+`contracts/adapters/mellow/MellowClaimerAdapter.sol`,
+`contracts/adapters/midas/MidasIssuanceVaultAdapter.sol`,
+`contracts/adapters/midas/MidasRedemptionVaultAdapter.sol`,
+`contracts/adapters/securitize/SecuritizeOnRampAdapter.sol`,
+`contracts/adapters/upshift/UpshiftVaultAdapter.sol`.
+
+Checked for: a
+stranger swap that
+honors a caller
+`recipient` / `to`;
+an Infinifi mint
+off the credit
+account; a Midas
+or Securitize
+deposit that
+mints to the
+caller; an
+Upshift redeem
+that claims to a
+chosen receiver.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- All adapters
+  are
+  `creditFacadeOnly`
+  and execute on
+  the manager's
+  active credit
+  account.
+- Camelot,
+  Velodrome, and
+  TraderJoe ignore
+  caller
+  `recipient` /
+  `to` and force
+  the credit
+  account. Paths
+  must be
+  configurator-
+  allowed (at most
+  3 hops).
+- FluidDex
+  ignores `to`
+  and swaps
+  constructor-
+  bound token0 /
+  token1, both
+  collateral.
+- Infinifi
+  ignores `to`
+  and mints /
+  stakes to the
+  credit account.
+  USDC / iUSD /
+  siUSD are
+  collateral.
+  Locked tokens
+  are
+  allowlisted.
+- Mellow 4626
+  inherits
+  ERC-4626
+  (receiver /
+  owner forced
+  to the credit
+  account).
+  Claimer
+  `multiAccept`
+  requires an
+  allowed
+  multiVault and
+  claims via the
+  account.
+- Midas instant
+  deposit /
+  redeem require
+  allowed tokens
+  and run
+  `_execute` as
+  the credit
+  account.
+- Securitize
+  on-ramp swap
+  spends
+  liquidity
+  token from the
+  account.
+  DS and
+  liquidity
+  tokens are
+  collateral.
+- Upshift
+  deposit is
+  ERC-4626.
+  Instant
+  withdraw /
+  redeem revert.
+  `requestRedeem`
+  / `claim` go
+  through the
+  gateway as
+  `msg.sender`
+  (the credit
+  account).
+  Phantom token
+  must match.
+
+Do not file
+configurator
+pool / token
+allowlists or
+facade-gated
+adapter use on
+the caller's own
+account as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`integrations-v3`
+opens for these
+remaining
+adapter types is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+integrations
+helpers;
+permissionless
+factories /
+InstanceManager /
+PriceFeedStore /
 helpers.
