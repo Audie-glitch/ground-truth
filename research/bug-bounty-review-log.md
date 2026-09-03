@@ -40010,3 +40010,107 @@ distributor,
 minter, VELO,
 sink stack, and
 reward factories.
+
+## 2026-09-03: Velodrome leftover Gauge + RewardsDistributor (`b3065d8`)
+
+Immunefi program
+`velodromefinance`
+($100,000, `kyc: true`).
+Router / Pool /
+Voter /
+VotingEscrow
+leftovers already
+logged. This slice
+is listed
+Distributor
+`0x9D4736EC60715e71aFe72973f7885DCBC21EA99b`
+and the Gauge
+implementation
+used by
+GaugeFactory
+`0x8391fE399640E7228A059f8Fa104b8a7B4835071`.
+Same official
+clone
+`/tmp/velo-contracts`
+`b3065d8`. No
+mainnet writes.
+
+Files:
+`contracts/gauges/Gauge.sol`,
+`contracts/RewardsDistributor.sol`.
+
+Checked for: a
+stranger
+`withdraw` of
+another staker's
+LP; `getReward`
+that pays the
+caller; rebase
+`claim` that
+sends VELO to
+the caller
+instead of the
+veNFT owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Gauge
+  `withdraw`
+  decreases
+  `balanceOf[sender]`
+  and pays
+  `sender`.
+  `getReward`
+  requires
+  `_msgSender() ==
+  account` or
+  voter, and
+  transfers to
+  `_account`.
+  `deposit` pulls
+  the sender and
+  credits
+  `_recipient`
+  (donation).
+  `notifyRewardAmount`
+  is voter-only.
+- RewardsDistributor
+  `claim` /
+  `claimMany` are
+  permissionless.
+  Expired locks
+  pay
+  `ve.ownerOf`.
+  Active locks
+  call
+  `ve.depositFor`
+  on that tokenId.
+
+Do not file
+permissionless
+rebase claim that
+credits the
+correct lock /
+owner, or
+staking LP into
+another
+recipient, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Velodrome
+Gauge +
+RewardsDistributor
+leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed: minter,
+VELO, sink stack,
+and reward
+factories.
