@@ -23557,6 +23557,84 @@ listed GitHub:
 governance bridges /
 aragon-apps.
 
+## 2026-09-03: Lido governance-crosschain-bridges leftover (`659e236`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Core,
+L2 token bridges,
+easy-track, CSM, and
+dual-governance
+leftovers are already
+logged. This slice is
+`governance-crosschain-bridges`.
+Local clone
+`/tmp/lidofinance-gov-bridges`
+at `659e236`. No
+mainnet interaction.
+
+Files:
+`bridges/{BridgeExecutorBase,L2BridgeExecutor,OptimismBridgeExecutor,ArbitrumBridgeExecutor,PolygonBridgeExecutor}.sol`.
+
+Checked for: a
+stranger `queue`
+that binds attacker
+targets; `execute`
+before the delay;
+Polygon
+`processMessageFromRoot`
+from a non-FxChild.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- L2 `queue` is
+  `onlyEthereumGovernanceExecutor`.
+  Optimism requires
+  the L2 messenger
+  and
+  `xDomainMessageSender
+  == L1 executor`.
+  Arbitrum requires
+  the L1-to-L2
+  alias of that
+  executor.
+  Polygon
+  `processMessageFromRoot`
+  is FxChild-only
+  and
+  `rootMessageSender
+  == fxRootSender`.
+- `execute` is
+  permissionless
+  after
+  `executionTime`
+  and only while
+  `Queued`. The set
+  is marked
+  `executed` before
+  the calls.
+  `cancel` is
+  guardian-only.
+  Delay / guardian
+  updates are
+  `onlyThis`
+  (self-queued).
+  `executeDelegateCall`
+  is `onlyThis`.
+- Updating the L1
+  executor address
+  is `onlyThis`.
+
+Not submitted.
+Remaining Lido
+listed GitHub:
+aragon-apps /
+aave-delivery-infrastructure /
+mev-boost-relay-allowed-list.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -23886,9 +23964,11 @@ Lido CSM bond leftover
 Lido CSM gates leftover
 (`2824e21`) is logged.
 Lido easy-track leftover
-(`3183d1f`) is logged
-(remaining Lido is
-governance bridges).
+(`3183d1f`) is logged.
+Lido governance-crosschain-bridges
+leftover (`659e236`) is logged
+(remaining Lido is aragon-apps /
+aave-delivery-infrastructure).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -24234,9 +24314,11 @@ Lido CSM bond leftover
 Lido CSM gates leftover
 (`2824e21`) is logged.
 Lido easy-track leftover
-(`3183d1f`) is logged
-(remaining Lido is
-governance bridges);
+(`3183d1f`) is logged.
+Lido governance-crosschain-bridges
+leftover (`659e236`) is logged
+(remaining Lido is aragon-apps /
+aave-delivery-infrastructure);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
 rETH2 / Oracles /
