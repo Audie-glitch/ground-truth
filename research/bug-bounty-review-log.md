@@ -67722,3 +67722,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a local event observer as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Aave leftover remaining CCIP GHO pools leftover (`d5c6ced`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after VotingStrategy leftover. Official `aave/ccip` `d5c6cedde6fbca9890a92a55f2db80e94793d0ec`. Opened listed `UpgradeableLockReleaseTokenPool.sol` and `UpgradeableBurnMintTokenPool.sol` plus parents `UpgradeableTokenPool` / `UpgradeableBurnMintTokenPoolAbstract` for ramp checks. Do not rematch GHO token / FlashMinter leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `releaseOrMint` / `lockOrBurn` without being a router ramp; `directMint` without owner; `withdrawLiquidity` without the rebalancer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `lockOrBurn` / `releaseOrMint` call `_validateLockOrBurn` / `_validateReleaseOrMint`: supported token, RMN not cursed, allowlist (if enabled), `_onlyOnRamp` / `_onlyOffRamp` (`s_router.getOnRamp` / `isOffRamp`), and inbound/outbound rate limits. Release also requires a configured remote source pool.
+- LockRelease increments `s_currentBridged` against `s_bridgeLimit` on lock and decrements on release (reverts if `amount > s_currentBridged`). It `safeTransfer`s the decimal-adjusted local amount to `receiver`. `provideLiquidity` / `withdrawLiquidity` are `s_rebalancer` only. `setBridgeLimit` is owner or `s_bridgeLimitAdmin`. `setCurrentBridgedAmount` / `setRebalancer` / `transferLiquidity` are `onlyOwner`.
+- BurnMint `lockOrBurn` burns after the same ramp check; `releaseOrMint` mints to `receiver`. `directMint` / `directBurn` are `onlyOwner` (facilitator migration). `initialize` is OZ `initializer` on both pools.
+
+Do not file a router-ramp-gated CCIP lock/mint as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: none on official Aave GitHub assets that still 200 (PriceOracleSentinel + OwnableFacilitator 404).
+
