@@ -42648,7 +42648,12 @@ Filecoin leftover remaining lotus sync leftover (`7740217`)
 is logged.
 Aave leftover remaining GHO token leftover (`23859bb`)
 is logged.
+Aave leftover remaining GHO GSM leftover is logged.
+Aave leftover remaining AaveOracle leftover (`cff15de`)
+is logged.
 Aave leftover remaining StableDebtToken leftover (`782f519`)
+is logged.
+Filecoin leftover remaining lotus stmgr leftover (`7740217`)
 is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
@@ -42675,6 +42680,7 @@ Do not rematch Filecoin lotus paych leftover.
 Do not rematch Filecoin lotus mpool leftover.
 Do not rematch Filecoin lotus wallet leftover.
 Do not rematch Filecoin lotus sync leftover.
+Do not rematch Filecoin lotus stmgr leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
@@ -66224,3 +66230,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an ACL-gated source update as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: PoolConfigurator / ACL / periphery / rewards. Official PriceOracleSentinel 404 on `cff15de`.
+
+## 2026-09-03: Filecoin leftover remaining lotus stmgr leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus sync leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/stmgr`. Opened `call.go`, `execute.go`, `stmgr.go`, and `actors.go`. State-manager simulation / tipset execution. Does not persist a stranger `Call`. Do not rematch FVM / lotus miner / sync leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `Call` / `CallWithGas` writing a simulated send onto the chain blockstore; `skipSenderValidation` minting a real account; `ValidateChain` accepting a tipset whose computed state does not match `ParentState`.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `callInternal` runs on a `TieredBstore` over a memory overlay. Missing-sender placeholder is an implicit System→From send of 0; the comment states it is never persisted. Gas estimation uses dummy 65-byte secp/delegated signatures. `Call` without `checkGas` is `ApplyImplicitMessage`.
+- `TipSetState` returns cached / looked-up parent state+receipts when the next tipset is on the same fork and both roots exist; otherwise `ExecuteTipSet`. `ValidateChain` walks to genesis and requires each tipset's `ParentState` equal the previously computed root.
+- `actors.go` loaders (`GetMinerWorkerRaw`, `GetPaychState`, `MarketBalance`) read actor state only.
+
+Do not file an in-memory eth_call / gas-estimate helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
