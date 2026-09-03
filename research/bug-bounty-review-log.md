@@ -9664,6 +9664,139 @@ public tree can open
 are exhausted. Not
 submitted.
 
+## 2026-09-03: GammaSwap 2024 factory + DeltaSwap leftover
+
+Immunefi program
+`gammaswap` ($40,000,
+`kyc: false`, Primacy of
+Rules, critical only,
+PoC required). 24 Mar
+2024 leftover after the
+May 2026 vault pass:
+GammaPoolFactory
+`0xFD51…c20B` (Sourcify
+exact, solc 0.8.21,
+core `2312d0e`),
+DeltaSwapFactory
+`0xCb85…ffA8`,
+DeltaSwapRouter02
+`0x5FbE…1e1b`,
+DeltaSwapPair
+`0x755F…6EF0`
+(Sourcify exact),
+MinimalBeaconProxy +
+LockableMinimalBeacon.
+Extract under
+`/tmp/gammaswap-core`
+and
+`/tmp/gammaswap-deltaswap`.
+Read-only. No
+state-changing txs.
+UniV2 issues in
+DeltaSwap are OOS unless
+GammaSwap materially
+changed them. Staking /
+GS / timelock are capped
+at high; airdrop is
+medium-ineligible.
+
+Files:
+`contracts/GammaPoolFactory.sol`,
+`base/AbstractGammaPoolFactory.sol`,
+`utils/{LockableMinimalBeacon,MinimalBeaconProxy}.sol`,
+`libraries/AddressCalculator.sol`,
+`observer/AbstractLoanObserverStore.sol`,
+DeltaSwap
+`{DeltaSwapFactory,DeltaSwapPair,DeltaSwapRouter02}.sol`.
+
+Checked for: a stranger
+`createPool` that
+initializes a victim’s
+predicted address; beacon
+delegatecall to a
+swappable impl; factory
+`execute` by a
+non-feeToSetter; DeltaSwap
+`swap` that skips the K
+check when
+`msg.sender == gammaPool`
+for a spoofed pool;
+`setGammaPool` by a
+stranger; router fee
+calc that lets a swap
+drain reserves.
+
+Result: no user-exploitable
+critical. Not submitted.
+
+- `createPool` is
+  permissionless unless
+  the protocol is
+  restricted. It
+  `validateCFMM`s, salts
+  by `(cfmm, protocolId)`,
+  create2s, then
+  `initialize`s in the
+  same tx. `addProtocol` /
+  `updateProtocol` /
+  `lockProtocol` are
+  owner-only. After
+  `lock`, the beacon
+  freezes
+  `_implementation()`.
+- `execute` is
+  `feeToSetter` only
+  (admin-trusted arbitrary
+  call). Pause is owner.
+- Beacon proxy bytecode
+  is
+  `calcMinimalBeaconProxyBytecode`
+  (factory + protocolId
+  baked in), not the
+  placeholder constants
+  in the Solidity source.
+- DeltaSwap is UniV2
+  plus a size-gated fee
+  (`dsFee` when trade ≥
+  `dsFeeThreshold` of
+  the liquidity EMA) and
+  a `gsFee` path when
+  `msg.sender ==
+  gammaPool`.
+  `gammaPool` is set only
+  by the factory to
+  `calcAddress(gsFactory,
+  gsProtocolId,
+  keccak256(pair,
+  protocolId))`.
+  `setGammaPool` /
+  `updateGammaPool` are
+  `gammaPoolSetter`.
+- Zero-fee small trades
+  are designed. The K
+  invariant still uses
+  `1000 - fee`. Router
+  `getAmountOut` uses
+  `calcPairTradingFee`.
+- Staking rows Sourcify
+  as GMX-style
+  `RewardTracker` /
+  `Vester` /
+  `StakingRouter`
+  (`@gammaswap/v1-staking`).
+  Do not file high
+  findings against them.
+
+Remaining GammaSwap
+listed Solidity:
+staking / GS / timelock
+(high-capped) and
+airdrop (medium
+ineligible). Factory +
+DeltaSwap + May 2026
+vault leftover are
+logged. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -9797,10 +9930,13 @@ X Layer
 `0x5bCD…1865` (Sourcify)
 is logged. GammaSwap May
 2026 vault + PositionManager
-are logged; remaining
-GammaSwap is the 2024 factory
-/ DeltaSwap / staking / GS /
-timelock / airdrop set.
+and 2024 factory +
+DeltaSwap (Sourcify) are
+logged; remaining
+GammaSwap is staking / GS /
+timelock (high-capped) and
+airdrop (medium
+ineligible).
 KeeperHub #2105 is claimed by
 `tenk-earn` PR #2275
 (do not duplicate).
@@ -9922,7 +10058,7 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-~04:41 UTC 3 Sep: KeeperHub #2105 still `open` +
+~04:50 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 1 comment and
 PR #2275 (`tenk-earn`, `staging`, mergeable) — do not
 duplicate;
@@ -9931,13 +10067,11 @@ Hedera Harness #8 still `open`, 0 comments;
 CreditPassport deployer still 0 Sepolia ETH
 (publicnode) / 0 tCTC
 (`rpc.cc3-testnet.creditcoin.network`);
-Superteam still 28 open listings,
-`AGENT_ALLOWED` still only Steve Arena and ZNS;
-Sherlock page 1 still only contest `1234` (Tare)
-in `SHERLOCK_JUDGING`; Code4rena still 24
-`Completed` + 1 `Reporting` (Rujira, window
-ended 16 Jan 2026); no new Immunefi GitHub SC
+no new Immunefi GitHub SC
 assets since 2026-09-02;
+GammaSwap 2024 factory +
+DeltaSwap leftover is
+logged;
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub

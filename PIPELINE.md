@@ -175,7 +175,8 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   L2 `UsdcVaultL2`, GammaSwap May
   2026 vault + PositionManager
   (`e71dd91` / Sourcify PM;
-  live observers unset),
+  live observers unset) +
+  2024 factory / DeltaSwap,
   Olympus V1Migrator + Cooler
   V2 + CCIP + CD Facility +
   DepositManager /
