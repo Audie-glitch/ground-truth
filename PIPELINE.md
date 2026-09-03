@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~07:45 UTC. Dates verified against each
+Status as of 3 September 2026, ~07:50 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
@@ -197,10 +197,15 @@ Threshold RebateStaking leftover
 (`502cd39`) is logged.
 JustLend leftover governance leftover
 (`f28f3b4` GovernorBravo / WJST / Timelock /
-PriceOracleProxy) is logged (remaining
-listed is ComptrollerLegacy JST rewards /
-PriceOracleV1 / rate models / other
-Tronscan markets).
+PriceOracleProxy) is logged.
+Threshold validator + ReimbursementPool leftover
+(`502cd39`) is logged.
+JustLend leftover rewards leftover
+(`f28f3b4` ComptrollerLegacy JST /
+PriceOracleV1 / rate models) is logged
+(listed leftover that a public tree would
+open is exhausted; remaining listed is
+other Tronscan jToken markets).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /
@@ -468,11 +473,13 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   governance leftover
   (GovernorBravo / WJST /
   Timelock /
-  PriceOracleProxy;
-  remaining
-  ComptrollerLegacy JST
-  rewards / PriceOracleV1 /
-  rate models), and
+  PriceOracleProxy) plus
+  rewards leftover
+  (ComptrollerLegacy JST /
+  PriceOracleV1 / rate
+  models; listed leftover
+  that a public tree would
+  open is exhausted), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

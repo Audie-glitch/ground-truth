@@ -26988,6 +26988,88 @@ and
 `keep-network/tbtc-v2`
 typescript.
 
+## 2026-09-03: JustLend leftover rewards leftover (`f28f3b4`)
+
+Immunefi program
+`JustLend DAO` ($50,000,
+`kyc: false`). Unitroller /
+CToken and GovernorBravo /
+WJST leftovers are already
+logged. This slice is
+ComptrollerLegacy JST
+rewards, PriceOracleV1,
+and interest-rate models.
+Official clone
+`/tmp/justlend-protocol`
+at `f28f3b4`. No mainnet
+interaction.
+
+Files:
+`contracts/ComptrollerLegacy.sol`,
+`contracts/PriceOracle/PriceOracleV1.sol`,
+`contracts/JumpRateModel.sol`,
+`contracts/JumpRateModelV2.sol`,
+`contracts/BaseJumpRateModelV2.sol`,
+`contracts/WhitePaperInterestRateModel.sol`.
+
+Checked for: a stranger
+`claimComp` that pays
+the caller another
+holder's JST;
+`setPrice` without being
+poster; `updateJumpRateModel`
+by a non-owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `claimComp` updates
+  supply / borrow
+  indexes and
+  `transferComp` sends
+  JST to the named
+  holder, not the
+  caller. Speeds and
+  market add/drop are
+  admin or initializing.
+  `refreshCompSpeeds`
+  only rewrites speeds.
+- PriceOracleV1
+  `setPrice` /
+  `setPrices` require
+  `poster`. Reader
+  assets cannot be
+  overwritten. Swing
+  is capped.
+- JumpRate /
+  WhitePaper models
+  are view-only after
+  construct.
+  JumpRateModelV2
+  `updateJumpRateModel`
+  is owner.
+
+Do not file poster /
+admin / owner
+privilege, permissionless
+`claimComp` for another
+holder (pays that
+holder), or public
+`refreshCompSpeeds`
+as theft.
+
+Not submitted.
+Listed leftover that a
+public tree would open
+is exhausted. Remaining
+listed: other Tronscan
+jToken markets (same
+CToken / CErc20 /
+CEther / Delegator
+bytecode).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -27455,12 +27537,17 @@ JustLend leftover
 governance leftover
 (`f28f3b4` GovernorBravo /
 WJST / Timelock /
-PriceOracleProxy) is logged
-(remaining listed is
-ComptrollerLegacy JST
-rewards / PriceOracleV1 /
-rate models / other
-Tronscan markets).
+PriceOracleProxy) is logged.
+JustLend leftover rewards
+leftover (`f28f3b4`
+ComptrollerLegacy JST /
+PriceOracleV1 / rate
+models) is logged (listed
+leftover that a public
+tree would open is
+exhausted; remaining
+listed is other Tronscan
+jToken markets).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -27952,12 +28039,17 @@ JustLend leftover
 governance leftover
 (`f28f3b4` GovernorBravo /
 WJST / Timelock /
-PriceOracleProxy) is logged
-(remaining listed is
-ComptrollerLegacy JST
-rewards / PriceOracleV1 /
-rate models / other
-Tronscan markets);
+PriceOracleProxy) is logged.
+JustLend leftover rewards
+leftover (`f28f3b4`
+ComptrollerLegacy JST /
+PriceOracleV1 / rate
+models) is logged (listed
+leftover that a public
+tree would open is
+exhausted; remaining
+listed is other Tronscan
+jToken markets);
 Beets stS
 (`877087b`) + token
 leftover is logged
