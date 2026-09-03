@@ -51424,3 +51424,127 @@ L1/L2 data
 caches, and the
 go-livepeer
 website.
+
+## 2026-09-03: Axelar leftover DLT tofnd (`98de47e`)
+
+Immunefi program
+`axelarnetwork`
+($500,000, `kyc: true`).
+Listed remaining after
+axelar-core evm /
+axelarnet / nexus
+(`126d3d9`). Official
+clone `/tmp/axelar-tofnd`
+`98de47e`. Opened
+`src/main.rs`,
+`src/config/mod.rs`,
+`src/multisig/service.rs`,
+`src/multisig/sign.rs`,
+`src/multisig/keygen.rs`,
+`src/encrypted_sled/kv.rs`,
+`src/encrypted_sled/password.rs`.
+No mainnet writes.
+No exploit PoCs.
+
+Files:
+`src/main.rs`,
+`src/config/mod.rs`,
+`src/multisig/service.rs`,
+`src/multisig/sign.rs`,
+`src/multisig/keygen.rs`,
+`src/encrypted_sled/kv.rs`.
+
+Checked for: a
+stranger
+`Sign` / `Keygen`
+that drains
+validator keys
+without operator
+trust; remote
+bind that
+exposes signing
+by default;
+password skip
+that unlocks
+on-disk seed for
+an unauthenticated
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Default listen
+  is `127.0.0.1:50051`.
+  `--address` can
+  bind `0.0.0.0`;
+  that is an
+  operator choice.
+  tonic server
+  has no TLS and
+  no request
+  interceptor.
+- `keygen` /
+  `sign` /
+  `key_presence`
+  have no
+  caller auth.
+  Anyone who can
+  reach the gRPC
+  port can
+  request a
+  signature.
+  Designed as a
+  localhost /
+  operator-trust
+  sidecar for
+  `vald`.
+- `handle_sign`
+  regenerates
+  the key from
+  mnemonic seed
+  + `key_uid`
+  and signs
+  `msg_to_sign`.
+  Empty `pub_key`
+  uses the
+  active seed.
+- Disk store is
+  XChaCha20Poly1305
+  with scrypt
+  (n=15, r=8,
+  p=1). Password
+  from stdin
+  unless
+  `--no-password`
+  (documented
+  insecure
+  default).
+  Wrong password
+  fails open.
+
+Do not file
+unauthenticated
+localhost gRPC
+sign, optional
+`0.0.0.0` bind,
+or
+`--no-password`
+as stranger
+on-chain theft
+of user funds.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Axelar
+DLT tofnd
+leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+Hyperliquid ITS
+if a live deploy
+is in scope.
