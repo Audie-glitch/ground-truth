@@ -47575,7 +47575,7 @@ Remaining listed Rootstock: unused official leftover that listed trees open is e
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted at leftover-heading level. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining ResourceMetering leftover is logged. Optimism leftover remaining CrossDomainOwnable leftover is logged. Optimism leftover remaining CrossL2Inbox leftover is logged. Optimism leftover remaining SuperchainConfig leftover is logged. Optimism leftover remaining LegacyMessagePasser leftover is logged. Optimism leftover remaining L2ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Ethena: unused official leftovers if still open. Ethena leftover remaining StakedENA leftover is logged. Ethena leftover remaining USDtb leftover is logged. Ethena leftover remaining USDeOFTAdapter leftover is logged. Remaining listed is TON / other-chain OFT rows if still unused.
 Remaining listed LayerZero: unused official leftovers if still open. LayerZero leftover remaining ULN301 leftover is logged. LayerZero leftover remaining ExecutorFeeLib leftover is logged. LayerZero leftover remaining OApp OFT leftover is logged. Remaining listed is other-chain twins if still unused.
-Remaining listed Ether.fi: unused official leftovers if still open. Ether.fi leftover remaining Auction leftover is logged. Ether.fi leftover remaining bridge adapters leftover is logged. Remaining listed is other-chain weETH / RoleRegistry / TopUpSourceFactory / PixWalletAutoTopup / Scroll Cash modules if still unused.
+Remaining listed Ether.fi: unused official leftovers if still open. Ether.fi leftover remaining Auction leftover is logged. Ether.fi leftover remaining bridge adapters leftover is logged. Ether.fi leftover remaining weETH-cross-chain leftover is logged. Remaining listed is RoleRegistry / TopUpSourceFactory / PixWalletAutoTopup / Scroll Cash modules if still unused.
 Remaining listed Arbitrum: unused official leftover that listed Arbitrum trees open is exhausted at leftover-heading level. Arbitrum leftover remaining nitro challenge leftover is logged. Arbitrum leftover remaining custom reverse gateway leftover is logged. Arbitrum leftover remaining governance leftover is logged. Arbitrum leftover remaining fund-distribution leftover is logged. Arbitrum leftover remaining token-bridge libs leftover is logged. Arbitrum leftover remaining websites leftover is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -47715,6 +47715,7 @@ Do not rematch LayerZero leftover remaining ExecutorFeeLib leftover.
 Do not rematch LayerZero leftover remaining OApp OFT leftover.
 Do not rematch Ether.fi leftover remaining Auction leftover.
 Do not rematch Ether.fi leftover remaining bridge adapters leftover.
+Do not rematch Ether.fi leftover remaining weETH-cross-chain leftover.
 Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Arbitrum leftover remaining custom reverse gateway leftover.
 Do not rematch Arbitrum leftover remaining governance leftover.
@@ -74037,3 +74038,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a bridger-role gated factory bridge or a direct-call adapter balance move as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: other-chain weETH (`weETH-cross-chain`) / RoleRegistry / TopUpSourceFactory / PixWalletAutoTopup / Scroll Cash modules if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Ether.fi leftover remaining weETH-cross-chain leftover (`7e535a7`)
+
+Immunefi program `etherfi` ($500,000, `kyc: true`). Official remaining unused leftover after bridge adapters leftover. Official `etherfi-protocol/weETH-cross-chain` `7e535a7` (`7e535a7fa6dbc6c85ebfbc8e8ea921c6732ddf19`). Opened listed OFT stack `contracts/{EtherFiOFTAdapter,EtherFiOFTAdapterUpgradeable,EtherfiOFTUpgradeable,PairwiseRateLimiter}.sol`; native-minting L1/L2 sync pools `native-minting/{EtherfiL1SyncPoolETH,EtherfiL2ExchangeRateProvider,BucketRateLimiter}.sol`, `layerzero-base/{L1BaseSyncPoolUpgradeable,L2BaseSyncPoolUpgradeable,L1BaseReceiverUpgradeable}.sol`, L2 OP/Scroll ETH sync pools, and `receivers/L1ScrollReceiverETHUpgradeable.sol`. Official raw GitHub **200**. Local extract `/tmp/weeth-cross-extract/` (15 / 82 / 106 / 206 / 276 / 329 / 478 / 108 / 124 / 126 / 48 / 80 / 39 lines). Do not rematch LiquidityPool / WeETH / Liquifier leftover, Auction leftover, or bridge adapters leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: permissionless L2 `mint` of weETH/OFT to a stranger; `lzReceive` / `_lzReceive` on L1 sync pool without a trusted LZ peer; `onMessageReceived` callable by a non-registered receiver or spoofed L2 messenger sender; L2 `sync` that inflates `unsyncedAmountIn/Out` beyond prior deposits; `sweep` / finalize paths that pay the caller instead of the lockbox; OFT `_credit` without inbound rate-limit / pause guards; `BucketRateLimiter.updateRateLimit` from a non-consumer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- OFT adapters extend leftover-logged LayerZero `OFTAdapter` / `OFTUpgradeable` with owner-set pairwise inbound/outbound rate limits and pauser roles. `EtherfiOFTUpgradeable.mint` is `onlyRole(MINTER_ROLE)` (sync-pool consumer). `_debit` / `_credit` apply rate limits and `whenNotPaused`.
+- L2 `deposit` pulls ETH (or ERC-20) from `msg.sender`, converts via configured exchange-rate provider, optionally updates `BucketRateLimiter` as `consumer`-only, and mints `tokenOut` to `msg.sender`. Unauthorized `tokenIn` reverts (`l1Address == address(0)`).
+- L2 `sync` is permissionless but only forwards accumulated `unsyncedAmountIn/Out` from prior deposits, then zeroes counters before LZ + native-bridge messages. OP/Scroll variants additionally send ETH through the canonical messenger to the configured L1 receiver.
+- L1 `_lzReceive` (anticipated deposit) is peer-gated via `OAppReceiver`; `_handleAnticipatedDeposit` sends minted `tokenOut` to the configured lockbox, tracking `totalUnbackedTokens` on shortfall. `onMessageReceived` requires `msg.sender == receivers[originEid]`. `L1BaseReceiver` requires `msg.sender == messenger` and L2 sender == `l1SyncPool.peers(originEid)` before forwarding ETH to finalize. `EtherfiL1SyncPoolETH` anticipated/finalize paths are ETH-only, pausable, and use dummy-token + liquifier plumbing tied to per-`originEid` config.
+- `sweep` on L1 base sync pool is `onlyOwner`. Rate-limiter capacity/refill and sync-pool peer/receiver wiring are owner/admin gated.
+
+Do not file a peer-gated LZ receive, messenger-authenticated finalize, or MINTER_ROLE sync-pool mint as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: RoleRegistry / TopUpSourceFactory / PixWalletAutoTopup / Scroll Cash modules if still unused. Next unused leftover is a different Immunefi program, not a rematch.
