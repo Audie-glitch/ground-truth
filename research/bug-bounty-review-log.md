@@ -70067,3 +70067,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file federation HSM firmware as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: none on official Rootstock leftover trees that still open.
+
+## 2026-09-03: Jito leftover remaining jito-solana banking_stage leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after bundle_stage leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `core/src/banking_stage.rs`, `banking_stage/{consumer,committer,consume_worker}.rs`, and `core/src/tpu.rs`. Do not rematch tip_manager leftover or bundle_stage leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger TPU packet that cranks tip programs to the caller; banking_stage committing an unsigned drain; tip-payment txs slipping past `filter_keys`.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Tpu` inserts `tip_manager.tip_payment_program_id()` into `filter_keys`. Banking-stage vote receivers and the scheduler clone that set. Tip-payment program packets are dropped on the regular TPU path.
+- `ConsumeWorker::maybe_run_tip_programs` only runs when tip deps exist, a batch touches tip accounts, and BAM is connected. Init/crank bundles are signed with `cluster_info.keypair()` (the validator) via leftover-logged `TipManager`. Commit failures return false; this is validator-local upkeep, not a public submit API.
+- `Consumer` re-sanitizes aged txs, `check_transactions`, QoS cost, then `bank.commit_transactions`. Vote-only banks reject non-votes. `revert_on_error` is all-or-nothing. A stranger packet still needs a valid signature and does not move validator funds.
+
+Do not file a validator banking pipeline as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` other crates (proxy / forwarding / replay) if still unused.
