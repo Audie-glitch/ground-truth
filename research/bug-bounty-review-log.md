@@ -33569,10 +33569,17 @@ pool + credit leftover
 CreditFacadeV3 /
 CreditManagerV3 /
 CreditAccountV3; KYC) is
-logged (remaining listed is
-oracles-v3 / integrations /
-bots / permissionless /
-periphery);
+logged.
+Gearbox leftover
+oracles-v3 leftover
+(`287739a` LPPriceFeed /
+Bounded / Composite /
+Curve / ERC4626 / wstETH /
+Pendle / Pyth / Redstone;
+KYC) is logged (remaining
+listed is integrations-v3 /
+bots-v3 / permissionless /
+periphery-v3);
 Burrow leftover
 `contract.main.burrow.near`
 leftover (`0dbfa18`
@@ -42666,3 +42673,226 @@ MANA /
 collections
 (and other
 Polygon rows).
+
+## 2026-09-03: Gearbox leftover oracles-v3 leftover (`287739a`)
+
+Immunefi program
+`gearbox` ($150,000,
+`kyc: true`). Official
+scope is
+`Gearbox-protocol/security`
+`bug-bounty/v3_1-scope.md`.
+This slice is
+`oracles-v3` `287739a`
+(`main`): everything in
+`contracts/` except
+`contracts/test/`. Clone
+`/tmp/gearbox-oracles`.
+No mainnet writes.
+
+Files:
+`contracts/oracles/LPPriceFeed.sol`,
+`contracts/oracles/BoundedPriceFeed.sol`,
+`contracts/oracles/CompositePriceFeed.sol`,
+`contracts/oracles/ConstantPriceFeed.sol`,
+`contracts/oracles/ZeroPriceFeed.sol`,
+`contracts/oracles/SingleAssetLPPriceFeed.sol`,
+`contracts/oracles/curve/CurveStableLPPriceFeed.sol`,
+`contracts/oracles/curve/CurveCryptoLPPriceFeed.sol`,
+`contracts/oracles/curve/CurveTWAPPriceFeed.sol`,
+`contracts/oracles/erc4626/ERC4626PriceFeed.sol`,
+`contracts/oracles/lido/WstETHPriceFeed.sol`,
+`contracts/oracles/pendle/PendleTWAPPTPriceFeed.sol`,
+`contracts/oracles/updatable/PythPriceFeed.sol`,
+`contracts/oracles/updatable/RedstonePriceFeed.sol`,
+`contracts/traits/PriceFeedValidationTrait.sol`.
+
+Checked for: a
+permissionless
+`updatePrice` that
+writes a forged
+Pyth / Redstone
+answer; an LP
+donation that
+inflates collateral
+past the limiter
+window; a composite
+or bounded feed
+that skips
+staleness; a Pendle
+PT that prices above
+the asset after
+expiry; an ERC-4626
+or wstETH rate
+without a lower
+bound.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `PriceFeedValidationTrait`
+  requires 8
+  decimals on
+  wrapped feeds,
+  pairs
+  `skipPriceCheck`
+  with a zero /
+  non-zero
+  staleness period,
+  and rejects
+  negative, zero
+  (unless
+  `skipCheck`), or
+  stale answers.
+- `LPPriceFeed`
+  `skipPriceCheck`
+  is true because
+  it checks locally.
+  Exchange rate
+  below
+  `lowerBound`
+  reverts; above
+  `upperBound`
+  (`+200` bps) is
+  capped.
+  `setLimiter` is
+  `onlyOwner` and
+  the live rate
+  must sit inside
+  the new window.
+- Bounded feed
+  validates the
+  underlying then
+  caps upside
+  only (stable
+  overvalue
+  defense).
+  Composite
+  multiplies
+  target/base ×
+  base/USD, keeps
+  the earlier
+  timestamp, and
+  always
+  staleness-checks
+  feed0
+  (`skipCheck0 =
+  false`).
+- Curve stable
+  aggregate is the
+  min of
+  underlying
+  prices times
+  `get_virtual_price`
+  / 1e18. Curve
+  crypto uses the
+  geometric mean
+  times `nCoins`.
+  Curve TWAP
+  bounds are
+  immutable: below
+  lower reverts,
+  above upper
+  caps.
+- ERC-4626 uses
+  `convertToAssets`
+  of one share;
+  wstETH uses
+  `stEthPerToken`.
+  Both inherit the
+  LP limiter.
+- Pendle PT uses
+  the market
+  `ln(impliedRate)`
+  TWAP until
+  expiry, then the
+  asset price,
+  haircut when
+  `syIndex <
+  pyIndex`.
+- Pyth
+  `latestRoundData`
+  uses
+  `getPriceUnsafe`
+  plus a 10-minute
+  / 1-minute
+  publish window
+  and a max
+  `conf/price`
+  ratio.
+  `updatePrice` is
+  permissionless
+  but forwards a
+  Hermes payload
+  and requires the
+  post-update
+  publish time to
+  match the
+  expected
+  timestamp. Fee
+  is paid from
+  precharged ETH.
+- Redstone
+  requires an
+  authorised
+  signer set and
+  threshold.
+  `updatePrice`
+  early-stops on
+  an older
+  timestamp, then
+  `getOracleNumericValueFromTxMsg`
+  checks
+  signatures.
+  `skipPriceCheck`
+  is false, so a
+  never-updated
+  zero price is
+  rejected by the
+  consumer.
+- Constant feed
+  stores a
+  positive
+  immutable price.
+  Zero feed is an
+  intentional
+  disabled-asset
+  sentinel
+  (`skipPriceCheck
+  true`, answer
+  `0`).
+
+Do not file
+owner limiter
+moves, Pyth ETH
+fee drain via
+valid Hermes
+updates,
+Constant /
+Zero as
+configured
+oracles, or
+admin-chosen
+Redstone signers
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`oracles-v3`
+opens is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+integrations-v3,
+bots-v3,
+permissionless,
+and periphery-v3
+emergency / kyc /
+migration.
