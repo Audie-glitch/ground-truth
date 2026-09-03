@@ -43430,3 +43430,168 @@ permissionless;
 periphery-v3
 emergency / kyc /
 migration.
+
+## 2026-09-03: Velodrome leftover Minter, VELO, sink, and reward factories (`b3065d8`)
+
+Immunefi program
+`velodromefinance`
+($100,000, `kyc: true`).
+Router / Pool,
+Voter / VotingEscrow,
+and Gauge /
+RewardsDistributor
+leftovers already
+logged. This slice
+is listed minter,
+VELO, sink stack,
+and reward
+factories.
+Official clone
+`/tmp/velo-contracts`
+`b3065d8`.
+No mainnet writes.
+
+Files:
+`contracts/Minter.sol`,
+`contracts/Velo.sol`,
+`contracts/sink/SinkPool.sol`,
+`contracts/gauges/sink/SinkGauge.sol`,
+`contracts/factories/sink/SinkGaugeFactory.sol`,
+`contracts/factories/sink/SinkPoolFactory.sol`,
+`contracts/factories/VotingRewardsFactory.sol`,
+`contracts/factories/ManagedRewardsFactory.sol`,
+`contracts/rewards/FeesVotingReward.sol`,
+`contracts/rewards/VotingReward.sol`,
+`contracts/rewards/LockedManagedReward.sol`,
+`contracts/VeloForwarder.sol`.
+
+Checked for: a
+stranger
+`Velo.mint`;
+`updatePeriod`
+that pays the
+caller the
+emission;
+`SinkGauge.getReward`
+that drains
+locked
+emissions;
+`notifyRewardAmount`
+from a
+non-gauge;
+`getReward` on
+someone else's
+veNFT.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- VELO
+  `mint` /
+  `setMinter`
+  are
+  `msg.sender ==
+  minter`.
+- Minter
+  `updatePeriod`
+  is
+  permissionless
+  but only
+  advances once
+  per week.
+  New VELO goes
+  to `team`
+  (`teamRate ≤
+  5%`),
+  `rewardsDistributor`
+  (growth), and
+  `voter.notifyRewardAmount`
+  (emissions).
+  `nudge` is
+  epochGovernor
+  only.
+  `setTeam` /
+  `setTeamRate`
+  are team-only
+  with a pending
+  accept.
+- SinkPool is
+  an empty
+  placeholder.
+  SinkGauge
+  `notifyRewardAmount`
+  is voter-only
+  and
+  `transferFrom`s
+  VELO to the
+  minter.
+  `getReward` is
+  a no-op.
+  Factories
+  return the
+  single
+  pre-deployed
+  sink pool /
+  gauge.
+- Voting
+  rewards
+  `getReward`
+  requires
+  ve
+  `isApprovedOrOwner`
+  or voter.
+  Fees
+  `notifyRewardAmount`
+  requires
+  `voter.gaugeToFees(sender)
+  == this`.
+  Locked
+  managed
+  rewards
+  notify /
+  getReward are
+  VotingEscrow
+  only.
+  `_deposit` /
+  `_withdraw`
+  are
+  `authorized`
+  (voter).
+- VeloForwarder
+  is stock
+  OpenGSN
+  Forwarder.
+
+Do not file
+permissionless
+weekly
+`updatePeriod`,
+team emission
+cut, voter-only
+sink notify that
+returns VELO to
+the minter, or
+ve-owner reward
+claim, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Velodrome
+minter + VELO +
+sink + reward
+factories leftover
+is exhausted at
+the opened-file
+level. Remaining
+listed: none on
+the official
+contracts tree
+beyond already-
+logged Router /
+Pool / Voter /
+VE / Gauge /
+Distributor.
