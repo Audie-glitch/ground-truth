@@ -63682,3 +63682,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file BLS-verified GPBFT votes or quorum-gated finality certs as stranger theft. go-f3 does not move FIL by itself.
 
 Not submitted. Payment requires user KYC. Remaining listed: lotus / proofs / FVM / filecoin.io.
+
+## 2026-09-03: ZKsync OS leftover storage_models + crypto + oracles leftover (`9efc8bf`)
+
+Immunefi program `zksync-os` ($100,000, `kyc: true`). Official remaining listed after bootloader / system hooks leftover. Official clone `/tmp/zksync-os` at listed commit `9efc8bf70ae77d1d4df67eff5c60c8a8cfc21268`. Sparse `storage_models`, `crypto`, `oracle_provider`, `callable_oracles`. Do not rematch evm_interpreter or bootloader leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `recover` returning a stranger pubkey on a bad signature; `secp256r1::verify` accepting identity / infinity; `StorageModel` remapping a write onto another address; host oracle injecting a duplicate query processor.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `secp256k1::recover` fails closed on field overflow, failed decompress, and recovered infinity. The L2 EOA path that consumes it (recover → EIP-3607 → debit `from`) is already leftover-logged on the bootloader.
+- `secp256r1::verify` rejects identity points, inverts `s`, and requires recovered `x` to equal `r`.
+- `StorageModel` is a trait: `storage_write` / `transfer_nominal_token_value` / `increment_nonce` take the caller-supplied address. No implementation in this crate remaps `from` / `to`.
+- `ZkEENonDeterminismSource` panics on a second processor for the same query id. A disconnected oracle returns 0. `verify_hash_to_prime` rejects oversized `first_step_n`, even candidates, and failed Miller-Rabin / Pocklington steps.
+
+Do not file library-only recover/verify, address-parameter storage traits, or host-registered oracles as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `zk_ee` implementations, `zksync_os` program, `proof_running_system`, airbender CS / prover / verifier, and `zkos-wrapper` circuits.
