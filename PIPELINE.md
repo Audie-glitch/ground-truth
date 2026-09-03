@@ -22,8 +22,8 @@ listed Solidity is mux-staking, GitHub 404 as of 3 Sep 2026).
 Threshold tBTC BOB cross-chain leftover is logged. Obyte Coop /
 Friends / prediction-markets leftovers are logged. Counterstake
 EVM+AA claim path and assistants / factories / governance leftovers
-are logged (listed Counterstake leftover exhausted). Obyte City AA and perpetual AA leftovers are logged.
-Remaining Obyte listed AAs: oswap-token-aa,
+are logged (listed Counterstake leftover exhausted). Obyte City AA, perpetual AA, and OSWAP token AA leftovers
+are logged. Remaining Obyte listed AAs:
 token-registry-aa, cascading-donations. Twyne vaults
 still Sourcify 404.
 

@@ -13515,7 +13515,77 @@ finding. Not submitted.
 
 Not submitted. Remaining
 Obyte listed AAs:
-`oswap-token-aa`,
+`oswap-token-aa` (logged
+below), `token-registry-aa`,
+`obyte-cascading-donations`.
+
+## 2026-09-03: Obyte OSWAP token AA leftover (`461e860`)
+
+Immunefi program `obyte`
+($50,000, `kyc: false`).
+19 Aug 2025 leftover
+`byteball/oswap-token-aa`
+(OSWAP token). Local clone
+`/tmp/obyte-oswap-token-aa`
+at `461e860`
+(“replication”). Custom
+OOS: fund-loss under
+$1,000; attacker expense
+≥ 50% of damage. No
+mainnet interaction.
+
+Files: `oswap.oscript`,
+`oswap-lib.oscript`,
+`initial-sale-pool.oscript`.
+
+Checked for: redeem that
+pays more reserve than the
+invariant; unstake of a
+stranger’s stake; LP
+withdraw of another
+address’s tokens; reward
+claim that double-mints
+emissions; replicator
+drain after renounce.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Trade is the same
+  Pythagorean curve as
+  perpetual (swap fee +
+  arb-profit tax).
+  Appreciation uses a TVL
+  data-feed oracle
+  (oracle trust).
+- Stake is
+  term-locked (≥14 days).
+  Unstake after expiry
+  pays the caller’s
+  `user.balance` and
+  forfeits unclaimed
+  rewards. Staking rewards
+  are `floor(user.reward)`
+  after
+  `distribute_stakers_emissions`.
+- LP withdraw is capped
+  at the caller’s recorded
+  balance. A third party
+  can pass `for` to update
+  another LP’s accrual
+  without paying them
+  (anti-share-gaming).
+- Replicator
+  (`OKQFTRCE…`) can copy
+  vars (not `constants` /
+  `lp_*` /
+  `pool_asset_balance_*`)
+  and restore outputs
+  until `renounce`.
+
+Not submitted. Remaining
+Obyte listed AAs:
 `token-registry-aa`,
 `obyte-cascading-donations`.
 
@@ -13967,9 +14037,10 @@ Counterstake leftover
 exhausted; `evm-v1.0` is
 the old pin; City AA
 (`4a0a53f`) and perpetual
-AA (`126cdd0`) are logged;
-remaining Obyte listed
-AAs: `oswap-token-aa`,
+AA (`126cdd0`) and OSWAP
+token AA (`461e860`) are
+logged; remaining Obyte
+listed AAs:
 `token-registry-aa`,
 `obyte-cascading-donations`);
 Twyne vaults / wrappers /
