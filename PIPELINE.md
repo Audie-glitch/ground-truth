@@ -10,7 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~11:00 UTC;
-246 programs; no Sep 2026 launches; Velvet leftover BSC v1 IndexSwap leftover is logged;
+246 programs; no Sep 2026 launches; Velvet leftover remaining BSC handlers leftover is logged;
+Velvet leftover BSC v1 IndexSwap leftover is logged;
 ZKsync OS leftover bootloader + system hooks leftover is logged;
 Lombard leftover BARD token + TokenDistributor leftover is logged;
 Immunefi leftover ETH Splitter leftover is logged;
@@ -233,6 +234,7 @@ Ava Labs leftover website leftover is logged;
 BlockPI leftover website leftover is logged;
 Unstoppable leftover wallet leftover is logged;
 Velvet leftover BSC v1 IndexSwap leftover is logged;
+Velvet leftover remaining BSC handlers leftover is logged;
 Immunefi leftover ETH Splitter leftover is logged;
 Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
@@ -1067,6 +1069,14 @@ PriceOracle /
 RebalanceAggregator /
 ERC1967Proxy twins /
 Primacy of Impact).
+Velvet leftover remaining
+BSC handlers leftover
+(Sourcify; no KYC) is
+logged (listed leftover
+that Sourcify opens is
+exhausted; remaining listed
+is two proxy 404s /
+Primacy of Impact).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -1854,6 +1864,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`unstoppablewallet`; no KYC),
   Velvet leftover BSC v1
   IndexSwap leftover
+  (Sourcify; no KYC),
+  Velvet leftover remaining
+  BSC handlers leftover
   (Sourcify; no KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),

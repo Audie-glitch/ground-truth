@@ -38496,6 +38496,152 @@ twins, and
 Primacy of
 Impact.
 
+## 2026-09-03: Velvet leftover remaining BSC handlers leftover (Sourcify)
+
+Immunefi program
+`velvetcapital`
+($51,000,
+`kyc: false`).
+Listed remaining
+after BSC v1
+IndexSwap leftover.
+Sourcify extracts
+under
+`/tmp/velvet-v1-rest`.
+Two listed
+addrs 404
+(`0xB966…3775`,
+`0xE614…798B`).
+No mainnet
+writes.
+
+Files:
+`contracts/rebalance/RebalanceAggregator.sol`,
+`contracts/vault/VelvetSafeModule.sol`,
+`contracts/oracle/PriceOracle.sol`,
+`contracts/handler/PancakeSwapHandler.sol`,
+`contracts/handler/venus/VenusHandler.sol`,
+`contracts/handler/Beefy/BeefyHandler.sol`,
+`contracts/handler/ExternalSwapHandler/ZeroExHandler.sol`,
+`contracts/handler/ExternalSwapHandler/OneInchHandler.sol`.
+
+Checked for:
+a stranger
+`swapRewardToken`
+that drains
+the vault;
+`executeWallet`
+that spends
+the Safe;
+handler
+`swap` /
+`redeem` that
+pulls vault
+tokens.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- RebalanceAggregator
+  `swapRewardToken`
+  /
+  `swapPrimaryToken`
+  /
+  `redeem`
+  /
+  `revertRedeem`
+  are
+  `onlyAssetManager`.
+  `executeSwap`
+  is
+  internal
+  and pulls
+  from the
+  vault via
+  the
+  aggregator.
+- VelvetSafeModule
+  `executeWallet`
+  /
+  `executeWalletDelegate`
+  are
+  `onlyOwner`.
+  `setUp`
+  transfers
+  ownership
+  to the
+  Exchange.
+- PriceOracle
+  reads are
+  view.
+  Feed /
+  expiration
+  writes are
+  `onlyOwner`.
+- Pancake /
+  Venus /
+  Beefy /
+  LP /
+  ZeroEx /
+  1inch /
+  Paraswap
+  handlers
+  operate on
+  tokens
+  already on
+  the handler.
+  They do
+  not
+  `transferFrom`
+  a stranger's
+  wallet.
+  Public
+  `swap` /
+  `redeem`
+  of leftover
+  handler
+  dust is
+  donated
+  balance,
+  not vault
+  funds.
+
+Do not file
+asset-manager
+aggregator
+swaps,
+Exchange-
+owned Safe
+module
+calls, or
+sweeping
+donated
+tokens on a
+handler as
+stranger
+theft.
+
+Not submitted.
+Listed leftover
+that Sourcify
+opens for
+velvetcapital
+handlers /
+Safe module /
+oracle /
+aggregator
+is exhausted
+at the
+opened-file
+level.
+Remaining listed:
+two Sourcify
+404 proxies
+and Primacy
+of Impact.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -40626,6 +40772,14 @@ handlers / VelvetSafeModule /
 PriceOracle /
 RebalanceAggregator /
 ERC1967Proxy twins /
+Primacy of Impact);
+Velvet leftover remaining
+BSC handlers leftover
+(Sourcify; no KYC) is
+logged (listed leftover
+that Sourcify opens is
+exhausted; remaining listed
+is two proxy 404s /
 Primacy of Impact);
 Serai leftover bitcoin-serai
 leftover (`4b89cf02`; KYC)
