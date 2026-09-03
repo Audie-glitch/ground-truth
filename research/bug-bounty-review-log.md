@@ -19226,6 +19226,112 @@ leftover is exhausted
 aside from Fertilizer
 proxy (Sourcify 404).
 
+## 2026-09-03: Flux Finance leftover (Sourcify)
+
+Immunefi program
+`fluxfinance`
+($550,000, `kyc: false`).
+Unique no-KYC listed
+slice not previously
+logged. Ethereum
+Sourcify `exact_match`:
+Unitroller
+`0x95Af143a…3A51`
+(solc 0.5.17, verified
+2026-02-14), fUSDC /
+fDAI / fOUSG
+`CErc20DelegatorKYC`
+(solc 0.5.17),
+OndoPriceOracleV2
+`0xba9b10f9…7ef2`
+(solc 0.8.16),
+GovernorBravoDelegator,
+Timelock. Extract
+`/tmp/flux`. No mainnet
+interaction.
+
+Files:
+`contracts/lending/compound/Unitroller.sol`,
+`tokens/cToken.sol`,
+`tokens/cErc20ModifiedDelegator.sol`,
+`OndoPriceOracleV2.sol`,
+`compound/governance/GovernanceBravoDelegator.sol`,
+`Timelock.sol`.
+
+Checked for: a
+stranger minting from
+a victim’s tokens;
+oracle that treats a
+stale or zero
+Chainlink tick as
+live; Unitroller
+implementation swap
+without admin.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `CErc20DelegatorKYC`
+  `mint` / `redeem` /
+  `seize` delegate.
+  `_setImplementation`
+  is admin.
+  Constructor inits
+  KYC registry +
+  group on the
+  implementation.
+- Extracted `cToken`
+  `mintFresh` pulls
+  from the minter and
+  mints to the minter.
+  Empty-market rate
+  is
+  `initialExchangeRateMantissa`.
+  Do not file vanilla
+  Compound first-
+  depositor inflation
+  without an empty
+  listed market.
+- OndoPriceOracleV2
+  `setPrice` /
+  `setOracle` /
+  `setFTokenToOracleType`
+  / caps are
+  `onlyOwner`.
+  Chainlink mode
+  reverts if stale
+  (`answeredInRound`
+  / timeout) or
+  `answer < 0`.
+  Compound mode
+  requires matching
+  underlyings. Cap
+  is `min`.
+- Unitroller
+  `_setPendingImplementation`
+  is admin;
+  `_acceptImplementation`
+  is the pending
+  implementation.
+
+Do not file owner
+`setPrice` or
+Compound first-
+depositor inflation
+as a finding.
+
+Not submitted.
+Remaining Flux:
+Comptroller
+implementation (not
+in this Sourcify
+slice), KYC cToken
+implementation
+behind the
+delegator, Governor
+Bravo implementation.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -19759,6 +19865,14 @@ Beanstalk leftover
 exhausted aside from
 Fertilizer proxy
 Sourcify 404);
+Flux Finance leftover
+(Sourcify `exact_match`
+Unitroller / fToken
+delegator / Ondo
+oracle) is logged
+(remaining Flux is
+Comptroller + KYC
+cToken implementations);
 Beets stS
 (`877087b`) + token
 leftover is logged

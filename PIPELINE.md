@@ -37,7 +37,11 @@ tokens leftover (`8e22cd2`, Sourcify
 UnwrapETH / LSD / marketplace leftover
 (`8e22cd2`) is logged (listed Beanstalk leftover
 exhausted aside from Fertilizer proxy Sourcify
-404). Beets stS + token leftover
+404). Flux Finance leftover (Sourcify
+`exact_match` Unitroller / KYC fToken
+delegator / OndoPriceOracleV2) is logged
+(remaining Flux is Comptroller + KYC cToken
+implementations). Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
 leftover is logged (yvUSD / Woofy still Sourcify 404).
 Benqi Dual Oracle leftover is logged. Benqi core
