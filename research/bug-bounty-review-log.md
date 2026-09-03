@@ -41721,16 +41721,18 @@ Filecoin leftover builtin-actors market + paych leftover
 proofs / boost / other actors);
 Filecoin leftover remaining miner + account leftover
 (`d894a1a`) is logged;
-Filecoin leftover evm leftover (`d894a1a`) is logged
-(remaining listed is lotus / proofs / boost / power /
-reward / other actors);
+Filecoin leftover evm leftover (`d894a1a`) is logged;
+Filecoin leftover reward + power leftover (`d894a1a`)
+is logged (remaining listed is lotus / proofs / boost /
+other actors);
 Hedera leftover remaining TokenMint leftover
 (`0d3d9a2`) is logged (remaining listed is
 mirror-node / cryptography / other modules / SDKs);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
-Sei leftover go-ethereum leftover (`bb451e2`) is logged
-(remaining listed is other modules / Primacy of Impact);
+Sei leftover go-ethereum leftover (`bb451e2`) is logged;
+Sei leftover wasmd + sei-wasmd leftover (`2e256b5` / `8dd2534`)
+is logged (remaining listed is other modules / Primacy of Impact);
 Hedera leftover json-rpc-relay leftover (`2b51a98`)
 is logged (remaining listed is consensus-node /
 mirror-node / cryptography / SDKs / transaction-tool);
@@ -61875,3 +61877,37 @@ Result: no user-exploitable finding. Not submitted.
 Do not file associated-caller funds attach, pointer-gated delegatecall execute, or signer-bound CosmWasm execute as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `sei-cosmos` / tendermint, other `sei-chain` modules (IBC host), and Primacy of Impact.
+
+## 2026-09-03: Filecoin leftover reward + power leftover (`d894a1a`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Follow-on leftover after
+market + paych, miner + account, and evm leftovers. Official clone
+`/tmp/filecoin-actors` at `d894a1a`. Opened `actors/reward/src/lib.rs`
+(`award_block_reward` / `update_network_kpi`) and
+`actors/power/src/lib.rs` (`create_miner` / `update_claimed_power` /
+`update_pledge_total`). No mainnet writes. No exploit PoCs. Do not rematch
+market / paych / miner / evm leftovers.
+
+Checked for: stranger `award_block_reward` that mints FIL to the caller;
+`create_miner` that spends another account's value; `update_pledge_total`
+that steals collateral accounting.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Reward constructor is System-only. `award_block_reward` is System-only.
+  It pays `ApplyRewards` + value to the resolved miner id, burns the
+  3x penalty via miner params, and burns leftover reward if the miner
+  apply fails. `this_epoch_reward` is a view. `update_network_kpi` is
+  Power-only.
+- Power `create_miner` is public but forwards `value_received` (the
+  caller's attached FIL) to Init `Exec` for a new miner. It does not
+  pull a third party. `update_claimed_power`, `enroll_cron_event`, and
+  `update_pledge_total` require caller type Miner. Epoch tick is Cron.
+  KPI update is a zero-value send to Reward.
+
+Do not file System-gated block rewards or caller-funded miner create as
+stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: lotus,
+proofs / boost / graphsync / FVM / go-f3, other builtin-actors
+(`datacap`, `verifreg`), and filecoin.io.
