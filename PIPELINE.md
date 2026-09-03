@@ -24,7 +24,8 @@ logged; Celer leftover is logged; Pyth EVM leftover is
 logged; Axelar leftover is logged; Kiln
 On-Chain v1 leftover is logged; Kiln DeFi
 leftover is logged; Acala leftover is logged;
-Ostium leftover is logged). KeeperHub
+Ostium leftover is logged; GMX leftover V2
+AdlHandler leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
