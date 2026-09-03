@@ -3695,6 +3695,58 @@ Remaining DFS: `curveusd`, Fluid Dex T2/T3/T4,
 `eulerV2`, `aaveV4` / leftover Aave, `llamalend`,
 `mcd`, `tx-saver`, triggers. Not submitted.
 
+## 2026-09-03: DeFi Saver CurveUsd core money actions (`e623f20`)
+
+Same Immunefi program (`defisaver`, $350,000, no KYC).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction.
+
+Files: `contracts/actions/curveusd/{CurveUsdCreate,CurveUsdBorrow,CurveUsdWithdraw,CurveUsdSupply,CurveUsdAdjust,CurveUsdPayback,CurveUsdSelfLiquidate}.sol`,
+`helpers/CurveUsdHelper.sol`,
+`advanced/CurveUsdSwapper.sol` (callback gate only).
+
+Checked for: a fake controller that
+`withdrawTokens` of minted crvUSD from the wallet;
+borrow/withdraw of another user’s llamma
+position; payback `onBehalfOf` that closes and
+sends someone else’s coll to `to`; self-liquidate
+that pulls more crvUSD than needed and keeps it;
+swapper callback from a non-controller.
+
+Result: no user-exploitable finding.
+
+- Every money action checks
+  `isControllerValid`: factory `debt_ceiling`
+  != 0. A random AddressProvider-style fake
+  cannot pass. Positions are the wallet’s
+  `create_loan` / `borrow_more` /
+  `remove_collateral` on that controller.
+- Create / adjust / borrow then
+  `withdrawTokens` of the requested crvUSD
+  amount. If the controller minted less, the
+  transfer reverts. Supply can credit
+  `onBehalfOf` (donation). Payback caps at
+  `debt(onBehalfOf)` and, on close, sends only
+  the wallet’s balance deltas.
+- Self-liquidate is `liquidate(address(this))`.
+  Extra crvUSD pull is `debt - collInCrvUsd +
+  1000` wei and leftover is returned to `from`.
+  Outgoing amounts are post-liq deltas.
+- Swapper callbacks require `msg.sender` to be
+  a valid controller. `setAdditionalRoutes` is
+  permissionless storage, but the action writes
+  it in the same tx before the callback and
+  `_curveSwap` deletes it. `withdrawAll` lets
+  anyone sweep leftover swapper balances (no
+  user position).
+
+Remaining CurveUsd: lev-create / repay /
+self-liquidate-with-coll + transient variants.
+Remaining DFS: those, Fluid Dex T2–T4,
+`eulerV2`, `aaveV4` / leftover Aave,
+`llamalend`, `mcd`, `tx-saver`, triggers.
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3736,10 +3788,13 @@ exhausted. DeFi Saver V3 executor + FL + auth
 (`e623f20`) and exchangeV3 + sell actions (`e623f20`)
 are logged; Morpho Blue, Liquity V2, Fluid T1
 + liquidity logic, Aave V3, Comp V2/V3, Spark,
-and Liquity V1 (`e623f20`) are logged. Remaining
-DFS is `curveusd` / `eulerV2` / `aaveV4` /
-leftover Aave / Fluid Dex T2–T4 / `llamalend` /
-`mcd`, `tx-saver`, and triggers. Next unreviewed
+Liquity V1, and CurveUsd core create/borrow/
+withdraw/supply/adjust/payback/self-liquidate
+(`e623f20`) are logged. Remaining DFS is
+CurveUsd advanced/transient, Fluid Dex T2–T4,
+`eulerV2`, `aaveV4` / leftover Aave,
+`llamalend`, `mcd`, `tx-saver`, and triggers.
+Next unreviewed
 Immunefi GitHub-or-recent trees: those DFS
 trees, Jito restaking `restaking_*` / `vault_*`
 plus `jito-solana` / `mev-programs` ($250k, KYC;
