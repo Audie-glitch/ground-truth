@@ -1710,24 +1710,79 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Sky diamond-pau Maple / farms / wraps / Curve / PSM (`1b6743a`)
+
+Same Immunefi program (`sky`) and clone `/tmp/diamond-pau`
+at `1b6743a`. No mainnet interaction. Aave / LayerZero /
+Pendle / UniV3 / Aave V4 were logged in the prior entry.
+
+Files: `src/facets/maple/MapleFacet.sol`,
+`src/facets/farm/FarmFacet.sol`,
+`src/facets/wsteth/WSTETHFacet.sol`,
+`src/facets/weeth/WEETHFacet.sol`,
+`src/facets/wrap-proxy-eth/WrapProxyETHFacet.sol`,
+`src/facets/curve/CurveFacet.sol`,
+`src/facets/psm/PSMFacet.sol`.
+
+Checked for: Maple cancel restoring request capacity so a
+second redemption could exceed the request limit; farm
+`getReward` sending rewards off-proxy; wstETH/weETH claim
+paying a caller-chosen owner; Curve slippage mins that do
+not bind the pool call; leftover approvals; PSM fill
+loop that credits a partial swap.
+
+Result: no user-exploitable finding.
+
+- Maple `requestRedemption` burns
+  `LIMIT_MAPLE_REQUEST_REDEEM` by `convertToAssets(shares)`
+  before `requestRedeem(shares, proxy)`. Cancel only
+  requires that a cancel key **exists** (same pattern as
+  7540 claim) and does **not** restore the request limit.
+- Farm deposit/withdraw burn their keys; `claimReward`
+  only requires the claim key exists. `getReward` is
+  called on the farm; the delta is measured on
+  `rewardsToken` at the proxy.
+- WSTETH unwraps WETH then `doCallWithValue(wsteth, "",
+  amount)` (expects a payable submit/wrap). Request
+  burns the stETH-equivalent; claim requires the claim
+  key and wraps received ETH to WETH on the proxy.
+  WEETH deposit checks `minSharesOut`. Withdraw
+  `requestWithdraw` pays the eETH to a `weethModule`
+  authorized by the rate-limit key, then claim is
+  module-gated the same way. `WrapProxyETHFacet.wrapAll`
+  wraps the proxy's full ETH balance if the wrap key
+  exists.
+- Curve swap/add/remove require admin `maxSlippage` and
+  compare mins to `stored_rates` / `get_virtual_price`.
+  Unseeded pools (`virtualPrice == 0`) cannot be
+  deposited into. Rate limits run after the pool call
+  (swap vs deposit split on add). PSM USDS↔USDC is 1:1
+  through immutable `daiUSDS` + lite PSM; the fill loop
+  reverts if `rush()` is 0 before the full amount is
+  swapped. DAI/USDC/USDS approvals are reset.
+
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
 diamond-pau core + CCTP/4626/7540/OTC/transfer/Ethena +
-Aave/AaveV4/LayerZero/Pendle/UniV3, and Intuition MultiVault
-/ AtomWallet / curves / emissions / registry are exhausted.
-Remaining Sky `diamond-pau` facets: Maple, farms, wraps,
-UniV4, DualPool, PSM. Remaining Intuition:
+Aave/AaveV4/LayerZero/Pendle/UniV3 + Maple / farms /
+wraps / Curve / Lite PSM, and Intuition MultiVault /
+AtomWallet / curves / emissions / registry are exhausted.
+Remaining Sky `diamond-pau` facets: UniV4, DualPool, PSM3,
+DAIUSDS, Basin, Centrifuge, SparkVault, Superstate,
+Merkl, NFAT Halo/Prime. Remaining Intuition:
 `TrustSwapAndBridgeRouter` (Base, not in the v2 repo).
 Superteam API rechecked 02:50 UTC 3 Sep: 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. Mermail skill is built (`mermail-onchain-receipts/`);
-remaining work is the
-participant's PR, Mermail MCP, and X demo. T3N still needs
-Terminal 3 SSO. NectarFi is a creator campaign. the402.ai
-still paused. 1inch Fusion settlement / whitelist /
-PowerPod / KycNFT and FeeTaker are exhausted. Remaining OZ
-hooks: none of the money-moving general/fee/base files.
+remaining work is the participant's PR, Mermail MCP, and
+X demo. T3N still needs Terminal 3 SSO. NectarFi is a
+creator campaign. the402.ai still paused. 1inch Fusion
+settlement / whitelist / PowerPod / KycNFT and FeeTaker
+are exhausted. Remaining OZ hooks: none of the
+money-moving general/fee/base files.
 Leather ($5k, wallet/web) is the next unread Immunefi
 program if we want a web2 target. Sherlock `/api/contests`
 has 301 historical items; the only non-FINISHED row as of
