@@ -68163,3 +68163,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a rounding helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused official Aave v2 copies are exhausted on this pin (PriceOracleSentinel + OwnableFacilitator 404). Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Aave leftover remaining protocol-v2 upgradeability leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after math-libs leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `BaseImmutableAdminUpgradeabilityProxy.sol`, `InitializableImmutableAdminUpgradeabilityProxy.sol`, and `VersionedInitializable.sol`. Do not rematch v3 upgradeability leftover (`cff15de` / solidity-utils `7a7548c`). No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `upgradeTo` / `upgradeToAndCall` replacing the pool implementation; `initializer` re-running on an already-initialized proxy.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ADMIN` is an immutable constructor arg. `upgradeTo` / `upgradeToAndCall` / `admin` / `implementation` are `ifAdmin` (non-admin falls through to the implementation). `_willFallback` reverts if `msg.sender == ADMIN`.
+- `InitializableImmutableAdminUpgradeabilityProxy` only overrides `_willFallback` onto the immutable-admin path. The leftover-logged Configurator is this proxy’s admin for reserve tokens.
+- `VersionedInitializable.initializer` requires `revision > lastInitializedRevision` (or constructor / nested init). Direct implementation calls still hit `extcodesize != 0` after deploy, so a stranger cannot re-init a live impl. These contracts do not move user tokens.
+
+Do not file an admin-gated v2 proxy as stranger theft.
+
+Not submitted. Payment requires user KYC. Official Aave protocol-v2 listed copies on this pin are exhausted (PriceOracleSentinel + OwnableFacilitator 404). Next unused leftover is a different Immunefi program, not a rematch.
