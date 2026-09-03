@@ -47068,7 +47068,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs` / `bank_forks`) if still unused. Jito leftover remaining jito-solana accounts_background_service leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs`) if still unused. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed Arbitrum: governance / fund-distribution / remaining token-bridge libs / custom reverse gateways / websites if still unused. Arbitrum leftover remaining nitro challenge leftover is logged.
@@ -47153,6 +47153,8 @@ Do not rematch Jito jito-solana snapshot_utils leftover.
 Do not rematch Jito jito-solana snapshot_bank_utils leftover.
 Do not rematch Jito jito-solana accounts_background_service leftover.
 Do not rematch Jito jito-solana status_cache leftover.
+Do not rematch Jito jito-solana bank_forks leftover.
+Do not rematch Chainlink leftover remaining CCIP Sui leftover.
 Do not rematch Chainlink leftover remaining CCIP Solana leftover.
 Do not rematch Jito jito-solana snapshot_package leftover.
 Do not rematch Optimism leftover remaining op-node deposits + withdrawals leftover.
@@ -49961,8 +49963,10 @@ Jito leftover remaining jito-solana snapshot_bank_utils leftover
 Jito leftover remaining jito-solana accounts_background_service leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana status_cache leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana bank_forks leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-bank / bank_forks if still unused);
+bank if still unused);
 Optimism leftover remaining op-node deposits + withdrawals leftover
 (`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
@@ -72562,3 +72566,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a Sui pool release as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink CCIP Aptos / chainlink-evm / OCR / core node / websites if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana bank_forks leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after status_cache leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/bank_forks.rs`. Do not rematch status_cache leftover, snapshot_controller leftover, or remaining runtime leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `insert` that replaces a rooted bank so a later replay credits extra lamports; `set_root` that keeps a stranger fork as canonical; `get_with_checked_hash` that returns a bank whose hash does not match.
+
+Result: no user-exploitable finding. Not submitted.
+
+- This is an in-memory fork DAG, not a stranger IX. `insert` asserts the slot is new, records descendants, and updates the working (highest) bank. `get_with_checked_hash` asserts `bank.hash() == expected_hash`.
+- `set_root` stores the already-present root bank, calls leftover-logged `SnapshotController::handle_new_roots` (or squashes), then `prune_non_rooted`. Kept slots are the root, descendants of the root, and slots between `highest_super_majority_root` and root that have the new root as a descendant (RPC commitment).
+- `clear_bank` / `dump_slots` remove local unrooted banks and signatures. Epoch-boundary rooting only clears the epoch-rewards cache and advances Alpenglow migration status. No credit path.
+
+Do not file a fork-DAG helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
