@@ -39297,3 +39297,122 @@ them, hub pools,
 oracle nodes, and
 bridge adapters
 (Wormhole / CCIP).
+
+## 2026-09-03: Variational leftover SettlementPool factory (`exact_match`)
+
+Immunefi program
+`variational`
+($100,000, `kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Arb
+Sourcify
+`exact_match` on
+listed factory
+`0x0F820B9afC270d658a9fD7D16B1Bdc45b70f074C`
+target
+`SettlementPoolFactory`.
+Extract
+`/tmp/variational-src/Factory`
+includes
+`SettlementPool.sol`
+from that
+verification.
+Listed OLP vault
+`0x74bbbb0e7f0bad6938509dd4b556a39a4db1f2cd`
+and treasury
+`0x5e91b40467fb8902c46a7b6cb90482363188d645`
+Sourcify 404.
+No official
+public contracts
+repo found. No
+mainnet writes.
+
+Files:
+`src/SettlementPoolFactory.sol`,
+`src/SettlementPool.sol`.
+
+Checked for: a
+stranger
+`createPool` that
+pulls a victim's
+USDC; pool
+`initialize`
+hijack;
+`depositUSDC` that
+pulls another
+party;
+`withdrawUSDC` /
+`withdrawFees` by
+a non-oracle to
+the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `createPool` is
+  owner or oracle.
+  Optional
+  creation fee is
+  `transferFrom(
+  feePaidBy,
+  feeRequestor)`
+  (needs
+  allowance).
+  Clone +
+  `initialize` in
+  the same
+  transaction.
+- `initialize`
+  requires
+  `msg.sender ==
+  factory` and
+  `factory == 0`.
+- `depositUSDC` is
+  `onlyParties`
+  and pulls
+  `msg.sender`.
+  Atomic / on-
+  behalf deposits
+  are
+  `onlyOracle` and
+  pull addresses
+  that approved
+  the pool.
+- `withdrawUSDC`
+  is `onlyOracle`
+  and pays a
+  `requestor` that
+  must be creator
+  or
+  `otherAddresses`.
+  `withdrawFees`
+  is `onlyOracle`.
+
+Do not file
+oracle-gated
+settlement
+withdraw / fee
+sweep, or factory
+owner pool
+create, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed
+Variational
+SettlementPool
+factory leftover
+is exhausted at
+the opened-file
+level. Remaining
+listed: OLP vault
+and treasury
+(Sourcify 404),
+and the web /
+Omni apps.
