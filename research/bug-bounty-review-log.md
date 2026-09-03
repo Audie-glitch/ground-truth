@@ -2344,6 +2344,63 @@ Ethena/AbstractARM, xOGN token itself.
 
 Not submitted.
 
+## 2026-09-03: Origin WETH / USDC / Lido ARM adapters (`2322537`)
+
+Immunefi program `originprotocol` ($1,000,000, `kyc: false`).
+WETH ARM stETH/wstETH/eETH/weETH adapters, USDC ARM
+PYUSD/USDG (Paxos) adapters, Lido ARM, and ARM zappers
+were listed separately from Ethena ARM. Local clone
+`/tmp/arm-oeth` at `2322537`. No mainnet interaction.
+`AbstractARM` swap / LP deposit / FIFO redeem was
+already reviewed with Ethena ARM; this pass is the
+adapter + zapper delta. HyperEVM CrossChain
+Master/Remote is the same CCTP tree already logged.
+
+Files: `src/contracts/{LidoARM,MultiAssetARM,ZapperARM,ZapperLidoARM}.sol`,
+`src/contracts/adapters/{AbstractLidoAssetAdapter,StETHAssetAdapter,WstETHAssetAdapter,EtherFiAssetAdapter,WeETHAssetAdapter,PaxosAssetAdapter}.sol`.
+
+Checked for: a non-ARM caller that opens or claims a
+withdrawal; redeem that sends WETH/USDC off-ARM;
+Ether.fi permissionless claim that burns the NFT and
+leaves ETH elsewhere; Paxos submit that pays a
+caller-chosen recipient; zapper mint of more shares
+than ETH wrapped.
+
+Result: no user-exploitable finding.
+
+- Lido / Ether.fi / Paxos `requestRedeem` / `redeem`
+  are `onlyARM`. Lido FIFO-claims only a finalized
+  prefix owned by the adapter, wraps all ETH, and
+  transfers all WETH to the ARM (donations included).
+  stETH is 1:1; wstETH unwraps then uses
+  `getStETHByWstETH`. Chunks are ≤ 1000 ETH.
+- Ether.fi adapters pull eETH/weETH, open a queue
+  request to `address(this)`, and claim via
+  `batchClaimWithdraw`. `receive()` reverts unless
+  `claimingEtherFi` is set, so a permissionless
+  Ether.fi claim cannot burn the NFT and strand ETH.
+  `onERC721Received` is present.
+- Paxos queues `pendingShares` then the operator
+  submits to an owner-set `paxosRecipient`. `redeem`
+  requires `settlingShares` and enough settled
+  liquidity, then sends exactly `shares` USDC to the
+  ARM. Excess recovery is owner-only and also pays
+  the ARM.
+- `LidoARM` / `MultiAssetARM` only initialize
+  `AbstractARM`. Zappers wrap the contract’s ETH
+  balance and `deposit` shares to `msg.sender`.
+  Lido zapper is pinned to one ARM; generic
+  `ZapperARM` takes a caller-chosen ARM (user
+  error if they pass a fake). `rescueERC20` is
+  owner-only.
+
+Remaining Origin in-scope: xOGN token (not in
+origin-dollar / arm-oeth; rewards module already
+reviewed). CapManager / Morpho market wrappers if
+they differ from the Ethena 4626 wrapper.
+
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam, the full `dss-emergency-spells` tree,
@@ -2352,13 +2409,14 @@ Intuition MultiVault / AtomWallet / curves / emissions /
 registry / `TrustSwapAndBridgeRouter` (`bb34cc2`),
 Origin OUSD vault + Curve AMO + WOETH/WOUSD + Ethena ARM,
 Origin Aerodrome / Base Curve / Hydrex AMOs + OETH
-zapper + Safe modules, Lombard SVM asset_router /
+zapper + Safe modules, Origin WETH/USDC/Lido ARM
+adapters + zappers, Lombard SVM asset_router /
 bridge / bascule / mailbox deliver-handle, Leather
 extension RPC / PSBT approval, OZ Confidential v0.5.3
 (`4a4f6c7`), and Money on Chain V2 core/queue/V4
 swapper (`d770477`) are exhausted. Remaining Origin:
-HyperEVM cross-chain master/remote, other ARM adapters
-if they differ from Ethena/AbstractARM, xOGN token.
+xOGN token (separate repo); CapManager / Morpho market
+if they differ from the Ethena 4626 wrapper.
 Remaining Lombard SVM: `lombard_token_pool`,
 `ratio_oracle`. Remaining MoC: governance machines and
 live Rootstock v1 proxies if a later pass wants
