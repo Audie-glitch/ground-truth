@@ -33605,3 +33605,110 @@ StandardManager /
 PMRM / Option /
 Perp / BaseAsset /
 feeds.
+## 2026-09-03: Royco factory + Makina strategy leftover (Sourcify)
+
+Immunefi program
+`Royco`
+($250,000, `kyc: true`).
+Unique unused standing
+program. Not previously
+logged. Ethereum
+Sourcify `match`
+ERC1967 Factory
+`0x7cC6fB28eC7b5e7afC3cB3986141797ffc27253C`
+impl
+`0x34DB2f4215e55ec8e2c3dE0a826935EBF158be77`
+(`RoycoFactory`);
+same impl behind the
+Arbitrum factory
+proxy. Makina
+strategy
+`0xc5FeF644d59415cec65049e0653CA10eD9Cba778`
+is Sourcify `match`
+`RoycoVaultMakinaStrategy`.
+srRoyUSDC
+`0xcD9f5907…` and
+Multisig Strategy
+`0xd3F8Edff…` are
+Sourcify 404. Official
+clone
+`/tmp/royco-makina`
+`3ba424d`. No mainnet
+writes. Extract
+`/tmp/royco-src`.
+
+Files:
+`src/factory/RoycoFactory.sol`,
+`src/RoycoVaultMakinaStrategy.sol`.
+
+Checked for: a
+stranger
+`deployMarket` that
+takes over an
+existing tranche;
+`allocateFunds` that
+pulls a victim's
+USDC; `onWithdraw`
+that pays the
+caller instead of
+the vault;
+`rescueToken` of the
+machine share
+token.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Factory
+  `deployMarket` is
+  `onlyAuthorized`
+  and CREATE3-
+  deploys new
+  proxies. Role /
+  upgrade setters
+  are authorized.
+- Strategy
+  `allocateFunds` /
+  `deallocateFunds` /
+  `onWithdraw` are
+  `onlyRoycoVault`.
+  Allocate pulls
+  the vault and
+  deposits into the
+  Makina machine
+  for this
+  strategy.
+  Deallocate /
+  withdraw redeem
+  to `ROYCO_VAULT`.
+  `rescueToken` is
+  `restricted` and
+  cannot sweep the
+  machine share
+  token.
+
+Do not file
+authorized market
+deploy, vault-only
+allocate /
+deallocate, or
+admin rescue of
+non-share tokens
+as stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Royco
+factory + Makina
+strategy leftover
+is exhausted at
+the opened-contract
+level. Remaining
+listed: srRoyUSDC /
+Multisig Strategy
+(Sourcify 404),
+the Safe, and the
+website.
