@@ -66209,3 +66209,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a capped fixed-ratio GSM swap as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: PoolConfigurator / ACL / oracles / periphery / rewards.
+
+## 2026-09-03: Aave leftover remaining AaveOracle leftover (`cff15de`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after GHO GSM leftover. Official `aave-dao/aave-v3-origin` `cff15de`. Opened listed `AaveOracle.sol`. Official `PriceOracleSentinel.sol` 404 on this pin. Do not rematch Pool / GHO leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `setAssetSources` pointing an asset at a fake aggregator; `getAssetPrice` returning 0 so a healthy position liquidates.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `setAssetSources` / `setFallbackOracle` are `onlyAssetListingOrPoolAdmins` via `ACLManager.isAssetListingAdmin` / `isPoolAdmin`.
+- `getAssetPrice` returns `BASE_CURRENCY_UNIT` for the base asset. A configured Chainlink source is used only if `latestAnswer() > 0`; otherwise (or if the source is `address(0)`) it forwards to the fallback oracle. This contract does not move tokens.
+
+Do not file an ACL-gated source update as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: PoolConfigurator / ACL / periphery / rewards. Official PriceOracleSentinel 404 on `cff15de`.
