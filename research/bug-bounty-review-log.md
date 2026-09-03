@@ -63282,3 +63282,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file stake-weighted signed stream import or TSS-gated blocks as stranger theft. Mirror-node does not hold user funds.
 
 Not submitted. Payment requires user KYC. Remaining listed: `hiero-sdk-java` / `hiero-sdk-go`, and the hashed transaction-tool website leftover.
+
+## 2026-09-03: Hedera leftover remaining SDK-java leftover (`eedd4b3`)
+
+Immunefi program `hedera` ($30,000, `kyc: true`). Official remaining listed after SDK-js leftover (`b7e4fc1`) and mirror-node importer leftover (`59e539b`). Official sparse clone `/tmp/hiero-sdk-java` `eedd4b3`. Opened `Transaction.java`, `PrivateKey.java`, `PublicKey.java`, `TransferTransaction.java`, `EthereumTransaction.java`. Consensus-node, cryptography, and JS SDK leftovers already logged. No mainnet writes. No exploit PoCs.
+
+Checked for: `sign` / `signWithOperator` attaching another account's spend authority; `addSignature` that would make a transfer valid without the sender key; `EthereumTransaction` wrapping a stranger's unsigned payload as the HAPI payer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Transaction.sign` is `signWith(privateKey.getPublicKey(), privateKey::sign)`. `signWithOperator` requires `client.getOperator()` and signs only with that operator. `onExecute` auto-signs only when the operator account equals the transaction-ID payer. `addSignature` attaches caller-supplied bytes; the node still verifies keys.
+- `PrivateKey.signTransaction` signs `bodyBytes` with `sign` and records that public key. `PublicKey.verifyTransaction` matches `pubKeyPrefix` then `verify(bodyBytes, signature)`.
+- `TransferTransaction` only builds `CryptoTransfer` bodies. `EthereumTransaction.setEthereumDataFromBody` rejects an unsigned ethereum body. A wrap still spends the recovered Ethereum sender plus the HAPI relayer gas allowance, as already leftover-logged on consensus-node.
+
+Do not file client-side builders or operator-only signing as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `hiero-sdk-go`, and the hashed transaction-tool website leftover.
