@@ -4199,6 +4199,45 @@ Result: no user-exploitable finding.
 Maker MCD treated as exhausted. Remaining DFS:
 `tx-saver`, triggers. Not submitted.
 
+## 2026-09-03: DeFi Saver TxSaver leftover (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction. RecipeExecutor / BotAuth
+already logged; this slice is the TxSaver entry
+plus gas-cost helper.
+
+Files: `contracts/tx-saver/{TxSaverExecutor,
+BotAuthForTxSaver,TxSaverBytesTransientStorage,
+TxSaverGasCostCalc}.sol`.
+
+Checked for: a stranger calling `executeTx`
+without a Safe signature; injected exchange
+data that runs without the user’s signed
+recipe; gas-cost helper that over-charges
+past block gas.
+
+Result: no user-exploitable finding.
+
+- `executeTx` requires
+  `BotAuthForTxSaver.isApproved(msg.sender)`
+  (owner-gated add/remove). It then
+  `Safe.execTransaction` to RecipeExecutor as
+  DelegateCall with the user’s packed
+  signatures. Safe verifies the signers.
+  Deadline is checked when non-zero.
+- Transient storage is written only by
+  TxSaverExecutor in the same tx. Anyone can
+  read it; only that tx’s sell/fee hook
+  consumes it.
+- Gas cost caps `_gasUsed` at `block.gaslimit`
+  and converts via an injected ETH price
+  (reverts if zero). Fee-from-position vs
+  EOA is the user’s signed flag.
+
+TxSaver treated as exhausted. Remaining DFS:
+triggers. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -4243,9 +4282,9 @@ are logged; Morpho Blue, Liquity V2, Fluid T1
 + GHO/Umbrella, Comp V2/V3, Spark, Liquity V1,
 CurveUsd core, CurveUsd advanced/transient,
 Euler V2, LlamaLend core, LlamaLend leftover +
-swapper, Aave V4 sig/premium, and Maker MCD
-(`e623f20`) are logged. Remaining DFS is
-`tx-saver` and triggers. Next unreviewed Immunefi
+swapper, Aave V4 sig/premium, Maker MCD, and
+TxSaver leftover (`e623f20`) are logged.
+Remaining DFS is triggers. Next unreviewed Immunefi
 GitHub-or-recent trees: those DFS trees, Jito
 `jito-solana` / `mev-programs` ($250k, KYC;
 interceptor `dbd8ce4` and restaking
