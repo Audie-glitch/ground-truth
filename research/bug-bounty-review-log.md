@@ -67357,3 +67357,22 @@ Do not file a self-stake rewards helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: PriceOracleSentinel / StakeToken / OwnableFacilitator / governance.
 
+
+## 2026-09-03: Aave leftover remaining StakeToken leftover (`5346765`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after StakedAaveV3 leftover. Official `bgd-labs/stake-token` `5346765`. Opened listed `src/contracts/StakeToken.sol`. Do not rematch `aave-stk-gov-v3` StakedAaveV3 leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `redeemOnBehalf` / `claimRewardsOnBehalf` without the claim helper; `slash` without slashing admin; `returnFunds` minting shares to the caller; redeem skipping cooldown outside a slashing window.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `stake` / `redeem` / `claimRewards` / `claimRewardsAndRedeem` act on `msg.sender`. `*OnBehalf` variants are `onlyClaimHelper`. `stakeWithPermit` still pulls `STAKED_TOKEN` from `msg.sender`.
+- `_stake` mints `previewStake` shares then `transferFrom`s assets. `_redeem` requires cooldown + `UNSTAKE_WINDOW`, except during `inPostSlashingPeriod` (full balance). Assets out are `previewRedeem`.
+- `slash` is `onlySlashingAdmin`, capped by `_maxSlashablePercentage`, leaves `LOWER_BOUND` assets, and flips `inPostSlashingPeriod`. `settleSlashing` / `setMaxSlashablePercentage` are the same admin. `setCooldownSeconds` is cooldown admin.
+- `returnFunds` is permissionless donate (`>= LOWER_BOUND`): it updates the exchange rate then `transferFrom`s the caller. `_getExchangeRate` rounds up (shares per asset) so redeem rounding favors the vault.
+- `initialize` is OZ `initializer` (once). Rewards pull from `REWARDS_VAULT` via `safeTransferFrom`.
+
+Do not file a cooldown-gated stake/redeem token as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: PriceOracleSentinel / OwnableFacilitator / governance.
+
