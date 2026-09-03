@@ -8748,7 +8748,8 @@ Emission, CCIP token pool,
 Governor Bravo, cross-chain
 MINTR copies, BondTeller.
 Spark 15 Jul sUSDC impls
-still open. Not submitted.
+are already logged. Not
+submitted.
 
 ## 2026-09-03: Spark leftover gov-relay Executor + SPARK_RECEIVER (`6218d57`)
 
