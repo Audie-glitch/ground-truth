@@ -32179,16 +32179,17 @@ exhausted at
 this money-path
 level.
 Remaining listed:
-nitro challenge
-/ rollup / OSP,
-governance,
-fund-distribution,
+nitro challenge leftover
+is logged;
+governance /
+fund-distribution /
 remaining
 token-bridge
 libs / custom
 reverse
-gateways,
-websites.
+gateways /
+websites
+(if still unused).
 
 ## 2026-09-03: zkSync Era leftover L1 Mailbox + AssetRouter leftover (Sourcify / `ad5a478`)
 
@@ -46586,6 +46587,133 @@ leftovers if
 still open.
 
 
+## 2026-09-03: Arbitrum leftover remaining nitro challenge leftover (`7fc6624`)
+
+Immunefi program
+`arbitrum`
+($2,000,000,
+`kyc: true`).
+Official remaining
+listed after
+token-bridge +
+Inbox leftover.
+Official
+`OffchainLabs/nitro-contracts`
+`7fc6624`.
+Extract
+`/tmp/arb-nitro/`.
+Do not rematch
+token-bridge +
+Inbox leftover.
+No mainnet
+writes.
+
+Files:
+`src/challengeV2/{EdgeChallengeManager,IEdgeChallengeManager}.sol`,
+`src/rollup/{RollupUserLogic,RollupCore,RollupLib}.sol`,
+`src/osp/{OneStepProofEntry,IOneStepProofEntry}.sol`.
+
+Checked for:
+a stranger
+`confirmAssertion`
+that refunds
+another
+validator's
+stake;
+`refundStake`
+that pays the
+caller;
+OSP that
+confirms a
+forged
+one-step
+and sweeps
+bonds.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `newStake` /
+  `stakeOnNewAssertion`
+  /
+  `confirmAssertion`
+  are
+  `onlyValidator`.
+  `returnOldDeposit`
+  withdraws
+  an inactive
+  `msg.sender`.
+  `returnOldDepositFor`
+  needs the
+  staker's
+  withdrawal
+  address.
+- Second
+  child moves
+  `requiredStake`
+  to
+  `loserStakeEscrow`.
+  `withdrawStakerFunds`
+  pays
+  `msg.sender`
+  from that
+  account's
+  withdrawable
+  map.
+- Fast
+  confirm is
+  `anyTrustFastConfirmer`
+  only.
+- Layer-zero
+  edges
+  whitelist
+  when the
+  rollup does.
+  Rival stake
+  goes to
+  `excessStakeReceiver`.
+  `refundStake`
+  pays
+  `edge.staker`
+  after
+  `setRefunded`.
+- OSP
+  `proveOneStep`
+  is view.
+  Confirm
+  needs a
+  length-1
+  small-step
+  edge plus
+  history
+  proofs.
+
+Do not file
+validator-
+gated BOLD
+stake or a
+view OSP
+step as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+governance /
+fund-distribution /
+remaining
+token-bridge
+libs / custom
+reverse
+gateways /
+websites
+(if still unused).
+
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -46903,6 +47031,8 @@ Optimism leftover remaining op-reth consensus leftover (`eea9542`)
 is logged.
 Optimism leftover remaining rust/op-reth flashblocks leftover (`a8a3b818`)
 is logged.
+Arbitrum leftover remaining nitro challenge leftover (`7fc6624`)
+is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
 Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
@@ -46941,6 +47071,7 @@ Remaining listed Aave: primacy; unused official v3 logic leftover that listed tr
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs` / `bank_forks`) if still unused. Jito leftover remaining jito-solana accounts_background_service leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
+Remaining listed Arbitrum: governance / fund-distribution / remaining token-bridge libs / custom reverse gateways / websites if still unused. Arbitrum leftover remaining nitro challenge leftover is logged.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
 Do not rematch Hedera consensus-node,
@@ -47043,6 +47174,7 @@ Do not rematch Optimism leftover remaining websites leftover.
 Do not rematch Optimism leftover remaining op-reth consensus leftover.
 Do not rematch Optimism leftover remaining op-reth consensus + txpool leftover.
 Do not rematch Optimism leftover remaining rust/op-reth flashblocks leftover.
+Do not rematch Arbitrum leftover remaining nitro challenge leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -49864,6 +49996,8 @@ Optimism leftover remaining op-reth consensus leftover
 Optimism leftover remaining rust/op-reth flashblocks leftover
 (`a8a3b818`) is logged (remaining listed is unused official
 leftovers if still open);
+Arbitrum leftover remaining nitro challenge leftover
+(`7fc6624`) is logged;
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
