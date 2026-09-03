@@ -25609,8 +25609,8 @@ submitted.
 Not submitted.
 Remaining Hydration
 listed GitHub:
-EVM adapters /
-precompiles.
+EVM leftover is
+logged.
 
 ## 2026-09-03: Velvet Capital leftover (Sourcify)
 
@@ -25841,6 +25841,82 @@ Remaining listed:
 and
 `0xC35a8BdBB93A03dB362aF6dC3383cD2c6aEA6cBc`
 Sourcify 404.
+
+## 2026-09-03: Hydration EVM leftover (`672e02f`)
+
+Immunefi program
+`Hydration`
+($222,222, `kyc: false`).
+DCA, pool, and staking
+leftovers are already
+logged. This slice is
+evm-accounts, the
+MultiCurrency
+precompile, and
+permit dispatch.
+Local sparse clone
+`/tmp/hydration-node`
+at `672e02f`. No
+mainnet interaction.
+
+Files:
+`pallets/evm-accounts/src/lib.rs`,
+`runtime/hydradx/src/evm/precompiles/multicurrency.rs`,
+`runtime/hydradx/src/evm/permit.rs`.
+
+Checked for: a
+stranger
+`claim_account`
+that binds another
+account; `transfer`
+from a non-caller;
+`transfer_from`
+without allowance.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `bind_evm_address`
+  binds the signer.
+  `claim_account` is
+  unsigned but
+  `validate_signature`
+  verifies the
+  claimed account.
+  Deployer /
+  approved-contract
+  / NTT minter
+  writes are
+  `ControllerOrigin`.
+- MultiCurrency
+  `transfer` pulls
+  `handle.context().
+  caller`.
+  `approve` sets
+  allowance for that
+  caller.
+  `transfer_from`
+  requires allowance
+  or an
+  owner-approved
+  contract.
+- Permit
+  `dispatch_permit`
+  runs as the
+  permit `source`
+  and reverts if
+  the account nonce
+  changes.
+
+Not submitted.
+Listed Hydration
+GitHub leftover in
+this pass is
+exhausted at the
+opened-pallet
+level.
 
 ## Next candidates
 
@@ -26215,10 +26291,12 @@ Hydration DCA leftover
 Hydration pool leftover
 (`672e02f`) is logged.
 Hydration staking leftover
+(`672e02f`) is logged.
+Hydration EVM leftover
 (`672e02f`) is logged
-(remaining listed is
-EVM adapters /
-precompiles).
+(listed Hydration leftover
+exhausted at opened-pallet
+level).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
@@ -26639,10 +26717,12 @@ Hydration DCA leftover
 Hydration pool leftover
 (`672e02f`) is logged.
 Hydration staking leftover
+(`672e02f`) is logged.
+Hydration EVM leftover
 (`672e02f`) is logged
-(remaining listed is
-EVM adapters /
-precompiles).
+(listed Hydration leftover
+exhausted at opened-pallet
+level).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
