@@ -21,17 +21,19 @@ exhausted). Marinade liquid-staking leftover (`b8fe3f8`) is
 logged (remaining Marinade is crank / admin / validators).
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool
-v1.4 deposit / rETH / megapool queue leftover, megapool dissolve / rewards / exit leftover, vault + RPL auction leftover, smoothing / rewards leftover, minipool leftover, and DAO settings / voting leftover are logged (listed Rocket Pool GitHub leftover exhausted). Beanstalk Basin
+v1.4 listed GitHub leftover is exhausted (deposit /
+megapool / vault / auction / smoothing / minipool /
+DAO). Beanstalk Basin
 leftover (Pipeline / Depot / Well / Aquifer / CP2 /
 MultiFlowPump) is logged. Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
 leftover is logged (yvUSD / Woofy still Sourcify 404).
 Benqi Dual Oracle leftover is logged. Harvest vault /
 controller leftover (`0364901`) and 4626 / Dolomite
-lend leftover are logged (remaining Harvest is Convex /
-Aura / Aave / Penpie / Notional / StakeDAO / Yel /
-ZeroLend / CompoundV3 / Idle / inactive + MorphoVault
-V2 + polygon / arbitrum). Hermetica hBTC
+lend leftover and Convex / Aura / Aave fold leftover
+are logged (remaining Harvest is Penpie / Notional /
+StakeDAO / Yel / ZeroLend / CompoundV3 / Idle /
+inactive + MorphoVault V2 + polygon / arbitrum). Hermetica hBTC
 vault leftover is logged (listed Clarity exhausted).
 CoW GPv2 leftover (`6ebbd81`) is logged (listed CoW
 GitHub leftover exhausted). Stader ETHx leftover

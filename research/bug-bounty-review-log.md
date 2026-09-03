@@ -16969,6 +16969,117 @@ listed: StaderConfig,
 Penalty, PoolSelector,
 PoolUtils.
 
+## 2026-09-03: Harvest Convex / Aura / Aave fold leftover (`0364901`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Vault /
+controller and 4626
+lend on the same pin
+`0364901` are already
+logged. This slice is
+the Convex / Aura
+farms and the Aave
+fold. Local clone
+`/tmp/harvest-strategy`.
+No mainnet interaction.
+
+Files:
+`contracts/strategies/convex/ConvexStrategy.sol`,
+`ConvexLendStrategy.sol`,
+`aura/AuraStrategy.sol`,
+`aave/AaveFoldStrategy.sol`.
+
+Checked for: a stranger
+unstaking Convex / Aura
+LP; withdraw that pays
+more than staked plus
+idle; flash-loan
+callback that is not
+the Balancer vault;
+fold that borrows
+above the collateral
+factor.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Convex booster
+  `poolInfo` LP must
+  match `underlying`.
+  `depositAll` stakes.
+  `withdrawAllToVault`
+  / `withdrawToVault`
+  are `restricted`.
+  Partial unwrap is
+  capped at the reward
+  pool balance; the
+  later transfer of the
+  requested amount
+  reverts if unwrap was
+  short. `invested`
+  is staked plus idle.
+  Curve
+  `add_liquidity`
+  `min = 0` runs only
+  on hard-work (keeper
+  sandwich, known
+  Harvest pattern).
+- Aura matches the
+  Balancer pool LP and
+  the Aura booster LP
+  to `underlying`.
+  Withdraw / salvage /
+  hard-work follow the
+  same Convex gates.
+- Convex lend supplies
+  the 4626 lending
+  vault (`asset` =
+  underlying), then
+  stakes the vault
+  shares in Convex
+  (`poolInfo` LP =
+  lending vault).
+  Withdraw redeems
+  `min(requested,
+  idle)` after a
+  partial unwrap.
+- Aave fold requires
+  aToken and variable
+  debt
+  `UNDERLYING_ASSET_ADDRESS`
+  = underlying.
+  Borrow target is
+  strictly below the
+  collateral factor.
+  `receiveFlashLoan`
+  requires
+  `msg.sender ==
+  bVault` and exactly
+  one of
+  `makingFlashDeposit`
+  / `makingFlashWithdrawal`.
+  Deposit supplies the
+  flash amount then
+  borrows the repay.
+  Withdraw repays then
+  redeems, then pays
+  Balancer
+  `amount + fee`.
+  `invested` is idle +
+  stored net −
+  `pendingFee`.
+
+Not submitted. Remaining
+Harvest is Penpie /
+Notional / StakeDAO /
+Yel / ZeroLend /
+CompoundV3 / Idle /
+inactive + MorphoVault
+V2 + polygon /
+arbitrum.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -17495,9 +17606,10 @@ unitroller / gauges);
 Harvest vault / controller
 leftover (`0364901`) and
 4626 / Dolomite lend
-leftover are logged
+leftover and Convex /
+Aura / Aave fold leftover
+are logged
 (remaining Harvest is
-Convex / Aura / Aave /
 Penpie / Notional /
 StakeDAO / Yel /
 ZeroLend / CompoundV3 /
