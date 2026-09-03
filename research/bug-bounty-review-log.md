@@ -64436,7 +64436,6 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a secp256k1 recover-and-compare helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner.
->>>>>>> d25b66d (Log Filecoin leftover remaining go-crypto review.)
 
 ## 2026-09-03: Wormhole leftover remaining Algorand Aptos Near leftover (`c58827e`)
 
