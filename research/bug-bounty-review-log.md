@@ -8109,10 +8109,79 @@ finding. Not submitted.
   the full USDC balance.
 
 Remaining SparkLend:
-treasury controllers and
-the 13 Jul Robinhood /
-X Layer rows. Not
-submitted.
+treasury / cap automator /
+ratio oracles (this pass
+below) and the 13 Jul
+Robinhood / X Layer rows.
+Not submitted.
+
+## 2026-09-03: Spark CapAutomator + ratio oracles + CollectorController (Sourcify)
+
+Immunefi program `sparklend`
+($5,000,000, `kyc: false`).
+5 Mar 2026 leftover:
+CapAutomator v1.1.0
+`0x4C13…F2eE` (exact match,
+verified 2026-03-09),
+cbBTC/weETH/rETH ratio
+oracles (`0x64B1…cCBC`,
+`0x4C80…b7E4`,
+`0xd0B3…8d06`), plus
+Ethereum TREASURY_CONTROLLER
+`0x92eF…8F7a` (CollectorController,
+verified 2025-06-23). Treasury
+proxy rows are
+`InitializableAdminUpgradeabilityProxy`
+only. Extract under
+`/tmp/spark-leftover/{cap_auto,
+cbbtc_oracle,weeth_oracle,
+reth_oracle,treasury_ctrl}`.
+No mainnet interaction.
+
+Files: `src/CapAutomator.sol`,
+`src/{CBBTC,WEETH,RETH}RatioOracle.sol`,
+`CollectorController.sol`.
+
+Checked for: a public `exec`
+that raises caps past `max`;
+same-block cap pump; ratio
+oracle that returns 1e18 on
+a dead feed; controller
+`transfer` by a non-owner.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- Cap config is
+  `DEFAULT_ADMIN_ROLE`.
+  `exec` / `execSupply` /
+  `execBorrow` are
+  `UPDATE_ROLE`. New cap is
+  `min(usage + gap, max)`.
+  Increases respect
+  `increaseCooldown`;
+  decreases do not. A second
+  update in the same block
+  returns the current cap.
+- Ratio oracles return 0
+  when a feed is
+  non-positive (or the LST
+  rate is 0). Kill-switch
+  consumers treat that as a
+  halt, not a peg. Feeds
+  are immutable.
+- CollectorController
+  `approve` / `transfer`
+  are `onlyOwner` and
+  forward to the collector
+  proxy.
+
+Remaining SparkLend: the
+13 Jul Robinhood / X Layer
+executor / receiver rows
+(ALM + Vault V2 on those
+chains already logged).
+Not submitted.
 
 ## Next candidates
 
@@ -8223,11 +8292,13 @@ seeded) are logged. Listed Extra Finance
 and Hashflow Solidity are
 exhausted. Magpie leftover is
 Primacy of Impact only.
-Remaining SparkLend is
-treasury controllers and the
+Remaining SparkLend is the
 13 Jul Robinhood / X Layer
-rows beyond the ALM +
-SparkVault + PSM3 trees. Next
+executor / receiver rows
+beyond ALM + SparkVault +
+PSM3 + CapAutomator / ratio
+oracles / CollectorController.
+Next
 unreviewed Immunefi
 GitHub-or-recent trees:
 Twyne June-2026 Aave V3
