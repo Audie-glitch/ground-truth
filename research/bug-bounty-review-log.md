@@ -6042,6 +6042,76 @@ BaseTokenProvider path, and
 LisAster (not in the Immunefi HTML).
 Not submitted.
 
+## 2026-09-03: Extra Finance Aave-fork leftover (ACL / config / aToken)
+
+Immunefi program `extrafinance`
+($100,000, `kyc: false`). LYF +
+ExtraX + Pool skim + VeToken
+already logged. Remaining
+**listed** assets (2024-11-26)
+are Optimism Aave-v3-fork
+PoolConfigurator
+`0x9378…0ADC`, AToken
+`0x2B27…662E`, DebtToken
+`0xC0C8…d5E`,
+PoolAddressProvider
+`0xA98c…721d`, ACL
+`0x70Cd…595f`, and EXTRA
+`0x2dad…8f8`. Vault registry
+ids 101–105 are not in the
+assets table. Sourcify extracts
+under `/tmp/extrafinance/{atoken,
+debt,poolcfg}`. No mainnet
+interaction.
+
+Files:
+`protocol/tokenization/{AToken,VariableDebtToken}.sol`,
+`protocol/pool/PoolConfigurator.sol`.
+
+Checked for: aToken mint/burn
+without `onlyPool`; debt token
+that a user can mint to
+themselves; configurator
+`initReserves` / `dropReserve`
+callable by a non-admin.
+
+Result: no user-exploitable
+finding. This is stock Aave v3
+tokenization + configurator.
+
+- AToken `mint` / `burn` /
+  `mintToTreasury` /
+  `transferOnLiquidation` /
+  `transferUnderlyingTo` /
+  `updateTreasury` are
+  `onlyPool`. `rescueTokens` is
+  `onlyPoolAdmin`. Scaled
+  balances use
+  `getReserveNormalizedIncome`.
+- VariableDebtToken `mint` /
+  `burn` are `onlyPool`.
+  `user != onBehalfOf` spends
+  borrow allowance. ERC-20
+  `transfer` / `approve` revert
+  `OPERATION_NOT_SUPPORTED`.
+- PoolConfigurator
+  `initReserves` is
+  `onlyAssetListingOrPoolAdmins`;
+  `dropReserve` / treasury /
+  interest-rate updates are
+  `onlyPoolAdmin`; collateral /
+  borrow flags are
+  `onlyRiskOrPoolAdmins`; pause
+  is `onlyEmergencyOrPoolAdmin`.
+  Roles resolve through the
+  addresses-provider ACL.
+
+Remaining Extra Finance listed
+Solidity: EXTRA token (standard
+ERC-20, not pulled here). Vault
+101–105 stay OOS. Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -6109,12 +6179,10 @@ VeloPositionManager + RewardDistributor
 factory / creators / live proxy, the
 Aave-fork Pool skim, and VeToken
 (`0xe0Be…1466`) are logged;
-remaining Extra Finance in the
-Immunefi assets table is Aave-fork
-ACL / PoolAddressProvider /
-PoolConfigurator / AToken /
-DebtToken / EXTRA (stock Aave /
-token). Vault factory ids 101–105
+remaining Extra Finance listed
+Solidity is EXTRA token (Aave-fork
+ACL / config / aToken / debt
+logged). Vault factory ids 101–105
 are **not** listed. Index Coop
 Set Protocol V2 (all five in-scope
 addresses) is logged. Lista DAO Moolah
@@ -6124,22 +6192,26 @@ LisUSD / clip-join / slisBNB
 (`3e120da` + `67e524c`), Moolah vault
 + Credit/Lending brokers, SlisBNB /
 BNB / ERC20-LP providers, MasterVault
-+ yield strategies, and leftover
++ yield strategies, leftover
 OFT / distributors / providers
-(`28a3c02` + `fa5dfa5`) are logged.
+(`28a3c02` + `fa5dfa5`), and Extra
+Finance Aave-fork leftover (ACL /
+config / aToken / debt) are logged.
 Enzyme Blue BebopBlend / ThreeOneThird /
 SharesSplitter (`da3b870` + Sourcify) are
 logged. Next unreviewed Immunefi
 GitHub-or-recent trees: Extra Finance
-Aave-fork leftover (ACL / config /
-aToken / EXTRA). Remaining Lista is
-oracles / `lista-new-contracts` RWA /
+EXTRA token. Remaining Lista is
+oracles / VeLista lock / airdrop /
+`lista-new-contracts` RWA /
 slisXAUE / LisAster. Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted).
-Superteam API rechecked ~04:03 UTC
-3 Sep: still 28 open listings.
+Superteam API rechecked ~04:40 UTC
+3 Sep: still 28 open listings
+(earn.superteam.fun 308, api host
+unresolved from this VM).
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the
@@ -6175,10 +6247,11 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-~04:10 UTC 3 Sep: KeeperHub #2105 still `open` +
+~04:40 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
-CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
+CreditPassport deployer still 0 Sepolia ETH
+(Tenderly) / 0 tCTC;
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub

@@ -135,8 +135,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   slisBNB (`3e120da` + `67e524c`),
   Moolah vault / brokers, SlisBNB / BNB /
   ERC20-LP providers, MasterVault +
-  yield strategies, and leftover OFT /
+  yield strategies, leftover OFT /
   distributors (`28a3c02` + `fa5dfa5`),
+  and Extra Finance Aave-fork leftover,
   and Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.
