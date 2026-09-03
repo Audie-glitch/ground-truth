@@ -5173,6 +5173,53 @@ Remaining 0x: PancakeInfinity,
 Renegade, Ekubo, Hanji,
 NucleusTeller. Not submitted.
 
+## 2026-09-03: 0x leftover Pancake / Renegade / Ekubo / Hanji / Nucleus (`1df9087`)
+
+Same Immunefi program `0x` ($1,000,000, `kyc: true`).
+Same clone `/tmp/reviews/0x-settler` at `1df9087`.
+No mainnet interaction. Bebop / EulerSwap /
+Curve already logged.
+
+Files: `src/core/{PancakeInfinity,Renegade,
+EkuboV3,Hanji,NucleusTeller}.sol`,
+`src/chains/Mainnet/BridgeSettler.sol`.
+
+Checked for: Pancake / Ekubo lock that
+spends a stranger’s Permit2; Renegade
+that pays a maker more than this
+Settler holds; Hanji / Nucleus that
+hits Permit2 or AllowanceHolder.
+
+Result: no user-exploitable finding.
+
+- Pancake Infinity and Ekubo V3 use
+  the same notes / VIP pattern as
+  UniV4 against hardcoded vault /
+  `CORE`. Payer `address(this)`
+  transfers from Settler; payer `0`
+  uses Permit2. Fills (hooks, pool
+  manager id, fee) are in the signed
+  action.
+- Renegade approves a chain-specific
+  `GasSponsorV2`, patches sell amount
+  / tokens / recipient into opaque
+  signed calldata, then subtracts
+  `maxRefundAmount` from reported
+  buy (conservative). `minBuyAmount`
+  applies.
+- Hanji is a caller-chosen book:
+  approve or native `ppm`, market
+  order, `minBuyAmount`.
+- Nucleus Teller / WPAXG are
+  hardcoded. `bridge` /
+  `depositAndBridge` overwrite share
+  or deposit amount to this Settler’s
+  balance and forward `selfbalance()`.
+
+0x Settler listed leftover DEX /
+bridge mixins treated as exhausted.
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -5230,11 +5277,11 @@ plus UniV2 / Velodrome / Across /
 POSITIVE_SLIPPAGE, Stargate / LayerZero /
 CCIP / Mayan / DeBridge, UniV4 / Relay /
 SETTLER_SWAP, Maverick / Dodo /
-BalancerV3, and Bebop / EulerSwap /
-Curve (`1df9087`) are logged;
-remaining 0x is PancakeInfinity,
-Renegade, Ekubo, Hanji, NucleusTeller.
-Extra Finance LYF LendingPool +
+BalancerV3, Bebop / EulerSwap / Curve,
+and Pancake / Renegade / Ekubo / Hanji /
+Nucleus (`1df9087`) are logged.
+0x Settler leftover DEX / bridge mixins
+are exhausted. Extra Finance LYF LendingPool +
 VeloPositionManager + RewardDistributor
 (Sourcify, 2024-08 verified) plus ExtraX
 factory / creators / live proxy and the
@@ -5243,8 +5290,7 @@ remaining Extra Finance is vault logic
 (not Sourcify) and veToken. Index Coop
 Set Protocol V2 (all five in-scope
 addresses) is logged. Next unreviewed
-Immunefi GitHub-or-recent trees: those
-0x leftover adapters, Extra Finance
+Immunefi GitHub-or-recent trees: Extra Finance
 vault / veToken, Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
