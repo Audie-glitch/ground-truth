@@ -71319,3 +71319,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a CommP/CommD hasher as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches.
+
+## 2026-09-03: Filecoin leftover remaining go-fil-commp-hashhash leftover (`256368516783`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after go-commp-utils leftover (avoid lotus collision). Official `filecoin-project/go-fil-commp-hashhash` `256368516783` (`2563685167835b98a40bfade4fbdbdc0f9db376b`). Opened listed `commp.go` (`Calc`, `digestQuads`, `PadCommP`, snapshot helpers). Do not rematch go-commp-utils leftover or go-fil-commcid leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `Digest` that returns a CommP for &lt; 65 bytes; `Write` that overflows `MaxPiecePayload` and wraps; `PadCommP` that enlarges a digest without hashing stacked nul padding.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Write` rejects additional bytes that would exceed `MaxPiecePayload`. `Digest` errors below `MinPiecePayload` (65). Residual buffer is zero-padded to 127-byte quads, then FR32-expanded to 128 with `byte[31|63|95] &= 0x3F`.
+- Layer workers SHA-256-fold pairs and mask `d[31] &= 0x3F`. Close-of-queue pads with `stackedNulPadding`. Padded size is rounded up to the next power of two.
+- `PadCommP` requires a 32-byte source, power-of-two sizes, source ≤ target, source ≥ 128, target ≤ `MaxPieceSize`. Each step hashes the current digest with the matching nul pad.
+- This crate implements `hash.Hash` only. It does not send messages or hold FIL.
+
+Do not file an FR32 CommP hasher as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches.
