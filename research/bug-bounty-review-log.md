@@ -61567,3 +61567,22 @@ Result: no user-exploitable finding. Not submitted.
 Do not file ABI constants, operator-held MCP keys, or pointer-gated Bank `send` as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `go-ethereum`, other `sei-chain` modules / precompiles (`oracle`, `epoch`, IBC / gov / wasm), `sei-cosmos` / `sei-wasmd` / tendermint, and Primacy of Impact.
+
+## 2026-09-03: Sei leftover remaining precompiles leftover (`2e256b5`)
+
+Immunefi program `sei` ($500,000, `kyc: true`). Follow-on leftover after `sei-chain` evm/bank/tokenfactory (`156664f`) and `sei-js` (`e69fd78`). Official sparse clone `/tmp/sei-chain` `2e256b5`. Opened `precompiles/distribution/distribution.go`, `precompiles/pointer/pointer.go`, `precompiles/ibc/ibc.go`, `precompiles/oracle/oracle.go`, `precompiles/gov/gov.go`, `x/oracle/keeper/keeper.go`, `x/epoch/keeper/*.go`. No mainnet writes. No exploit PoCs.
+
+Checked for: a stranger distribution withdraw that pays the caller; `setWithdrawAddress` that retargets another delegator; pointer `addNative` that mints a victim denom; IBC transfer still live; gov `deposit` that spends another associated account.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Distribution rejects `delegatecall` and staticcall on writes. `withdrawDelegationRewards` / `withdrawMultiple` / `setWithdrawAddress` / `withdrawValidatorCommission` map `caller` to the associated Sei address (`GetSeiAddress`). Rewards go to that delegator's CosmWasm withdraw address. `*WithAuthorization` / `grantWithdrawAuthorization` require a live authz grant from the named granter.
+- Views that would otherwise increment validator periods run on `CacheContext` and discard writes.
+- Pointer `addNative` / `addCW*` are nonpayable, reject delegatecall, and only `UpsertERC*Pointer` metadata wrappers. Native pointers require stored denom metadata (else gov). No token mint/burn.
+- IBC precompile (`0x…1009`) is a tombstone: every method returns `ibc precompile is retired; IBC transfers are disabled`.
+- Oracle precompile (`0x…1008`) `getExchangeRates` / `getOracleTwaps` revert `oracle precompile is retired`. `x/oracle` keeper is validator-feeder vote storage; `ValidateFeeder` gates vote submission. `x/epoch` is BeginBlocker clock only.
+- Gov `deposit` / `submitProposal` / `vote` require an associated Sei address for `caller`. `deposit` requires nonzero `value` and `HandlePaymentUsei` from that depositor. Authz submit/vote paths use `ExecuteAuthorization`.
+
+Do not file caller-associated reward withdraws, authz-gated withdraws, retired IBC/oracle precompiles, or pointer metadata upserts as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `go-ethereum`, `sei-cosmos` / `sei-wasmd` / tendermint, other `sei-chain` modules (wasm / IBC host), and Primacy of Impact.
