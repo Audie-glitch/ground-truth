@@ -63536,3 +63536,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file client-side builders or operator-only signing as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `hiero-sdk-go`, and the hashed transaction-tool website leftover.
+
+## 2026-09-03: Hedera leftover remaining SDK-go leftover (`029d087`)
+
+Immunefi program `hedera` ($30,000, `kyc: true`). Official remaining listed after SDK-js (`b7e4fc1`) / SDK-java (`4f0c3c1`) leftovers. Official sparse clone `/tmp/hiero-sdk-go` `029d087`. Opened `transaction.go`, `crypto.go`, `ecdsa_private_key.go`, `transfer_transaction.go`, `ethereum_transaction.go`. Consensus-node, cryptography, mirror-node, and other SDK leftovers already logged. No mainnet writes. No exploit PoCs.
+
+Checked for: `Sign` / `SignWithOperator` attaching another account's spend authority; `AddSignature` that would make a transfer valid without the sender key; `EthereumTransaction` wrapping a stranger's unsigned payload as the HAPI payer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `Transaction.Sign` is `SignWith(privateKey.PublicKey(), privateKey.Sign)`. `SignWithOperator` requires `client.operator` and signs only with that operator. `Execute` auto-signs only when the operator account equals the transaction-ID payer. `AddSignature` attaches caller-supplied bytes; the node still verifies keys.
+- `PrivateKey.SignTransaction` signs `BodyBytes` with the ED25519 or ECDSA key and records that public key. `PublicKey.VerifyTransaction` dispatches to the matching key type.
+- `TransferTransaction` only builds `CryptoTransfer` bodies. `EthereumTransaction.SetEthereumDataFromBody` rejects an unsigned ethereum body. A wrap still spends the recovered Ethereum sender plus the HAPI relayer gas allowance, as already leftover-logged on consensus-node.
+
+Do not file client-side builders or operator-only signing as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: the hashed transaction-tool website leftover.
