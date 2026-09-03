@@ -68098,3 +68098,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a libp2p admin helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Aave leftover remaining protocol-v2 ValidationLogic + GenericLogic leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after AaveOracle leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `contracts/protocol/libraries/logic/ValidationLogic.sol` and `GenericLogic.sol`. Do not rematch LendingPool / CollateralManager / AToken leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `validateBorrow` skipping HF / LTV so a zero-collateral borrow succeeds; `validateWithdraw` / `validateTransfer` allowing an HF < 1 exit; `validateLiquidationCall` liquidating a healthy position; `calculateUserAccountData` treating empty config as HF 0.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `validateDeposit` requires amount > 0, reserve active, not frozen. `validateWithdraw` caps amount at user balance and calls `GenericLogic.balanceDecreaseAllowed` (HF after the decrease ≥ 1, or early-true if the user is not borrowing / not using the asset as collateral / threshold 0).
+- `validateBorrow` requires active + not frozen + borrowing enabled, HF > 1, collateral > 0, and `collateral >= (debt + newBorrow) / LTV`. Stable-rate extra gates: stable enabled; not same-currency collateral abuse unless the borrow exceeds the user’s aToken balance; amount ≤ 25% of aToken underlying liquidity (`maxStableLoanPercent`).
+- `validateRepay` requires debt of the selected type; `uint256(-1)` repay-on-behalf is forbidden. `validateSwapRateMode` / `validateRebalanceStableBorrowRate` re-check stable-abuse and 95% usage + liquidity-rate vs max variable APR.
+- `validateLiquidationCall` requires both reserves active, HF < 1, collateral enabled by config + user flag, and stable or variable debt > 0. `validateTransfer` requires sender HF ≥ 1. Flashloan only checks array length.
+- `calculateUserAccountData` prices aToken collateral and stable+variable debt via the leftover-logged oracle. Empty user config returns HF `uint256(-1)`. `calculateHealthFactorFromBalances` is `(collateral * liqThreshold) / debt`. These libraries do not move tokens.
+
+Do not file a view-only HF/LTV gate as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: v2 ReserveLogic / DefaultReserveInterestRateStrategy / ReserveConfiguration / UserConfiguration (if still unused).
