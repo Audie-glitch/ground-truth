@@ -60,7 +60,9 @@ Ondo Finance leftover
 remaining oracles leftover is logged;
 Chainlink leftover CCIP EVM leftover is logged;
 Optimism leftover L1 portal +
-StandardBridge leftover is logged).
+StandardBridge leftover is logged;
+Arbitrum leftover token-bridge +
+Inbox leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -519,6 +521,13 @@ messenger / ERC721; KYC) is logged
 (remaining listed is dispute games
 / op-node / L2 /
 PolicyEngineStaking / websites).
+Arbitrum leftover token-bridge +
+Inbox leftover (`1bdf3cd` /
+`7fc6624` L1/L2 gateways / Inbox /
+Outbox; KYC) is logged (remaining
+listed is nitro challenge / rollup
+/ governance / fund-distribution /
+remaining token-bridge).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1129,6 +1138,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Optimism leftover L1 portal +
   StandardBridge leftover
   (`eea9542`; KYC),
+  Arbitrum leftover token-bridge +
+  Inbox leftover (`1bdf3cd` /
+  `7fc6624`; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover

@@ -32050,6 +32050,146 @@ L2 contracts,
 PolicyEngineStaking,
 websites.
 
+## 2026-09-03: Arbitrum leftover token-bridge + Inbox leftover (`1bdf3cd` / `7fc6624`)
+
+Immunefi program
+`arbitrum`
+($2,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`OffchainLabs/token-bridge-contracts`
+HEAD
+`1bdf3cd`
+and
+`OffchainLabs/nitro-contracts`
+HEAD
+`7fc6624`.
+Extract
+`/tmp/arb/tb`,
+`/tmp/arb/nitro`
+via jsDelivr.
+No mainnet
+interaction.
+
+Files:
+`contracts/tokenbridge/ethereum/gateway/L1ArbitrumGateway.sol`,
+`contracts/tokenbridge/ethereum/gateway/L1GatewayRouter.sol`,
+`contracts/tokenbridge/ethereum/gateway/L1ERC20Gateway.sol`,
+`contracts/tokenbridge/arbitrum/gateway/L2ArbitrumGateway.sol`,
+`src/bridge/Inbox.sol`,
+`src/bridge/AbsInbox.sol`,
+`src/bridge/AbsOutbox.sol`,
+`src/bridge/Bridge.sol`.
+
+Checked for: a
+stranger
+`outboundTransfer`
+that escrow-
+pulls another
+account; L1
+`finalizeInbound`
+that pays the
+caller; Inbox
+`depositEth`
+that credits
+another user's
+ETH; Outbox
+`executeTransaction`
+that pays a
+proven
+withdrawal to
+the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- L1 router
+  `outboundTransferCustomRefund`
+  encodes
+  `msg.sender`
+  as `_from`.
+  Gateway
+  `outboundEscrowTransfer`
+  `safeTransferFrom`s
+  that `_from`.
+  Gateway
+  outbound
+  requires
+  `isRouter`.
+- L1
+  `finalizeInboundTransfer`
+  is
+  `onlyCounterpartGateway`
+  and
+  `safeTransfer`s
+  `_to`.
+- L2 outbound
+  burns /
+  escrows
+  `_from`
+  (router-
+  encoded
+  `msg.sender`
+  or the
+  caller).
+- Inbox
+  `depositEth`
+  credits
+  `msg.sender`
+  (or its L1→L2
+  alias).
+  Retryable
+  tickets bind
+  `msg.sender`.
+- Outbox
+  `executeTransaction`
+  is
+  permissionless
+  after a spent
+  merkle proof
+  and calls
+  recorded `to`.
+
+Do not file
+permissionless
+outbox execute
+of a merkle-
+proven L2→L1
+message to the
+recorded `to`,
+or counterpart-
+gateway finalize
+that pays `_to`.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+token-bridge L1
+/ L2 gateways
+and nitro Inbox
+/ Outbox /
+Bridge open is
+exhausted at
+this money-path
+level.
+Remaining listed:
+nitro challenge
+/ rollup / OSP,
+governance,
+fund-distribution,
+remaining
+token-bridge
+libs / custom
+reverse
+gateways,
+websites.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -33631,6 +33771,14 @@ ERC721; KYC) is logged
 games / op-node / L2 /
 PolicyEngineStaking /
 websites);
+Arbitrum leftover token-bridge +
+Inbox leftover (`1bdf3cd` /
+`7fc6624` L1/L2 gateways /
+Inbox / Outbox; KYC) is
+logged (remaining listed is
+nitro challenge / rollup /
+governance / fund-distribution
+/ remaining token-bridge);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
