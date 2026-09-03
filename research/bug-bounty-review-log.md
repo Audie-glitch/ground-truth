@@ -702,9 +702,38 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Origin WOETH CCIP zapper + Base bridge helper
+
+Same Immunefi program. In-scope Ethereum zapper
+`0x438731b5Ee8fEcC02a28532713E237b93260C3F8` (added 1 Sep 2026).
+Local clone `/tmp/origin-dollar` at `4fa0602`. No mainnet interaction.
+
+Files: `contracts/zapper/WOETHCCIPZapper.sol`,
+`contracts/automation/{AbstractCCIPBridgeHelperModule,BaseBridgeHelperModule,AbstractSafeModule}.sol`.
+
+Checked for: user stealing another zap; CCIP fee/token-amount mismatch
+draining the zapper or the Safe; unprivileged bridge of Safe inventory.
+
+Result: no user-exploitable finding.
+
+- `WOETHCCIPZapper.zap` / `receive` convert `msg.value - fee` to OETH,
+  wrap to wOETH, and `ccipSend` to the chosen receiver. There is no
+  pending-zap storage. A revert on `deposit` / wrap / `ccipSend` returns
+  the ETH. `getFee` quotes CCIP with the full ETH amount as the token
+  amount, then the send uses the smaller wOETH share count. That can
+  overpay the fee; leftover ETH sits on the zapper with no rescue.
+  That is stuck dust, not a path for a second user to extract.
+- `BaseBridgeHelperModule` deposit/withdraw/bridge functions are
+  `onlyOperator` and execute via the Safe. CCIP receiver is the Safe
+  itself. `transferTokens` on the module is `onlySafe`. A user cannot
+  move Safe wOETH or WETH.
+
+Not submitted. Circle CCIP fee behavior is third-party.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. the402.ai still paused. No KeeperHub implementation before the
-6 Sep build window. Remaining Origin slice: WOETH CCIP zapper /
-`BaseBridgeHelperModule` if still unreviewed.
+6 Sep build window. Origin in-scope money-movers from this clone are
+largely covered. Next Immunefi time-box would be a newly added program
+or a remaining GMTrade model file if still unreviewed.
