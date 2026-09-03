@@ -64401,3 +64401,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a transport that defers payment semantics to a registered validator as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner.
+
+## 2026-09-03: Wormhole leftover remaining node leftover (`c58827e`)
+
+Immunefi program `wormhole` ($1,000,000, `kyc: true`). Official remaining listed after wormchain leftover. Official clone `/tmp/wormhole` `c58827e` (sparse `node`). Opened `pkg/processor` (`handleMessage`, `handleMessagePublication`, `handleSingleObservation`, `checkForQuorum`) and `pkg/txverifier/evm.go` `TransferIsValid`. No mainnet writes. No exploit PoCs.
+
+Checked for: a gossip observation becoming a signed VAA without a local watcher event; a forged guardian signature aggregating; `TransferIsValid` treating an insolvent receipt as safe.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `handleMessagePublication` runs notary then governor then accountant; only `shouldPub` reaches `handleMessage`, which signs the watcher-built digest. `checkForQuorum` assembles a VAA only when `ourObservation != nil` (this guardian independently saw the message) and `len(sigs for the active set) >= gs.Quorum()`.
+- `handleSingleObservation` treats p2p fields as untrusted: signer must be in the guardian set, `Ecrecover(hash, sig)` must match the claimed address. Unknown hashes may store signatures but do not emit a VAA until this node observes the same digest.
+- `TransferIsValid` parses the receipt, requires at least one token-bridge `LogMessagePublished`, then `validateReceipt` (inbound deposits/transfers vs outbound amounts). Parse errors fail closed and are not cached. Insolvent receipts are not marked safe.
+
+This node signs observations; it does not hold or pay user tokens. Do not file quorum-gated signing of a locally observed digest as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `wormhole` algorand / aptos / near, and Relayer Sourcify 404.
