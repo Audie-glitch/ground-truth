@@ -97,8 +97,62 @@ Result: no exploitable finding.
 Time spent: roughly 40 minutes on this path only. Treasury and liquidity-provider
 programs were not reviewed. Not submitted.
 
+## 2026-09-03: GMTrade treasury + LP (gmx-solana `50c4d8d`)
+
+Same program and commit as the builder-fee pass. Reviewed money-moving paths in
+`programs/treasury` and the single-file `programs/liquidity-provider`. No
+mainnet interaction.
+
+Treasury files: `lib.rs`, `instructions/{treasury,gt_bank,store,swap,config}.rs`,
+`states/{gt_bank,treasury,config}.rs`. LP file: `programs/liquidity-provider/src/lib.rs`.
+
+Checked for: role gates vs permissionless completion; authorized vs leftover
+vault configs; GT-factor split and receiver-vault accounting; buyback reserve
+vs later `sync_gt_bank`; pro-rata `complete_gt_exchange` insolvency/rounding;
+swap in/out token flags; LP claim/unstake reward double-mint; vault dust and
+fee-on-transfer; two-step authority handover.
+
+Result: no exploitable finding.
+
+- Withdrawals, deposits, fee claims, buyback confirm, swaps, and GT-bank sync
+  are all role-gated (`TREASURY_WITHDRAWER` / `KEEPER` / `ADMIN` / `OWNER`) via
+  store CPI auth. `withdraw_from_treasury_vault` may target any vault config
+  tied to the same `Config` (not only the currently authorized one); that is
+  how leftover vaults are recovered and is still withdrawer-gated.
+- `deposit_to_treasury_vault` splits the receiver ATA with `apply_factor` then
+  `checked_sub`, so GT-bank + treasury equals the pulled amount. Recorded GT
+  bank balances increase only after the GT-bank CPI succeeds.
+- `confirm_gt_buyback` can run once per bank. It reserves a recorded share
+  (`reserve_balances`) without moving tokens; `sync_gt_bank_v2` then sends
+  vault-minus-recorded excess to the treasury. Claimants later pull only the
+  reserved recorded amounts.
+- `complete_gt_exchange` is owner-signed and permissionless. It closes the
+  exchange via store CPI first (vault must already be confirmed; ownership
+  checked there), then pro-rata transfers from recorded balances. Targets must
+  be owned by the signer. Last claimer with `remaining_confirmed_gt_amount`
+  equal to their GT gets the leftover recorded balances; rounding dust stays
+  recorded and can be synced to treasury. Missing PDA seeds on the GT bank
+  account are not exploitable: only `prepare_gt_bank` can create that type.
+- Swaps require swap-in deposit disabled and swap-out deposit enabled, and
+  pull only from the receiver ATA. Cancel returns to the same ATAs.
+- LP `claim_gt` is off by default. Unstake always mints then snapshots
+  `cum_inv_cost`; when claims are disabled only a full unstake is allowed, so
+  that path cannot be used as a partial-claim bypass. Full exit transfers the
+  vault's actual balance (dust-safe) and closes the vault + position PDA.
+  Position and vault are PDAs; destination LP ATA must be owner-owned.
+- Time-weighted APY uses `stake_start_time` even after a mid-stake claim, so
+  a later claim applies a life-of-position average APY to only the new inverse-
+  cost integral. That can overpay if the admin lowers APY after a claim, and
+  underpay if APY rises. Default `claim_enabled` is false (single unstake
+  window). Admin can set APY to `APY_MAX` directly. Not submitted.
+- Fee-on-transfer LP mints would record requested amount/value but unstake the
+  received vault balance. Controllers are admin-created. Not submitted.
+
+Time spent: roughly 70 minutes. No Immunefi report. Next Immunefi candidate is
+1inch Aqua (KYC required to be paid).
+
 ## Next candidates
 
-1inch Aqua (Solidity, KYC, overlaps with ETHOnline Aqua work) or a later pass
-on `programs/treasury` / `programs/liquidity-provider` after the hackathon
-windows close.
+1inch Aqua (Solidity, KYC, overlaps with ETHOnline Aqua work). Sherlock page 1
+was FINISHED/JUDGING only as of this session. KeeperHub feature bounty build
+window is 6–18 Sep 2026 — do not implement before that date.
