@@ -21271,6 +21271,106 @@ SmartContracts
 GitHub leftover is
 exhausted.
 
+## 2026-09-03: Aevo deposit leftover (Sourcify)
+
+Immunefi program
+`Aevo` ($300,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Ethereum
+`0x4082C9647c098a6493fb499EaE63b5ce3259c574`
+Sourcify `match`
+`L1ChugSplashProxy`
+only (solc 0.8.15).
+Arbitrum
+`0x80d40e32fad8be8da5c6a42b8af1e181984d137c`
+Sourcify `match`
+`Vault` (solc 0.8.13)
+plus
+`ConnectorPlug`.
+Extract `/tmp/aevo`.
+No mainnet
+interaction.
+
+Files:
+`L1ChugSplashProxy.sol`,
+`Vault.sol`,
+`ConnectorPlug.sol`,
+`Gauge.sol`.
+
+Checked for: a
+stranger
+`receiveInbound`
+that unlocks vault
+tokens; pending
+unlock paid to the
+caller; ChugSplash
+`setCode` by anyone.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Vault
+  `depositToAppChain`
+  `transferFrom`s
+  `msg.sender` after
+  a lock-limit
+  consume, then
+  `connector.outbound`.
+  Unconfigured
+  connectors have
+  `maxLimit == 0`.
+- `receiveInbound`
+  requires
+  `_unlockLimitParams
+  [msg.sender].
+  maxLimit != 0`
+  (owner-set
+  connector). Pays
+  the payload
+  `receiver`.
+  `unlockPendingFor`
+  is permissionless
+  but transfers to
+  `receiver_`.
+- `ConnectorPlug.
+  inbound` is
+  Socket-only.
+  `outbound` is the
+  hub. `connect` /
+  `disconnect` are
+  owner.
+- ChugSplash
+  `setCode` /
+  `setStorage` /
+  `setOwner` run
+  only for the
+  owner (else
+  `delegatecall`
+  implementation).
+
+Do not file owner
+rate-limit writes
+or Socket-trusted
+inbound as theft.
+
+Not submitted.
+Listed leftover is
+the Arb Vault +
+Socket plug and the
+ETH ChugSplash
+proxy. Remaining
+Aevo: Ethereum
+implementation
+behind the
+ChugSplash proxy
+is not
+independently
+Sourcify-matched.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -21876,6 +21976,11 @@ eBTC Boost leftover
 is logged (listed eBTC
 Boost GitHub leftover
 exhausted);
+Aevo deposit leftover
+(Sourcify Arb `Vault` + ETH
+`L1ChugSplashProxy`) is logged
+(remaining Aevo is the ETH
+ChugSplash implementation);
 Beets stS
 (`877087b`) + token
 leftover is logged

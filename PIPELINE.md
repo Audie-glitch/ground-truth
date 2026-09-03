@@ -79,6 +79,15 @@ mETH is L2 token + Pauser impl Sourcify
 eBTC Boost leftover (`c9b95ac`, listed
 `release-0.7` files) is logged (listed
 eBTC Boost GitHub leftover exhausted).
+Aevo deposit leftover (Sourcify Arb
+`Vault` + ETH `L1ChugSplashProxy`) is
+logged (remaining Aevo is the ETH
+ChugSplash implementation).
+1inch cross-chain-swap leftover
+(`ada243b`) is logged. 1inch Solana
+CCS + Fusion leftover (`58b8a42` /
+`0768267`) is logged (listed 1inch
+SmartContracts leftover exhausted).
 Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
 leftover is logged (yvUSD / Woofy still Sourcify 404).
