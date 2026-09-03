@@ -92,11 +92,13 @@ lido-l2-with-steth leftover (`4fec842`)
 is logged. Lido 0.8.25 vault leftover
 (`2da0f48`) is logged. Lido
 dual-governance Escrow leftover
-(`ba9dfc9`) is logged. Lido CSM bond
-leftover (`2824e21`) is logged
-(remaining Lido is DualGovernance /
-timelock / easy-track / governance
-bridges / remaining CSM gates).
+(`ba9dfc9`) is logged. Lido
+dual-governance submit / timelock and
+committees leftovers are logged. Lido
+CSM bond leftover (`2824e21`) is
+logged. Lido CSM gates leftover
+(`2824e21`) is logged (remaining Lido
+is easy-track / governance bridges).
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis

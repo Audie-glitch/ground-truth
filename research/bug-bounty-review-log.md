@@ -23115,6 +23115,163 @@ easy-track /
 governance bridges /
 remaining CSM gates.
 
+## 2026-09-03: Lido CSM gates leftover (`2824e21`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). CSM
+bond leftover is
+already logged on
+this pin. Dual-
+governance leftovers
+are logged on
+`ba9dfc9`. This slice
+is Vetted / Curated
+gates, Verifier,
+Ejector, ExitPenalties,
+and FeeOracle. Same
+clone `/tmp/lido-csm`
+at `2824e21`. No
+mainnet interaction.
+
+Files:
+`src/VettedGate.sol`,
+`src/CuratedGate.sol`,
+`src/abstract/MerkleGate.sol`,
+`src/CuratedModule.sol`,
+`src/Verifier.sol`,
+`src/Ejector.sol`,
+`src/ExitPenalties.sol`,
+`src/FeeOracle.sol`.
+
+Checked for: a
+stranger Merkle
+consume that claims
+another address’s
+curve; `claimBondCurve`
+for a non-owner;
+Verifier report that
+marks a live key
+withdrawn without a
+beacon proof;
+`ejectBadPerformer`
+by a non-strikes
+caller; Curated
+`obtainDepositData`
+by a non-router.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `MerkleGate._consume`
+  verifies
+  `hashLeaf(msg.sender)`
+  and marks that
+  address consumed.
+  Tree root / CID
+  writes are
+  `SET_TREE_ROLE`.
+- `VettedGate`
+  create + add keys
+  consume the caller’s
+  leaf, create the
+  operator for
+  `msg.sender`, set
+  the vetted curve,
+  then deposit the
+  caller’s ETH /
+  stETH / wstETH.
+  `claimBondCurve`
+  is owner-only plus
+  a fresh consume.
+- `CuratedGate.createNodeOperator`
+  is the same Merkle
+  consume, then
+  `MODULE.createNodeOperator`
+  for `msg.sender`.
+  Optional custom
+  curve needs
+  `SET_BOND_CURVE_ROLE`
+  on the gate.
+- `CuratedModule.obtainDepositData`
+  / `allocateDeposits`
+  are StakingRouter
+  plus up-to-date
+  deposit info.
+  Weight notify is
+  MetaRegistry only.
+- `Verifier` proofs
+  bind EIP-4788
+  parent roots, SSZ
+  gindices, module
+  pubkeys, and
+  withdrawal
+  credentials ==
+  `WITHDRAWAL_ADDRESS`.
+  Slashed proofs
+  require
+  `validator.slashed`.
+  Withdrawal proofs
+  reject slashed /
+  not-withdrawable /
+  partial amounts.
+- `Ejector.voluntaryEject`
+  is owner-only,
+  deposited +
+  non-withdrawn keys,
+  and forwards
+  `msg.value` to the
+  triggerable-
+  withdrawals
+  gateway.
+  `ejectBadPerformer`
+  is STRIKES only.
+- `ExitPenalties`
+  only records
+  marked fees.
+  Delay / triggered
+  writes are module
+  only; strikes
+  writes are STRIKES
+  only. It does not
+  move bond.
+- `FeeOracle.submitReportData`
+  is a consensus
+  member or
+  `SUBMIT_DATA_ROLE`,
+  checks the
+  consensus hash,
+  then calls
+  `FeeDistributor.processOracleReport`
+  and strikes.
+  The oracle holds
+  no user assets.
+
+Do not file
+`SET_TREE_ROLE` /
+`SET_BOND_CURVE_ROLE`
+/ STRIKES /
+StakingRouter
+privilege as a
+stranger drain; or
+permissionless
+Verifier calls that
+only apply a valid
+beacon proof.
+
+Not submitted.
+Remaining CSM:
+MerkleGateFactory,
+ValidatorStrikes,
+HashConsensus,
+MetaRegistry.
+Remaining Lido
+listed GitHub:
+easy-track /
+governance bridges /
+aragon-apps.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -23440,10 +23597,11 @@ leftover (`ba9dfc9`) is logged
 TiebreakerSubCommittee /
 tiebreaker wrappers).
 Lido CSM bond leftover
+(`2824e21`) is logged.
+Lido CSM gates leftover
 (`2824e21`) is logged
 (remaining Lido is easy-track /
-governance bridges / remaining
-CSM gates).
+governance bridges).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -23780,11 +23938,12 @@ is logged. Lido
 dual-governance committees
 leftover is logged.
 Lido CSM bond leftover
+(`2824e21`) is logged.
+Lido CSM gates leftover
 (`2824e21`) is logged
 (remaining Lido is
 easy-track /
-governance bridges /
-remaining CSM gates);
+governance bridges);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
 rETH2 / Oracles /
