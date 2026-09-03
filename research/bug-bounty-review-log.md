@@ -41720,14 +41720,17 @@ Filecoin leftover builtin-actors market + paych leftover
 (`d894a1a`) is logged (remaining listed is lotus /
 proofs / boost / other actors);
 Filecoin leftover remaining miner + account leftover
-(`d894a1a`) is logged (remaining listed is lotus /
-proofs / boost / power / reward);
+(`d894a1a`) is logged;
+Filecoin leftover evm leftover (`d894a1a`) is logged
+(remaining listed is lotus / proofs / boost / power /
+reward / other actors);
 Hedera leftover remaining TokenMint leftover
 (`0d3d9a2`) is logged (remaining listed is
 mirror-node / cryptography / other modules / SDKs);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
-is logged (remaining listed is sei-js / go-ethereum /
-other modules);
+is logged;
+Sei leftover go-ethereum leftover (`bb451e2`) is logged
+(remaining listed is other modules / Primacy of Impact);
 Hedera leftover json-rpc-relay leftover (`2b51a98`)
 is logged (remaining listed is consensus-node /
 mirror-node / cryptography / SDKs / transaction-tool);
@@ -61817,3 +61820,41 @@ Result: no user-exploitable finding. Not submitted.
 Do not file recovered-sender gas debit, sei-chain pre-charged `feeCharged`, or coinbase base-fee credit as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `sei-cosmos` / `sei-wasmd` / tendermint, other `sei-chain` modules (wasm / IBC host), and Primacy of Impact.
+
+## 2026-09-03: Filecoin leftover evm leftover (`d894a1a`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Follow-on leftover after
+market + paych (`29eac26`) and miner + account (`9f807b3`). Official clone
+`/tmp/filecoin-actors` at `d894a1a`. Opened `actors/evm/src/lib.rs`
+(`invoke_contract` / constructor / delegate),
+`actors/evm/src/interpreter/instructions/call.rs`,
+`actors/evm/src/interpreter/instructions/lifecycle.rs` SELFDESTRUCT,
+`actors/evm/src/interpreter/system.rs` `transfer`, and
+`actors/evm/src/interpreter/precompiles/fvm.rs` `call_actor`. No mainnet
+writes. No exploit PoCs. Do not rematch market / paych / miner leftovers.
+
+Checked for: CALL / `transfer` that spends another actor; SELFDESTRUCT
+that drains a victim; `invoke_contract_delegate` from a stranger;
+`call_actor` that spoofs a different sender.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Constructor is Init-only. Resurrect is EAM-only. Delegate invoke is
+  `receiver`-only (the contract itself). `invoke_contract` is public
+  and runs this actor's bytecode with `value_received` from the
+  incoming message.
+- CALL / STATICCALL `system.send_raw` to the destination as
+  `InvokeContract` with `value` from this actor. Read-only + nonzero
+  value errors. `System::transfer` is `METHOD_SEND` from
+  `rt` (this EVM actor).
+- SELFDESTRUCT sends `current_balance()` to the beneficiary, then
+  marks this actor deleted. Read-only frames abort.
+- `call_actor` / `call_actor_id` require `DelegateCall` into this
+  contract. The send is still from the executing EVM actor.
+
+Do not file this-actor CALL value, constructor Init/EAM gates, or
+SELFDESTRUCT of the executing contract as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: lotus,
+proofs / boost / graphsync / FVM / go-f3, other builtin-actors
+(`reward`, `datacap`, `verifreg`, `power`), and filecoin.io.
