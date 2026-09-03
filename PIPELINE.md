@@ -74,8 +74,8 @@ share the username.
 - `/earn` on the Ground Truth app: dated open/closed windows for every live path.
 - `signlens/`: the 3rd-Web-Hack entry, working with live on-chain checks; demo video recorded.
 - `research/bug-bounty-review-log.md`: Immunefi target selection method and
-  time-boxed reviews through Sky PAS / SBEBeam and Intuition MultiVault +
-  AtomWallet (no submittable finding on any of them).
+  time-boxed reviews through Sky PAS / SBEBeam and Intuition MultiVault,
+  AtomWallet, curves, and emissions mint/bridge (no submittable finding).
 
 ## Schedule
 

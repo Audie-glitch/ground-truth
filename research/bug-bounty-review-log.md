@@ -1445,19 +1445,58 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Intuition ProgressiveCurve + emissions mint/bridge (`94bddae`)
+
+Same program and commit. Local clone `/tmp/reviews/intuition-v2`.
+No mainnet interaction.
+
+Files: `src/protocol/curves/ProgressiveCurve.sol`,
+`src/libraries/ProgressiveCurveMathLib.sol`,
+`src/protocol/emissions/{BaseEmissionsController,SatelliteEmissionsController}.sol`,
+claim budget in `TrustBonding.claimRewards`.
+
+Checked for: deposit/redeem rounding that pays a later LP
+more than the curve holds; mint quoting cheaper than
+deposit; double-mint of an epoch; satellite `transfer`
+draining user TRUST; unclaimed-epoch withdraw racing a late
+claim.
+
+Result: no user-exploitable finding.
+
+- Deposit: `shares = sqrt(s² + assets/½m) − s` (`square`
+  down, `div` down). Redeem: `(s² − sNext²) × ½m` (both
+  squares down). Rounding leans against the taker, not
+  toward extra assets out.
+- `previewMint` uses `squareUp(sNext) − square(s)` and
+  `mulUp`, so an exact-share mint quotes ≥ the deposit
+  inverse. Slope must be even and non-zero.
+- `mintAndBridge` is `CONTROLLER_ROLE`, one mint per epoch
+  (`_epochToMintedAmount[epoch] > 0` reverts), refunds
+  excess gas. Admin `withdraw` / `burn` are
+  `DEFAULT_ADMIN_ROLE`.
+- Satellite `transfer` is `CONTROLLER_ROLE` (TrustBonding
+  claim path). `withdrawUnclaimedEmissions` /
+  `bridgeUnclaimedEmissions` require the epoch to be ≥2
+  epochs old (`getUnclaimedRewardsForEpoch` is 0 otherwise)
+  and mark `_reclaimedEmissions[epoch]`. A late claim is
+  also capped by `_emissionsForEpoch` remaining budget.
+
+Intuition core + periphery money paths reviewed in this
+session are exhausted at `94bddae`.
+
+Not submitted.
+
 ## Next candidates
 
-Sky PAS / SBEBeam, Intuition MultiVault deposit/redeem, and
-Intuition AtomWallet / OffsetProgressive / utilization
-ratios are exhausted at these commits. Remaining Sky slices
-(`diamond-pau` facets, `dss-emergency-spells`) are large and
-older. Remaining Intuition: `ProgressiveCurve` convert math
-and emissions mint/bridge (not the known VotingEscrow
-underflow). Superteam `AGENT_ALLOWED` is still only Steve
-Arena and ZNS — do not execute. All other open Superteam
-listings are `HUMAN_ONLY`. the402.ai still paused. 1inch
-Fusion settlement / whitelist / PowerPod / KycNFT and
-FeeTaker are exhausted. Remaining OZ hooks: none of the
+Sky PAS / SBEBeam and Intuition MultiVault / AtomWallet /
+curves / utilization / emissions mint-bridge are exhausted
+at these commits. Remaining Sky slices (`diamond-pau`
+facets, `dss-emergency-spells`) are large and older.
+Superteam `AGENT_ALLOWED` is still only Steve Arena and
+ZNS — do not execute. All other open Superteam listings
+are `HUMAN_ONLY`. the402.ai still paused. 1inch Fusion
+settlement / whitelist / PowerPod / KycNFT and FeeTaker
+are exhausted. Remaining OZ hooks: none of the
 money-moving general/fee/base files.
 Sherlock `/api/contests` has 301 historical items; the only
 non-FINISHED row as of 02:46 UTC 3 Sep is contest `1234`
