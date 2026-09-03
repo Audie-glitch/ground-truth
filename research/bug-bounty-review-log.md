@@ -68000,3 +68000,20 @@ Do not file an admin-gated v2 configurator as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: v2 AToken / debt tokens / v2 AaveOracle.
 
+
+## 2026-09-03: Aave leftover remaining protocol-v2 AToken leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after Configurator leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `contracts/protocol/tokenization/AToken.sol`. Do not rematch LendingPool leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `mint` / `burn` / `transferUnderlyingTo` without the LendingPool; ERC20 transfer skipping HF validation; `permit` accepting a non-owner signature.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `mint`, `burn`, `mintToTreasury`, `transferOnLiquidation`, `transferUnderlyingTo`, and `handleRepayment` are `onlyLendingPool`. `burn` / `transferUnderlyingTo` `safeTransfer` the underlying. `initialize` is `VersionedInitializable`.
+- User `transfer` / `transferFrom` call `_transfer(..., validate=true)`, which scales by the reserve liquidity index and `finalizeTransfer`s on the leftover-logged pool (HF check). Liquidation transfers skip that validate flag because the pool already validated the liquidation.
+- `permit` is EIP-2612 `ecrecover` of `owner` over `DOMAIN_SEPARATOR` + nonce; deadline is checked.
+
+Do not file a pool-gated aToken as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: v2 VariableDebtToken / StableDebtToken / v2 AaveOracle.
+
