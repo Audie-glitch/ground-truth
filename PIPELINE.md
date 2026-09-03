@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~08:00 UTC. Dates verified against each
+Status as of 3 September 2026, ~07:45 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
@@ -186,6 +186,16 @@ logged.
 Arkadiko leftover (Hiro vaults / tokens /
 liq-pool) is logged (remaining listed is
 the website).
+Threshold vault + MaintainerProxy leftover
+(`502cd39`) is logged.
+Threshold watchtower + Wormhole L1 leftover
+(`502cd39`) is logged.
+JustLend leftover (`f28f3b4` Unitroller /
+Comptroller / CToken mint-redeem-borrow-
+liquidate) is logged (remaining listed is
+ComptrollerLegacy JST rewards /
+GovernorBravo / WJST / Timelock / oracle /
+rate models / other Tronscan markets).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /
@@ -444,7 +454,16 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Zest Protocol V2 market
   + vault + DAO / zvstBTC
   (`f2fce52`; listed
-  Clarity exhausted), and
+  Clarity exhausted),
+  JustLend leftover
+  (`f28f3b4` Unitroller /
+  Comptroller / CToken
+  mint-redeem-borrow-
+  liquidate; remaining
+  ComptrollerLegacy JST
+  rewards / GovernorBravo /
+  WJST / Timelock / oracle /
+  rate models), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

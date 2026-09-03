@@ -26574,6 +26574,144 @@ and
 `keep-network/tbtc-v2`
 typescript.
 
+## 2026-09-03: JustLend leftover (`f28f3b4`)
+
+Immunefi program
+`JustLend DAO` ($50,000,
+`kyc: false`). Unique
+no-KYC listed slice.
+Official clone
+`/tmp/justlend-protocol`
+at `f28f3b4` (`justlend/
+justlend-protocol`).
+55 listed assets are
+Tronscan `smart_contract`
+URLs (Unitroller /
+Comptroller / jToken
+markets / GovernorBravo /
+oracle / rate models).
+No mainnet interaction.
+
+Files:
+`contracts/Unitroller.sol`,
+`contracts/Comptroller.sol`,
+`contracts/CToken.sol`,
+`contracts/CErc20.sol`,
+`contracts/CEther.sol`,
+`contracts/CErc20Delegator.sol`,
+`contracts/Maximillion.sol`.
+
+Checked for: a stranger
+`mint` that credits
+another account without
+pulling that account;
+`redeem` / `borrow` that
+pays the caller from
+someone else's jTokens;
+`liquidateBorrow` without
+shortfall; `seize` that
+moves collateral when
+`msg.sender` is not the
+borrowed jToken.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Unitroller
+  `_setPendingImplementation`
+  / `_setPendingAdmin` are
+  admin. Accept is the
+  pending implementation
+  or pending admin.
+  Other calls
+  `delegatecall` the
+  current implementation.
+- `mintFresh` pulls the
+  minter via
+  `doTransferIn` and
+  credits that minter.
+  `redeemFresh` burns the
+  redeemer's jTokens and
+  pays that redeemer.
+  `borrowFresh` pays the
+  borrower after a
+  liquidity check.
+  `repayBorrowFresh`
+  pulls the payer and
+  reduces the named
+  borrower.
+- `liquidateBorrowFresh`
+  uses `msg.sender` as
+  liquidator, requires
+  shortfall and
+  closeFactor, and
+  seizes via
+  `seizeInternal` or
+  `cTokenCollateral.seize`
+  (`msg.sender` is the
+  seizer). Borrower
+  cannot be the
+  liquidator.
+- Comptroller
+  redeem / borrow /
+  transfer require
+  listed markets and no
+  hypothetical shortfall.
+  Liquidation requires
+  shortfall.
+  `_setPriceOracle` /
+  `_setCollateralFactor` /
+  `_supportMarket` /
+  pause are admin or
+  pause guardian.
+- CEther refunds surplus
+  `msg.value` to the
+  sender. CErc20 skips
+  the USDT transfer
+  return-value check
+  (Tron USDT
+  compatibility).
+  Delegator
+  `_setImplementation`
+  is admin.
+  Maximillion
+  `repayBehalf` refunds
+  excess TRX to
+  `msg.sender`.
+
+Do not file first-
+depositor exchange-rate
+inflation, admin /
+reserveAdmin privilege,
+permissionless
+liquidation of an
+undercollateralized
+account, or the USDT
+return-value skip as
+theft.
+
+Not submitted.
+Listed leftover is the
+official GitHub
+Unitroller /
+Comptroller / CToken
+mint-redeem-borrow-
+liquidate slice.
+Remaining listed:
+ComptrollerLegacy JST
+rewards, GovernorBravo /
+WJST / Timelock,
+PriceOracle /
+PriceOracleProxy,
+interest-rate models,
+and the other Tronscan
+jToken markets (same
+CToken / CErc20 /
+CEther / Delegator
+bytecode).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -27028,6 +27166,16 @@ Wormhole L1 leftover
 Arkadiko leftover (Hiro vaults /
 tokens / liq-pool) is logged
 (remaining listed is the website).
+JustLend leftover (`f28f3b4`
+Unitroller / Comptroller /
+CToken mint-redeem-borrow-
+liquidate) is logged
+(remaining listed is
+ComptrollerLegacy JST
+rewards / GovernorBravo /
+WJST / Timelock / oracle /
+rate models / other
+Tronscan markets).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -27508,6 +27656,17 @@ vaults / tokens /
 liq-pool) is logged
 (remaining listed is the
 website);
+JustLend leftover
+(`f28f3b4` Unitroller /
+Comptroller / CToken
+mint-redeem-borrow-
+liquidate) is logged
+(remaining listed is
+ComptrollerLegacy JST
+rewards / GovernorBravo /
+WJST / Timelock / oracle /
+rate models / other
+Tronscan markets);
 Beets stS
 (`877087b`) + token
 leftover is logged
