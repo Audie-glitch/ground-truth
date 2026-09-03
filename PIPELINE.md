@@ -37,7 +37,8 @@ is logged; Ondo Finance leftover is logged;
 Hyperlane leftover is logged; Veda leftover
 is logged; Immutable leftover is logged;
 Stargate leftover is logged;
-LayerZero leftover is logged).
+LayerZero leftover is logged;
+Ethena leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -442,6 +443,11 @@ ReceiveUln302 / DVN / Endpoint V1; KYC)
 is logged (remaining listed is
 FPValidator / ULN301 / OApp examples /
 other chains).
+Ethena leftover minting + staking leftover
+(Sourcify EthenaMinting / StakedUSDeV2 /
+LP staking / PSM; KYC) is logged
+(remaining listed is StakedENA / USDtb
+proxies / other OFT / TON).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1028,6 +1034,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   KYC),
   LayerZero leftover ETH
   Endpoint leftover
+  (Sourcify; KYC),
+  Ethena leftover minting +
+  staking leftover
   (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),

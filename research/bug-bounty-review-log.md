@@ -30701,6 +30701,185 @@ examples, Aptos
 / Solana / TON
 rows.
 
+## 2026-09-03: Ethena leftover minting + staking leftover (Sourcify)
+
+Immunefi program
+`ethena`
+($3,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+`exact_match`
+EthenaMinting
+`0xe3490297a08d6fC8Da46Edb7B6142E4F461b62D3`,
+StakedUSDeV2
+`0x9D39A5DE30e57443BfF2A8307A4256c8797A3497`,
+USDeSilo
+`0x7FC7c91D556B400AFa565013E3F32055a0713425`,
+EthenaLPStaking
+`0x8707f238936c12c309bfc2B9959C35828AcFc512`,
+USDtbMinting
+`0xa3DDBf92077b850E29C4805Df0a2459Ae048416a`,
+PSM
+`0x73E35C5c35A274E34AdE6EB13cC7f62aEE323728`,
+USDe
+`0x4c9EDD5852cd905f086C759E8383e09bff1E68B3`,
+StakingRewardsDistributor
+`0xf2fa332bD83149c66b09B45670bCe64746C6b439`
+and `match`
+USDeOFTAdapter
+`0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34`.
+Extract
+`/tmp/ethena-mint`
+/ `/tmp/ethena-susde`
+/ `/tmp/ethena-silo`
+/ `/tmp/ethena-lp`
+/ `/tmp/ethena-usdtb-mint`
+/ `/tmp/ethena-psm`
+/ `/tmp/ethena-usde`
+/ `/tmp/ethena-dist`
+/ `/tmp/ethena-usde-oft`.
+No mainnet
+interaction.
+
+Files:
+`contracts/EthenaMinting.sol`,
+`contracts/StakedUSDeV2.sol`,
+`contracts/USDeSilo.sol`,
+`contracts/EthenaLPStaking.sol`,
+`contracts/usdtb/USDtbMinting.sol`,
+`dependencies/onchain-minting-internal-1.0.0/src/swap/PSM.sol`,
+`contracts/USDe.sol`.
+
+Checked for: a
+stranger mint
+without a
+benefactor
+signature;
+unstake of
+another user's
+sUSDe cooldown;
+LP withdraw of
+someone else's
+stake; PSM
+swap that
+pulls a
+non-delegated
+benefactor.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- EthenaMinting
+  `mint` /
+  `mintWETH` are
+  `MINTER_ROLE`
+  and require a
+  benefactor or
+  accepted
+  delegate
+  EIP-712 /
+  EIP-1271
+  signature.
+  Collateral
+  pulls the
+  benefactor.
+  `redeem` is
+  `REDEEMER_ROLE`
+  and
+  `burnFrom`s
+  the
+  benefactor.
+- USDe `mint`
+  is
+  `OnlyMinter`.
+- StakedUSDeV2
+  4626
+  withdraw /
+  redeem are
+  off when
+  cooldown is
+  on.
+  `cooldownAssets`
+  / `cooldownShares`
+  burn
+  `msg.sender`
+  into the
+  silo.
+  `unstake`
+  pays the
+  named
+  receiver
+  from
+  `cooldowns[msg.sender]`.
+  Silo
+  `withdraw`
+  is vault
+  only.
+- LP staking
+  `stake` pulls
+  `msg.sender`.
+  Unstake /
+  withdraw
+  debit
+  `msg.sender`.
+- PSM `swap`
+  requires
+  `msg.sender`
+  ==
+  benefactor
+  or an
+  accepted
+  delegate,
+  then
+  `transferFrom`s
+  that
+  benefactor.
+- USDtbMinting
+  follows the
+  same
+  minter +
+  signature
+  pattern.
+
+Do not file
+role-gated
+attested mint /
+redeem, 4626
+deposit to a
+named receiver
+that pays the
+caller, or
+cooldown
+unstake of
+`msg.sender`
+to a named
+receiver.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH mint /
+stake / PSM
+types is
+exhausted.
+Remaining listed:
+StakedENA /
+USDtb proxies
+(implementation
+not this
+slice), other
+OFT adapters,
+and TON /
+other-chain
+rows.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -32162,6 +32341,13 @@ Endpoint V1; KYC) is logged
 FPValidator / ULN301 /
 OApp examples / other
 chains);
+Ethena leftover minting +
+staking leftover (Sourcify
+EthenaMinting / StakedUSDeV2
+/ LP staking / PSM; KYC)
+is logged (remaining listed
+is StakedENA / USDtb
+proxies / other OFT / TON);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
