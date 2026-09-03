@@ -730,10 +730,45 @@ Result: no user-exploitable finding.
 
 Not submitted. Circle CCIP fee behavior is third-party.
 
+## 2026-09-03: GMTrade gmsol_model liquidation thresholds (`50c4d8d`)
+
+Same Immunefi program (`gmtrade`, $100k, no KYC). Fetched
+`crates/model` into `/tmp/gmx-solana` (it was missing from the earlier
+sparse clone). No mainnet interaction.
+
+Files: `crates/model/src/position.rs` (`check_liquidatable`,
+`check_collateral`), `crates/model/src/action/decrease_position/mod.rs`
+(`check_liquidation`, remaining-size close-all),
+`crates/model/src/params/position.rs`, `crates/model/src/market/perp.rs`
+(liq-impact cap).
+
+Checked for: liquidating a healthy position; fee-induced liquidation;
+partial liquidation leaving a dust position that steals; impact
+over-cap on a close.
+
+Result: no user-exploitable finding.
+
+- `DecreasePosition::execute` calls `check_liquidation`. A liquidation
+  flag requires `check_liquidatable(..., for_liquidation=true)` to
+  return a reason; a healthy position errors `NotLiquidatable`. Users
+  still cannot invoke `liquidate` (store `ORDER_KEEPER`).
+- Eligibility uses collateral + full-size PnL + capped negative impact
+  − position fees, and **excludes** liquidation fees so the fee itself
+  cannot push a solvent position under the line.
+  `for_liquidation` uses `min_collateral_factor_for_liquidation`
+  (falls back to the ordinary factor). Absolute
+  `min_collateral_value` is also applied.
+- Negative impact is capped by
+  `max_position_impact_factor_for_liquidations`. Remaining size below
+  `min_position_size_usd` (or tokens that would go to zero) forces a
+  full close. The store already requires `size_delta >= size_in_usd`
+  on liquidate.
+
+Not submitted.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. the402.ai still paused. No KeeperHub implementation before the
-6 Sep build window. Origin in-scope money-movers from this clone are
-largely covered. Next Immunefi time-box would be a newly added program
-or a remaining GMTrade model file if still unreviewed.
+6 Sep build window. GMTrade model remaining: oracle price assembly /
+revertible swap if still unreviewed.
