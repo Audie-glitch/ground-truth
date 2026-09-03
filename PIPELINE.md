@@ -164,7 +164,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   seeded), GammaSwap May
   2026 vault + PositionManager
   (`e71dd91` / Sourcify PM;
-  live observers unset), and
+  live observers unset),
+  Olympus V1Migrator + Cooler
+  V2 + CCIP + CD Facility
+  (`3f918a0`), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

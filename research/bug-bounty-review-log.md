@@ -8625,6 +8625,131 @@ migrator / Cooler / CCIP
 or Spark 15 Jul sUSDC
 impls. Not submitted.
 
+## 2026-09-03: Olympus V1Migrator + Cooler V2 + CCIP + CD Facility (`3f918a0`)
+
+Immunefi program `olympus`
+($3,333,333, `kyc: false`,
+critical only: loss of
+treasury / user / bond
+funds). 2 Mar 2026 leftover
+is V1 Migrator
+`0x5131…B8B0`. 20 Feb 2026
+Cooler / CD / CCIP leftover
+includes MonoCooler
+`0xdb59…e7cC`, Cooler v2
+Migrator `0xe045…9F1c`,
+CCIPCrossChainBridge
+`0xFbf6…143D`, CD Facility
+`0xEBDe…9678`, CD Auctioneer
+`0xF351…E39a`. Official
+`OlympusDAO/olympus-v3`
+`3f918a0` (2026-09-01).
+Sourcify v2 returned HTTP
+400 on checksummed
+addresses; used the public
+tree. No mainnet
+interaction.
+
+Files: `src/policies/V1Migrator.sol`,
+`policies/cooler/{MonoCooler,
+CoolerTreasuryBorrower,
+CoolerLtvOracle}.sol`,
+`periphery/{CoolerV2Migrator,
+bridge/CCIPCrossChainBridge}.sol`,
+`policies/deposits/ConvertibleDepositFacility.sol`.
+
+Checked for: merkle-free
+OHM v2 mint; migrator
+reminting after a root
+change without burning v1;
+Cooler V2 migrator flash
+loan that credits a
+stranger; MonoCooler
+borrow / withdraw without
+authorization; CCIP receive
+from an untrusted remote;
+CD `convert` minting OHM
+for a non-owner.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `V1Migrator.migrate` is
+  `onlyEnabled`, burns
+  `OHMv1` from `msg.sender`,
+  then `MINTR.mintOhm` after
+  a double-hashed merkle
+  leaf `(account, allocated)`.
+  Partial claims are capped
+  by `_migratedAmounts` for
+  the current nonce. gOHM
+  `balanceTo`/`balanceFrom`
+  can dust; documented.
+  `setMerkleRoot` increments
+  the nonce (admin /
+  `legacy_migration_admin`).
+  `rescue` sweeps to that
+  same role.
+- `CoolerV2Migrator.consolidate`
+  requires the caller owns
+  each factory-created
+  Cooler, lenders in CHREG,
+  and DAI/USDS debt. Flash
+  DAI (fee 0) repays V1,
+  pulls gOHM from the owner,
+  `addCollateral` /
+  `borrow` on Cooler V2 for
+  `newOwner` (needs
+  authorization or a
+  signature), converts USDS
+  back, repays the flash.
+  Leftover DAI/USDS refund
+  to `msg.sender`.
+- `MonoCooler` withdraw /
+  borrow / applyDelegations
+  need `isSenderAuthorized`.
+  `addCollateral` can credit
+  any `onBehalfOf` (donation);
+  delegating for them still
+  needs auth. `repay` is
+  permissionless. Liquidation
+  burns gOHM minus incentive
+  and `writeOffDebt`. LTV
+  oracle can only rise.
+  `setTreasuryBorrower` is
+  permissionless only while
+  unset.
+- CCIP send pulls OHM from
+  the caller to a trusted
+  remote. Receive requires
+  the stored EVM remote,
+  a single OHM amount, and
+  transfers to the decoded
+  recipient. Failed messages
+  are retryable by anyone
+  to that same recipient.
+  `withdraw` is owner-only
+  native dust.
+- CD `createPosition` is
+  `ROLE_AUCTIONEER`.
+  `convert` is owner-only,
+  withdraws the receipt into
+  TRSRY, then mints OHM at
+  the position’s
+  `conversionPrice`.
+  `claimYield` sends yield
+  to TRSRY.
+
+Remaining Olympus leftover:
+DepositManager / ReceiptToken
+/ RedemptionVault, Clearinghouse
+v1.2, Heart / Operator /
+Emission, CCIP token pool,
+Governor Bravo, cross-chain
+MINTR copies, BondTeller.
+Spark 15 Jul sUSDC impls
+still open. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -8749,10 +8874,16 @@ staking / GS / timelock /
 airdrop set. Next
 unreviewed Immunefi
 GitHub-or-recent trees:
-Olympus March 2026 leftover
-(v1 Migrator / Cooler v2 /
-CCIP; `olympus`, $3.33M,
-no KYC).
+Olympus V1Migrator + Cooler
+V2 + CCIP + CD Facility
+(`3f918a0`) are logged;
+remaining Olympus leftover
+is DepositManager /
+RedemptionVault /
+Clearinghouse / Heart /
+Operator / Emission / token
+pool / Governor. Spark 15
+Jul sUSDC impls. 
 Twyne June-2026 Aave V3
 operators (Sourcify) are logged;
 remaining Twyne vaults /
