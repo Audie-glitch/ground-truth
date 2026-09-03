@@ -49285,3 +49285,142 @@ costaking / mint,
 btclightclient,
 and website /
 toolkit rows.
+
+## 2026-09-03: Axelar leftover ITS token manager / handler / token (`ff21991`)
+
+Immunefi program
+`axelarnetwork`
+($500,000, `kyc: true`).
+Listed remaining after
+Aurora / Fantom
+gateways + axlUSDC
+(`3b31536`). Official
+clone `/tmp/axelar-its`
+`ff21991`. Entry
+`InterchainTokenService`
+/ `InterchainTokenFactory`
+already opened
+(`39948`). This slice
+is the rest of the
+token-moving ITS
+tree. No mainnet
+writes.
+
+Files:
+`contracts/TokenHandler.sol`,
+`contracts/token-manager/TokenManager.sol`,
+`contracts/interchain-token/InterchainToken.sol`,
+`contracts/interchain-token/InterchainTokenStandard.sol`,
+`contracts/proxies/TokenManagerProxy.sol`,
+`contracts/utils/InterchainTokenDeployer.sol`.
+
+Checked for: a
+stranger
+`giveToken` /
+`takeToken` that
+mints or unlocks
+without ITS;
+`mintToken` /
+`burnToken`
+without
+`onlyService`;
+`InterchainToken.mint`
+without minter;
+`init` takeover of
+a live token;
+`interchainTransferFrom`
+without allowance.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- ITS calls
+  `TokenHandler`
+  only via
+  `delegatecall`.
+  Direct
+  `giveToken` /
+  `takeToken` mint
+  / burn go to
+  `TokenManager.onlyService`
+  (`msg.sender` is
+  the handler, not
+  ITS) and revert.
+  Lock/unlock
+  `transferFrom`
+  uses the handler
+  as spender, but
+  `approveService`
+  approves ITS.
+- `TokenManager.mintToken`
+  / `burnToken`
+  are
+  `onlyService`.
+  `setup` is
+  `onlyProxy`.
+- Native
+  `InterchainToken.mint`
+  / `burn` are
+  `onlyRole(MINTER)`.
+  Deployer
+  `init` is
+  once-only; the
+  implementation
+  constructor
+  already
+  initializes, and
+  the clone is
+  `init`ed in the
+  same
+  `deployInterchainToken`
+  call.
+- `interchainTransfer`
+  sends
+  `msg.sender`.
+  `interchainTransferFrom`
+  `_spendAllowance`s
+  first.
+- `execute` is
+  `onlyItsHub` +
+  `gateway.validateContractCall`.
+  `expressExecute`
+  fronts the
+  executor's own
+  tokens and is
+  repaid when the
+  approved message
+  arrives.
+
+Do not file
+delegatecall-only
+handler mint,
+service-gated
+manager mint,
+minter-gated
+token mint, or
+express fronting
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Axelar ITS
+token-moving
+tree leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed: Hyperliquid
+ITS variants if
+a live deploy is
+in scope, DLT
+axelar-core /
+tofnd, and the
+Immunefi Fantom
+historic proxy
+if a public
+source drop
+opens.
