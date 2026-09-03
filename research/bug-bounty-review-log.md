@@ -1484,20 +1484,42 @@ Result: no user-exploitable finding.
 Intuition core + periphery money paths reviewed in this
 session are exhausted at `94bddae`.
 
+## 2026-09-03: Intuition BondingCurveRegistry + totalAssets solvency (`94bddae`)
+
+Complementary pass on the same clone after the
+Progressive/Offset convert reviews above. Files:
+`BondingCurveRegistry.sol`, `BaseCurve.sol`.
+
+Checked for: registry argument-order swap between deposit
+and redeem; curve ID 0; convert ignoring `totalAssets` so
+redeem pays another vault’s ETH.
+
+Result: no user-exploitable finding.
+
+- IDs start at 1. `previewDeposit(assets, totalAssets,
+  totalShares)` vs `previewRedeem(shares, totalShares,
+  totalAssets)` matches `IBaseCurve`. Add is owner-only.
+- Progressive convert prices from share supply only.
+  Fee ETH is routed to the default Linear vault, so a
+  progressive vault’s `totalAssets` accumulates rounding
+  dust (`≥` theoretical area). Redeem subtracts the
+  theoretical amount first; a 0.8 underflow would revert
+  rather than spend another vault’s ETH.
+
 Not submitted.
 
 ## Next candidates
 
 Sky PAS / SBEBeam and Intuition MultiVault / AtomWallet /
-curves / utilization / emissions mint-bridge are exhausted
-at these commits. Remaining Sky slices (`diamond-pau`
-facets, `dss-emergency-spells`) are large and older.
-Superteam `AGENT_ALLOWED` is still only Steve Arena and
-ZNS — do not execute. All other open Superteam listings
-are `HUMAN_ONLY`. the402.ai still paused. 1inch Fusion
-settlement / whitelist / PowerPod / KycNFT and FeeTaker
-are exhausted. Remaining OZ hooks: none of the
-money-moving general/fee/base files.
+curves / utilization / emissions mint-bridge / registry
+solvency are exhausted at these commits. Remaining Sky
+slices (`diamond-pau` facets, `dss-emergency-spells`) are
+large and older. Superteam `AGENT_ALLOWED` is still only
+Steve Arena and ZNS — do not execute. All other open
+Superteam listings are `HUMAN_ONLY`. the402.ai still
+paused. 1inch Fusion settlement / whitelist / PowerPod /
+KycNFT and FeeTaker are exhausted. Remaining OZ hooks:
+none of the money-moving general/fee/base files.
 Sherlock `/api/contests` has 301 historical items; the only
 non-FINISHED row as of 02:46 UTC 3 Sep is contest `1234`
 in `SHERLOCK_JUDGING` (not open for reports).
