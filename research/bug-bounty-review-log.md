@@ -22736,6 +22736,158 @@ governance bridges.
 is already logged on
 `2da0f48`.
 
+## 2026-09-03: Lido CSM bond leftover (`2824e21`)
+
+Immunefi program
+`lido` ($2,000,000,
+`kyc: false`). Core,
+L2, vesting, stonks,
+and 0.8.25 vaults are
+already logged. Dual-
+governance Escrow is
+logged on `ba9dfc9`.
+This slice is the CSM
+bond / fee / deposit
+queue money path.
+Local clone
+`/tmp/lido-csm` at
+`2824e21`. No mainnet
+interaction.
+
+Files:
+`src/Accounting.sol`,
+`src/abstract/BondCore.sol`,
+`src/FeeDistributor.sol`,
+`src/PermissionlessGate.sol`,
+`src/CSModule.sol`,
+`src/abstract/BaseModule.sol`
+(`createNodeOperator`,
+`addValidatorKeys*`,
+`obtainDepositData`,
+`allocateDeposits`).
+
+Checked for: a
+stranger claim of
+another operator’s
+bond; recover that
+drains `totalBondShares`;
+fee Merkle proof that
+overpays the caller;
+`obtainDepositData` by
+a non-router; a gate
+that bonds a victim
+permit into the
+caller’s operator.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Public
+  `depositETH` /
+  `depositStETH` /
+  `depositWstETH(noId)`
+  credit that
+  existing operator
+  from `msg.sender`
+  (`Lido.submit` or
+  `transferSharesFrom`
+  / unwrap). Anyone
+  can top up another
+  operator; that is a
+  donation. The
+  `from` overloads
+  are `onlyModule`.
+- `claimRewards*`
+  require manager,
+  reward address, or
+  custom claimer, pay
+  `rewardAddress`,
+  and only transfer
+  excess over
+  required + locked +
+  debt. Fee pulls go
+  through
+  `FeeDistributor.distributeFees`
+  (Accounting-only,
+  non-empty Merkle
+  proof, cumulative
+  shares must not
+  decrease) and then
+  optional fee-split
+  transfers.
+- `lockBond` /
+  `releaseLockedBond` /
+  `compensateLockedBond` /
+  `settleLockedBond` /
+  `penalize` /
+  `chargeFee` are
+  `onlyModule`.
+  `recoverERC20`
+  blocks stETH.
+  `recoverStETHShares`
+  is recoverer-only
+  and subtracts
+  `totalBondShares`.
+- `FeeDistributor.processOracleReport`
+  is oracle-only,
+  caps
+  `distributed+rebate`
+  by contract shares,
+  and pays rebate to
+  `rebateRecipient`.
+  stETH recover is
+  blocked.
+- `PermissionlessGate`
+  creates an operator
+  for `msg.sender`
+  then adds keys with
+  that sender’s ETH /
+  stETH / wstETH.
+  `CSModule._checkCanAddKeys`
+  allows a gate only
+  when
+  `OperatorTracker`
+  creator ==
+  `msg.sender`.
+- `obtainDepositData`
+  and
+  `allocateDeposits`
+  are StakingRouter
+  only. Deposit data
+  requires up-to-date
+  deposit info.
+  Unbonded keys on a
+  negative rebase are
+  documented and
+  expected to be
+  exited by VEBO.
+
+Do not file a
+permissionless bond
+top-up of another
+operator (donation);
+recoverer privilege;
+CREATE-role as a
+stranger drain; or
+the documented
+unbonded-key rebase
+trade-off.
+
+Not submitted.
+Remaining CSM:
+Vetted / Curated
+gates and modules,
+Verifier, Ejector,
+ExitPenalties,
+FeeOracle / HashConsensus.
+Remaining Lido listed
+GitHub: easy-track /
+governance bridges /
+aragon-apps /
+dual-governance
+timelock +
+committees.
 
 ## Next candidates
 
@@ -23054,9 +23206,12 @@ Lido `lido-l2-with-steth` leftover
 Lido dual-governance Escrow leftover
 (`ba9dfc9`) is logged (remaining
 dual-governance is DualGovernance /
-timelock / committees;
-remaining Lido is CSM /
-easy-track / governance bridges).
+timelock / committees).
+Lido CSM bond leftover
+(`2824e21`) is logged
+(remaining Lido is easy-track /
+governance bridges / remaining
+CSM gates).
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 / rETH2 /
 Oracles / MerkleDistributor /
@@ -23387,10 +23542,14 @@ Lido 0.8.25 vault leftover
 (`2da0f48`) is logged.
 Lido dual-governance Escrow
 leftover (`ba9dfc9`) is
-logged (remaining Lido is
+logged.
+Lido CSM bond leftover
+(`2824e21`) is logged
+(remaining Lido is
 DualGovernance / timelock /
-CSM / easy-track /
-governance bridges);
+easy-track /
+governance bridges /
+remaining CSM gates);
 StakeWise Mainnet leftover
 (Sourcify Pool / sETH2 /
 rETH2 / Oracles /
