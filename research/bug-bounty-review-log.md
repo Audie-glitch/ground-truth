@@ -1508,25 +1508,99 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Sky diamond-pau core + CCTP / 4626 / 7540 / OTC (`1b6743a`)
+
+Immunefi program `sky` ($10,000,000, `kyc: false`). In-scope
+`sky-ecosystem/diamond-pau` `dev` files added 6 Jul 2026.
+Local clone `/tmp/reviews/diamond-pau` at `1b6743a`. No
+mainnet interaction.
+
+Files: `Controller.sol`, `ALMProxy.sol`, `ALMProxyFreezable.sol`,
+`RateLimits.sol`, `AccessControls.sol`, `Beacon.sol`,
+`facets/Facet.sol`, `libraries/ApproveLib.sol`,
+`facets/transfer-asset/TransferAssetFacet.sol`,
+`facets/cctp/CCTPFacet.sol`, `facets/erc4626/ERC4626Facet.sol`,
+`facets/erc7540/ERC7540Facet.sol`, `facets/otc/OTCFacet.sol`,
+`facets/ethena/EthenaFacet.sol`.
+
+Checked for: fallback dispatch without a role check;
+allocator transferring to an arbitrary destination without
+a rate-limit key; CCTP mintRecipient swap; 4626 first-depositor
+inflation past the max exchange-rate cap; 7540 claim without
+a pending request; OTC claim draining the buffer without a
+prior send; leftover ERC20 approvals on the proxy.
+
+Result: no user-exploitable finding.
+
+- Controller `fallback` remaps `msg.sig` →
+  `delegateSelector` and `delegatecall`s the wired facet.
+  There is no ACL on the fallback; every money-moving
+  facet function is `onlyRole(ALLOCATOR_ROLE)` or
+  `DEFAULT_ADMIN_ROLE`. `msg.sender` is preserved.
+  Beacon / `updateIntegrations` are admin-only. A selector
+  can be wired only once.
+- `ALMProxy.doCall` is `CONTROLLER` only. Rate-limit
+  decrease/increase is `CONTROLLER` only. Unlimited keys
+  (`maxAmount == max`) skip accounting.
+- `TransferAssetFacet.transfer` burns
+  `LIMIT_ASSET_TRANSFER(asset, destination)` before the
+  proxy `transfer`. An unset key reverts (`zero-maxAmount`).
+- CCTP mint recipient and fee-cap band are admin-set per
+  domain. Allocator cannot change destination. Dual rate
+  limits (global + domain). Approval is cleared after the
+  burn loop. `DESTINATION_CALLER == 0` is the standard
+  permissionless-relay CCTP setting.
+- 4626 deposit requires
+  `(1e36 * assets) / shares <= maxExchangeRate` (admin-set)
+  and `minSharesOut`. An inflated vault that mints too few
+  shares fails the cap. Withdraw/redeem restore the deposit
+  limit via `_tryIncreaseRateLimit` using assets received.
+- 7540 `claimDeposit` / `claimRedeem` only require that a
+  claim rate-limit key **exists** (maxAmount > 0), then
+  mint/withdraw `maxMint` / `maxWithdraw` to the proxy.
+  The request already consumed the request-side limit.
+  Trusted allocator.
+- OTC `send` pays the exchange; `claim` pulls the buffer
+  balance. Next send is blocked until
+  `claimed + recharge >= sent * maxSlippage / 1e18`.
+  Counterparty, buffer, slippage, and recharge are admin
+  parameters. First send is allowed (`sentTimestamp == 0`).
+- `ApproveLib` force-approves (zero then retry). Facets
+  reset allowance to 0 after use.
+- `ALMProxyFreezable` is a separate proxy: `ALLOCATOR_ROLE`
+  may `doCall`, `FREEZER_ROLE` may revoke. Not the
+  Controller-owned ALMProxy used by these facets.
+- Ethena mint/burn only `approve` the official minter
+  (allowance is left for the off-chain mint, unlike other
+  facets). Cooldown/unstake are allocator-gated and
+  rate-limited. `setDelegatedSigner` requires the key to
+  exist. Trusted Ethena minter + allocator.
+
+Remaining diamond-pau facets (Aave, LayerZero, Pendle,
+Maple, farms, wraps, etc.) were not read.
+
+Not submitted.
+
 ## Next candidates
 
-Sky PAS / SBEBeam and Intuition MultiVault / AtomWallet /
+Sky PAS / SBEBeam, Intuition MultiVault / AtomWallet /
 curves / utilization / emissions mint-bridge / registry
-solvency are exhausted at these commits. Remaining Intuition
-slice: `TrustSwapAndBridgeRouter` (Base asset, not in the v2
-repo) plus periphery. Remaining Sky slices (`diamond-pau`
-facets, `dss-emergency-spells`) are large and older. Superteam
-API rechecked 02:50 UTC 3 Sep: 28 open listings.
-`AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
-execute. Mermail skill is built (`mermail-onchain-receipts/`);
-remaining work is the participant's PR, Mermail MCP, and X
-demo. T3N still needs Terminal 3 SSO. NectarFi is a creator
-campaign. the402.ai still paused. 1inch Fusion settlement /
-whitelist / PowerPod / KycNFT and FeeTaker are exhausted.
-Remaining OZ hooks: none of the money-moving general/fee/base
-files. Leather ($5k, wallet/web) is the next unread Immunefi
-program if we want a web2 target. Sherlock `/api/contests` has
-301 historical items; the only non-FINISHED row as of 02:46 UTC
+solvency, and Sky diamond-pau **core + CCTP/4626/7540/OTC/
+transfer/Ethena** are exhausted. Remaining Intuition slice:
+`TrustSwapAndBridgeRouter` (Base asset, not in the v2 repo)
+plus periphery. Remaining Sky slices: other `diamond-pau`
+facets and `dss-emergency-spells`. Superteam API rechecked
+02:50 UTC 3 Sep: 28 open listings. `AGENT_ALLOWED` is still
+only Steve Arena and ZNS — do not execute. Mermail skill is
+built (`mermail-onchain-receipts/`); remaining work is the
+participant's PR, Mermail MCP, and X demo. T3N still needs
+Terminal 3 SSO. NectarFi is a creator campaign. the402.ai
+still paused. 1inch Fusion settlement / whitelist / PowerPod
+/ KycNFT and FeeTaker are exhausted. Remaining OZ hooks:
+none of the money-moving general/fee/base files. Leather
+($5k, wallet/web) is the next unread Immunefi program if we
+want a web2 target. Sherlock `/api/contests` has 301
+historical items; the only non-FINISHED row as of 02:46 UTC
 3 Sep is contest `1234` in `SHERLOCK_JUDGING` (not open for
 reports). Hedera Harness #8 still `open`, 0 comments, 0
 HOL-Guard PRs. No KeeperHub implementation before the 6 Sep

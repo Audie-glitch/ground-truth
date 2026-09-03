@@ -80,8 +80,9 @@ share the username.
   green: 16 skills), live Sepolia receipt lookup. Needs your fork/PR, Mermail
   MCP, and an X demo tagging @Mermailapp; see `mermail-onchain-receipts/SUBMISSION.md`.
 - `research/bug-bounty-review-log.md`: Immunefi target selection method and
-  time-boxed reviews through Sky PAS / SBEBeam and Intuition MultiVault,
-  AtomWallet, curves, and emissions mint/bridge (no submittable finding).
+  time-boxed reviews through Sky PAS / SBEBeam, Intuition money paths,
+  and Sky diamond-pau core + CCTP/4626/7540/OTC/Ethena (no submittable
+  finding).
 
 ## Schedule
 
