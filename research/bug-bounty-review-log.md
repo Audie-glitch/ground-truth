@@ -62456,3 +62456,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file supply-key treasury burns, owner-signed allowances, or payer-scoped contract calls as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `hiero-consensus-node` other handlers, `hiero-mirror-node`, `hiero-cryptography`, SDKs, and the hashed transaction-tool website leftover.
+
+## 2026-09-03: Hedera leftover TokenWipe + TokenDelete leftover (`0d3d9a2`)
+
+Immunefi program `hedera` ($30,000, `kyc: true`). Follow-on leftover after TokenBurn / CryptoApproveAllowance (`7ce8625`) and TokenUpdate (`30e1ebf`). Official clone `/tmp/hiero-consensus` `0d3d9a2`. Opened `TokenAccountWipeHandler.java`, `TokenDeleteHandler.java`, `CryptoDeleteHandler.java`. No mainnet writes. No exploit PoCs.
+
+Checked for: a `TokenWipe` that burns a stranger without the wipe key; `TokenDelete` that deletes without admin; `CryptoDelete` that redirects another account's balance without its key.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `TokenAccountWipe` `preHandle` requires the token **wipe key** when present. `handle` `validateSemantics` rejects empty wipe key (`TOKEN_HAS_NO_WIPE_KEY`), rejects wiping the treasury relation, and requires NFT serials to be owned by the named account (`ACCOUNT_DOES_NOT_OWN_WIPED_NFT`). Fungible/NFT balances cannot go negative.
+- `TokenDelete` `preHandle` requires the **admin key**. `handle` rejects HIP-540 empty admin (`TOKEN_IS_IMMUTABLE`) and only marks the token `deleted` while decrementing the treasury's title count.
+- `CryptoDelete` `preHandle` `requireKeyOrThrow(deleteAccountId)` and `requireKeyIfReceiverSigRequired(transferAccountID)`. `handle` `deleteAndTransfer`s the deleted account's balance to the transfer account.
+
+Do not file wipe-key treasury-excluded wipes, admin-gated token delete, or key-gated account delete-and-transfer as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `hiero-consensus-node` other handlers (freeze/pause/unfreeze), `hiero-mirror-node`, `hiero-cryptography`, SDKs, and the hashed transaction-tool website leftover.
