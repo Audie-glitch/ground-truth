@@ -31127,3 +31127,140 @@ BatchRouter (e.g.
 later listed
 factory / fee /
 buffer rows).
+
+## 2026-09-03: Balancer Foundation leftover VaultAdmin / Extension / BufferRouter (Sourcify)
+
+Immunefi program
+`Balancer Foundation`
+($1,000,000, `kyc: false`).
+V2 Vault, V3 Vault,
+and V3 BatchRouter
+leftovers already
+logged. V3 Router
+`0xAE56…8Ea2`,
+CompositeLiquidityRouter,
+ProtocolFeeController,
+and the 23 Jun factory
+set are already logged.
+This slice is the
+remaining Foundation
+money-path helpers:
+`VaultAdmin`
+`0x35fFB749B273bEb20F40f35EdeB805012C539864`,
+`VaultExtension`
+`0x0E8B07657D719B86e06bF0806D6729e3D528C9A9`,
+`BufferRouter`
+`0x9179C06629ef7f17Cb5759F501D89997FE0E7b45`,
+and V2
+`BalancerRelayer`
+`0x35Cea9e57A393ac66Aaa7E25C391D52C74B5648f`.
+Sourcify
+`exact_match`. Extract
+`/tmp/bal-found2`. Clone
+`/tmp/balancer-v3-monorepo`
+at `449f7e0`. No mainnet
+interaction.
+
+Files:
+`contracts/VaultAdmin.sol`,
+`contracts/VaultExtension.sol`,
+`contracts/BufferRouter.sol`,
+`contracts/relayer/BalancerRelayer.sol`.
+
+Checked for: a
+stranger
+`removeLiquidityFromBuffer`
+that burns another
+owner's shares;
+`addLiquidityToBuffer`
+that pulls another
+user without Permit2;
+`removeLiquidityRecovery`
+that burns without
+allowance;
+`collectAggregateFees`
+by a random caller;
+relayer `multicall`
+that spends a user
+without Vault relayer
+approval.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- VaultAdmin
+  pause / query /
+  buffer pause are
+  `authenticate`.
+  `collectAggregateFees`
+  is
+  `onlyProtocolFeeController`.
+  Buffer init / add
+  are
+  `onlyWhenUnlocked`
+  and take debt from
+  the unlocker.
+  `removeLiquidityFromBuffer`
+  forwards
+  `msg.sender` as
+  `sharesOwner` and
+  burns that
+  owner's shares.
+- BufferRouter
+  init / add pass
+  `msg.sender` as
+  sharesOwner.
+  Hooks are
+  `onlyVault` and
+  `_takeTokenIn`
+  that owner.
+  Queries use
+  `quote` and do
+  not settle to a
+  stranger.
+- VaultExtension
+  `initialize` is
+  `onlyWhenUnlocked`
+  and mints BPT to
+  `to` after taking
+  debt. Recovery
+  exit spends
+  allowance
+  (`from`,
+  `msg.sender`) then
+  burns `from`.
+- BalancerRelayer
+  `multicall`
+  delegatecalls the
+  library and
+  refunds leftover
+  ETH to
+  `msg.sender`.
+  Vault still
+  requires
+  per-user relayer
+  approval. ETH
+  `receive` is
+  Vault-only.
+
+Do not file
+governance pause,
+protocol-fee
+controller collect,
+or query-mode share
+increase as
+stranger theft.
+
+Not submitted.
+Listed Balancer
+Foundation leftover
+is exhausted at the
+opened-contract
+level (Vault /
+routers / admin /
+extension / buffer
+/ relayer /
+already-logged
+factories).
