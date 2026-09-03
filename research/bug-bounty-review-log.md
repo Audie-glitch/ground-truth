@@ -68147,3 +68147,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a bitmap packer as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: v2 math libs (WadRayMath / PercentageMath / MathUtils) if still unused.
+
+## 2026-09-03: Aave leftover remaining protocol-v2 math libs leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after configuration leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `WadRayMath.sol`, `PercentageMath.sol`, and `MathUtils.sol`. Do not rematch ReserveLogic leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `wadMul` / `rayMul` wrapping so a tiny input becomes a huge index; `calculateCompoundedInterest` minting extra debt via a caller-chosen timestamp.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `wadMul` / `rayMul` return 0 if either side is 0 and require `a <= (max - half) / b` before `(a * b + half) / unit`. `wadDiv` / `rayDiv` revert on `b == 0` and the same overflow check. `wadToRay` requires `result / 1e9 == a`.
+- `percentMul` / `percentDiv` use `PERCENTAGE_FACTOR = 1e4` with the same overflow / zero-divisor gates.
+- `calculateLinearInterest` is `1 + rate * dt / 365 days`. Compounded interest is a 3-term binomial in `rate/year`; `exp == 0` returns 1 ray. The view overload uses `block.timestamp`. These libraries do not move tokens.
+
+Do not file a rounding helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused official Aave v2 copies are exhausted on this pin (PriceOracleSentinel + OwnableFacilitator 404). Next unused leftover is a different Immunefi program, not a rematch.
