@@ -71618,3 +71618,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a receipt-gated deposit decoder or MPT-verified withdrawal helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining `op-node` (engine / p2p / sequencing) / websites if still unused.
+
+## 2026-09-03: Optimism leftover remaining op-node engine leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining listed after op-node deposits + withdrawals leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `op-node/rollup/engine/{api,payload_process,payload_success,build_start,build_seal,payloads_queue,build_invalid}.go`. Do not rematch deposits leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `processNewPayload` that inserts a denied or invalid payload as safe; `CommitBlock` that applies a stranger envelope without an execution-valid status; `PayloadsQueue.Push` that evicts a later block in favor of a conflicting older one.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `processNewPayload` checks SuperAuthority denylist (denied derived payloads request deposits-only replacement; denied unsafe payloads are dropped), then `NewPayload`. Only `ExecutionValid` continues. Invalid Holocene derived payloads also request deposits-only. `ProcessPayload` drops a stale seal whose parent is not the current unsafe head.
+- `sealBuild` requires a non-empty payload, first tx type deposit, and no deposit after a non-deposit. `SealBuild` also drops if parent ≠ unsafe head.
+- `PayloadsQueue` rejects nil/duplicate hashes and payloads larger than `MaxSize`. Overflow pops lowest block numbers first. `DropInapplicableUnsafePayloads` drops hashes already processed, numbers ≤ safe/unsafe, and next-height payloads that do not parent the unsafe head.
+- `CommitBlock` takes a `SignedExecutionPayloadEnvelope` but verifies execution via `NewPayload` in this file; signature checks live in the sequencer RPC/signer layer, not here. This package does not send L1 transactions.
+
+Do not file an engine-API payload inserter as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining `op-node` (p2p / sequencing) / websites if still unused.
