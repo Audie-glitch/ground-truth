@@ -25129,7 +25129,103 @@ Remaining Nexus
 listed GitHub:
 Claims / Assessment
 / Ramm / LimitOrders
-/ CoverBroker /
+/ CoverBroker leftover
+is logged.
+Remaining listed is
+legacy modules.
+
+## 2026-09-03: Nexus Mutual claims leftover (`9e88562`)
+
+Immunefi program
+`Nexus Mutual`
+($25,000, `kyc: false`).
+Cover / pool / staking
+leftover is already
+logged. This slice is
+Claims, Assessments,
+Ramm, LimitOrders, and
+CoverBroker. Local
+clone `/tmp/nexus-mutual`
+at `9e88562`. No
+mainnet interaction.
+
+Files:
+`contracts/modules/assessment/Claims.sol`,
+`contracts/modules/assessment/Assessments.sol`,
+`contracts/modules/capital/Ramm.sol`,
+`contracts/modules/cover/LimitOrders.sol`,
+`contracts/external/cover/CoverBroker.sol`.
+
+Checked for: a
+stranger
+`submitClaim` on
+someone else's
+cover; `redeemClaimPayout`
+to the caller;
+`executeOrder`
+without a buyer
+signature;
+`swap` that mints
+NXM without ETH.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `submitClaim` is
+  a member and the
+  cover NFT owner
+  only. Deposit ETH
+  goes to the Pool.
+  `redeemClaimPayout`
+  is the current
+  cover owner and
+  pays that owner
+  after a
+  redeemable
+  assessment.
+  `retrieveDeposit`
+  is permissionless
+  and always pays
+  the cover owner.
+- `castVote` is a
+  member in the
+  claim's assessor
+  group. Group
+  writes are
+  Governor. 
+  `startAssessment`
+  is Claims only.
+- Ramm `swap` takes
+  ETH or NXM from
+  `msg.sender` and
+  mints / pays that
+  sender with
+  minOut and
+  circuit breakers.
+- LimitOrders
+  `executeOrder` is
+  `onlyInternalSolver`
+  and recovers the
+  buyer from the
+  signature.
+  Payment and
+  refunds are the
+  buyer. `cancelOrder`
+  is the signer.
+- CoverBroker
+  `buyCover` pulls
+  payment from
+  `msg.sender` and
+  refunds that
+  sender.
+  `rescueFunds` is
+  owner-only.
+
+Not submitted.
+Remaining Nexus
+listed GitHub:
 legacy modules.
 ## 2026-09-03: dHEDGE leftover (Sourcify)
 
@@ -25608,10 +25704,11 @@ Lido aragon-apps Agreement leftover
 exhausted).
 Nexus Mutual cover / pool /
 staking leftover (`9e88562`) is
-logged (remaining listed is
-Claims / Assessment / Ramm /
-LimitOrders / CoverBroker /
-legacy).
+logged.
+Nexus Mutual claims leftover
+(`9e88562`) is logged
+(remaining listed is
+legacy modules).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
@@ -26005,10 +26102,11 @@ Lido aragon-apps Agreement leftover
 exhausted).
 Nexus Mutual cover / pool /
 staking leftover (`9e88562`) is
-logged (remaining listed is
-Claims / Assessment / Ramm /
-LimitOrders / CoverBroker /
-legacy).
+logged.
+Nexus Mutual claims leftover
+(`9e88562`) is logged
+(remaining listed is
+legacy modules).
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged
 (listed dual-governance leftover
