@@ -104,9 +104,13 @@ bridges leftover (`659e236`) is
 logged. Lido aragon-apps leftover
 (`e44f928`) is logged. Lido
 aave-delivery-infrastructure leftover
-(`27e7d4e`) is logged (remaining
-Lido is leftover aave-delivery
-adapters / mev-boost-relay-allowed-list).
+(`27e7d4e`) is logged. Lido
+mev-boost-relay leftover (`47211c6`)
+is logged. Lido aave-delivery adapters
+leftover (`27e7d4e`) is logged (listed
+Lido GitHub leftover exhausted aside
+from remaining slices in already-opened
+trees).
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis
@@ -126,6 +130,10 @@ IPOR leftover (Sourcify ipToken /
 router / AmmStorage / AmmTreasury)
 is logged (remaining listed is
 AmmTreasury ETH impl Sourcify 404).
+Vesper leftover (Sourcify Ethereum
++ Optimism `VPool` / `VETH`) is
+logged (remaining listed is Base
+vaults Sourcify 404).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /

@@ -24265,7 +24265,6 @@ payload without
 the official
 messenger or a
 trusted remote.
-
 Result: no
 user-exploitable
 finding. Not
@@ -24356,7 +24355,124 @@ MEV-relay /
 vault-hub /
 OperatorGrid / CSM
 settle factories.
+## 2026-09-03: Vesper leftover (Sourcify)
 
+Immunefi program
+`Vesper` ($50,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Ethereum
+Sourcify-open vault
+proxies share
+`VPool`
+`0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46`
+(vaFrax / vaDAI /
+vaUSDC / vaWBTC /
+vaLINK) or
+`0xd948ba1B50C474199DB204Ef128BA413c49Fd9b8`
+(vastETH / varETH)
+or
+`0x91f92F75E547Db066c39DEa4d4a8B45f4B8EDE4a`
+(vacbETH). vaETH
+impl
+`0xf296B1113CC49Ae4c6890E7B5dD3bed780407487`
+`exact_match` `VETH`.
+Optimism listed
+vaults are the same
+`VPool` / `VETH`
+(solc 0.8.9). Extract
+`/tmp/vesper`. No
+mainnet interaction.
+
+Files:
+`VPool.sol`,
+`VETH.sol`,
+`PoolERC20.sol`,
+`PoolStorage.sol`,
+`Governable.sol`,
+`Pausable.sol`.
+
+Checked for: a
+stranger mint of
+vault shares;
+withdraw that pays
+the caller without
+burning; `reportEarning`
+that transfers
+collateral to a
+non-strategy;
+`sweepERC20` of the
+pool token; VETH
+unwrap that sends
+ETH to a third
+party.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `deposit` /
+  `depositWithPermit`
+  `transferFrom`
+  `msg.sender` then
+  mint shares from
+  `calculateMintage`.
+  `withdraw` burns
+  `_msgSender` then
+  transfers
+  collateral (or ETH
+  on VETH
+  `withdrawETH`) to
+  that sender.
+- `reportEarning` /
+  `reportLoss` take
+  `msg.sender` as the
+  strategy and
+  forward to
+  `poolAccountant`.
+  Token moves only
+  between the pool
+  and that caller.
+- `sweepERC20` is
+  `onlyKeeper` and
+  blocks the
+  collateral token.
+  Governor / keeper
+  setters are
+  privilege.
+- Empty-pool
+  `pricePerShare` is
+  `10**decimals`.
+  `minDepositLimit`
+  defaults to 1.
+
+Do not file
+first-depositor
+share inflation on
+an empty vault,
+keeper / governor
+privilege, or
+`reportEarning` as a
+stranger drain
+without a listed
+accountant that
+accepts an
+unregistered
+strategy.
+
+Not submitted.
+Listed leftover is
+the Sourcify-open
+Ethereum + Optimism
+`VPool` / `VETH`
+vaults.
+Remaining listed:
+Base vaults Sourcify
+404. PoolAccountant
+and strategies are
+not listed assets.
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -24722,6 +24838,10 @@ IPOR leftover (Sourcify ipToken /
 router / AmmStorage / AmmTreasury)
 is logged (remaining listed is
 AmmTreasury ETH impl Sourcify 404).
+Vesper leftover (Sourcify Ethereum
++ Optimism `VPool` / `VETH`) is
+logged (remaining listed is Base
+vaults Sourcify 404).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -25092,6 +25212,11 @@ AmmStorage / AmmTreasury)
 is logged (remaining listed
 is AmmTreasury ETH impl
 Sourcify 404);
+Vesper leftover (Sourcify
+Ethereum + Optimism `VPool`
+/ `VETH`) is logged
+(remaining listed is Base
+vaults Sourcify 404);
 Beets stS
 (`877087b`) + token
 leftover is logged
