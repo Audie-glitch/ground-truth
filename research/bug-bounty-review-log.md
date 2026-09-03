@@ -32977,6 +32977,13 @@ vToken; KYC) is logged
 (remaining listed is
 Configurator / ACL / oracles
 / periphery / rewards / GHO);
+FBTC leftover ETH FireBridge
++ minter leftover (Sourcify
+FireBridge / FBTCMinter /
+FBTC / FeeModel / Governor /
+LockedFBTC; KYC) is logged
+(remaining listed is other-
+chain twins);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
@@ -40773,3 +40780,177 @@ Pyth + Wormhole
 adapter rows
 (third-party),
 and the website.
+
+## 2026-09-03: FBTC leftover ETH FireBridge + minter leftover (Sourcify)
+
+Immunefi program
+`fbtc` ($100,000,
+`kyc: true`). Unique
+unused standing
+program. Ethereum
+Sourcify
+`exact_match` on
+listed FireBridge
+proxy
+`0xbee335BB44e75C4794a0b9B54E8027b111395943`
+(impl
+`0xC5E2f85CB57350d3aE918d8B038f891f8ED6f6E5`
+`FireBridge`),
+FBTCMinter
+`0x80b534D4bB3D809FbDA809DCB26D3f220634AED7`,
+FBTC
+`0xC96dE26018A54D51c097160568752c4E3BD6C364`,
+FeeModel
+`0xd12D39E682715a40dbC860fa07F02bF48841294e`,
+FBTCGovernorModule
+`0x09e4c43eD89E5972df026d94FdA3a7680637c59A`,
+and LockedFBTCFactory
+proxy
+`0x722b9348712418469DD6bb6c92C2560072537584`
+(impl
+`0x9cDC53dbcA3a2862708a12dCF8e311A8387b7f13`
+`LockedFBTCFactory`,
+bundled
+`LockedFBTC.sol`).
+Extract `/tmp/fbtc-src`.
+No mainnet writes.
+
+Files:
+`contracts/FireBridge.sol`,
+`contracts/FBTCMinter.sol`,
+`contracts/FBTC.sol`,
+`contracts/base/FToken.sol`,
+`contracts/FeeModel.sol`,
+`contracts/FBTCGovernorModule.sol`,
+`src/LockedFBTCFactory.sol`,
+`src/LockedFBTC.sol`.
+
+Checked for: a
+stranger
+`addMintRequest`
+that mints to the
+caller; `addBurnRequest`
+/ cross-chain that
+burns a victim;
+`confirmMintRequest`
+that is not
+minter-gated;
+`FToken.mint` /
+`burn` without the
+bridge; LockedFBTC
+`confirmRedeemFbtc`
+that pays a
+non-minter.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `FToken.mint` /
+  `burn` /
+  `payFee` are
+  `onlyBridge`.
+- FireBridge
+  `addMintRequest`
+  /
+  `addBurnRequest`
+  are
+  `onlyActiveQualifiedUser`.
+  Mint dest is
+  `msg.sender`.
+  Burn / cross-chain
+  burn
+  `msg.sender`
+  after the fee
+  pull. Deposit
+  txids are
+  one-shot.
+- `confirmMintRequest`
+  /
+  `confirmBurnRequest`
+  /
+  `confirmCrosschainRequest`
+  are
+  `onlyMinter`.
+  FBTCMinter
+  forwards those
+  under
+  `MINT_ROLE` /
+  `BURN_ROLE` /
+  `CROSSCHAIN_ROLE`.
+  Cross-chain
+  confirm mints
+  the encoded
+  `dstAddress`
+  after the
+  source-hash
+  check.
+- FeeModel
+  setters are
+  `onlyOwner`.
+  Governor module
+  pause / lock /
+  qualified-user /
+  fee updates are
+  owner or named
+  roles.
+- LockedFBTC
+  mint / redeem /
+  confirm / burn
+  are
+  `MINTER_ROLE`.
+  `mintLockedFbtcRequest`
+  pulls
+  `msg.sender`
+  FBTC, then
+  `addBurnRequest`
+  as the wrapper
+  (must already be
+  a qualified
+  user).
+  `confirmRedeemFbtc`
+  burns the
+  caller's locked
+  tokens and pays
+  that caller.
+  Transfers are
+  disabled.
+  `createLockedFBTC`
+  is
+  permissionless
+  but the new
+  wrapper cannot
+  burn through
+  FireBridge until
+  owner adds it as
+  a qualified
+  user.
+
+Do not file
+qualified-user
+mint/burn,
+minter-role
+confirm, owner
+qualified-user
+admin, or
+permissionless
+factory deploy of
+an isolated
+wrapper as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens on Ethereum
+for these types is
+exhausted.
+Remaining listed:
+other-chain
+FireBridge /
+Minter / FBTC /
+FeeModel twins
+(same types).
