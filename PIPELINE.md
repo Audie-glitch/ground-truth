@@ -99,8 +99,11 @@ CSM bond leftover (`2824e21`) is
 logged. Lido CSM gates leftover
 (`2824e21`) is logged. Lido
 easy-track leftover (`3183d1f`) is
-logged (remaining Lido is governance
-bridges).
+logged. Lido governance-crosschain-
+bridges leftover (`659e236`) is
+logged (remaining Lido is
+aragon-apps / aave-delivery /
+mev-boost-relay-allowed-list).
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis
@@ -113,8 +116,9 @@ is logged (remaining listed is zkEVM
 404).
 USDN leftover (Sourcify token / wrap
 / protocol two-step / farming /
-rebalancer) is logged (remaining
-listed is sUSDN Enzyme `VaultLib`).
+rebalancer) is logged. USDN sUSDN
+VaultLib leftover is logged (listed
+USDN leftover exhausted).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /

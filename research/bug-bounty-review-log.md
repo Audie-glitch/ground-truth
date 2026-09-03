@@ -23635,6 +23635,114 @@ aragon-apps /
 aave-delivery-infrastructure /
 mev-boost-relay-allowed-list.
 
+## 2026-09-03: USDN sUSDN VaultLib leftover (Sourcify)
+
+Immunefi program
+`USDN` ($50,000,
+`kyc: false`). Token /
+wrap / protocol /
+farming / rebalancer
+leftover is already
+logged. This slice is
+the listed sUSDN
+proxy
+`0xf67e2dc041b8a3c39d066037d29f500757b1e886`
+(`VaultProxy`) impl
+`0x891dee0483eBAA922E274ddD2eBBaA2D33468A38`
+`exact_match` Enzyme
+`VaultLib` (solc
+0.6.12). Extract
+`/tmp/usdn/vaultlib`.
+No mainnet
+interaction.
+
+Files:
+`VaultLib.sol`,
+`VaultLibBaseCore.sol`,
+`VaultLibBase1.sol`,
+`VaultLibBase2.sol`,
+`SharesTokenBase.sol`,
+`ProxiableVaultLib.sol`.
+
+Checked for: a
+stranger `mintShares`
+of sUSDN; `withdrawAssetTo`
+that pays the caller;
+`callOnContract` /
+external-position
+dispatch without the
+accessor; `init` /
+`setAccessor` /
+`setVaultLib` by a
+non-creator;
+`transfer` that skips
+the Comptroller hook.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `mintShares` /
+  `burnShares` /
+  `transferShares` /
+  `withdrawAssetTo` /
+  `callOnContract` /
+  `receiveValidatedVaultAction`
+  / protocol-fee mint
+  and MLN buyback are
+  `onlyAccessor`
+  (ComptrollerProxy).
+  `notShares` blocks
+  withdrawing the
+  vault’s own shares
+  token.
+- `init` runs once
+  (`creator == 0`).
+  `setAccessor` and
+  `setVaultLib` are
+  creator-only
+  (Dispatcher).
+  `setVaultLib`
+  requires a matching
+  `proxiableUUID`.
+- ERC20
+  `transfer` /
+  `transferFrom` call
+  the accessor
+  pre-transfer hook
+  (or the freely-
+  transferable
+  variant). Owner
+  `setFreelyTransferableShares`
+  is one-way.
+- Owner can add
+  asset managers,
+  nominate a new
+  owner, and set a
+  migrator. Those
+  are privilege, not
+  a stranger drain.
+  `claimOwnership`
+  is the nominated
+  owner only.
+
+Do not file
+accessor-trusted
+mint / withdraw /
+`callOnContract` as
+a stranger drain, or
+Enzyme owner /
+migrator privilege.
+
+Not submitted.
+Listed USDN leftover
+is exhausted. The
+Comptroller buy /
+redeem share-price
+path is not a listed
+USDN asset.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -23983,9 +24091,10 @@ zkSync / Polygon impl Sourcify
 404).
 USDN leftover (Sourcify token /
 wrap / protocol two-step /
-farming / rebalancer) is logged
-(remaining listed is sUSDN
-Enzyme `VaultLib`).
+farming / rebalancer) is logged.
+USDN sUSDN VaultLib leftover is
+logged (listed USDN leftover
+exhausted).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -24337,9 +24446,10 @@ Polygon impl Sourcify
 USDN leftover (Sourcify
 token / wrap / protocol
 two-step / farming /
-rebalancer) is logged
-(remaining listed is
-sUSDN Enzyme `VaultLib`);
+rebalancer) is logged.
+USDN sUSDN VaultLib leftover
+is logged (listed USDN
+leftover exhausted);
 Beets stS
 (`877087b`) + token
 leftover is logged
