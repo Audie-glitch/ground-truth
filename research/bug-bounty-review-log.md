@@ -13424,7 +13424,97 @@ finding. Not submitted.
 
 Not submitted. Remaining
 Obyte listed AAs:
-`perpetual-aa`,
+`perpetual-aa` (logged
+below), `oswap-token-aa`,
+`token-registry-aa`,
+`obyte-cascading-donations`.
+
+## 2026-09-03: Obyte perpetual AA leftover (`126cdd0`)
+
+Immunefi program `obyte`
+($50,000, `kyc: false`).
+19 Aug 2025 leftover
+`byteball/perpetual-aa`
+(Pythagorean perpetual
+futures). Local clone
+`/tmp/obyte-perpetual-aa`
+at `126cdd0` (“require VP
+to vote and check leader
+before committing”).
+Custom OOS: fund-loss
+under $1,000; attacker
+expense ≥ 50% of damage.
+No mainnet interaction.
+
+Files: `perpetual.oscript`,
+`factory.oscript`,
+`staking.oscript`,
+`staking-lib.oscript`,
+`price.oscript`.
+
+Checked for: redeem that
+pays more reserve than the
+invariant; presale withdraw
+of a stranger’s
+contribution; staking AA
+that drains
+`total_staker_fees`; claim
+that mints above the
+launched supply; hop that
+forwards into staking.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Trade is the Pythagorean
+  invariant
+  `r'^2 - r^2 =
+  a c^2 (s'^2 - s^2) *
+  (1 - fee)`. Sell payout
+  is `r - new_r_gross`
+  (fees stay in reserve /
+  staker pot). Buy mints
+  `floor` tokens after
+  arb-profit tax. Same
+  `initial_address` can
+  merge trades within 1s
+  (designed).
+- Presale add/withdraw is
+  per-address
+  `contribution_`. Claim
+  after launch mints
+  `floor(contribution /
+  initial_price)` and
+  clears the slot.
+- `withdraw_staker_fees` on
+  the perp AA is
+  staking-AA-only and
+  decrements
+  `total_staker_fees`.
+  Staking pays
+  `floor(user rewards.r)`
+  after
+  `distribute_emissions`.
+  Unstake is after expiry
+  and requires a full
+  asset0 exit.
+- Parameter / asset adds
+  come only from staking
+  governance (fixed name
+  list; 5-day default
+  challenge). Factory
+  clamps swap_fee /
+  min_s0_share < 1.
+- Hops refuse
+  `address == staking_aa`.
+  Price AAs are
+  governance-set (oracle
+  trust, not a theft
+  path).
+
+Not submitted. Remaining
+Obyte listed AAs:
 `oswap-token-aa`,
 `token-registry-aa`,
 `obyte-cascading-donations`.
@@ -13876,10 +13966,10 @@ are logged (listed
 Counterstake leftover
 exhausted; `evm-v1.0` is
 the old pin; City AA
-(`4a0a53f`) is logged;
+(`4a0a53f`) and perpetual
+AA (`126cdd0`) are logged;
 remaining Obyte listed
-AAs: `perpetual-aa`,
-`oswap-token-aa`,
+AAs: `oswap-token-aa`,
 `token-registry-aa`,
 `obyte-cascading-donations`);
 Twyne vaults / wrappers /
