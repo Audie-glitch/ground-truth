@@ -14418,6 +14418,97 @@ Not submitted. Listed
 Orderly GitHub leftover
 is exhausted.
 
+## 2026-09-03: Compound Finance PR 127 / 2.9 (`ae4388e`)
+
+Immunefi program
+`Compound Finance`
+($1,000,000, `kyc: true`).
+The only listed GitHub
+smart-contract asset is
+`compound-finance/compound-protocol`
+pull 127 (merge
+`ae4388e`, “Compound/2.9”).
+Remaining Compound assets
+are explorer addresses +
+Primacy of Impact. Local
+worktree
+`/tmp/compound-pr127-merge`
+at that merge (do not use
+`/tmp/compound-protocol`
+HEAD `#152`). No mainnet
+interaction.
+
+Files:
+`contracts/Comptroller.sol`
+(`liquidateBorrowAllowed`,
+`isDeprecated`,
+`seizeAllowed`),
+`contracts/CToken.sol`
+(`liquidateBorrowFresh`,
+`seize` /
+`seizeInternal`),
+`contracts/CTokenInterfaces.sol`
+(`protocolSeizeShareMantissa`).
+
+Checked for: a
+non-deprecated market
+that can be fully
+liquidated without
+shortfall; seize that
+inflates the exchange
+rate or steals extra
+collateral; permissionless
+`seize` from a stranger
+cToken.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- `isDeprecated` requires
+  CF = 0, borrow paused,
+  and reserve factor =
+  100%. Only then does
+  `liquidateBorrowAllowed`
+  skip shortfall and
+  close-factor (repay ≤
+  stored borrow). All
+  three knobs are
+  governance. Intended
+  SAI/REP wind-down.
+- Otherwise liquidate
+  still needs shortfall
+  and `repay ≤
+  closeFactor * borrow`.
+  Both markets listed.
+  Freshness on both
+  cTokens. Liquidator ≠
+  borrower. `repayAmount`
+  not 0 / uint-max.
+- `seize` is
+  `nonReentrant` and
+  passes `msg.sender` as
+  the seizer. Comptroller
+  requires both markets
+  listed and the same
+  comptroller.
+- Protocol share is
+  2.8% of seize tokens:
+  burn that supply and
+  add `tokens * rate`
+  to reserves. Rate
+  stays invariant:
+  `(cash+borrows-reserves
+  - amount) / (supply -
+  tokens)` equals the
+  prior rate. Liquidator
+  gets the remaining
+  97.2%.
+
+Not submitted. Listed
+Compound GitHub leftover
+(PR 127) is exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -14889,6 +14980,13 @@ B/C/D (`462e129`), and
 (`9a8ba76`) are logged
 (listed Orderly GitHub
 leftover exhausted);
+Compound Finance PR 127 /
+2.9 (`ae4388e`) is logged
+(listed Compound GitHub
+leftover exhausted;
+remaining assets are
+explorer addresses +
+PoI);
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover
