@@ -10,7 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Optimism leftover remaining op-node sequencing leftover is logged;
+246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana stake_weighted_timestamp leftover is logged;
+Optimism leftover remaining op-node sequencing leftover is logged;
 Optimism leftover remaining op-node p2p leftover is logged;
 Optimism leftover remaining SystemConfig leftover is logged;
 Optimism leftover remaining L2OutputOracle leftover is logged;
@@ -1720,11 +1721,13 @@ jito-solana stakes leftover
 (`d0e3a47`; KYC) is logged.
 Jito leftover remaining
 jito-solana epoch_stakes leftover
+(`d0e3a47`; KYC) is logged.
+Jito leftover remaining
+jito-solana stake_weighted_timestamp leftover
 (`d0e3a47`; KYC) is logged
 (remaining listed is unused
 remaining-runtime slices
-`snapshot_*` / `bank.rs` /
-`stake_weighted_timestamp`
+`snapshot_*` / `bank.rs`
 if still unused).
 Optimism leftover remaining
 PolicyEngineStaking leftover

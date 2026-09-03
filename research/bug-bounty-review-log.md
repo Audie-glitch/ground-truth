@@ -46829,9 +46829,9 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`snapshot_*` / `bank.rs`) if still unused. Jito leftover remaining jito-solana stake_weighted_timestamp leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
-Remaining listed Optimism: unused official op-node leftover that listed trees still open after this sequencing slice / websites / rust/op-reth if still unused.
+Remaining listed Optimism: unused official op-node leftover that listed trees still open after this sequencing slice / websites / rust/op-reth if still unused. Optimism leftover remaining op-node p2p leftover is logged. Optimism leftover remaining op-node sequencing leftover is logged.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -46906,6 +46906,7 @@ Do not rematch Jito jito-solana check_transactions leftover.
 Do not rematch Jito jito-solana transaction_execution leftover.
 Do not rematch Jito jito-solana stakes leftover.
 Do not rematch Jito jito-solana epoch_stakes leftover.
+Do not rematch Jito jito-solana stake_weighted_timestamp leftover.
 Do not rematch Optimism leftover remaining op-node deposits + withdrawals leftover.
 Do not rematch Optimism leftover remaining PolicyEngineStaking leftover.
 Do not rematch Optimism leftover remaining L2 ETH liquidity leftover.
@@ -49689,8 +49690,10 @@ Jito leftover remaining jito-solana transaction_execution leftover
 Jito leftover remaining jito-solana stakes leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana epoch_stakes leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana stake_weighted_timestamp leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-snapshot / bank / stake_weighted_timestamp if still unused);
+snapshot / bank if still unused);
 Optimism leftover remaining op-node deposits + withdrawals leftover
 (`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
@@ -72063,3 +72066,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an origin-selector or seal loop as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining `op-node` websites / other unused official leftovers if still open.
+
+## 2026-09-03: Jito leftover remaining jito-solana stake_weighted_timestamp leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after epoch_stakes leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/stake_weighted_timestamp.rs`. Do not rematch epoch_stakes leftover, stakes leftover, or remaining runtime leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: a low-stake vote timestamp that moves the cluster clock; an unknown vote pubkey that contributes stake; a clamp that lets an estimate escape PoH bounds and credit lamports.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `calculate_stake_weighted_timestamp` is a validator helper, not a stranger IX. It builds a stake-weighted median of vote timestamps. Each estimate is that vote's timestamp plus elapsed slots from the vote slot to the current slot.
+- Unknown vote pubkeys contribute 0 stake. `total_stake == 0` returns `None`.
+- Low-stake outliers cannot move the median. Tests show 0.00003% stake cannot shift the timestamp; `i64::MAX` / `0` outliers are ignored unless they hold more than half of available stake (by design).
+- When `epoch_start_timestamp` is present, the estimate is clamped to the PoH offset ± `MaxAllowableDrift` (`fast` 25%, `slow` 150% v2). Add and subtract saturate.
+- The helper does not credit lamports. Clock skew with majority stake is consensus, then still PoH-bounded.
+
+Do not file a stake-weighted clock helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`snapshot_*` / `bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
