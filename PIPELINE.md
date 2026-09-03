@@ -64,7 +64,9 @@ share the username.
 - CreditPassport demo video recorded 3 Sep (64s): landing, live `/verify`
   against a real attested Sepolia transfer, Alice (limit 606) and Bob (cap 0).
   Upload is the remaining human step. Testnet deploy still waits on faucet
-  gas for `0x8F72A0f832068555C0edAf649b1F8A37d33bA14D`.
+  gas for `0x8F72A0f832068555C0edAf649b1F8A37d33bA14D` (rechecked 02:41 UTC
+  3 Sep: **0 Sepolia ETH and 0 tCTC**). `/earn` and `GET /api/deployer-status`
+  now read those balances live.
 - `x402-api/KICKOFF.md`: minute-one scaffold for 4 Sep 16:00 UTC. No project
   code written. `@x402/*` still 2.24.0.
 - `research/demand-list-triage.md`, `x402-api/DESIGN.md`, and

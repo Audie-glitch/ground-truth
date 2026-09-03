@@ -46,7 +46,9 @@ prices stay static strings; page-bucket paths `/v1/parse/{s,m,l}` as in
 - Hedera Harness: issue
   [#8](https://github.com/hedera-dev/hedera-harness/issues/8) (HOL Guard
   validator in ASSERT). Maintainer-authored, 0 comments, no linked PR as of
-  3 Sep. Open PR is enough for that bounty.
+  3 Sep 02:41 UTC. File-level plan:
+  [`research/ethonline-hedera-harness-8.md`](../research/ethonline-hedera-harness-8.md).
+  Open PR is enough for that bounty.
 - Uniswap Foundation: a tooling PR + `FEEDBACK.md` against an official
   Uniswap repo.
 

@@ -8,6 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  CREDITPASSPORT_DEPLOYER,
+  classifyFunding,
+  formatEther,
+  readDeployerBalances,
+} from "@/lib/deployer-status";
 import { rankWindows, type WindowState } from "@/lib/earn-status";
 
 export const dynamic = "force-dynamic";
@@ -18,9 +24,34 @@ const STATE_LABEL: Record<WindowState, string> = {
   closed: "Closed",
 };
 
-export default function EarnPage() {
+async function loadDeployer() {
+  try {
+    const { sepoliaWei, ctcWei } = await readDeployerBalances();
+    return {
+      ok: true as const,
+      state: classifyFunding(sepoliaWei, ctcWei),
+      sepoliaEth: formatEther(sepoliaWei),
+      ctc: formatEther(ctcWei),
+    };
+  } catch (error) {
+    return {
+      ok: false as const,
+      error: error instanceof Error ? error.message : "RPC error",
+    };
+  }
+}
+
+const FUNDING_LABEL = {
+  unfunded: "Unfunded",
+  "sepolia-only": "Sepolia only",
+  "ctc-only": "Creditcoin only",
+  ready: "Ready to deploy",
+} as const;
+
+export default async function EarnPage() {
   const now = new Date();
   const rows = rankWindows(now);
+  const deployer = await loadDeployer();
 
   return (
     <main className="mx-auto w-full max-w-7xl grow px-4 py-6 sm:px-6 sm:py-10">
@@ -41,6 +72,32 @@ export default function EarnPage() {
           Windows evaluated at {now.toISOString()}.
         </p>
       </header>
+
+      <Card className="mb-6">
+        <CardHeader className="gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <CardTitle className="text-lg">CreditPassport deployer</CardTitle>
+            <Badge variant={deployer.ok && deployer.state === "ready" ? "default" : "outline"}>
+              {deployer.ok ? FUNDING_LABEL[deployer.state] : "RPC error"}
+            </Badge>
+          </div>
+          <CardDescription>
+            Testnet-only address. Never send mainnet assets. Official faucets:
+            Creditcoin Discord <code>token-faucet</code>, Google Cloud Sepolia.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm leading-relaxed">
+          <p className="font-mono text-xs break-all">{CREDITPASSPORT_DEPLOYER}</p>
+          {deployer.ok ? (
+            <p>
+              Sepolia {deployer.sepoliaEth} ETH · Creditcoin {deployer.ctc} tCTC.
+              Need at least 0.01 ETH and 0.05 tCTC. Rechecked just now from public RPCs.
+            </p>
+          ) : (
+            <p>Could not read balances: {deployer.error}</p>
+          )}
+        </CardContent>
+      </Card>
 
       <ol className="grid gap-4">
         {rows.map((row) => (

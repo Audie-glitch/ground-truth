@@ -162,6 +162,8 @@ Bug-bounty target selection and review notes: [`research/bug-bounty-review-log.m
   requirement-by-requirement completion evidence and unresolved blockers.
 - [`research/ethonline-start-checklist.md`](research/ethonline-start-checklist.md) —
   what may be built from 4 Sep 16:00 UTC, and what must wait.
+- [`research/ethonline-hedera-harness-8.md`](research/ethonline-hedera-harness-8.md) —
+  file-level plan for the Hedera Harness OSS backup (issue #8).
 - [`research/phantom-wallet-blocker-2026-09.md`](research/phantom-wallet-blocker-2026-09.md) —
   device-code login succeeded; Phantom KMS still refuses the DCR app
   (`whitelist-disabled`). No agent address yet.
