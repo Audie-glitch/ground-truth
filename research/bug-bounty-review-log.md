@@ -70796,3 +70796,21 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a signed compute-budget CU request as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` zk-elgamal-proof / remaining runtime if still unused.
+
+## 2026-09-03: Jito leftover remaining jito-solana zk-elgamal-proof leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after compute-budget leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `programs/zk-elgamal-proof/src/lib.rs` and `programs/zk-token-proof/src/lib.rs`. Do not rematch compute-budget leftover, bpf leftover, or vote leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `process_verify_proof` that accepts a failed proof and still writes context; `CloseContextState` that drains a context account without the stored authority; a path that mints confidential-transfer tokens.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Feature-gated: `disable_zk_elgamal_proof_program` without `reenable_zk_elgamal_proof_program` rejects every IX.
+- Each verify consumes a fixed CU budget, then `verify_proof()` on the Pod proof from IX data or from a bounded account slice. Failure is `InvalidInstructionData`. This crate does not mint or transfer SPL tokens.
+- Optional context write requires a program-owned uninitialized account of exact encoded length. Authority is the next account key. An already-initialized context is rejected.
+- `CloseContextState` requires account 2 to sign and equal `context_state_authority`, rejects uninitialized / same destination, then moves lamports, zeros data, and assigns the account to the system program.
+- `zk-token-proof` is a no-op entrypoint (`Ok(())`). It does not verify proofs or touch accounts.
+
+Do not file a verified proof-context close as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` remaining runtime if still unused.
