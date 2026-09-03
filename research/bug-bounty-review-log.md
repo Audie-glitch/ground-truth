@@ -42935,6 +42935,107 @@ Collector /
 transfer
 strategies.
 
+## 2026-09-03: Aave leftover remaining transfer-strategy leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after Collector
+leftover.
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-periph`.
+Do not rematch
+Rewards leftover.
+Do not rematch
+Collector leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/rewards/transfer-strategies/TransferStrategyBase.sol`,
+`src/contracts/rewards/transfer-strategies/PullRewardsTransferStrategy.sol`,
+`src/contracts/rewards/transfer-strategies/StakedTokenTransferStrategy.sol`.
+
+Checked for:
+a
+stranger
+`performTransfer`
+from
+the
+rewards
+vault;
+an
+`emergencyWithdrawal`
+without
+the
+rewards
+admin.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `performTransfer`
+  on
+  pull
+  and
+  staked
+  strategies
+  is
+  `onlyIncentivesController`.
+  Pull
+  `safeTransferFrom`s
+  `REWARDS_VAULT`.
+  Staked
+  requires
+  `reward == STAKE_CONTRACT`
+  and
+  `stake`s
+  to
+  `to`.
+- `emergencyWithdrawal`
+  is
+  `onlyRewardsAdmin`
+  and
+  `safeTransfer`s
+  the
+  chosen
+  token.
+- `renewApproval`
+  /
+  `dropApproval`
+  are
+  `onlyRewardsAdmin`.
+  Controller
+  installs
+  strategies
+  via
+  leftover-
+  logged
+  `onlyEmissionManager`.
+
+Do not file
+an
+incentives-
+controller
+payout
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+IR strategy /
+other helpers.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -43058,9 +43159,13 @@ Aave leftover remaining periphery leftover (`cff15de`)
 is logged.
 Aave leftover remaining WrappedTokenGateway leftover (`cff15de`)
 is logged.
+Aave leftover remaining Collector leftover (`308489d`)
+is logged.
+Aave leftover remaining transfer-strategy leftover (`cff15de`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: Collector / transfer strategies.
+Remaining listed Aave: IR strategy / other helpers.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43091,6 +43196,8 @@ Do not rematch Aave ACL + PoolConfigurator leftover.
 Do not rematch Aave RewardsController leftover.
 Do not rematch Aave periphery leftover.
 Do not rematch Aave WrappedTokenGateway leftover.
+Do not rematch Aave Collector leftover.
+Do not rematch Aave transfer-strategy leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -45709,6 +45816,9 @@ transfer strategies);
 Aave leftover remaining WrappedTokenGateway leftover
 (`cff15de`) is logged (remaining listed is
 Collector / transfer strategies);
+Aave leftover remaining transfer-strategy leftover
+(`cff15de`) is logged (remaining listed is
+IR strategy / other helpers);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
