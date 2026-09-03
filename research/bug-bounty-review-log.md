@@ -29896,3 +29896,139 @@ SignatureValidator
 (2026-07-03 rows)
 plus GitHub DLT /
 web assets (KYC).
+
+## 2026-09-03: Synthetix deposit leftover (Blockscout)
+
+Immunefi program
+`Synthetix`
+($100,000, `kyc: false`).
+Unique no-KYC listed
+Ethereum slice.
+Sourcify has no
+match on the three
+listed proxies.
+Blockscout verified
+`SynthetixDepositContract`
+impl
+`0xff6611190b48Cc920EF3c5DCbD356bF2C20D731F`
+behind
+`0xD62595c3c23B690BAEE0935e107A209Cb1Dbd37B`,
+`SynthetixDepositContractLens`
+`0x99E61877aF9Bc6805BCc3813F655D94Ed5f3782A`,
+and
+`PermissionsRegistry`
+impl
+`0xF06E7b50A214D8437221BAADD04e0878F232db5e`
+behind
+`0x45F91031b33Da2585932c8f1cdFF0faa6cD329ae`.
+Extract
+`/tmp/synthetix-src`.
+No mainnet
+interaction.
+
+Files:
+`src/SynthetixDepositContract.sol`,
+`src/SynthetixDepositContractLens.sol`,
+`src/PermissionsRegistry.sol`,
+`src/libraries/CowProtocol.sol`.
+
+Checked for: a
+stranger
+`deposit` that pulls
+another owner
+without allowance
+or that owner's
+Permit2; a
+permissionless
+`requestWithdrawal`
+or `disburse` that
+pays the caller;
+`cancelWithdrawal`
+of another user's
+request; ERC-1271
+`isValidSignature`
+that lets a stranger
+settle CoW against
+custody; registry
+grants that mutate
+another owner's
+delegatees.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `deposit` pulls
+  `msg.sender` via
+  `safeTransferFrom`
+  or Permit2
+  (`owner` is the
+  caller). Credit
+  goes to
+  `beneficiary`.
+- `requestWithdrawal`
+  is
+  `RELAYER_ROLE`.
+  The request user
+  is
+  `entry.beneficiary`.
+  `disburseWithdrawals`
+  is `TELLER_ROLE`
+  and
+  `safeTransfer`s to
+  that user, not the
+  caller.
+- `cancelWithdrawal`
+  requires
+  `req.user ==
+  msg.sender`.
+  Reject / dispute /
+  watcher vote /
+  guardian resolve
+  are role-gated.
+- CoW
+  `isValidSignature`
+  requires an
+  `AUTHORIZED_TRADER_ROLE`
+  EOA, sell
+  collateral, buy
+  USDT, and
+  `receiver ==
+  address(this)`.
+  VaultRelayer /
+  SLP approvals are
+  `OWNER_ROLE`.
+- Lens is view-only.
+  PermissionsRegistry
+  `_grant` /
+  `_revoke` bind
+  `msg.sender` as
+  owner. Contract
+  owner can only
+  pause / upgrade.
+
+Do not file
+relayer-created
+withdrawals, negative
+internal balances,
+guardian `limit == 0`
+(no cap), or CoW
+`appData` / kind
+trust as stranger
+theft.
+
+Not submitted.
+Listed Synthetix
+leftover is
+exhausted at the
+three Immunefi
+Ethereum addresses.
+Remaining unused
+no-KYC docs /
+audit-comp rows:
+Sushi (docs-only
+deployments), DeGate
+and IDEX 2024 audit
+comps (testnet /
+closed window).
