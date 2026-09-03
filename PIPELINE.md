@@ -9,7 +9,9 @@ organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging), and Immunefi
 unofficial mirror rechecked 3 Sep. KeeperHub #2105 is claimed by PR #2275.
-#2240 has a design comment from `edycutjong` — do not implement.
+#2240 has a design comment from `edycutjong` — do not implement. Lombard
+EVM 15 Jul strategy leftover (Shard / BlocklistOracle / merkle
+validator / converters) is logged.
 
 ## Opportunities, ranked by expected payout per unit of work
 

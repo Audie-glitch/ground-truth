@@ -11352,8 +11352,11 @@ Next leftover: Sky
 Optimism / Arbitrum /
 Starknet DAI-bridge
 relays (logged below),
-or Twyne Sourcify-404
-vaults. Not submitted.
+Lombard EVM strategy
+leftover (logged
+below), or Twyne
+Sourcify-404 vaults.
+Not submitted.
 
 ## 2026-09-03: Sky Optimism / Arbitrum / Starknet DAI-bridge leftover
 
@@ -11487,12 +11490,129 @@ are still Sourcify 404).
   with `msg.sender`
   as the depositor.
 
-Next leftover: Twyne
-Sourcify-404 vaults /
-wrappers / EVC /
-factories (still
-closed). Not
-submitted.
+Next leftover: Lombard
+EVM strategy leftover
+(logged below), Enzyme
+`CreWorkflowConsumer`,
+or Twyne Sourcify-404
+vaults. Not submitted.
+
+## 2026-09-03: Lombard EVM strategy shard leftover (`7fe83e5`)
+
+Immunefi program
+`lombard-finance`
+($250,000, `kyc: true`).
+15 Jul 2026 leftover
+after the SVM tree:
+`Shard.sol`,
+`BlocklistOracle.sol`,
+`MerkleAllowlistValidator.sol`,
+and
+`contracts/strategy/converters`
+(listed live Ethereum
+`0xDde9…2dFD` /
+`0xc94B…da16` /
+`0x5D84…6602` /
+`0x6647…CDd3` /
+`0xecc0…A777`).
+Official clone
+`/tmp/lombard-evm` at
+`7fe83e5`. No mainnet
+interaction.
+
+Files as named plus
+`ShardBaseUpgradeable.sol`
+and
+`ChainlinkConverter` /
+`ChainlinkCompositeConverter`
+/ `DirectConverter`.
+
+Checked for: `exec`
+that skips the
+allowlist; merkle
+`validatorArgs` that
+forges a leaf; privileged
+`exec` callable by
+anyone; `pullFromStrategy`
+without the transfer
+role; blocklist `check`
+that an allowlisted
+sanctioned address
+bypasses; converter
+that uses a stale or
+pre-downtime answer.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `Shard.initialize` is
+  one-shot
+  (`initializer`) and
+  `_disableInitializers`
+  on the impl.
+  `pullFromStrategy` /
+  `pushToStrategy` are
+  `SHARD_TRANSFER_ROLE`.
+  `exec` is
+  `nonReentrant`,
+  rejects `to == this`,
+  and requires
+  `validator.isAllowed`.
+  The 3-arg `exec` is
+  `PRIVILEGED_EXECUTOR_ROLE`
+  only. `setValidator`
+  is
+  `DEFAULT_ADMIN_ROLE`.
+- Merkle validator
+  fail-closes on a
+  zero root. Leaves
+  bind `LEAF_TYPE` +
+  chainid +
+  `address(this)`.
+  Rules are packed and
+  must be canonical
+  (reserved flags 0,
+  unused header fields
+  0, exact length,
+  strictly increasing
+  constraint offsets,
+  `expected ⊆ mask`).
+  Dynamic-ABI
+  constraint limits
+  are documented
+  in-source (policy
+  authoring, not a
+  user bypass).
+- Blocklist `check`
+  reverts on the
+  manual list first,
+  then external
+  sanction lists.
+  Allowlist skips
+  sanctions only.
+  `blockAccount` /
+  `unblockAccount` /
+  `allowAccount` /
+  sanction-list add
+  are role-gated.
+- Converters are
+  view. Chainlink
+  rejects `answer <= 0`,
+  future
+  `updatedAt`,
+  heartbeat staleness,
+  sequencer-down, zero
+  `startedAt`, grace
+  period, and
+  pre-recovery
+  answers. Composite
+  is one `mulDiv`.
+  Direct is 1:1.
+
+Next leftover: Enzyme
+`CreWorkflowConsumer`
+or Twyne Sourcify-404
+vaults. Not submitted.
 
 ## Next candidates
 
@@ -11872,6 +11992,12 @@ exhausted); listed
 StackingDAO and
 TermMax leftover
 adapters are exhausted;
+Lombard EVM strategy
+shard / blocklist /
+merkle validator /
+converters (`7fe83e5`,
+15 Jul leftover) are
+logged;
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
