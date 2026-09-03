@@ -12967,8 +12967,106 @@ critical. Not submitted.
 
 Not submitted. Remaining
 Mux: mux-protocol
-folders (28 Aug 2025)
+folders (logged below)
 and mux-staking.
+
+## 2026-09-03: Mux protocol v1 core leftover (`0f70a70`)
+
+Immunefi program `mux`
+($100,000, `kyc: false`,
+smart-contract rewards
+are critical-only).
+Listed leftover folders
+added 28 Aug 2025:
+`contracts/components`,
+`core`, `governance`,
+`libraries`,
+`orderbook`. Local clone
+`/tmp/mux-v1` at
+`0f70a70` (“a better
+protection to asset
+price”). Program OOS:
+`test` / `oracle` /
+`reader`. No mainnet
+interaction.
+
+Files:
+`core/{Trade,Liquidity,
+Account,LiquidityPool}.sol`,
+`orderbook/OrderBook.sol`,
+`libraries/{LibOrderBook,
+LibAsset,LibSubAccount,
+LibReferenceOracle}.sol`,
+`components/NativeUnwrapper.sol`,
+`governance/{Vault,POL,
+MuxTimelock}.sol`.
+
+Checked for: aggregator
+or owner bypass that
+places a stranger’s
+order; MLP add that
+mints against a
+broker-chosen zero nav;
+remove that over-pays
+spot; liquidate of a
+solvent account;
+unwrapper that sends ETH
+to the caller.
+
+Result: no
+user-exploitable
+critical. Not submitted.
+
+- `placePositionOrder3`
+  and `depositCollateral`
+  require
+  `getSubAccountOwner ==
+  msg.sender` unless
+  `aggregators[msg.sender]`
+  (owner-set, the Mux
+  aggregator factory).
+  Fills / liquidate /
+  rebate are
+  `onlyBroker`. Pool
+  hops are
+  `onlyOrderBook`.
+- Deposit: OrderBook
+  `_transferIn` from the
+  owner to the pool,
+  then credits wad.
+- Add liquidity
+  transfers pre-minted
+  MLP from the pool at a
+  broker `mlpPrice`
+  clamped to
+  `mlpPriceLowerBound` /
+  `UpperBound`. Token
+  price is
+  Chainlink-truncated
+  with bid/ask spread.
+  Spot is tracked
+  `spotLiquidity`, not
+  raw ERC20. Remove
+  refuses
+  `wad > spotLiquidity`.
+- Open requires IM safe.
+  Close requires MM
+  safe. Liquidate
+  requires MM unsafe
+  including funding.
+- `NativeUnwrapper.unwrap`
+  is whitelist-only
+  (the pool). Failed ETH
+  send re-wraps WETH to
+  the trader.
+- Vault / POL transfers
+  are `onlyOwner`.
+  Timelock is standard
+  OZ-style.
+
+Not submitted. Remaining
+Mux listed Solidity:
+`mux-staking` only.
 
 ## Next candidates
 
@@ -13381,10 +13479,12 @@ orderbook (`8674f2b`) is
 logged; Mux aggregator
 proxyFactory + GmxV2 +
 LendingPool (`0f36131`)
-and Mux degen pool
-(`c5bfe81`) are logged
-(remaining Mux is
-mux-protocol folders and
+Mux degen pool
+(`c5bfe81`), and Mux
+protocol v1 core
+(`0f70a70`) are logged
+(remaining Mux listed
+Solidity is
 mux-staking);
 Obyte Coop AA
 (`d7d5e57`), Friends AA

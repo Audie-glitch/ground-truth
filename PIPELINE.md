@@ -15,9 +15,9 @@ EVM 15 Jul strategy leftover (Shard / BlocklistOracle / merkle
 validator / converters) is logged. Listed Silo V3 GitHub Solidity
 is exhausted. PancakeSwap Infinity leftover is logged (remaining
 Pancake is listed V3 + V2 periphery). Mux3 core leftover is
-logged. Mux aggregator proxyFactory + GmxV2 leftover and Mux
-degen pool leftover are logged (remaining Mux is mux-protocol /
-staking). Obyte Coop /
+logged. Mux aggregator, degen pool, and protocol v1 core
+leftovers are logged (remaining Mux listed Solidity is
+mux-staking). Obyte Coop /
 Friends / prediction-markets leftovers are logged. Counterstake
 EVM+AA claim path and assistants / factories / governance
 leftovers are logged (listed Counterstake leftover exhausted).
