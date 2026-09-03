@@ -44904,8 +44904,10 @@ Filecoin leftover remaining lotus lib httpreader leftover (`7740217`)
 is logged.
 Rootstock leftover remaining rskj Bridge leftover (`161c3f105d18`)
 is logged.
+Filecoin leftover remaining lotus lib addrutil leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: remaining lotus lib (addrutil) if still unused.
+Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: v3 logic libraries / primacy.
 Remaining listed Jito: `jito-solana` other crates (if still unused).
 Remaining listed Rootstock: `rsk-powhsm` (if still unused).
@@ -69408,3 +69410,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an HTTP GET reader as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus lib (addrutil) if still unused.
+
+## 2026-09-03: Filecoin leftover remaining lotus lib addrutil leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus lib httpreader leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `lib/addrutil`. Opened `parse.go`. Multiaddr / peer-id parser. Do not rematch lotus lib peermgr leftover or lotus net leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `ParseAddresses` connecting to a stranger as if they were a bootstrap miner; DNS resolution rewriting actor balances; an unresolved multiaddr being treated as a signed peer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ParseAddresses` parses each string as a multiaddr. If the last protocol is `ipfs`/`P_IPFS` (peer id), it is kept as-is. Otherwise `madns.Resolve` runs under a 10s timeout, and only resolved addrs that still end in `ipfs` are kept.
+- `peer.AddrInfosFromP2pAddrs` builds `peer.AddrInfo`s. This package does not `Connect`, sign, or move FIL. Leftover-logged `peermgr` is the only caller that connects bootstrappers.
+
+Do not file a multiaddr parser as stranger theft.
+
+Not submitted. Payment requires user KYC. Unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.

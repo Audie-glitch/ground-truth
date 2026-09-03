@@ -4,13 +4,14 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~13:00 UTC. Dates verified against each
+Status as of 3 September 2026, ~13:02 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~13:00 UTC;
-246 programs; no Sep 2026 launches; Filecoin leftover remaining lotus lib httpreader leftover is logged;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~13:02 UTC;
+246 programs; no Sep 2026 launches; Filecoin leftover remaining lotus lib addrutil leftover is logged;
+Filecoin leftover remaining lotus lib httpreader leftover is logged;
 Rootstock leftover remaining rskj Bridge leftover is logged;
 Filecoin leftover remaining lotus lib peermgr leftover is logged;
 Filecoin leftover remaining lotus lib rpcenc leftover is logged;
