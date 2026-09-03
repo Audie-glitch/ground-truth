@@ -42672,6 +42672,135 @@ Remaining listed:
 remaining lotus
 non-miner.
 
+## 2026-09-03: Aave leftover remaining periphery leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+periphery
+after Rewards
+leftover.
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-periph`.
+Do not rematch
+Pool leftover.
+Do not rematch
+Oracle leftover.
+Do not rematch
+ACL +
+PoolConfigurator
+leftover.
+Do not rematch
+Rewards leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/protocol/configuration/PoolAddressesProvider.sol`,
+`src/contracts/helpers/UiPoolDataProviderV3.sol`,
+`src/contracts/helpers/WalletBalanceProvider.sol`,
+`src/contracts/helpers/AaveProtocolDataProvider.sol`.
+
+Checked for:
+a
+stranger
+`setPoolImpl`
+or
+`setACLManager`;
+a
+wallet-balance
+helper
+that
+transfers
+tokens.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `PoolAddressesProvider`
+  setters
+  (`setAddress`,
+  `setPoolImpl`,
+  `setPoolConfiguratorImpl`,
+  `setPriceOracle`,
+  `setACLManager`,
+  `setACLAdmin`,
+  `setPriceOracleSentinel`,
+  `setPoolDataProvider`)
+  are
+  `onlyOwner`.
+  Constructor
+  `transferOwnership`s
+  the
+  supplied
+  owner.
+- `UiPoolDataProviderV3`
+  and
+  `AaveProtocolDataProvider`
+  are
+  view
+  readers
+  of
+  pool
+  /
+  oracle
+  state.
+  They
+  do
+  not
+  move
+  tokens.
+- `WalletBalanceProvider`
+  `balanceOf`
+  /
+  `batchBalanceOf`
+  /
+  `getUserWalletBalances`
+  only
+  read
+  `IERC20.balanceOf`
+  and
+  native
+  ETH.
+  The
+  file
+  states
+  it
+  is
+  not
+  used
+  inside
+  the
+  protocol.
+
+Do not file
+an owner-
+gated
+address
+registry
+or
+a
+view
+balance
+helper
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+transfer
+strategies.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -42791,8 +42920,11 @@ Aave leftover remaining ACL + PoolConfigurator leftover (`cff15de`)
 is logged.
 Aave leftover remaining RewardsController leftover (`cff15de`)
 is logged.
+Aave leftover remaining periphery leftover (`cff15de`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
+Remaining listed Aave: transfer strategies.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -42821,6 +42953,7 @@ Do not rematch Filecoin lotus miner leftover.
 Do not rematch Filecoin lotus market leftover.
 Do not rematch Aave ACL + PoolConfigurator leftover.
 Do not rematch Aave RewardsController leftover.
+Do not rematch Aave periphery leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -45433,6 +45566,9 @@ remaining lotus non-miner);
 Filecoin leftover remaining lotus market leftover
 (`7740217`) is logged (remaining listed is
 remaining lotus non-miner);
+Aave leftover remaining periphery leftover
+(`cff15de`) is logged (remaining listed is
+transfer strategies);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
