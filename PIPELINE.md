@@ -10,7 +10,9 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~13:02 UTC;
-246 programs; no Sep 2026 launches; Aave leftover remaining v3 money-path logic leftover is logged;
+246 programs; no Sep 2026 launches; Aave leftover remaining v3 ValidationLogic + GenericLogic leftover is logged;
+Aave leftover remaining v3 money-path logic leftover is logged;
+Rootstock leftover remaining rsk-powhsm leftover is logged;
 Filecoin leftover remaining lotus lib addrutil leftover is logged;
 Filecoin leftover remaining lotus lib httpreader leftover is logged;
 Rootstock leftover remaining rskj Bridge leftover is logged;
@@ -1596,10 +1598,12 @@ GhoOracle leftover
 (`23859bb`; KYC) is logged.
 Aave leftover remaining
 v3 money-path logic leftover
+(`cff15de`; KYC) is logged.
+Aave leftover remaining
+v3 ValidationLogic + GenericLogic leftover
 (`cff15de`; KYC) is logged
 (remaining listed is
-v3 ValidationLogic /
-GenericLogic / PoolLogic /
+v3 PoolLogic /
 ConfiguratorLogic /
 CalldataLogic / primacy).
 Rootstock leftover remaining
@@ -1627,9 +1631,13 @@ lotus lib addrutil leftover
 this pin is exhausted).
 Rootstock leftover remaining
 rskj Bridge leftover
-(`161c3f105d18`; KYC) is logged
-(remaining listed is
-`rsk-powhsm` if still unused).
+(`161c3f105d18`; KYC) is logged.
+Rootstock leftover remaining
+rsk-powhsm leftover
+(`82a12d44efec`; KYC) is logged
+(official Rootstock leftover
+that listed trees open is
+exhausted).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -2604,6 +2612,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Aave leftover remaining
   v3 money-path logic leftover
   (`cff15de`; KYC),
+  Aave leftover remaining
+  v3 ValidationLogic + GenericLogic leftover
+  (`cff15de`; KYC),
+  Rootstock leftover remaining
+  rsk-powhsm leftover
+  (`82a12d44efec`; KYC),
   Rootstock leftover remaining
   powpeg-node pegout leftover
   (`254fb3d`; KYC),

@@ -44850,6 +44850,219 @@ CalldataLogic
 /
 primacy.
 
+## 2026-09-03: Aave leftover remaining v3 ValidationLogic + GenericLogic leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-v3-logic/`.
+Do not rematch
+v3 money-path
+logic leftover
+or
+protocol-v2
+ValidationLogic
++
+GenericLogic
+leftover
+(`ce53c4a`).
+No mainnet
+writes.
+
+Files:
+`src/contracts/protocol/libraries/logic/{ValidationLogic,GenericLogic}.sol`.
+
+Checked for:
+supply /
+withdraw /
+borrow
+validators
+that skip
+caps or
+pause;
+`validateRepay`
+that lets
+`type(uint256).max`
+clear a
+stranger’s
+debt;
+HF check
+that treats
+HF `< 1`
+as healthy;
+liquidation
+validator
+that allows
+solvent
+accounts;
+`calculateUserAccountData`
+that omits
+debt or
+inflates
+collateral.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `validateSupply`
+  requires
+  active /
+  unpaused /
+  unfrozen,
+  rejects
+  supply to
+  the aToken,
+  and enforces
+  the supply
+  cap
+  including
+  treasury
+  accrual.
+- `validateWithdraw`
+  requires
+  scaled
+  amount
+  `<=`
+  scaled
+  user
+  balance.
+- `validateBorrow`
+  requires
+  variable
+  mode,
+  borrowable
+  flag or
+  eMode
+  bitmap,
+  aToken
+  supply
+  `>=`
+  amount,
+  and the
+  borrow
+  cap.
+- `validateRepay`
+  forbids
+  max-uint
+  repay
+  on
+  behalf
+  unless
+  `user
+  ==
+  onBehalfOf`.
+- `validateFlashloan`
+  /
+  `validateFlashloanSimple`
+  require
+  unique
+  assets,
+  flash-loan
+  enabled,
+  and aToken
+  supply
+  `>=`
+  amount.
+- `validateLiquidationCall`
+  rejects
+  self-liquidation,
+  paused /
+  inactive
+  reserves,
+  grace
+  period,
+  and
+  `healthFactor
+  >= 1e18`.
+- `validateHealthFactor`
+  /
+  `validateHFAndLtv`
+  require
+  HF
+  `>= 1e18`.
+  LTV
+  must be
+  non-zero
+  and
+  collateral
+  must
+  cover
+  new
+  borrow.
+- `validateHFAndLtvzero`
+  forces
+  a zero-LTV
+  asset to
+  be the
+  first
+  withdraw
+  when the
+  position
+  holds
+  one.
+- `calculateUserAccountData`
+  walks
+  user-config
+  flags.
+  Collateral
+  uses
+  scaled
+  aToken
+  balance
+  `*`
+  price
+  `/`
+  unit.
+  Debt uses
+  `mulDivCeil`
+  of scaled
+  variable
+  debt.
+  HF is
+  `type(uint256).max`
+  when debt
+  is 0,
+  else
+  weighted
+  liquidation
+  threshold
+  wadDiv
+  debt
+  `/
+  10000`.
+- `calculateAvailableBorrows`
+  is
+  `percentMulFloor(ltv)`
+  minus
+  debt.
+
+Do not file
+view HF /
+cap /
+pause
+checks as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+v3 PoolLogic
+/
+ConfiguratorLogic
+/
+CalldataLogic
+/
+primacy.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -45085,6 +45298,8 @@ Aave leftover remaining GhoOracle leftover (`23859bb`)
 is logged.
 Aave leftover remaining v3 money-path logic leftover (`cff15de`)
 is logged.
+Aave leftover remaining v3 ValidationLogic + GenericLogic leftover (`cff15de`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45101,11 +45316,13 @@ Rootstock leftover remaining rskj Bridge leftover (`161c3f105d18`)
 is logged.
 Filecoin leftover remaining lotus lib addrutil leftover (`7740217`)
 is logged.
+Rootstock leftover remaining rsk-powhsm leftover (`82a12d44efec`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
-Remaining listed Aave: v3 ValidationLogic / GenericLogic / PoolLogic / ConfiguratorLogic / CalldataLogic / primacy.
+Remaining listed Aave: v3 PoolLogic / ConfiguratorLogic / CalldataLogic / primacy.
 Remaining listed Jito: `jito-solana` other crates (if still unused).
-Remaining listed Rootstock: `rsk-powhsm` (if still unused).
+Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -45155,6 +45372,8 @@ Do not rematch Aave FixedPriceStrategy leftover.
 Do not rematch Aave v2 Collector impl leftover.
 Do not rematch Aave GhoOracle leftover.
 Do not rematch Aave v3 money-path logic leftover.
+Do not rematch Aave v3 ValidationLogic + GenericLogic leftover.
+Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
 Do not rematch Filecoin lotus lib rpcenc leftover.
@@ -47867,9 +48086,10 @@ Aave leftover remaining v2 Collector impl leftover
 Aave leftover remaining GhoOracle leftover
 (`23859bb`) is logged;
 Aave leftover remaining v3 money-path logic leftover
+(`cff15de`) is logged;
+Aave leftover remaining v3 ValidationLogic + GenericLogic leftover
 (`cff15de`) is logged (remaining listed is
-v3 ValidationLogic / GenericLogic / PoolLogic /
-ConfiguratorLogic / CalldataLogic / primacy);
+v3 PoolLogic / ConfiguratorLogic / CalldataLogic / primacy);
 Rootstock leftover remaining powpeg-node pegout leftover
 (`254fb3d`) is logged;
 Filecoin leftover remaining lotus lib sigs leftover
@@ -47887,6 +48107,9 @@ Filecoin leftover remaining lotus lib addrutil leftover
 is exhausted);
 Rootstock leftover remaining rskj Bridge leftover
 (`161c3f105d18`) is logged;
+Rootstock leftover remaining rsk-powhsm leftover
+(`82a12d44efec`) is logged (official Rootstock leftover
+that listed trees open is exhausted);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
