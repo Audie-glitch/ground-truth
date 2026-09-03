@@ -22,8 +22,11 @@ logged. Marinade crank / withdraw-stake leftover and
 admin / validator / update leftover are logged
 and create-canonical / realloc leftover are logged
 (listed Marinade GitHub leftover exhausted).
-Instadapp DSA leftover (`fef062a`) is logged
-(remaining Instadapp is Avocado / Fluid /
+Instadapp DSA leftover (`fef062a`) is logged.
+Instadapp Avocado leftover (`0bc1dd9`) is logged.
+Instadapp Fluid liquidity + fToken leftover
+(`a9949b4`) is logged (remaining Instadapp is
+Fluid vault / dex / dexLite / steth and
 `inst-governance`).
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool

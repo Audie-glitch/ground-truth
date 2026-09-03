@@ -19420,6 +19420,141 @@ behind the
 delegator, Governor
 Bravo implementation.
 
+## 2026-09-03: Instadapp Fluid liquidity + fToken leftover (`a9949b4`)
+
+Immunefi program
+`instadapp` ($500,000,
+`kyc: false`). DSA
+and Avocado leftovers
+are already logged.
+This slice is
+`fluid-contracts-public`
+liquidity + lending.
+Local clone
+`/tmp/instadapp-fluid`
+at `a9949b4`
+(`Merge pull request
+#825 from
+Instadapp/main`).
+515 Solidity files.
+No mainnet
+interaction. DeFi
+Saver Fluid leftovers
+are DFS integrations,
+not this tree.
+
+Files:
+`liquidity/userModule/main.sol`,
+`liquidity/adminModule/main.sol`,
+`liquidity/interfaces/iLiquidity.sol`,
+`protocols/lending/fToken/main.sol`,
+`protocols/lending/lendingFactory/main.sol`.
+
+Checked for: a
+stranger `operate`
+that withdraws or
+borrows another
+protocol’s
+accounting; skip /
+net-transfer flags
+that send tokens to
+a caller-chosen
+address; fToken
+withdraw that burns
+a victim’s shares
+without allowance;
+callback that pulls
+from an arbitrary
+`from`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Liquidity
+  `operate` is
+  public but
+  `_userSupplyData`
+  / `_userBorrowData`
+  are keyed by
+  `msg.sender`.
+  Undefined users
+  revert
+  `UserNotDefined`.
+  Auths must
+  `updateUserSupplyConfigs`
+  / borrow configs
+  first. Withdraw /
+  borrow send to the
+  caller-chosen
+  `withdrawTo_` /
+  `borrowTo_` from
+  that protocol’s
+  own balance.
+- Transfers in go
+  through
+  `liquidityCallback`
+  on `msg.sender`
+  and require the
+  contract balance
+  increase to match
+  (1% slack). Skip
+  transfers need
+  `SKIP_TRANSFERS`,
+  `from ==
+  msg.sender ==
+  receiver`, and
+  amounts that leave
+  Liquidity even or
+  better. Net
+  transfers need
+  `NET_TRANSFERS`
+  and the same
+  receiver match.
+- Admin: governance
+  sets auths /
+  guardians /
+  revenue.
+  Auths set rates,
+  user configs, and
+  `collectRevenue`.
+  Guardians pause
+  class-0 users
+  only.
+- fToken deposit
+  encodes
+  `msg.sender` as
+  callback `from`.
+  `liquidityCallback`
+  requires
+  `msg.sender ==
+  LIQUIDITY`,
+  matching asset,
+  and reentrancy
+  entered, then
+  `transferFrom`
+  that `from`.
+  Withdraw burns
+  `owner_` shares
+  first, then
+  `operate`s a
+  withdraw to
+  `receiver_`.
+  Non-owner
+  withdraw/redeem
+  spends allowance.
+  Factory
+  `createToken` is
+  deployer/owner.
+
+Not submitted.
+Remaining Instadapp
+is Fluid vault /
+dex / dexLite /
+steth and
+`inst-governance`.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -19921,9 +20056,13 @@ leftover exhausted);
 Instadapp DSA leftover
 (`fef062a`) is logged
 and Avocado leftover
-(`0bc1dd9`) is logged
+(`0bc1dd9`) is logged;
+Instadapp Fluid
+liquidity + fToken leftover
+(`a9949b4`) is logged
 (remaining Instadapp is
-Fluid /
+Fluid vault / dex /
+dexLite / steth and
 `inst-governance`);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
