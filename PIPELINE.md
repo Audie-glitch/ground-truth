@@ -147,7 +147,8 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Factory V3.1.0 + leftover
   yYB token / operator /
   locker / staker /
-  distributor, Twyne Aave V3
+  distributor + AuctionFactory,
+  Twyne Aave V3
   operators (Sourcify), TermMax TMX
   OFT, Balancer V3
   CompositeLiquidityRouter +
