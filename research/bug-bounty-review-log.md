@@ -34143,12 +34143,23 @@ configurator leftover
 / TreasurySplitter /
 Governor / CrossChainMultisig
 / BytecodeRepository / ACL;
-KYC) is logged (remaining
-listed is factories /
-InstanceManager /
-PriceFeedStore / helpers /
-other integrations adapters /
-periphery-v3);
+KYC) is logged.
+Gearbox leftover
+periphery-v3 emergency +
+migration leftover
+(`2a63cf2` MultiPause /
+TreasuryLiquidator /
+LiquidityMigrator /
+AccountMigratorBot; KYC)
+is logged (listed
+periphery-v3 emergency /
+migration leftover
+exhausted; remaining
+listed is permissionless
+factories / InstanceManager
+/ PriceFeedStore / helpers
+and other integrations
+adapters);
 Burrow leftover
 `contract.main.burrow.near`
 leftover (`0dbfa18`
@@ -44822,3 +44833,154 @@ helpers;
 periphery-v3
 emergency / kyc /
 migration.
+
+## 2026-09-03: Gearbox leftover periphery-v3 emergency + migration leftover (`2a63cf2`)
+
+Immunefi program
+`gearbox` ($150,000,
+`kyc: true`). Official
+scope is
+`Gearbox-protocol/security`
+`bug-bounty/v3_1-scope.md`:
+`periphery-v3`
+`contracts/emergency`,
+`contracts/kyc`, and
+`contracts/migration`
+except `*Previewer`. This
+slice is `main` `2a63cf2`.
+There is no `contracts/kyc`
+tree. Clone
+`/tmp/gearbox-peri`.
+No mainnet writes.
+
+Files:
+`contracts/emergency/MultiPause.sol`,
+`contracts/emergency/TreasuryLiquidator.sol`,
+`contracts/migration/LiquidityMigrator.sol`,
+`contracts/migration/AccountMigratorBot.sol`,
+`contracts/migration/AccountMigratorAdapter.sol`,
+`contracts/migration/AccountMigratorAdapterV30.sol`,
+`contracts/migration/AccountMigratorAdapterV31.sol`.
+
+Checked for: a
+stranger pause of
+markets; a
+treasury
+liquidation that
+sends seized
+collateral to the
+caller; a pool
+migration that
+redeems a victim
+without approval;
+a credit-account
+migration by a
+non-borrower.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- MultiPause
+  pause entry
+  points are
+  `pausableAdminsOnly`.
+  Targets come
+  from the
+  registered
+  market
+  configurator.
+- TreasuryLiquidator
+  `setLiquidatorStatus`
+  /
+  `setMinExchangeRate`
+  are
+  `onlyTreasury`.
+  `partiallyLiquidateFromTreasury`
+  is
+  `onlyLiquidator`
+  and only on a
+  registered
+  facade. Funds
+  leave the
+  treasury;
+  seized
+  collateral is
+  sent to
+  `treasury`.
+- LiquidityMigrator
+  `migrate` is
+  `onlyOwner`
+  (instance-owner
+  proxy). It
+  redeems
+  `user`'s
+  `poolFrom`
+  shares (needs
+  allowance) and
+  deposits the
+  same assets
+  back to
+  `user` in
+  `poolTo`.
+  Assets must
+  match.
+- AccountMigratorBot
+  `migrateCreditAccount`
+  requires
+  `msg.sender`
+  to be both
+  source
+  borrower and
+  `params.accountOwner`,
+  then
+  `botMulticall`.
+  Inner
+  `migrate` is
+  only the
+  active credit
+  account.
+  Adapter
+  `migrate` is
+  `creditFacadeOnly`
+  and unlock is
+  bot-only.
+
+Do not file
+pausable-admin
+pauses,
+treasury-approved
+liquidations,
+instance-owner
+pool migration
+after user
+approval, or
+owner-initiated
+account
+migration as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+`periphery-v3`
+opens for
+emergency /
+migration (and
+the missing kyc
+folder) is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+permissionless
+factories /
+InstanceManager /
+PriceFeedStore /
+helpers; other
+integrations
+adapters /
+helpers.
