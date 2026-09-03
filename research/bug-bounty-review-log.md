@@ -15820,6 +15820,118 @@ programs launched Sep
 assets since 2026-09-02
 (246 programs).
 
+## 2026-09-03: Harvest 4626 / Dolomite lend leftover (`0364901`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Vault /
+controller on the same
+pin `0364901` is already
+logged. This slice is
+the 4626-style lend
+strategies. Local clone
+`/tmp/harvest-strategy`.
+No mainnet interaction.
+
+Files:
+`contracts/strategies/morpho/MorphoLendStrategy.sol`,
+`MorphoVaultStrategy.sol`,
+`fluid/FluidLendStrategy.sol`,
+`euler/EulerLendStrategy.sol`,
+`dolomite/DolomiteLendStrategy.sol`.
+
+Checked for: a stranger
+redeeming the strategy’s
+4626 shares; withdraw
+that pays the vault more
+than idle plus supplied
+minus reserved fee;
+permissionless salvage
+of underlying; fee
+accrual that lets
+governance or a keeper
+pull user principal.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Each 4626 lend
+  strategy requires the
+  market `asset()` to
+  match `underlying`.
+  Supply deposits to
+  `address(this)`.
+  Redeem / withdraw
+  also pays this
+  strategy. `restricted`
+  withdraws send
+  `min(requested, idle)`
+  to the vault.
+- `investedUnderlyingBalance`
+  is idle + stored
+  supplied −
+  `pendingFee`. SafeMath
+  reverts if the
+  reserved fee exceeds
+  that sum (grief, not
+  theft).
+- Fee is a slice of
+  `current − stored`
+  using the controller
+  numerators. Morpho
+  lend / Fluid update
+  stored inside
+  `_accrueFee`. Euler /
+  Dolomite / Morpho
+  vault update stored
+  after the withdraw or
+  hard-work. They redeem
+  only the fee, then
+  `_notifyProfitInRewardToken`
+  on the reconstructed
+  yield so the
+  forwarder pulls the
+  fee legs. Dust
+  thresholds skip a
+  collect.
+- Fluid
+  `claimReward` is
+  permissionless but
+  always claims to
+  `address(this)`.
+  Extra reward tokens
+  swap through the
+  controller liquidator
+  with `minOut = 1`
+  (keeper sandwich,
+  known Harvest
+  pattern). Salvage is
+  governance and
+  refuses underlying /
+  reward / receipt
+  tokens.
+- Dolomite supplies
+  through
+  `depositWei` after
+  `getMarketIdByTokenAddress`
+  matches. Withdraw
+  uses the same market
+  id. `hardhat/console`
+  is still imported;
+  not a money path.
+
+Not submitted. Remaining
+Harvest is Convex /
+Aura / Aave fold /
+Penpie / Notional /
+StakeDAO / Yel /
+ZeroLend / CompoundV3 /
+Idle / inactive plus
+MorphoVault V2 and the
+polygon / arbitrum
+trees.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -16342,11 +16454,17 @@ is logged (remaining
 Benqi is qiToken /
 unitroller / gauges);
 Harvest vault / controller
-leftover (`0364901`) is
-logged (remaining Harvest
-is `contracts/strategies/*`
-plus polygon / arbitrum
-trees);
+leftover (`0364901`) and
+4626 / Dolomite lend
+leftover are logged
+(remaining Harvest is
+Convex / Aura / Aave /
+Penpie / Notional /
+StakeDAO / Yel /
+ZeroLend / CompoundV3 /
+Idle / inactive +
+MorphoVault V2 + polygon
+/ arbitrum);
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover

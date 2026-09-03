@@ -27,9 +27,11 @@ MultiFlowPump) is logged. Beets stS + token leftover
 is logged (migrator Sourcify 404). Yearn YFI token
 leftover is logged (yvUSD / Woofy still Sourcify 404).
 Benqi Dual Oracle leftover is logged. Harvest vault /
-controller leftover (`0364901`) is logged (remaining
-Harvest is strategy folders + polygon / arbitrum
-trees). Hermetica hBTC
+controller leftover (`0364901`) and 4626 / Dolomite
+lend leftover are logged (remaining Harvest is Convex /
+Aura / Aave / Penpie / Notional / StakeDAO / Yel /
+ZeroLend / CompoundV3 / Idle / inactive + MorphoVault
+V2 + polygon / arbitrum). Hermetica hBTC
 vault leftover is logged (listed Clarity exhausted).
 Twyne vaults still Sourcify 404.
 
