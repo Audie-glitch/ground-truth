@@ -12478,6 +12478,128 @@ staking), or Twyne
 Sourcify-404 vaults.
 Not submitted.
 
+## 2026-09-03: Obyte Counterstake bridge leftover (`530fb8b`)
+
+Immunefi program `obyte`
+($50,000, `kyc: false`).
+10 May 2022 leftover
+`byteball/counterstake-bridge`
+(Counterstake.org
+Obyte↔EVM/BSC). Official
+clone `/tmp/obyte-counterstake`
+at `530fb8b`. Custom OOS:
+fund-loss under $1,000;
+attacker expense ≥ 50%
+of damage. No mainnet
+interaction.
+
+This pass: EVM
+`Counterstake` /
+`CounterstakeLibrary` /
+`Export` / `Import` and
+Obyte `aas/export.oscript`
++ `aas/import.oscript`
+claim / challenge /
+withdraw. Remaining:
+assistants, factories,
+governance, `evm-v1.0`.
+
+Checked for: double-claim
+of the same transfer;
+withdraw of a losing
+stake; third-party claim
+that spends other users’
+locked reserve before
+stake is posted; challenge
+after expiry; Import mint
+without a matching burn;
+`withdraw(to)` that
+redirects another
+staker’s winnings.
+
+Result: no
+user-exploitable finding
+beyond the documented
+optimistic-verification
+model (watchdogs must
+challenge fraudulent
+claims). Not submitted.
+
+- Claim id is
+  `sender_recipient_txid_txts_amount_reward_data`
+  (underscores banned in
+  sender/txid). Same
+  underlying tx with a
+  different reward is a
+  new id — watchdogs
+  challenge the unmatched
+  one.
+- `claim` is
+  `nonReentrant`. Stake
+  must cover
+  `max(amount * ratio,
+  min_stake)` (Export) or
+  oracle*`ratio` floored
+  by `min_price20`
+  (Import). `txts +
+  min_tx_age` must be in
+  the past. Negative
+  reward forbids
+  third-party claiming.
+- Third-party claim
+  deposits
+  `stake + (amount -
+  reward)` then immediately
+  pays the recipient the
+  prepaid amount (assistant
+  float). Net contract
+  change is +stake. A
+  successful withdraw then
+  pays `amount` from the
+  locked/minted pool.
+- Challenge must flip the
+  current outcome and
+  meet
+  `current * coef/100`
+  (default 1.5x). Excess
+  is refunded. Periods
+  are ≥ 12h and
+  non-decreasing.
+- `finish` after expiry
+  pays each winning
+  staker
+  `(yes+no) * my / win`.
+  Only the claimant
+  additionally receives
+  `amount`, and only
+  once (`withdrawn`).
+  `withdraw(to)` looks up
+  `to`’s stake and pays
+  `to` (permissionless
+  harvest, not theft).
+- Import mints on
+  successful claim /
+  withdraw and burns on
+  `transferToHomeChain`.
+  Export locks on
+  `transferToForeignChain`
+  and unlocks on a
+  winning repatriation
+  claim.
+- Obyte AAs use the same
+  hash, stake, and
+  period rules (periods
+  in hours).
+
+Next leftover: Counterstake
+assistants / factories /
+governance, or Mux
+leftover (mux-protocol /
+aggregator / degen /
+staking), or Twyne
+Sourcify-404 vaults.
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -12892,9 +13014,15 @@ aggregator, degen,
 staking);
 Obyte Coop AA
 (`d7d5e57`), Friends AA
-(`45019f9`), and
+(`45019f9`),
 prediction-markets AA
-(`1292a09`) are logged;
+(`1292a09`), and
+Counterstake EVM+AA
+claim path (`530fb8b`)
+are logged (remaining
+Counterstake is
+assistants / factories /
+governance / evm-v1.0);
 Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase
