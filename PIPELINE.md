@@ -21,6 +21,7 @@ Ethena leftover remaining StakedENA leftover is logged;
 Ethena leftover remaining USDtb leftover is logged;
 LayerZero leftover remaining ULN301 leftover is logged;
 LayerZero leftover remaining ExecutorFeeLib leftover is logged;
+LayerZero leftover remaining OApp OFT leftover is logged;
 Ether.fi leftover remaining Auction leftover is logged;
 Jito leftover remaining jito-solana runtime_config leftover is logged;
 Jito leftover remaining jito-solana static_ids leftover is logged;
@@ -914,8 +915,10 @@ is logged.
 LayerZero leftover remaining ULN301 leftover
 (`9c741e7`; KYC) is logged.
 LayerZero leftover remaining ExecutorFeeLib leftover
-(`9c741e7` ExecutorFeeLib / PriceFeed; KYC) is logged
-(remaining listed is OApp examples / other-chain).
+(`9c741e7` ExecutorFeeLib / PriceFeed; KYC) is logged.
+LayerZero leftover remaining OApp OFT leftover
+(`9c741e7` OApp / OFT / OFTAdapter; KYC) is logged
+(remaining listed is other-chain twins).
 Ethena leftover minting + staking leftover
 (Sourcify EthenaMinting / StakedUSDeV2 /
 LP staking / PSM; KYC) is logged.
@@ -2626,6 +2629,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`9c741e7`; KYC),
   LayerZero leftover remaining
   ExecutorFeeLib leftover
+  (`9c741e7`; KYC),
+  LayerZero leftover remaining
+  OApp OFT leftover
   (`9c741e7`; KYC),
   Ethena leftover minting +
   staking leftover
