@@ -10,7 +10,8 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana validated_reward_certificate leftover is logged;
+246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana validated_block_finalization leftover is logged;
+Jito leftover remaining jito-solana validated_reward_certificate leftover is logged;
 Jito leftover remaining jito-solana non_circulating_supply leftover is logged;
 Jito leftover remaining jito-solana bank_forks leftover is logged;
 Chainlink leftover remaining CCIP Sui leftover is logged;
@@ -1773,10 +1774,12 @@ jito-solana non_circulating_supply leftover
 (`d0e3a47`; KYC) is logged.
 Jito leftover remaining
 jito-solana validated_reward_certificate leftover
+(`d0e3a47`; KYC) is logged.
+Jito leftover remaining
+jito-solana validated_block_finalization leftover
 (`d0e3a47`; KYC) is logged
 (remaining listed is unused
 remaining-runtime slices
-`validated_block_finalization` /
 `bank.rs` money-path subset /
 `bank/fee_distribution`
 if still unused).
