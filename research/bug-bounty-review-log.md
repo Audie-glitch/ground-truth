@@ -29084,7 +29084,15 @@ Threshold leftover
 StarkNet depositor leftover
 (`502cd39` Sourcify
 `StarkNetBitcoinDepositor`
-impl) is logged
+impl) is logged.
+Threshold leftover L2
+Wormhole gateway leftover
+(Sourcify OP / Base / Arb /
+Polygon `L2TBTC` /
+`L2WormholeGateway` /
+`L2BTCRedeemerWormhole`
+plus Base/Arb upgraded
+children) is logged
 (remaining Threshold is
 keep-network typescript,
 Starkscan Cairo, and
@@ -29334,7 +29342,15 @@ Threshold leftover
 StarkNet depositor leftover
 (`502cd39` Sourcify
 `StarkNetBitcoinDepositor`
-impl) is logged
+impl) is logged.
+Threshold leftover L2
+Wormhole gateway leftover
+(Sourcify OP / Base / Arb /
+Polygon `L2TBTC` /
+`L2WormholeGateway` /
+`L2BTCRedeemerWormhole`
+plus Base/Arb upgraded
+children) is logged
 (remaining Threshold is
 keep-network typescript,
 Starkscan Cairo, and
@@ -29737,6 +29753,13 @@ that a public tree would
 open is exhausted;
 remaining listed is the
 website);
+CapyFi leftover (Sourcify
+Comptroller / CEther /
+CErc20; KYC) is logged
+(remaining listed is
+Unitroller Sourcify 404
+and same-type other-market
+CErc20Delegate impls);
 Beefy Finance leftover
 (Sourcify Polygon
 `BeefyVaultV6` + common
@@ -32376,3 +32399,161 @@ type as caUSDC).
 The listed website
 is out of this
 slice.
+
+## 2026-09-03: Threshold leftover L2 Wormhole gateway leftover (Sourcify)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+StarkNet depositor /
+WalletRegistry leftovers
+are already logged.
+This slice is listed
+Optimism / Base /
+Arbitrum / Polygon
+Wormhole L2 proxies.
+Official clone
+`/tmp/threshold-tbtc`
+at `502cd39`. Sourcify
+extract `/tmp/threshold-l2`.
+No mainnet interaction
+beyond Sourcify
+`proxyResolution`.
+
+Listed this slice:
+OP
+`0x1293…A15458` →
+`L2WormholeGateway`
+`0xC08d…e5FdA6`,
+OP
+`0x6c84…dE40` →
+`L2TBTC`
+`0xDa53…f681365`,
+Base
+`0xe931…d88B` →
+`L2BTCRedeemerWormhole`
+`0x7926…7AEA2E`,
+Base
+`0x236a…794b` →
+`L2TBTC`
+`0x41C9…d91A`,
+Base
+`0x0995…99eab` →
+`BaseWormholeGatewayUpgraded`
+`0x40fa…05A0c`,
+Arb
+`0x1293…A15458` →
+`ArbitrumWormholeGatewayUpgraded`
+`0x7Ff0…eb9a5`,
+Arb
+`0xd7Cd…34D9b7` →
+`L2BTCRedeemerWormhole`
+`0x03E3…ee0F6`,
+Arb
+`0x6c84…dE40` →
+`L2TBTC`
+`0xDa53…f681365`,
+Polygon
+`0x236a…794b` →
+`L2TBTC`
+`0x41C9…d91A`,
+Polygon
+`0x0995…99eab` →
+`L2WormholeGateway`
+`0x0467…c197`.
+Listed etherscan
+`0x03E3…ee0F6`
+is that Arb redeemer
+impl checksum.
+
+Files:
+`L2TBTC.sol`,
+`L2WormholeGateway.sol`,
+`L2BTCRedeemerWormhole.sol`,
+`BaseWormholeGatewayUpgraded.sol`,
+`ArbitrumWormholeGatewayUpgraded.sol`.
+
+Checked for: a
+stranger `receiveTbtc`
+that mints to the
+caller; `sendTbtc`
+that burns another
+account; redeemer
+`requestRedemption`
+that pays the caller
+BTC script; upgraded
+gateway override that
+skips `burnFrom`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `L2TBTC.mint` is
+  `onlyMinter` (same
+  type already logged
+  in the BOB leftover).
+  `burn` / `burnFrom`
+  are holder /
+  allowance.
+  `recover*` is owner.
+  Guardian pause.
+- `L2WormholeGateway.sendTbtc`
+  `burnFrom`s
+  `msg.sender`, then
+  Token-Bridge
+  transfers wormhole
+  tBTC to the dest
+  gateway or recipient.
+  `receiveTbtc` measures
+  `bridgeToken` delta
+  after
+  `completeTransferWithPayload`
+  and mints (or, over
+  `mintingLimit`,
+  transfers wormhole
+  tBTC) to the payload
+  receiver, not the
+  caller. Token Bridge
+  VAA replay plus
+  `nonReentrant`.
+- `sendTbtcWithPayloadToNativeChain`
+  (clone + Base/Arb
+  upgraded child)
+  requires no dest
+  gateway, then the
+  same burn-and-send.
+- `L2BTCRedeemerWormhole.requestRedemption`
+  pulls tBTC from
+  `msg.sender`,
+  approves the
+  gateway, and sends
+  the Bitcoin output
+  script as payload
+  to the configured
+  L1 redeemer. It
+  does not mint.
+
+Do not file owner
+gateway / limit
+updates, guardian
+pause, minting-limit
+wormhole-tBTC
+fallback, or the
+"testing purposes"
+comment on the live
+upgraded child
+impls.
+
+Not submitted.
+Listed leftover is
+the Sourcify-open
+L2 Wormhole gateway /
+L2TBTC / L2 redeemer
+proxies. Remaining
+listed: keep-network
+typescript, Starkscan
+Cairo, and Sui /
+Solana explorer
+rows.

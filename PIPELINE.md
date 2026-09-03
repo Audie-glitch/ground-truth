@@ -4,13 +4,13 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~08:13 UTC. Dates verified against each
+Status as of 3 September 2026, ~08:22 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:10 UTC;
-246 programs; no Sep 2026 launches; Pareto Credit leftover
-Fulcrum leftover is logged). KeeperHub
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:22 UTC;
+246 programs; no Sep 2026 launches; Threshold leftover L2
+Wormhole gateway leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -220,7 +220,12 @@ alchemix-boost leftover (`f100743` veALCX
 is logged (listed leftover that a public
 tree would open is exhausted; remaining
 listed is the website).
-Beefy Finance leftover (Sourcify Polygon)))
+CapyFi leftover (Sourcify Comptroller /
+CEther / CErc20; KYC) is logged
+(remaining listed is Unitroller Sourcify
+404 and same-type other-market
+CErc20Delegate impls).
+Beefy Finance leftover (Sourcify Polygon
 `BeefyVaultV6` + common chef / DFYN /
 Curve / BIFI-maxi strategies) is logged.
 Beefy leftover remaining Polygon vaults
@@ -259,7 +264,12 @@ EcdsaDkgValidator / WalletRegistryGovernance)
 is logged.
 Threshold leftover StarkNet depositor leftover
 (`502cd39` Sourcify `StarkNetBitcoinDepositor`
-impl behind `0xC903…C155`) is logged
+impl behind `0xC903…C155`) is logged.
+Threshold leftover L2 Wormhole gateway leftover
+(Sourcify OP / Base / Arb / Polygon
+`L2TBTC` / `L2WormholeGateway` /
+`L2BTCRedeemerWormhole` plus Base/Arb
+upgraded children) is logged
 (remaining Threshold is keep-network
 typescript, Starkscan Cairo, and Sui /
 Solana explorer rows).
@@ -616,6 +626,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   StarkNet depositor leftover
   (`502cd39` Sourcify
   `StarkNetBitcoinDepositor`),
+  Threshold leftover L2
+  Wormhole gateway leftover
+  (Sourcify OP / Base / Arb /
+  Polygon `L2TBTC` /
+  `L2WormholeGateway` /
+  `L2BTCRedeemerWormhole`),
   Aspida leftover (Sourcify
   aETH / saETH / CorePrimary /
   RewardOracle / StETHMinter),
@@ -660,6 +676,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   RewardsDistributor; listed
   leftover that a public tree
   would open is exhausted),
+  CapyFi leftover (Sourcify
+  Comptroller / CEther / CErc20;
+  KYC),
   and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
