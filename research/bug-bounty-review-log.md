@@ -12757,6 +12757,122 @@ Aggregator
 unsupported GMX1
 adapter.
 
+## 2026-09-03: Obyte Counterstake assistants leftover (`530fb8b`)
+
+Same Immunefi program
+`obyte` and clone
+`/tmp/obyte-counterstake`
+at `530fb8b`. Remaining
+listed Solidity / AAs
+after the claim path:
+EVM `ExportAssistant` /
+`ImportAssistant` /
+`AssistantFactory` /
+`CounterstakeFactory` /
+`Governance` /
+`VotedValue`, plus Obyte
+`aas/export-assistant.oscript`
+(import-assistant AA is
+the same LP + manager
+pattern). `evm-v1.0` is
+the prior deployment
+tree, not re-reviewed.
+No mainnet interaction.
+
+Checked for: LP redeem
+that spends
+`balance_in_work`;
+manager claim that
+over-stakes past net
+balance; `recordLoss` on
+a winning claim;
+`recordWin` that mints
+unearned profit; Import
+swap that drains the
+in-work reserve;
+factory re-init of a
+live clone.
+
+Result: no
+user-exploitable finding
+beyond manager-trust
+(the assistant bot is
+supposed to stake LP
+funds). Not submitted.
+
+- Both assistants are
+  manager-gated for
+  `claim` / `challenge`.
+  Stake is capped by
+  current net balance
+  (gross − MF − success
+  fee − network-fee
+  reserve). Infinite
+  approve is to the
+  paired bridge only.
+- Shares: first mint
+  requires ≥ 1e6 units.
+  Later mints use
+  `balance^(1/exponent)`
+  (1/2/4). Redeem pays
+  only risk-free net
+  (`net − unavailable
+  profit −
+  balance_in_work`) and
+  charges `exit_fee`.
+  Profit diffuses over
+  10 days by default
+  (governance-capped at
+  365 days).
+- `onReceivedFromClaim`
+  is `onlyBridge`.
+  `recordLoss` is
+  permissionless after
+  expiry and requires a
+  losing stake and zero
+  winning stake.
+  `recordWin` rebuilds
+  the missed payout;
+  Export assumes a 1%
+  claimant reward
+  (documented
+  accounting slack, not
+  a drain).
+- Import assistant is a
+  two-asset CPMM. Swaps
+  use risk-free balances
+  and `min_amount_out`.
+  Redeem also charges
+  `swap_fee` so
+  buy+redeem is not a
+  free swap.
+- Factories `Clones` +
+  `init*` +
+  `setupGovernance`.
+  Init is once
+  (`governance == 0` /
+  `governedContract ==
+  0`). Default challenge
+  periods are 72h+.
+- Governance: 10-day
+  challenge + 30-day
+  freeze before a vote
+  can move. Withdraw
+  requires untying every
+  vote. `addVotedValue`
+  is governed-contract
+  only.
+
+Listed Counterstake
+GitHub leftover is
+exhausted (`evm-v1.0` is
+the old pin). Next
+leftover: Mux leftover
+(mux-protocol /
+degen / staking), or
+Twyne Sourcify-404
+vaults. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -13177,11 +13293,13 @@ Obyte Coop AA
 prediction-markets AA
 (`1292a09`), and
 Counterstake EVM+AA
-claim path (`530fb8b`)
-are logged (remaining
-Counterstake is
+claim path and
 assistants / factories /
-governance / evm-v1.0);
+governance (`530fb8b`)
+are logged (listed
+Counterstake leftover
+exhausted; `evm-v1.0` is
+the old pin);
 Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase

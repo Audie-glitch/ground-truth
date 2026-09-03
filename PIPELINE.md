@@ -18,9 +18,9 @@ Pancake is listed V3 + V2 periphery). Mux3 core leftover is
 logged. Mux aggregator proxyFactory + GmxV2 leftover is logged
 (remaining Mux is mux-protocol / degen / staking). Obyte Coop /
 Friends / prediction-markets leftovers are logged. Counterstake
-EVM+AA claim path is logged (remaining: assistants / factories /
-governance). Twyne vaults
-still Sourcify 404.
+EVM+AA claim path and assistants / factories / governance
+leftovers are logged (listed Counterstake leftover exhausted).
+Twyne vaults still Sourcify 404.
 
 ## Opportunities, ranked by expected payout per unit of work
 
