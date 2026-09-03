@@ -43604,6 +43604,8 @@ Aave leftover remaining governance voting leftover (`497226e`)
 is logged.
 Filecoin leftover remaining lotus vm leftover (`7740217`)
 is logged.
+Filecoin leftover remaining lotus events leftover (`7740217`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
 Remaining listed Aave: VotingStrategy / CCIP GHO pools.
@@ -43634,6 +43636,7 @@ Do not rematch Filecoin lotus stmgr leftover.
 Do not rematch Filecoin lotus store leftover.
 Do not rematch Filecoin lotus node leftover.
 Do not rematch Filecoin lotus vm leftover.
+Do not rematch Filecoin lotus events leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Filecoin lotus market leftover.
 Do not rematch Aave ACL + PoolConfigurator leftover.
@@ -67463,5 +67466,21 @@ Result: no user-exploitable finding. Not submitted.
 - `ActorRegistry.Invoke` requires a registered code CID and a version predicate. `vmExecutor` is a lane token around the same Interface.
 
 Do not file an account-gated, snapshot-reverted apply as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Filecoin leftover remaining lotus events leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus vm leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/events`. Opened `events.go`, `observer.go`, `filter/event.go`, and `filter/mempool.go`. Local tipset / actor-event observers. Do not rematch lotus eth leftover or lotus stmgr leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `EventFilterManager.Apply` accepting a stranger-supplied event log; `MemPoolFilter` rewriting a signed message; `observer` moving FIL on a head change.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `observer.listenHeadChangesOnce` consumes leftover-logged `ChainNotify`. `Apply` / `Revert` are local callbacks. GC confidence is `2 * policy.ChainFinality`.
+- `EventFilterManager.Apply` builds `TipSetEvents` from the applied `from`/`to` tipsets and `loadExecutedMessages`. Filters only `CollectEvents`. Historic fill requires the chain indexer when `minHeight < currentHeight`.
+- `MemPoolFilter.CollectMessage` stores or fans out an already-signed message to a local subscriber channel. It does not `MpoolPush` or resign.
+
+Do not file a local event observer as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
