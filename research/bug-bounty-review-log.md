@@ -61,7 +61,44 @@ Result: no exploitable finding.
 Time spent: roughly 90 minutes. Two ChainSecurity audits cover this scope,
 which matches the outcome.
 
+## 2026-09-03: GMTrade builder-fee path (gmx-solana `50c4d8d`)
+
+Unofficial Immunefi mirror (3 Sep 2026): slug `gmtrade`, max $100,000 USDC,
+`kyc: false`, `isPaused: false`, launched 6 Jul 2026. In-scope GitHub trees:
+`programs/store`, `programs/treasury`, `programs/liquidity-provider`. Reviewed
+only the newly activated builder-fee charge/settle/claim path in `programs/store`
+(commit message: “activate builder fee charging in order execution”). No
+mainnet interaction.
+
+Files: `instructions/builder_fee.rs`, `instructions/user.rs` (`set_builder_fee_factor`),
+`ops/order.rs` charge helpers, `states/order.rs` record/set, `lib.rs` error
+variants for this feature.
+
+Checked for: owner vs builder vs permissionless roles; fee factor checkpoint vs
+live advertisement; store cap after a later lower; settlement routing and
+double-pay; claim vault authority; increase underpayment vs decrease clamp;
+liquidation/ADL attaching a fee; swap types that empty the fee bucket.
+
+Result: no exploitable finding.
+
+- `set_builder_fee` is owner-signed, pending-only, and requires the advertised
+  factor to match `expected_factor` and the store cap (missing cap reads as 0).
+- Execution uses the checkpointed factor, not the builder’s current
+  advertisement. Liquidation and ADL kinds cannot take a checkpoint.
+- Increase underpayment cancels the order instead of taking a partial fee.
+  Decrease clamps the fee to available output.
+- `settle_builder_fee` is permissionless but transfers only to the checkpointed
+  builder’s ATA and zeroes `builder_fee_amount` after the CPI. A shortfall
+  clamps to escrow balance so the order can still close.
+- `claim_builder_fees` is owner-signed via User Account PDA seeds and rejects
+  destination == claim vault so a no-op SPL self-transfer cannot fake a claim
+  event.
+
+Time spent: roughly 40 minutes on this path only. Treasury and liquidity-provider
+programs were not reviewed. Not submitted.
+
 ## Next candidates
 
-gmtrade (Rust, no KYC) or 1inch Aqua (Solidity, KYC, overlaps with ETHOnline
-Aqua work) when there is a free block after the hackathon windows close.
+1inch Aqua (Solidity, KYC, overlaps with ETHOnline Aqua work) or a later pass
+on `programs/treasury` / `programs/liquidity-provider` after the hackathon
+windows close.
