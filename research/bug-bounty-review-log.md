@@ -1205,16 +1205,112 @@ and was not re-reviewed here.
 
 Not submitted.
 
+## 2026-09-03: 1inch Fusion whitelist / PowerPod / KycNFT (`b68b27b`)
+
+Same Immunefi program (`1inch-SmartContracts`, $500,000, `kyc: true`).
+Local clone `/tmp/1inch-fusion`. Delegation parents from
+`1inch/delegating` tag `1.1.0` (`ebd1a17`). No mainnet interaction.
+
+Files: `contracts/{WhitelistRegistry,CrosschainWhitelistRegistry,PowerPod,KycNFT}.sol`;
+`1inch/delegating` `contracts/{FarmingDelegationPlugin,TokenizedDelegationPlugin,DelegationPlugin,DelegatedShare}.sol`.
+
+Checked for: on-chain registry gating Fusion fills; flash-loan
+register then settle; `_clean` skipping a swapped-in address;
+permissionless `promote` impersonating a resolver; PowerPod
+`balanceOf` inflation; KycNFT mint/transfer without an owner
+signature.
+
+Result: no user-exploitable finding.
+
+- Fusion fills do **not** read `WhitelistRegistry`.
+  `SimpleSettlement` gates on the order-packed 10-byte list
+  plus `KycNFT` / access-token balance (already reviewed).
+  Register / clean / promote only change an off-chain resolver
+  roster and per-chain worker hints.
+- `register` requires `balance * 10000 >= totalSupply * threshold`
+  and `balance > 0`. `register` then `_clean`s anyone now
+  under the threshold. `clean` is permissionless. Threshold
+  changes are owner-only and do not evict until `clean`.
+- `_clean` uses AddressSet swap-remove: on eviction it
+  decrements length and re-checks the same index. Tests cover
+  mixed burns.
+- `promote` does not require whitelist membership.
+  `getPromotees` only maps **current** whitelist members, so a
+  stale mapping is invisible after eviction.
+- PowerPod itself disables `transfer` / `transferFrom` /
+  `approve`. `balanceOf` is minted to the delegatee from
+  st1INCH plugin balances. DelegatedShare mint/burn is
+  `onlyOwnerPlugin`. A flash-loan of PowerPod is not possible;
+  staking 1INCH has a lock. Even a temporary register would
+  not open a Fusion fill.
+- `KycNFT` mint and `transferFrom` are owner-only or
+  EIP-712-signed by the owner. `_update` bumps `nonces[tokenId]`
+  and enforces one token per address. `safeTransferFrom` goes
+  through the overridden `transferFrom`. Burn: owner any id,
+  holder their own. No public mint path.
+
+Not submitted.
+
+## 2026-09-03: 1inch FeeTaker / AmountGetterWithFee (`4.3.2` / `67c56ae`)
+
+Same program. In-scope repo `1inch/limit-order-protocol`.
+Fusion depends on npm `4.3.3`; git’s latest 4.3.x tag is
+`4.3.2` (`67c56ae`). Local clone `/tmp/1inch-lop`. No mainnet
+interaction.
+
+Files: `contracts/extensions/{FeeTaker,AmountGetterWithFee,AmountGetterBase}.sol`
+and the taker→maker / unwrap path in `OrderMixin.sol`.
+
+Checked for: fees exceeding `takingAmount` under `unchecked`;
+getter vs postInteraction fee mismatch draining the maker;
+whitelist-discount applied only on one side; ETH unwrap
+leaving WETH stranded or sending unbacked ETH; extra
+postInteraction pulling leftover taking tokens; integrator
+fallback reentering a fill to steal FeeTaker inventory.
+
+Result: no user-exploitable finding.
+
+- `_parseFeeData` caps `integratorShare` and the whitelist
+  discount at 100. Combined integrator + resolver fee is
+  `takingAmount * (integratorFee + resolverFee) / (1e5 + fees)`,
+  which is strictly below `takingAmount`. Fusion’s surplus
+  add-on is capped at 100% of the leftover, so the maker still
+  receives at least the Ceil-scaled estimate (already reviewed).
+- Getter extraData and postInteraction extraData are different
+  extension fields. Getter whitelist is `size + 10*N`; Fusion
+  postInteraction whitelist is `allowedTime + size + 12*N`.
+  A builder can encode different lists; the maker signed both.
+- `InconsistentFee` reverts if fees are non-zero but
+  `order.receiver` is not FeeTaker, so tokens cannot be
+  taken from a maker who never sent them here.
+- LOP unwraps WETH to `getReceiver()` (FeeTaker) **before**
+  `postInteraction`. FeeTaker then `_sendEth`s integrator /
+  protocol / maker. Direct WETH fills `safeTransfer`.
+- Remaining-amount invalidation is written before transfers.
+  Same-order reentrancy hits a reduced remaining (or
+  `ReentrancyDetected` on a still-new remaining order).
+  A different order filled from an integrator fallback cannot
+  call `rescueFunds` or `postInteraction` (owner / LOP only)
+  and FeeTaker never approves a spender, so leftover inventory
+  from the outer fill is not extractable.
+
+1inch Fusion settlement + registry + access-token + FeeTaker
+money path is exhausted at this commit. Remaining 1inch
+in-scope trees (token-plugins, farming, cross-chain-swap,
+Solana) are separate slices.
+
+Not submitted.
+
 ## Next candidates
 
 sBTC in-scope slices from this clone are exhausted. Superteam
 `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not execute.
 All other open Superteam listings are `HUMAN_ONLY` (Mermail skill is
 a later $500 slot). the402.ai still paused. Skip Sky and Money on
-Chain. Remaining 1inch Fusion: `WhitelistRegistry` / `PowerPod` if
-they gate fills. Remaining OZ hooks: none of the money-moving
-general/fee/base files. Intuition (launched Jul 2026, $100k, KYC) is
-the next unread new program. Sherlock `/api/contests` returned no
-live items as of 01:28 UTC 3 Sep 2026. No KeeperHub implementation
-before the 6 Sep build window. No ETHOnline project code before
-4 Sep 16:00 UTC.
+Chain. 1inch Fusion settlement / whitelist / PowerPod / KycNFT and
+FeeTaker / AmountGetterWithFee are exhausted. Remaining OZ hooks:
+none of the money-moving general/fee/base files. Intuition
+(launched Jul 2026, $100k, KYC) is the next unread new program.
+Sherlock `/api/contests` returned no live items as of 01:28 UTC
+3 Sep 2026. No KeeperHub implementation before the 6 Sep build
+window. No ETHOnline project code before 4 Sep 16:00 UTC.
