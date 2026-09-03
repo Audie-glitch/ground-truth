@@ -36764,8 +36764,12 @@ Treasury / ServiceRegistry /
 MerkleSnapshot / L2Migrator /
 DelegatorPool / PollCreator /
 L1Migrator / data caches; KYC)
-is logged (remaining listed is
-the go-livepeer website);
+is logged;
+Livepeer leftover go-livepeer
+client leftover (`38eb47d`;
+KYC) is logged (listed
+leftover exhausted; L1
+contracts stay paused);
 Gala leftover ETH MTRM +
 GALA + SILK leftover
 (Sourcify Materium / Gala
@@ -36779,6 +36783,15 @@ Serai leftover listed crypto
 (`4b89cf0`; KYC) is logged
 (listed leftover
 exhausted);
+Felix leftover feUSD +
+borrower + redeem leftover
+(`10b5457`; KYC) is logged
+(remaining listed is UBTC
+branch twins / price feeds /
+Hint Helpers / WHYPE /
+zappers / admin controllers /
+pool twins /
+`TroveManagerLst` / Primacy);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -52844,3 +52857,215 @@ for this
 program (L1
 contracts stay
 paused).
+
+## 2026-09-03: Felix leftover feUSD + borrower + redeem leftover (`10b5457`)
+
+Immunefi program
+`felix`
+($100,000, `kyc: true`).
+No leftover heading
+existed. Sourcify
+chain `999` 404.
+Official clone
+`/tmp/felix-contracts`
+`10b5457`. Liquity
+V2-style CDP on
+HyperEVM. No
+mainnet writes.
+No exploit PoCs.
+
+Files:
+`src/feUSDToken.sol`,
+`src/BorrowerOperations.sol`,
+`src/Dependencies/AddRemoveManagers.sol`,
+`src/TroveNFT.sol`,
+`src/CollateralRegistry.sol`,
+`src/TroveManager.sol`
+(`redeemCollateral`),
+`src/StabilityPool.sol`
+(`provideToSP` /
+`withdrawFromSP` /
+`provideToSpOnBehalfOf`),
+`src/ActivePool.sol`
+(send / mint
+gates).
+
+Live addrs
+(HyperEVM `999`):
+feUSD proxy
+`0x02c6a2fa…6c70`
+(impl
+`0x444322C3…2598`),
+Collateral
+Registry
+`0x9de1e570…711b`,
+Borrower
+Operations
+`0x5b271dc2…0a3`,
+Trove Manager
+`0x3100f4e7…be62`,
+Stability Pool
+`0x576c9c50…fd6b`,
+Active Pool
+`0x39ebba74…cc9e`,
+Trove NFT
+`0x5ad1512e…aaa7`.
+
+Checked for: a
+stranger
+`mint` of
+feUSD; close
+of another
+owner's trove;
+Stability Pool
+withdraw of
+another
+depositor;
+`redeemCollateral`
+that burns
+someone else's
+feUSD.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- feUSD
+  `initialize`
+  is disabled
+  in the
+  constructor.
+  `mint` is
+  BO or Active
+  Pool.
+  `burn` is
+  Collateral
+  Registry /
+  BO / TM /
+  SP.
+  `sendToPool`
+  /
+  `returnFromPool`
+  are SP only.
+  `setCollateralRegistry`
+  is
+  `onlyOwner`
+  then
+  `renounceOwnership`.
+  `setBranchAddresses`
+  is the
+  registry
+  owner.
+- `openTrove`
+  pulls coll
+  and gas-comp
+  WHYPE from
+  `msg.sender`
+  and mints
+  the Trove
+  NFT to
+  `_owner`.
+- `closeTrove`
+  /
+  coll-down
+  adjust
+  require
+  owner or
+  remove
+  manager
+  (`AddRemoveManagers`;
+  only the
+  NFT owner
+  can set
+  managers).
+  Repay burns
+  `msg.sender`
+  feUSD.
+- TroveNFT
+  `mint` /
+  `burn` are
+  TroveManager
+  only.
+- Collateral
+  Registry
+  `redeemCollateral`
+  burns
+  `msg.sender`
+  feUSD after
+  TM redeem.
+  TM
+  `redeemCollateral`
+  is
+  registry
+  only.
+- Stability
+  Pool
+  `provideToSP`
+  /
+  `withdrawFromSP`
+  use
+  `msg.sender`
+  deposits.
+  `provideToSpOnBehalfOf`
+  credits
+  `_onBehalfOf`
+  but pulls
+  feUSD from
+  the caller.
+- ActivePool
+  `sendColl`
+  is BO / TM
+  / SP.
+  Interest
+  mint is BO
+  / TM / SP.
+
+Do not file
+opening a
+trove for
+another
+`_owner`
+while paying
+the caller's
+collateral,
+or a feUSD
+redemption
+that takes
+the lowest-
+rate troves
+as protocol
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub opens
+for Felix
+feUSD /
+borrower /
+redeem / SP
+is exhausted
+at the
+opened-file
+level.
+Remaining
+listed: UBTC
+branch twins,
+price feeds,
+Hint Helpers,
+WHYPE
+`0x5555…5555`,
+zappers,
+admin
+controllers,
+Sorted /
+Default /
+Gas /
+Surplus
+pools,
+`TroveManagerLst`,
+and Primacy
+of Impact.
