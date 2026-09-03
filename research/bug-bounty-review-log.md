@@ -28622,10 +28622,14 @@ factory leftover
 write-off escrow /
 orchestrator / implied
 price / programmable
-borrower) is logged
+borrower) is logged.
+Pareto Credit leftover
+wrappers leftover
+(`19e7cde` TrancheWrapper /
+IdleTokenWrapper /
+wstETH Balancer /
+Keyring) is logged
 (remaining listed is
-TrancheWrapper /
-wrappers / Keyring /
 proxy impls / other
 docs addresses).
 Synthetix deposit leftover
@@ -29232,10 +29236,14 @@ factory leftover
 write-off escrow /
 orchestrator / implied
 price / programmable
-borrower) is logged
+borrower) is logged;
+Pareto Credit leftover
+wrappers leftover
+(`19e7cde` TrancheWrapper /
+IdleTokenWrapper /
+wstETH Balancer /
+Keyring) is logged
 (remaining listed is
-TrancheWrapper /
-wrappers / Keyring /
 proxy impls / other
 docs addresses);
 Synthetix deposit leftover
@@ -31264,3 +31272,98 @@ extension / buffer
 / relayer /
 already-logged
 factories).
+
+## 2026-09-03: Pareto Credit leftover wrappers leftover (`19e7cde`)
+
+Immunefi program
+`Pareto Credit` ($50,000,
+`kyc: false`). IdleCDO
+request-claim, strategy,
+epoch admin, queue, and
+factory leftovers are
+already logged. This
+slice is the remaining
+4626 wrappers and
+Keyring whitelist on
+the official clone
+`/tmp/idle-tranches` at
+`19e7cde`. No mainnet
+interaction.
+
+Files:
+`contracts/TrancheWrapper.sol`,
+`contracts/IdleTokenWrapper.sol`,
+`contracts/TrancheWrapperWSTETHBalancer.sol`,
+`contracts/KeyringIdleWhitelist.sol`.
+
+Checked for: a
+stranger
+`deposit` that mints
+without pulling the
+caller; `withdraw` /
+`redeem` that burns
+another owner
+without allowance;
+wstETH wrap that
+pays a stranger;
+Keyring whitelist
+mutation by a
+non-admin.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `TrancheWrapper`
+  / `IdleTokenWrapper`
+  `deposit` /
+  `mint` pull
+  `msg.sender` and
+  mint wrapper
+  shares to
+  `receiver`.
+  `withdraw` /
+  `redeem` burn
+  `owner` with
+  allowance when
+  `owner != caller`
+  and pay
+  `receiver`.
+- wstETH Balancer
+  variant unwraps
+  the caller's
+  wstETH to stETH
+  before
+  `depositAA` /
+  `depositBB`, then
+  wraps stETH back
+  to wstETH on
+  redeem for
+  `receiver`.
+- Keyring
+  `setWhitelistStatus`
+  / `changeAdmin`
+  are admin-only.
+  `checkCredential`
+  is a view.
+
+Do not file ERC-4626
+receiver mint,
+allowance redeem,
+wstETH wrap
+rounding, or
+Keyring allowlist as
+theft.
+
+Not submitted.
+Listed leftover is
+the wrapper /
+Keyring slice.
+Remaining listed:
+proxy
+implementations not
+independently
+Sourcify-fetched,
+and other docs
+addresses.

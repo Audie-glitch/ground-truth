@@ -4,13 +4,13 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~08:03 UTC. Dates verified against each
+Status as of 3 September 2026, ~08:10 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:01 UTC;
-246 programs; no Sep 2026 launches; Threshold leftover
-StarkNet depositor leftover is logged). KeeperHub
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:07 UTC;
+246 programs; no Sep 2026 launches; Pareto Credit leftover
+wrappers leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -273,10 +273,12 @@ is logged.
 Pareto Credit leftover factory leftover
 (`19e7cde` factory / write-off escrow /
 orchestrator / implied price /
-programmable borrower) is logged
-(remaining listed is TrancheWrapper /
-wrappers / Keyring / proxy impls /
-other docs addresses).
+programmable borrower) is logged.
+Pareto Credit leftover wrappers leftover
+(`19e7cde` TrancheWrapper /
+IdleTokenWrapper / wstETH Balancer /
+Keyring) is logged (remaining listed is
+proxy impls / other docs addresses).
 Synthetix deposit leftover (Blockscout
 `SynthetixDepositContract` / lens /
 PermissionsRegistry) is logged
