@@ -23272,6 +23272,174 @@ easy-track /
 governance bridges /
 aragon-apps.
 
+## 2026-09-03: USDN leftover (Sourcify)
+
+Immunefi program
+`USDN` ($50,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Ethereum
+Sourcify-open:
+USDN
+`0xde17a000ba631c5d7c2bd9fb692efea52d90dee2`
+`exact_match` `Usdn`
+(solc 0.8.26);
+WUSDN
+`0x99999999999999cc837c997b882957dafdcb1af9`
+`exact_match` `Wusdn`;
+Protocol proxy
+`0x656cb8c6d154aad29d8771384089be5b5141f01a`
+impl
+`0x271df5517a4DaacB7caB988Aa64D23dEbda4c498`
+`UsdnProtocolImpl`;
+LiquidationRewardsManager
+`0x9514D3496F46572e8461da381B200812D5Db202C`;
+WstEthOracleMiddleware
+`0xC1459fcFe23d5db9Ddb04935ab7a426Bd398EAb0`;
+LongFarming
+`0xF9D36078A248AF249AA57ae1D5D0c1033d6Bbe27`;
+Router
+`0x49f66b1616865b2a59caecb8352bbf2ac80983e1`
+`match`
+`UniversalRouter`;
+Dip Accumulator
+`0xaebcc85a5594e687f6b302405e6e92d616826e03`
+`exact_match`
+`Rebalancer`;
+sUSDN
+`0xf67e2dc041b8a3c39d066037d29f500757b1e886`
+`VaultProxy` impl
+`0x891dee0483eBAA922E274ddD2eBBaA2D33468A38`
+`VaultLib`.
+Extract `/tmp/usdn`.
+No mainnet
+interaction.
+
+Files:
+`Usdn.sol`,
+`Wusdn.sol`,
+`UsdnProtocolImpl.sol`,
+`UsdnProtocolVaultLibrary.sol`,
+`UsdnProtocolActionsLongLibrary.sol`,
+`UsdnLongFarming.sol`,
+`LiquidationRewardsManager.sol`,
+`WstEthOracleMiddleware.sol`,
+`UniversalRouter.sol`,
+`Rebalancer.sol`.
+
+Checked for: a
+stranger mint of
+USDN; rebase that
+shrinks balances;
+wrap that pulls
+another account;
+vault validate that
+mints to the caller;
+close that pays the
+caller; farming
+harvest that pays
+the notifier on a
+live position.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- USDN `mint` /
+  `mintShares` are
+  `MINTER_ROLE`.
+  `rebase` is
+  `REBASER_ROLE` and
+  only lowers the
+  divisor (balances
+  grow). `burn` /
+  `burnShares` burn
+  `msg.sender` (or
+  allowance).
+- WUSDN wrap
+  `transferSharesFrom`
+  `msg.sender`.
+  Unwrap burns
+  caller WUSDN then
+  `transferShares`
+  to `to`.
+- Protocol deposit
+  `safeTransferFrom`
+  `msg.sender`
+  (asset + SDEX
+  burn). Validate
+  `mintShares` to
+  pending `to`.
+  Withdrawal pulls
+  shares from the
+  initiator, burns
+  them on validate,
+  pays pending `to`
+  capped by
+  `_balanceVault`.
+- Open long
+  `transferFrom`
+  initiator. Close
+  requires
+  `msg.sender ==
+  pos.user` or
+  EIP-712 owner
+  sig. Payout is
+  `long.to`.
+- Farming
+  `ownershipCallback`
+  is protocol-only.
+  Live `harvest`
+  pays `owner`.
+  Slash (tick
+  version change)
+  splits notifier
+  BPS. `withdraw`
+  is owner-only
+  then transfers
+  the position
+  back.
+- Rebalancer
+  deposit
+  `transferFrom`
+  sender; validate /
+  reset / withdraw
+  are the pending
+  `msg.sender`.
+  `updatePosition`
+  is protocol.
+- Oracle applies
+  `stEthPerToken`
+  on ETH Pyth /
+  Chainlink. Router
+  is Uniswap-style
+  dispatcher + USDN
+  initiate/validate
+  cmds (`lockedBy`
+  / Permit2).
+
+Do not file minter
+/ rebaser roles,
+oracle-feed trust,
+or Enzyme VaultLib
+as a stranger mint.
+
+Not submitted.
+Listed leftover is
+the Sourcify-open
+token / wrap /
+protocol two-step /
+farming / rewards
+view / oracle /
+router / rebalancer
+deposit.
+Remaining listed:
+sUSDN Enzyme
+`VaultLib`
+internals.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -23614,6 +23782,11 @@ Rhino.fi deposit leftover
 (remaining listed is zkEVM /
 zkSync / Polygon impl Sourcify
 404).
+USDN leftover (Sourcify token /
+wrap / protocol two-step /
+farming / rebalancer) is logged
+(remaining listed is sUSDN
+Enzyme `VaultLib`).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -23959,6 +24132,12 @@ logged (remaining listed
 is zkEVM / zkSync /
 Polygon impl Sourcify
 404);
+USDN leftover (Sourcify
+token / wrap / protocol
+two-step / farming /
+rebalancer) is logged
+(remaining listed is
+sUSDN Enzyme `VaultLib`);
 Beets stS
 (`877087b`) + token
 leftover is logged
