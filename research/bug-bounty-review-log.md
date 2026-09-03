@@ -61911,3 +61911,21 @@ stranger theft.
 Not submitted. Payment requires user KYC. Remaining listed: lotus,
 proofs / boost / graphsync / FVM / go-f3, other builtin-actors
 (`datacap`, `verifreg`), and filecoin.io.
+
+## 2026-09-03: Sei leftover sei-cosmos bank leftover (`62bafe8`)
+
+Immunefi program `sei` ($500,000, `kyc: true`). Follow-on leftover after wasmd (`16cdda6`). Official clone `/tmp/sei-cosmos` `62bafe8`. Opened `x/bank/keeper/{msg_server,send}.go`, `x/bank/types/msgs.go`. No mainnet writes. No exploit PoCs.
+
+Checked for: a `MsgSend` that spends another `FromAddress`; `MsgMultiSend` that omits an input signer; `SendCoinsAndWei` that subtracts wei from a stranger.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `MsgSend.GetSigners()` is `FromAddress`. `msgServer.Send` requires send-enabled denoms and denom allowlists for both from and to, then `SendCoins(from, to, amount)`.
+- `SendCoins` → `SubUnlockedCoins(from)` then `AddCoins(to)`. Spendable is balance minus locked coins.
+- `MsgMultiSend.GetSigners()` is every input address. `InputOutputCoins` is only reached after those signatures (Cosmos ante).
+- `SendCoinsAndWei` subtracts wei from the supplied `from` and adds to `to`, then optionally `SendCoinsWithoutAccCreation` for usei. Callers are keepers/precompiles that already mapped `from` to the associated sender.
+- Module send helpers (`SendCoinsFromModuleToAccount` / `ToModule` / `FromAccountToModule`) are module-account paths.
+
+Do not file signer-bound `MsgSend`, multi-input MultiSend, or keeper-internal `SendCoinsAndWei` as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: tendermint, IBC host (not in `sei-cosmos`; IBC precompile already retired), and Primacy of Impact.
