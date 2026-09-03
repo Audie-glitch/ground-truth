@@ -26303,6 +26303,143 @@ liq-pool slice.
 Remaining listed:
 the website only.
 
+## 2026-09-03: Threshold vault + MaintainerProxy leftover (`502cd39`)
+
+Immunefi program
+`thresholdnetwork`
+($150,000, `kyc: false`).
+Bank / VendingMachine
+and BOB leftover are
+already logged.
+This slice is listed
+Ethereum Sourcify
+`TBTCVault`
+(`0x9C070027cdC9dc8F82416B2e5314E11DFb4FE3CD`),
+`DonationVault`
+(`0xa544b70dC6af906862f68eb8e68c27bb7150e672`),
+and `MaintainerProxy`
+(`0xcF29Ff894674775841F60Aa2a3c373DE27A8df2b`).
+Local clone
+`/tmp/threshold-tbtc`
+at `502cd39`.
+No mainnet interaction.
+
+Files:
+`solidity/contracts/vault/TBTCVault.sol`,
+`solidity/contracts/vault/TBTCOptimisticMinting.sol`,
+`solidity/contracts/vault/DonationVault.sol`,
+`solidity/contracts/maintainer/MaintainerProxy.sol`.
+
+Checked for: a
+stranger mint of TBTC
+without Bank balance;
+optimistic mint by a
+non-minter; debt
+repay that mints
+twice; DonationVault
+`decreaseBalance` of
+someone else;
+MaintainerProxy proof
+submit without being
+a listed maintainer.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `TBTCVault.mint`
+  pulls the caller's
+  Bank satoshis after
+  checking balance
+  and allowance.
+  `receiveBalanceApproval`
+  is `onlyBank`.
+  `receiveBalanceIncrease`
+  is `onlyBank` and
+  mints only the
+  swept amount after
+  `repayOptimisticMintingDebt`.
+  `unmint` burns the
+  caller and returns
+  that caller's Bank
+  balance.
+  `unmintAndRedeem`
+  requires the
+  decoded redeemer
+  to equal the TBTC
+  burner (rebate
+  impersonation
+  already patched;
+  do not refile
+  1308).
+- Optimistic mint
+  request / finalize
+  are `onlyMinter`,
+  require a revealed
+  unswept deposit
+  targeted at this
+  vault, and wait
+  `optimisticMintingDelay`.
+  Cancel is
+  `onlyGuardian`.
+  Debt is repaid
+  from later Bank
+  increases so a
+  sweep does not
+  mint a second
+  full amount.
+- DonationVault
+  `donate` /
+  `receiveBalanceApproval`
+  move the owner
+  into the vault
+  then
+  `decreaseBalance`
+  the vault.
+  `receiveBalanceIncrease`
+  burns the vault's
+  newly credited
+  Bank total.
+- MaintainerProxy
+  sweep / redemption
+  / moving-funds
+  proofs are
+  `onlySpvMaintainer`.
+  Wallet-lifecycle
+  helpers are
+  `onlyWalletMaintainer`.
+  Auth and
+  `updateBridge` are
+  owner.
+  Permissionless
+  wrappers
+  (`resetMovingFundsTimeout`,
+  `defeatFraudChallenge*`)
+  still have to
+  succeed on Bridge
+  before the
+  reimbursement pool
+  pays the caller.
+
+Not submitted.
+Remaining Threshold
+listed leftover:
+Bridge /
+BridgeGovernance /
+RedemptionWatchtower /
+RebateStaking /
+Wormhole L1
+depositor/redeemer
+proxies,
+WalletProposalValidator,
+LightRelay,
+TokenholderGovernor,
+ReimbursementPool,
+and
+`keep-network/tbtc-v2`
+typescript.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -26748,6 +26885,9 @@ logged (listed leftover
 exhausted).
 Threshold Bank leftover
 (`502cd39`) is logged.
+Threshold vault +
+MaintainerProxy leftover
+(`502cd39`) is logged.
 Arkadiko leftover (Hiro vaults /
 tokens / liq-pool) is logged
 (remaining listed is the website).
@@ -26878,9 +27018,17 @@ Threshold tBTC BOB
 cross-chain leftover
 (`502cd39`) is logged
 Threshold Bank leftover
+(`502cd39`) is logged;
+Threshold vault +
+MaintainerProxy leftover
 (`502cd39`) is logged
 (remaining Threshold is
-explorer addresses +
+Bridge / watchtower /
+Wormhole proxies /
+RebateStaking /
+ReimbursementPool /
+LightRelay /
+TokenholderGovernor +
 keep-network typescript);
 Pancake MasterChefV3 +
 LmPool + V2 periphery
