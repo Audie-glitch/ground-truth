@@ -192,10 +192,15 @@ Threshold watchtower + Wormhole L1 leftover
 (`502cd39`) is logged.
 JustLend leftover (`f28f3b4` Unitroller /
 Comptroller / CToken mint-redeem-borrow-
-liquidate) is logged (remaining listed is
-ComptrollerLegacy JST rewards /
-GovernorBravo / WJST / Timelock / oracle /
-rate models / other Tronscan markets).
+liquidate) is logged.
+Threshold RebateStaking leftover
+(`502cd39`) is logged.
+JustLend leftover governance leftover
+(`f28f3b4` GovernorBravo / WJST / Timelock /
+PriceOracleProxy) is logged (remaining
+listed is ComptrollerLegacy JST rewards /
+PriceOracleV1 / rate models / other
+Tronscan markets).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /
@@ -459,10 +464,14 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`f28f3b4` Unitroller /
   Comptroller / CToken
   mint-redeem-borrow-
-  liquidate; remaining
+  liquidate) plus
+  governance leftover
+  (GovernorBravo / WJST /
+  Timelock /
+  PriceOracleProxy;
+  remaining
   ComptrollerLegacy JST
-  rewards / GovernorBravo /
-  WJST / Timelock / oracle /
+  rewards / PriceOracleV1 /
   rate models), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan

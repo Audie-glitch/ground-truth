@@ -26805,6 +26805,114 @@ and
 `keep-network/tbtc-v2`
 typescript.
 
+## 2026-09-03: JustLend leftover governance leftover (`f28f3b4`)
+
+Immunefi program
+`JustLend DAO` ($50,000,
+`kyc: false`). Unitroller /
+Comptroller / CToken leftover
+is already logged. This
+slice is listed
+GovernorBravo / WJST /
+Timelock / PriceOracleProxy.
+Official clone
+`/tmp/justlend-protocol`
+at `f28f3b4`. No mainnet
+interaction.
+
+Files:
+`contracts/Governance/Bravo/GovernorBravoDelegate.sol`,
+`contracts/Governance/WJST.sol`,
+`contracts/Timelock.sol`,
+`contracts/PriceOracleProxy.sol`.
+
+Checked for: a stranger
+`execute` that runs an
+unqueued proposal;
+`voteFresh` that locks
+another account's WJST
+without the governor;
+`withdraw` of someone
+else's wrapped JST;
+`setSaiPrice` by a
+non-guardian.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `propose` needs WJST
+  votes above the
+  threshold or a live
+  whitelist. `queue` is
+  Succeeded only.
+  `execute` is Queued
+  and goes through
+  Timelock. `cancel` is
+  the proposer or a
+  proposer who fell
+  below threshold.
+- `castVoteInternal`
+  requires an Active
+  proposal, locks
+  `votesAdded` via
+  `wjst.voteFresh`, and
+  credits the named
+  voter. `voteFresh` is
+  governor-only and
+  subtracts that
+  account.
+- WJST `deposit` pulls
+  `msg.sender` and
+  credits that sender.
+  `withdraw` burns and
+  pays the sender.
+  `withdrawVotes`
+  unlocks the sender
+  after proposal state
+  ≥ 2.
+  `setGovernorAlpha` /
+  `transferOwnership`
+  are owner.
+- Timelock
+  queue / cancel /
+  execute are admin.
+  `setDelay` /
+  `setPendingAdmin` are
+  self-calls.
+- PriceOracleProxy
+  `getUnderlyingPrice`
+  is view.
+  `setSaiPrice` is
+  guardian, once, and
+  bounded.
+
+Do not file WJST
+`getPriorVotes`
+ignoring the block
+(no checkpoint —
+governance design),
+admin / owner
+privilege, or
+whitelist guardian
+as theft.
+
+Not submitted.
+Listed leftover is
+GovernorBravo / WJST /
+Timelock /
+PriceOracleProxy.
+Remaining listed:
+ComptrollerLegacy JST
+rewards, PriceOracleV1,
+interest-rate models,
+and the other Tronscan
+jToken markets (same
+CToken / CErc20 /
+CEther / Delegator
+bytecode).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -27264,11 +27372,15 @@ tokens / liq-pool) is logged
 JustLend leftover (`f28f3b4`
 Unitroller / Comptroller /
 CToken mint-redeem-borrow-
-liquidate) is logged
+liquidate) is logged.
+JustLend leftover
+governance leftover
+(`f28f3b4` GovernorBravo /
+WJST / Timelock /
+PriceOracleProxy) is logged
 (remaining listed is
 ComptrollerLegacy JST
-rewards / GovernorBravo /
-WJST / Timelock / oracle /
+rewards / PriceOracleV1 /
 rate models / other
 Tronscan markets).
 Remaining OZ hooks: none of the money-moving
@@ -27756,11 +27868,15 @@ JustLend leftover
 (`f28f3b4` Unitroller /
 Comptroller / CToken
 mint-redeem-borrow-
-liquidate) is logged
+liquidate) is logged.
+JustLend leftover
+governance leftover
+(`f28f3b4` GovernorBravo /
+WJST / Timelock /
+PriceOracleProxy) is logged
 (remaining listed is
 ComptrollerLegacy JST
-rewards / GovernorBravo /
-WJST / Timelock / oracle /
+rewards / PriceOracleV1 /
 rate models / other
 Tronscan markets);
 Beets stS
