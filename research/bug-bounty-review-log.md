@@ -35392,10 +35392,12 @@ finality-provider leftover
 (`fd28092`; KYC) is logged;
 Babylon leftover
 staking-expiry-checker leftover
-(`73f4c7b`; KYC) is logged
+(`73f4c7b`; KYC) is logged;
+Babylon leftover
+staking-queue-client leftover
+(`c4b08ad`; KYC) is logged
 (remaining listed is
-queue-client / babylon node /
-websites);
+babylon node / websites);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -47970,3 +47972,117 @@ level. Remaining
 listed: Lazer
 Solana / Sui /
 Cardano.
+
+## 2026-09-03: Babylon leftover staking-queue-client leftover (`c4b08ad`)
+
+Immunefi program
+`babylon-labs`
+($500,000, `kyc: true`).
+Vigilante,
+covenant,
+finality-provider,
+and
+expiry-checker
+leftovers already
+logged. This
+slice is listed
+`staking-queue-client`
+`release/v1.x`.
+Official clone
+`/tmp/babylon-queue`
+`c4b08ad`. No
+chain writes from
+this VM.
+
+Files:
+`client/rabbitmq_client.go`,
+`client/schema.go`,
+`client/client.go`,
+`queuemngr/queue_manager.go`,
+`config/queue.go`.
+
+Checked for: a
+stranger who can
+inject a staking /
+unbonding /
+withdraw event
+that moves BTC
+or mints BABY;
+queue credentials
+in default
+config usable
+against
+production.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- This repo is a
+  RabbitMQ
+  client + event
+  schema. It
+  does not
+  touch BTC or
+  Babylon
+  consensus.
+  `Push*Event`
+  only JSON-
+  marshals and
+  `SendMessage`s
+  to named
+  queues.
+- Consume is
+  manual-ack.
+  Requeue clones
+  the body to
+  the delay
+  queue then
+  acks the
+  original.
+  Default
+  `user` /
+  `password` /
+  `localhost`
+  are local
+  operator
+  config, not a
+  remote
+  money-path.
+- A type
+  assertion on
+  `x-processing-attempts`
+  can panic a
+  consumer if
+  the header is
+  the wrong
+  type. That is
+  operator
+  liveness, not
+  theft.
+
+Do not file
+operator
+RabbitMQ
+credentials or
+a consumer panic
+on a bad header
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+staking-queue-
+client v1.x
+opens is
+exhausted at the
+opened-file
+level. Remaining
+listed: babylon
+node and the
+website /
+toolkit rows.
