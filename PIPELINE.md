@@ -8,7 +8,9 @@ Status as of 3 September 2026, ~07:50 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep. KeeperHub
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~07:44 UTC;
+246 programs; no Sep 2026 launches; one new listed SC: RootstockLabs
+RIF token, KYC). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -138,6 +140,10 @@ adapters leftover (`672e02f`) is logged
 tree would open is exhausted).
 Beefy Finance leftover (Sourcify Polygon
 vault / strategy sample) is logged.
+Beefy leftover remaining Polygon vaults
+leftover (Sourcify zaps + Aave / Wault /
+Fish / Curve / PZAP / Cometh / MiniChef /
+RewardPool) is logged.
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis
@@ -176,8 +182,13 @@ Core / factory / router / farm / vesting
 two BSC addresses Sourcify 404).
 Beefy Finance leftover (Sourcify Polygon
 `BeefyVaultV6` + common chef / DFYN /
-Curve / BIFI-maxi strategies) is logged
-(remaining listed is other Polygon vaults).
+Curve / BIFI-maxi strategies) is logged.
+Beefy leftover remaining Polygon vaults
+leftover (Sourcify zaps + Aave / Wault /
+Fish / Curve / PZAP / Cometh / MiniChef /
+RewardPool) is logged (remaining listed
+is Sourcify 404 wexpoly / some Aave-Cometh
+and same-type unsampled vaults).
 Orca leftover (`3b47341` / `05fe66b` xORCA
 + Whirlpools) is logged (listed leftover
 exhausted).
@@ -199,7 +210,9 @@ JustLend leftover governance leftover
 (`f28f3b4` GovernorBravo / WJST / Timelock /
 PriceOracleProxy) is logged.
 Threshold validator + ReimbursementPool leftover
-(`502cd39`) is logged.
+(`502cd39`) is logged (remaining Threshold is
+Bridge / BridgeGovernance / LightRelay /
+TokenholderGovernor + keep-network typescript).
 JustLend leftover rewards leftover
 (`f28f3b4` ComptrollerLegacy JST /
 PriceOracleV1 / rate models) is logged

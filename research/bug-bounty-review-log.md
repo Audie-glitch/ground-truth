@@ -27602,8 +27602,15 @@ addresses Sourcify 404).
 Beefy Finance leftover (Sourcify
 Polygon `BeefyVaultV6` + common
 chef / DFYN / Curve / BIFI-maxi
-strategies) is logged (remaining
-listed is other Polygon vaults).
+strategies) is logged.
+Beefy leftover remaining Polygon
+vaults leftover (Sourcify zaps +
+Aave / Wault / Fish / Curve /
+PZAP / Cometh / MiniChef /
+RewardPool) is logged
+(remaining listed is Sourcify
+404 wexpoly / some Aave-Cometh
+and same-type unsampled vaults).
 Orca leftover (`3b47341` /
 `05fe66b` xORCA + Whirlpools) is
 logged (listed leftover
@@ -27645,6 +27652,12 @@ tree would open is
 exhausted; remaining
 listed is other Tronscan
 jToken markets).
+RootstockLabs listed a new SC
+on 2026-09-03: RIF token
+`0x2aCc…C9D5` (program `kyc:
+true`; next unique explorer
+slice if a later pass wants
+it).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -27686,15 +27699,15 @@ CreditPassport deployer still 0 Sepolia ETH
 publicnode 403)
 / 0 tCTC
 (`rpc.cc3-testnet.creditcoin.network`);
-Superteam still 28 open listings,
+Superteam still 27 open listings,
 `AGENT_ALLOWED` still only Steve Arena and ZNS;
 Sherlock page 1 still only contest `1234` (Tare)
 in `SHERLOCK_JUDGING`; no programs launched
 Sep 2026 in the unofficial Immunefi dump;
-no new Immunefi GitHub SC
-assets since 2026-09-02
-(unofficial dump now 246
-programs);
+one new listed SC since 2026-09-02
+(RootstockLabs RIF token,
+KYC, unofficial dump still
+246 programs);
 Olympus DEPOS / CDEPO is
 logged (Sourcify still
 404; official tree);
@@ -28116,8 +28129,18 @@ Beefy Finance leftover
 `BeefyVaultV6` + common
 chef / DFYN / Curve /
 BIFI-maxi strategies) is
-logged (remaining listed
-is other Polygon vaults);
+logged.
+Beefy leftover remaining
+Polygon vaults leftover
+(Sourcify zaps + Aave /
+Wault / Fish / Curve /
+PZAP / Cometh / MiniChef /
+RewardPool) is logged
+(remaining listed is
+Sourcify 404 wexpoly /
+some Aave-Cometh and
+same-type unsampled
+vaults);
 Orca leftover (`3b47341` /
 `05fe66b` xORCA +
 Whirlpools) is logged
@@ -28148,6 +28171,9 @@ tree would open is
 exhausted; remaining
 listed is other Tronscan
 jToken markets);
+RootstockLabs listed a new
+SC on 2026-09-03: RIF token
+`0x2aCc…C9D5` (KYC);
 Beets stS
 (`877087b`) + token
 leftover is logged
@@ -28873,3 +28899,156 @@ theft.
 Not submitted.
 Listed Aevo leftover
 is exhausted.
+
+## 2026-09-03: Beefy leftover remaining Polygon vaults leftover (Sourcify)
+
+Immunefi program
+`Beefy Finance`
+($75,000, `kyc: false`).
+First-30 Sourcify
+sample leftover is
+already logged. This
+slice is later
+Sourcify-open
+Polygon vault /
+strategy families
+plus the six listed
+zaps. Extract
+`/tmp/beefy-remaining`.
+No mainnet
+interaction.
+
+Listed Sourcify-open
+this slice:
+`BeefyUniV2Zap`
+(`0x540a9f99bb730631bf243a34b19fd00ba8cf315c`
+QuickSwap,
+`0x872c9dce4b107042933afd51e8a704631f7ee076`
+Cometh,
+`0xf039fe26456901f863c873556f40fb207c6c9c18`
+Sushi);
+`BeefyZapUniswapV2`
+(`0x0ea7b115d96c4df61b3e7d6757f0050f23492929`
+Wault,
+`0xaaa3477c6b326e2e416af7506a30f4519bc9960f`
+ApeSwap,
+`0x1a53c6fca349c23f573cedd3f8afe70c02ccec39`
+DYFN);
+`StrategyAave`
+(`0x55a10618c7e9489cee047705cd003df6d9e09195`);
+`StrategyAaveMatic`
+(`0x57fdeb65b71e6ad212088e63e85825e314f2ea62`);
+`StrategyAaveSupplyOnly`
+(`0x8f755873546f4d0edf7d41ff8604c8a632113eb7`);
+`StrategyWexPolyLP`
+(`0x6a440102015bf4d81d56fbc2fd4f27797d183931`);
+`StrategyWexPolySingle`
+(`0xcb6e386ad643a6d77c940bf69303cebd34c04757`);
+`StrategyFish`
+(`0x53f816063523d9883c83863cbd5d8eaf9ffc4641`);
+`StrategyCurveAave`
+(`0x748f243931b841f2c4d6f298abb85d7a23fe7c2a`);
+`StrategyPolyzapLP`
+(`0x9e75f8298e458b76382870982788988a0799195b`);
+`StrategyRewardPoolPolygonLP`;
+`StrategyCommonMiniChefLP`;
+`StrategyPolygonMiniChefLP`;
+`StrategyCommonRewardPoolLP`
+(`exact_match`
+`0xa7377cdb25bfa2889b6e4c9463cd0858a57ab315`).
+PZAP vault is
+`BeefyVaultV6` (already
+logged).
+
+Checked for: stranger
+zap `beefOut` of
+another depositor's
+vault shares; zap
+`beefIn` that mints
+shares to the
+caller without
+pulling `tokenIn`;
+strategy `withdraw`
+/ `retireStrat`
+without the vault;
+Aave `deposit` /
+`_leverage` that
+borrows to a
+stranger.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `beefIn` /
+  `beefInETH` pull
+  `msg.sender` /
+  `msg.value` then
+  mint vault shares
+  to that sender.
+  `_getVaultPair`
+  requires the vault
+  `want` pair factory
+  to match the
+  configured router.
+  Leftovers return
+  to `msg.sender`.
+- `beefOut` /
+  `beefOutAndSwap`
+  pull the caller's
+  vault shares, burn
+  them on the vault,
+  and send pair
+  tokens / the
+  desired token to
+  that caller.
+- Strategy
+  `withdraw` /
+  `retireStrat` are
+  `msg.sender ==
+  vault`. Public
+  `deposit` only
+  stakes idle `want`
+  into the
+  configured chef /
+  Aave / gauge.
+- Aave leverage
+  `rebalance` /
+  `deleverageOnce`
+  are `onlyManager`.
+  Harvest `onlyEOA`
+  (or vault /
+  `tx.origin` on
+  Fish / Curve
+  harvest-on-deposit)
+  takes the
+  configured call
+  fee from rewards.
+
+Do not file first-
+depositor inflation,
+public `deposit`,
+owner strat upgrade,
+harvest call-fee,
+zap leftover
+donation, or
+addLiquidity min
+`1,1` sandwich as a
+stranger drain.
+
+Not submitted.
+Listed leftover is
+the Sourcify-open
+later Polygon
+strategy families
+and the six listed
+zaps.
+Remaining listed:
+most `wexpoly` LP
+strategies plus
+some Aave / Cometh
+addresses Sourcify
+404; unsampled
+vaults of already-
+reviewed types.
