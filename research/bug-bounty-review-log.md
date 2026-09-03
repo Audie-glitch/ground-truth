@@ -13757,6 +13757,83 @@ Share / Bond tokens)
 and KYC attribute
 rules.
 
+## 2026-09-03: Orderly Vault leftover (`462e129`)
+
+Immunefi program
+`orderlynetwork`
+($100,000, `kyc: false`).
+Listed leftover
+`OrderlyNetwork/contract-evm`
+`src/` except `tUSDC.sol`.
+Local clone `/tmp/orderly-evm`
+at `462e129` (“Merge
+branch 'staging' into
+'main'”). This slice is
+`src/vaultSide/Vault.sol`
+only. No mainnet
+interaction.
+
+Checked for: deposit that
+credits a stranger’s
+accountId; permissionless
+withdraw; withdraw that
+pays after a failed
+transfer while the ledger
+already deducted;
+delegateSwap that drains
+without the operator +
+signer.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Deposit pulls
+  `tokenAmount` from
+  `msg.sender` and posts
+  a CC deposit for
+  `receiver`. Regular
+  callers must satisfy
+  `accountId ==
+  keccak256(receiver,
+  brokerHash)`. Allowed
+  token / broker, amount
+  > 0. Deposit limit is
+  documented as soft
+  (async withdraws).
+  `depositTo` is a gift.
+- Withdraw /
+  `withdraw2Contract` /
+  CCTP rebalance are
+  `onlyCrossChainManager`.
+  Payout is
+  `tokenAmount - fee`.
+  Native / blacklist
+  failures emit
+  `WithdrawFailed` and
+  leave tokens in the
+  vault (ledger already
+  notified — CC trust).
+- `delegateSwap` is
+  `onlySwapOperator`,
+  one-time `tradeId`,
+  and requires
+  `swapSigner`. Arbitrary
+  `to` + calldata is the
+  trusted-operator
+  path, not a user
+  theft path.
+- `vaultAdapter` may
+  skip accountId checks
+  (owner-set).
+
+Not submitted. Remaining
+Orderly listed GitHub:
+Ledger / Operator /
+Fee / Market managers
+and `evm-cross-chain`
+`contracts/`.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -14218,6 +14295,12 @@ MtPelerin bridge-v2
 (remaining listed files
 are token wrappers +
 KYC attribute rules);
+Orderly Vault
+(`462e129`) is logged
+(remaining Orderly is
+Ledger / Operator /
+Fee / Market and
+`evm-cross-chain`);
 Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase
