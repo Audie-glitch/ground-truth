@@ -41250,6 +41250,19 @@ ZKsync OS leftover bootloader + system hooks leftover
 zk_ee / airbender / wrapper);
 Lombard leftover BARD token + TokenDistributor leftover
 (`f79d6f6`) is logged;
+Lombard leftover StakeAndBake + NativeLBTC + AssetRouter leftover
+(`7fe83e5`) is logged;
+Lombard leftover BridgeV2 + Mailbox + Bascule leftover
+(`7fe83e5`) is logged (remaining listed is Sui / Starknet);
+Velvet leftover BSC v1 IndexSwap leftover (Sourcify)
+is logged;
+Velvet leftover remaining BSC handlers leftover (Sourcify)
+is logged (remaining listed is 404 proxies / Primacy of Impact);
+Wormhole leftover remaining Solana + Sui NTT leftover
+(`250d810`) is logged;
+Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
+is logged (remaining listed is sei-js / go-ethereum /
+other modules);
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub
@@ -60614,7 +60627,6 @@ Not submitted. Payment requires user KYC. Remaining listed: evm_interpreter,
 zk_ee, zksync_os program, storage_models, crypto, oracles, proof_running_system,
 airbender CS / prover / verifier, and zkos-wrapper circuits.
 
-
 ## 2026-09-03: Lombard leftover StakeAndBake + NativeLBTC + AssetRouter leftover (`7fe83e5`)
 
 Immunefi program
@@ -61117,3 +61129,41 @@ Starknet
 cairo
 packages.
 
+## 2026-09-03: Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
+
+Immunefi program `sei` ($500,000, `kyc: true`). Unique unused standing DLT
+program (updated 2026-08-31). Official sparse clone `/tmp/sei-chain` at
+`2e256b5` (`main`). Opened `x/evm` (msg server / ante sender recover /
+state transfer), `precompiles/bank`, `precompiles/staking` delegate,
+`x/tokenfactory`, and `x/mint`. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `MsgSend` / `MsgEVMTransaction` that spends another
+account; bank precompile `send` / `sendNative` that pulls a victim;
+tokenfactory mint/burn without admin; staking `delegate` of another
+delegator without authz.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `MsgEVMTransaction` uses `Derived.SenderEVMAddr` recovered in ante
+  (`RecoverSenderFromEthTx`, unprotected txs rejected). Fees are charged
+  from that sender before `StateTransition`. `MsgSend` signers are
+  `FromAddress`; bank `Send` then pays that signer to the mapped Sei
+  recipient.
+- Bank `sendNative` rejects staticcall / delegatecall, requires `value`,
+  and `SendCoinsAndWei` from the associated Sei address of `caller`.
+- Bank `send` is pointer-only (`GetERC20NativePointer` must equal
+  `caller`). It then calls `bankMsgServer.Send` for the named from/to.
+  A stranger EOA cannot hit this path.
+- Tokenfactory `Mint` / `Burn` require `msg.Sender == admin` and
+  mint/burn that sender. `x/mint` `MintCoins` is BeginBlocker / module.
+- Staking `delegate` maps `caller` to the associated Sei delegator and
+  pulls `value` from that address. `delegateWithAuthorization` uses the
+  authz executor for a named delegator.
+
+Do not file pointer-gated native `send`, admin tokenfactory mint, or
+authz staking as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `sei-js`,
+`go-ethereum`, other `sei-chain` modules / precompiles (`oracle`,
+`epoch`, IBC / gov / wasm), `sei-cosmos` / `sei-wasmd` / tendermint,
+and Primacy of Impact.
