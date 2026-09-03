@@ -12082,8 +12082,9 @@ Result: no user-exploitable finding.
 
 Not submitted. Remaining Mux: mux-protocol
 core/orderbook (Aug 2025 leftover),
-aggregator proxyFactory / gmxV2,
-mux-degen, mux-staking.
+aggregator proxyFactory / gmxV2
+(logged below), mux-degen,
+mux-staking.
 
 ## 2026-09-03: Obyte Coop AA leftover (`d7d5e57`)
 
@@ -12469,12 +12470,12 @@ Not submitted.
   must be in `[0, 1)`.
 
 Next leftover: remaining
-Obyte
-`counterstake-bridge`, or
-Mux leftover
-(mux-protocol /
-aggregator / degen /
-staking), or Twyne
+Obyte Counterstake
+(logged below), Mux
+leftover (mux-protocol /
+degen / staking;
+aggregator logged
+below), or Twyne
 Sourcify-404 vaults.
 Not submitted.
 
@@ -12595,10 +12596,166 @@ Next leftover: Counterstake
 assistants / factories /
 governance, or Mux
 leftover (mux-protocol /
-aggregator / degen /
-staking), or Twyne
+degen / staking;
+aggregator logged
+below), or Twyne
 Sourcify-404 vaults.
 Not submitted.
+
+## 2026-09-03: Mux aggregator proxyFactory + GmxV2 leftover (`0f36131`)
+
+Immunefi program `mux`
+($100,000, `kyc: false`,
+smart-contract rewards
+are critical-only). Whole
+`mux-aggregator-protocol`
+repo listed 28 Aug 2024;
+leftover folders
+`contracts/proxyFactory`
+and
+`contracts/aggregators/gmxV2`
+added 28 Aug 2025. Local
+clone `/tmp/mux-agg` at
+`0f36131` (“distribute
+gmx2 ETH when not debt”).
+In-repo README: keeper
+never calls
+`GmxV2Adapter.liquidate`
+since Dec 2023; GMX1
+adapter unsupported since
+Mar 2025; GMX2 borrowing
+disabled since Mar 2025.
+Program OOS: `test` /
+`oracle` / `reader`
+folders; listed ConsenSys
+/ OpenZeppelin /
+Quantstamp audit issues.
+No mainnet interaction.
+
+Files:
+`proxyFactory/{ProxyFactory,
+DebtManager,ProxyBeacon,
+Storage,ProxyConfig}.sol`,
+`aggregators/gmxV2/{GmxV2Adapter,
+libraries/{LibGmxV2,LibDebt,
+LibSwap,LibConfig,LibUtils}}.sol`,
+`lendingPool/LendingPool.sol`
+(2024 whole-repo asset).
+
+Checked for: factory
+calldata that places a
+mux / mux3 order for a
+stranger; CREATE2 proxy
+that binds a victim key;
+borrow that skips the
+created-proxy check;
+GmxV2 callback that pays
+the caller; swapPath that
+drains another account;
+lending-pool share
+inflation; permissionless
+liquidate of a solvent
+account.
+
+Result: no
+user-exploitable
+critical. Not submitted.
+
+- Proxy id is
+  `keccak(projectId,
+  account, collateral,
+  asset, isLong)`.
+  `proxyFunctionCall2` /
+  `transferToken2` /
+  `muxFunctionCall` /
+  `mux3PositionCall` /
+  cancel require
+  `msg.sender == account`
+  or an owner-set
+  `DELEGATOR`. mux3
+  `positionId` owner is
+  the high 160 bits
+  (`address || uint96`,
+  same as Mux3).
+- Beacon `create2` writes
+  `_proxyProjectIds[predicted]
+  = projectId` before
+  deploy so
+  `implementation()`
+  works during
+  `initialize`. Salt
+  includes the owner.
+  `_isCreatedProxy` is
+  `projectId != 0` (ids
+  are 1 = GMX1, 2 =
+  GMX2).
+- `borrowAsset` /
+  `repayAsset` require a
+  created proxy and a
+  matching projectId.
+  Factory `totalDebt` is
+  tracked, not raw ERC20
+  on the factory.
+- `_getLiquiditySource`
+  writes
+  `_liquiditySource[projectId]`
+  but reads
+  `_liquiditySource[sourceId]`.
+  For live ids 1 and 2
+  this coincides when
+  `sourceId == projectId`
+  (GMX2 + lending = 2).
+  Do not file without a
+  live project that sets
+  `sourceId != projectId`
+  and a proven fund path.
+  GMX2 borrow is
+  disabled.
+- GmxV2 `placeOrder` is
+  owner or factory.
+  Callbacks accept keeper
+  or GMX `CONTROLLER`.
+  After a decrease fill,
+  leftover adapter
+  collateral refunds to
+  `account.owner` if the
+  GMX position is still
+  IM-safe; if size is 0,
+  debt is repaid from
+  adapter balance (and
+  the secondary token).
+  Keeper-supplied
+  liquidate prices are
+  privileged (default
+  OOS).
+- UniV3 `swapPath` is
+  user-chosen; `tokenIn`
+  cannot be the position
+  collateral. Tokens
+  must already sit on
+  that adapter.
+- LendingPool `deposit`
+  increments
+  `supplyAmount` after
+  the pull. Withdraw is
+  owner. Borrow / repay
+  are `onlyBorrower`.
+  Donations that skip
+  `deposit` do not
+  inflate withdrawable
+  supply.
+
+Not submitted. Remaining
+Mux: mux-protocol
+`components` / `core` /
+`governance` /
+`libraries` / `orderbook`
+(28 Aug 2025 leftover),
+mux-degen, mux-staking.
+Aggregator
+`aggregators/gmx` is the
+unsupported GMX1
+adapter.
 
 ## Next candidates
 
@@ -13008,10 +13165,12 @@ listed V3 + V2
 periphery);
 Mux3 core trade / pool /
 orderbook (`8674f2b`) is
-logged (remaining Mux is
-mux-protocol core,
-aggregator, degen,
-staking);
+logged; Mux aggregator
+proxyFactory + GmxV2 +
+LendingPool (`0f36131`)
+is logged (remaining Mux
+is mux-protocol folders,
+mux-degen, mux-staking);
 Obyte Coop AA
 (`d7d5e57`), Friends AA
 (`45019f9`),

@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~05:35 UTC. Dates verified against each
+Status as of 3 September 2026, ~05:40 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (28 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging), and Immunefi
@@ -15,10 +15,11 @@ EVM 15 Jul strategy leftover (Shard / BlocklistOracle / merkle
 validator / converters) is logged. Listed Silo V3 GitHub Solidity
 is exhausted. PancakeSwap Infinity leftover is logged (remaining
 Pancake is listed V3 + V2 periphery). Mux3 core leftover is
-logged (remaining Mux is mux-protocol / aggregator / degen /
-staking). Obyte Coop / Friends / prediction-markets leftovers
-are logged. Counterstake EVM+AA claim path is logged
-(remaining: assistants / factories / governance). Twyne vaults
+logged. Mux aggregator proxyFactory + GmxV2 leftover is logged
+(remaining Mux is mux-protocol / degen / staking). Obyte Coop /
+Friends / prediction-markets leftovers are logged. Counterstake
+EVM+AA claim path is logged (remaining: assistants / factories /
+governance). Twyne vaults
 still Sourcify 404.
 
 ## Opportunities, ranked by expected payout per unit of work
