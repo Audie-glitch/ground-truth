@@ -48086,3 +48086,150 @@ listed: babylon
 node and the
 website /
 toolkit rows.
+
+## 2026-09-03: Pyth leftover Lazer Sui + Cardano (`4dd956e`)
+
+Immunefi program
+`pythnetwork`
+($250,000, `kyc: true`).
+Listed remaining after
+governance staking
+(`843027c`). Official
+sparse clone
+`/tmp/pyth-crosschain`
+`4dd956e`. Opened
+`lazer/contracts/sui`
+and
+`lazer/contracts/cardano`.
+Listed Solana Lazer
+repo
+`https://github.com/pyth-network/pyth-lazer`
+(`contracts/solana`)
+clone failed
+(`fatal: could not
+read Username` /
+401). That tree is
+not in
+`pyth-crosschain`.
+No mainnet writes.
+
+Files:
+`sui/sources/pyth_lazer.move`,
+`sui/sources/actions.move`,
+`sui/sources/governance.move`,
+`sui/sources/state.move`,
+`cardano/validators/pyth_state.ak`,
+`cardano/validators/pyth_price.ak`,
+`cardano/lib/pyth/governance.ak`.
+
+Checked for: a
+stranger Sui path
+that moves coins
+from `State`;
+`upgrade` /
+`update_trusted_signer`
+without a Wormhole
+PTGM VAA; Cardano
+`withdraw` that
+drains tokens;
+`PurgeExpiredWithdrawScripts`
+or script-hash
+upgrade without
+owner NFT /
+governance VAA.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Sui
+  `parse_and_verify_le_ecdsa_update_v2`
+  recovers secp256k1
+  and requires the
+  pubkey on the
+  trusted-signer
+  list with
+  `clock.timestamp_ms()
+  < expires_at_ms`.
+  It returns a
+  parsed `Update`.
+  No coins move.
+- Sui
+  `init_lazer` /
+  `upgrade` /
+  `commit_upgrade` /
+  `update_trusted_signer`
+  are Wormhole VAA
+  PTGM module 3
+  (`UpgradeSuiLazerContract`
+  / `UpdateTrustedSigner264Bit`).
+  `upgrade` also
+  requires
+  `version ==
+  meta::version()
+  + 1`. No coins
+  move.
+- Cardano
+  `pyth_price.withdraw`
+  is the Cardano
+  withdraw purpose,
+  not a token drain.
+  It checks the
+  credential hash
+  is the active
+  (or still-valid
+  deprecated)
+  withdraw script
+  and that each
+  Lazer update
+  verifies against
+  trusted signers +
+  the tx validity
+  range. Returns
+  `True` on
+  success. Tests
+  fail outdated /
+  wrong / missing
+  signers.
+- Cardano
+  `pyth_state`
+  governance
+  actions
+  (`UpdateTrustedSigner`,
+  `UpgradeSpendScript`,
+  `UpgradeWithdrawScript`)
+  require a
+  Wormhole VAA.
+  `PurgeExpiredWithdrawScripts`
+  is owner-NFT
+  only and only
+  drops expired
+  deprecated
+  hashes.
+
+Do not file
+ECDSA verify with
+no coin movement,
+PTGM-gated
+upgrade / signer
+update, Cardano
+withdraw-purpose
+success, or
+owner-NFT purge
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Pyth Lazer
+Sui + Cardano
+leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed: Solana
+Lazer if a public
+source drop
+opens.
