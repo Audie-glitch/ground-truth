@@ -33,7 +33,7 @@ import {
   formatUsd,
 } from "@/lib/format";
 import { STRATEGIES } from "@/lib/strategies";
-import type { StrategyId, WalkForwardResult } from "@/lib/types";
+import type { RollingWalkForwardResult, StrategyId, WalkForwardResult } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -53,32 +53,57 @@ const TRAIN_SPLITS = [
   { value: 0.7, label: "70% train / 30% test" },
 ];
 
+const MODES = [
+  { value: "single", label: "Single split" },
+  { value: "rolling", label: "Rolling folds" },
+] as const;
+
+const FOLD_COUNTS = [
+  { value: 2, label: "2 folds" },
+  { value: 3, label: "3 folds" },
+  { value: 4, label: "4 folds" },
+];
+
 export function WalkForwardLab({ assets, coinId, onCoinIdChange }: Props) {
   const [days, setDays] = useState(365);
   const [strategyId, setStrategyId] = useState<StrategyId>("dip_flip");
+  const [mode, setMode] = useState<"single" | "rolling">("single");
   const [trainRatio, setTrainRatio] = useState(0.65);
+  const [foldCount, setFoldCount] = useState(3);
   const [objective, setObjective] = useState<"return" | "sharpe">("return");
 
   const requestKey = useMemo(
-    () => JSON.stringify({ coinId, days, strategyId, trainRatio, objective }),
-    [coinId, days, strategyId, trainRatio, objective],
+    () =>
+      JSON.stringify({
+        coinId,
+        days,
+        strategyId,
+        mode,
+        trainRatio,
+        foldCount,
+        objective,
+      }),
+    [coinId, days, strategyId, mode, trainRatio, foldCount, objective],
   );
 
   const [state, setState] = useState<{
     key: string | null;
-    result: WalkForwardResult | null;
+    single: WalkForwardResult | null;
+    rolling: RollingWalkForwardResult | null;
     error: string | null;
-  }>({ key: null, result: null, error: null });
+  }>({ key: null, single: null, rolling: null, error: null });
 
   const loading = state.key !== requestKey;
-  const { result, error } = state;
+  const { single: result, rolling: rollingResult, error } = state;
 
   useEffect(() => {
     const controller = new AbortController();
 
     void (async () => {
       try {
-        const res = await fetch("/api/walkforward", {
+        const endpoint =
+          mode === "rolling" ? "/api/walkforward/rolling" : "/api/walkforward";
+        const res = await fetch(endpoint, {
           method: "POST",
           headers: { "content-type": "application/json" },
           signal: controller.signal,
@@ -88,6 +113,7 @@ export function WalkForwardLab({ assets, coinId, onCoinIdChange }: Props) {
             days,
             strategyId,
             trainRatio,
+            foldCount,
             objective,
             initialCapital: 10_000,
             feeBps: 10,
@@ -98,10 +124,20 @@ export function WalkForwardLab({ assets, coinId, onCoinIdChange }: Props) {
         if (controller.signal.aborted) return;
         setState(
           res.ok
-            ? { key: requestKey, result: json.result as WalkForwardResult, error: null }
+            ? {
+                key: requestKey,
+                single:
+                  mode === "single" ? (json.result as WalkForwardResult) : null,
+                rolling:
+                  mode === "rolling"
+                    ? (json.result as RollingWalkForwardResult)
+                    : null,
+                error: null,
+              }
             : {
                 key: requestKey,
-                result: null,
+                single: null,
+                rolling: null,
                 error: json.error ?? "Could not run walk-forward test.",
               },
         );
@@ -109,7 +145,8 @@ export function WalkForwardLab({ assets, coinId, onCoinIdChange }: Props) {
         if (controller.signal.aborted) return;
         setState({
           key: requestKey,
-          result: null,
+          single: null,
+          rolling: null,
           error:
             err instanceof Error
               ? err.message
@@ -119,7 +156,7 @@ export function WalkForwardLab({ assets, coinId, onCoinIdChange }: Props) {
     })();
 
     return () => controller.abort();
-  }, [requestKey, assets, coinId, days, strategyId, trainRatio, objective]);
+  }, [requestKey, assets, coinId, days, strategyId, mode, trainRatio, foldCount, objective]);
 
   const spec = STRATEGIES.find((s) => s.id === strategyId)!;
 
@@ -181,23 +218,61 @@ export function WalkForwardLab({ assets, coinId, onCoinIdChange }: Props) {
             </Select>
           </Field>
 
-          <Field label="Train / test split" htmlFor="wf-split">
+          <Field label="Mode" htmlFor="wf-mode">
             <Select
-              value={String(trainRatio)}
-              onValueChange={(v) => setTrainRatio(Number(v))}
+              value={mode}
+              onValueChange={(v) => setMode(v as "single" | "rolling")}
             >
-              <SelectTrigger id="wf-split" className="w-full">
+              <SelectTrigger id="wf-mode" className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {TRAIN_SPLITS.map((s) => (
-                  <SelectItem key={s.value} value={String(s.value)}>
-                    {s.label}
+                {MODES.map((m) => (
+                  <SelectItem key={m.value} value={m.value}>
+                    {m.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </Field>
+
+          {mode === "single" ? (
+            <Field label="Train / test split" htmlFor="wf-split">
+              <Select
+                value={String(trainRatio)}
+                onValueChange={(v) => setTrainRatio(Number(v))}
+              >
+                <SelectTrigger id="wf-split" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TRAIN_SPLITS.map((s) => (
+                    <SelectItem key={s.value} value={String(s.value)}>
+                      {s.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          ) : (
+            <Field label="Rolling folds" htmlFor="wf-folds">
+              <Select
+                value={String(foldCount)}
+                onValueChange={(v) => setFoldCount(Number(v))}
+              >
+                <SelectTrigger id="wf-folds" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {FOLD_COUNTS.map((f) => (
+                    <SelectItem key={f.value} value={String(f.value)}>
+                      {f.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          )}
 
           <Field label="Optimize for" htmlFor="wf-objective">
             <Select
@@ -215,10 +290,10 @@ export function WalkForwardLab({ assets, coinId, onCoinIdChange }: Props) {
           </Field>
 
           <p className="border-t border-foreground/10 pt-4 text-xs leading-relaxed text-muted-foreground">
-            {spec.description} Parameters are grid-searched on the train window
-            only, then frozen and run on the unseen test window. If the train
-            result looks great and the test result collapses, the rule was fitted
-            to the past.
+            {spec.description}{" "}
+            {mode === "rolling"
+              ? "Each fold expands the train window to include prior test data, then evaluates on the next unseen segment."
+              : "Parameters are grid-searched on the train window only, then frozen for test."}
           </p>
         </CardContent>
       </Card>
@@ -232,7 +307,9 @@ export function WalkForwardLab({ assets, coinId, onCoinIdChange }: Props) {
           </Alert>
         ) : null}
 
-        {!result && loading ? <Skeleton className="h-96 w-full rounded-xl" /> : null}
+        {!result && !rollingResult && loading ? (
+          <Skeleton className="h-96 w-full rounded-xl" />
+        ) : null}
 
         {result ? (
           <div className={cn("space-y-4", loading && "opacity-60 transition-opacity")}>
@@ -240,6 +317,14 @@ export function WalkForwardLab({ assets, coinId, onCoinIdChange }: Props) {
             <Timeline result={result} />
             <ComparisonTable result={result} />
             <MetricsRow result={result} />
+          </div>
+        ) : null}
+
+        {rollingResult ? (
+          <div className={cn("space-y-4", loading && "opacity-60 transition-opacity")}>
+            <RollingVerdict result={rollingResult} loading={loading} />
+            <RollingFoldsTable result={rollingResult} />
+            <RollingAggregate result={rollingResult} />
           </div>
         ) : null}
       </div>
@@ -502,6 +587,150 @@ function MetricsRow({ result }: { result: WalkForwardResult }) {
         label="Combinations tried"
         value={String(result.combinationsTried)}
         hint="How many parameter sets were evaluated on the train window before picking the winner."
+      />
+    </div>
+  );
+}
+
+function RollingVerdict({
+  result,
+  loading,
+}: {
+  result: RollingWalkForwardResult;
+  loading: boolean;
+}) {
+  const { aggregate } = result;
+  const heldUp =
+    aggregate.foldsBeatingHold >= Math.ceil(result.foldCount / 2);
+
+  return (
+    <Card className="ring-1 ring-foreground/10">
+      <CardContent className="space-y-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant={heldUp ? "default" : "secondary"}>
+            {aggregate.foldsBeatingHold}/{result.foldCount} folds beat buy &amp;
+            hold OOS
+          </Badge>
+          {loading ? (
+            <LoaderCircleIcon className="size-3.5 animate-spin text-muted-foreground" />
+          ) : null}
+        </div>
+        <p className="text-pretty leading-relaxed">
+          Across {result.foldCount} expanding-window folds, median out-of-sample
+          return was{" "}
+          <span
+            className={cn(
+              "font-mono font-medium",
+              aggregate.medianOosReturn >= 0
+                ? "text-emerald-400"
+                : "text-rose-400",
+            )}
+          >
+            {formatPct(aggregate.medianOosReturn)}
+          </span>{" "}
+          (mean {formatPct(aggregate.meanOosReturn)}). Optimisation helped on{" "}
+          {aggregate.foldsOptimisationHelped} of {result.foldCount} test windows.
+          Mean train-to-test gap: {formatPctMagnitude(aggregate.meanOverfitGap)}.
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function RollingFoldsTable({ result }: { result: RollingWalkForwardResult }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm">Fold-by-fold results</CardTitle>
+      </CardHeader>
+      <CardContent className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead>Fold</TableHead>
+              <TableHead>Test window</TableHead>
+              <TableHead className="text-right">Train</TableHead>
+              <TableHead className="text-right">Test (opt)</TableHead>
+              <TableHead className="text-right">Test (default)</TableHead>
+              <TableHead className="text-right">Hold</TableHead>
+              <TableHead className="hidden text-right md:table-cell">
+                Gap
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {result.folds.map((fold) => (
+              <TableRow key={fold.fold}>
+                <TableCell className="font-medium">#{fold.fold}</TableCell>
+                <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                  {formatDate(fold.testOptimized.from)} –{" "}
+                  {formatDate(fold.testOptimized.to)}
+                </TableCell>
+                <TableCell
+                  className={cn(
+                    "text-right font-mono tabular-nums",
+                    fold.train.totalReturn >= 0
+                      ? "text-emerald-400"
+                      : "text-rose-400",
+                  )}
+                >
+                  {formatPct(fold.train.totalReturn)}
+                </TableCell>
+                <TableCell
+                  className={cn(
+                    "text-right font-mono tabular-nums",
+                    fold.testOptimized.totalReturn >= 0
+                      ? "text-emerald-400"
+                      : "text-rose-400",
+                  )}
+                >
+                  {formatPct(fold.testOptimized.totalReturn)}
+                </TableCell>
+                <TableCell className="text-right font-mono tabular-nums text-muted-foreground">
+                  {formatPct(fold.testDefault.totalReturn)}
+                </TableCell>
+                <TableCell className="text-right font-mono tabular-nums text-muted-foreground">
+                  {formatPct(fold.testOptimized.benchmarkReturn)}
+                </TableCell>
+                <TableCell className="hidden text-right font-mono tabular-nums text-muted-foreground md:table-cell">
+                  {formatPctMagnitude(fold.overfitGap, 1)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
+function RollingAggregate({ result }: { result: RollingWalkForwardResult }) {
+  const a = result.aggregate;
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <MetricTile
+        label="Median OOS return"
+        value={formatPct(a.medianOosReturn)}
+        tone={a.medianOosReturn >= 0 ? "good" : "bad"}
+        hint="Middle out-of-sample return across folds. More stable than a single split."
+      />
+      <MetricTile
+        label="Mean overfit gap"
+        value={formatPctMagnitude(a.meanOverfitGap, 1)}
+        tone={a.meanOverfitGap > 0.15 ? "bad" : "neutral"}
+        hint="Average train return minus test return per fold."
+      />
+      <MetricTile
+        label="Folds beating hold"
+        value={`${a.foldsBeatingHold}/${result.foldCount}`}
+        tone={a.foldsBeatingHold > result.foldCount / 2 ? "good" : "bad"}
+        hint="How many test windows beat buy-and-hold with frozen optimised params."
+      />
+      <MetricTile
+        label="Params per fold"
+        value={String(result.combinationsTriedPerFold)}
+        sub="combinations searched"
+        hint="Grid-search size on each fold's train window."
       />
     </div>
   );

@@ -184,3 +184,73 @@ export type WalkForwardResult = {
   /** train.totalReturn − testOptimized.totalReturn. Large positive ⇒ overfit. */
   overfitGap: number;
 };
+
+export type WalkForwardFold = {
+  fold: number;
+  optimizedParams: Record<string, number>;
+  overfitGap: number;
+  train: WalkForwardPeriodMetrics & {
+    params: Record<string, number>;
+    benchmarkReturn: number;
+  };
+  testOptimized: WalkForwardPeriodMetrics & {
+    benchmarkReturn: number;
+  };
+  testDefault: WalkForwardPeriodMetrics & {
+    params: Record<string, number>;
+    benchmarkReturn: number;
+  };
+};
+
+export type RollingWalkForwardResult = {
+  strategyId: StrategyId;
+  strategyName: string;
+  coinId: string;
+  coinLabel: string;
+  initialCapital: number;
+  feeBps: number;
+  slippageBps: number;
+  foldCount: number;
+  objective: WalkForwardObjective;
+  combinationsTriedPerFold: number;
+  folds: WalkForwardFold[];
+  aggregate: {
+    meanOosReturn: number;
+    medianOosReturn: number;
+    meanOverfitGap: number;
+    foldsBeatingHold: number;
+    foldsBeatingDefault: number;
+    /** Share of folds where optimised params beat defaults on test. */
+    foldsOptimisationHelped: number;
+  };
+};
+
+export type MonteCarloResult = {
+  strategyId: StrategyId;
+  strategyName: string;
+  coinId: string;
+  coinLabel: string;
+  days: number;
+  initialCapital: number;
+  simulations: number;
+  /** Actual historical path from the backtest. */
+  actual: {
+    strategyReturn: number;
+    benchmarkReturn: number;
+  };
+  strategy: MonteCarloDistribution;
+  benchmark: MonteCarloDistribution;
+  /** Share of shuffled paths where strategy final return exceeded benchmark. */
+  probBeatBenchmark: number;
+};
+
+export type MonteCarloDistribution = {
+  mean: number;
+  p5: number;
+  p25: number;
+  p50: number;
+  p75: number;
+  p95: number;
+  probPositive: number;
+  histogram: { binStart: number; binEnd: number; count: number }[];
+};

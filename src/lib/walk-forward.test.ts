@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import { defaultParams } from "./strategies";
 import {
+  buildRollingFolds,
   paramCombinations,
+  runRollingWalkForward,
   runWalkForward,
   sampleParamValues,
   splitTrainTest,
@@ -91,6 +93,38 @@ describe("paramCombinations", () => {
     const combos = paramCombinations(spec, 64);
     expect(combos.length).toBeLessThanOrEqual(64);
     expect(combos.length).toBeGreaterThan(1);
+  });
+});
+
+describe("buildRollingFolds", () => {
+  it("creates expanding-window folds", () => {
+    const series = candles(200, (i) => 100 + i * 0.1);
+    const folds = buildRollingFolds(series, 3);
+    expect(folds).not.toBeNull();
+    expect(folds!.length).toBe(3);
+    expect(folds![0].train.length).toBeLessThan(folds![1].train.length);
+    expect(folds![1].train.length).toBeLessThan(folds![2].train.length);
+  });
+});
+
+describe("runRollingWalkForward", () => {
+  it("aggregates out-of-sample results across folds", () => {
+    const series = candles(200, (i) => 100 + Math.sin(i / 6) * 8);
+    const result = runRollingWalkForward({
+      candles: series,
+      strategyId: "dip_flip",
+      initialCapital: 10_000,
+      feeBps: 0,
+      slippageBps: 0,
+      coinId: "test",
+      coinLabel: "Test",
+      foldCount: 3,
+    });
+
+    expect(result.folds.length).toBe(3);
+    expect(Number.isFinite(result.aggregate.meanOosReturn)).toBe(true);
+    expect(result.aggregate.foldsBeatingHold).toBeGreaterThanOrEqual(0);
+    expect(result.aggregate.foldsBeatingHold).toBeLessThanOrEqual(3);
   });
 });
 

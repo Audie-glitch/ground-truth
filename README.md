@@ -39,8 +39,13 @@ built-in strategy at its default settings over the same window and ranks them.
 
 The **Walk-forward** tab goes one step further: it grid-searches parameters on
 the first portion of the window (train), freezes the winner, and runs it on the
-remaining unseen dates (test). A strategy that looks brilliant on train and
-collapses on test was fitted to the past, not discovered in the market.
+remaining unseen dates (test). Switch to **Rolling folds** mode for multiple
+expanding-window folds chained together. A strategy that looks brilliant on
+train and collapses on test was fitted to the past, not discovered in the market.
+
+The **Monte Carlo** tab shuffles the strategy's daily account returns hundreds
+of times while preserving their distribution, showing how much of the observed
+result could have come from luck in the ordering of the same moves.
 
 ## Running it
 

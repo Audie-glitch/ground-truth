@@ -6,6 +6,7 @@ import { AlertCircleIcon } from "lucide-react";
 import { BacktestLab, type AssetOption } from "@/components/backtest-lab";
 import { MarketTable } from "@/components/market-table";
 import { PaperDesk } from "@/components/paper-desk";
+import { MonteCarloLab } from "@/components/monte-carlo-lab";
 import { StrategyShootout } from "@/components/strategy-shootout";
 import { WalkForwardLab } from "@/components/walk-forward-lab";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -78,6 +79,7 @@ export function Desk({ initialCoins, initialError }: Props) {
         <TabsTrigger value="backtest">Backtest</TabsTrigger>
         <TabsTrigger value="walkforward">Walk-forward</TabsTrigger>
         <TabsTrigger value="shootout">Strategy shootout</TabsTrigger>
+        <TabsTrigger value="montecarlo">Monte Carlo</TabsTrigger>
         <TabsTrigger value="markets">Markets</TabsTrigger>
         <TabsTrigger value="paper">Paper desk</TabsTrigger>
       </TabsList>
@@ -111,6 +113,14 @@ export function Desk({ initialCoins, initialError }: Props) {
 
       <TabsContent value="shootout">
         <StrategyShootout
+          assets={assets}
+          coinId={selectedCoinId}
+          onCoinIdChange={setCoinId}
+        />
+      </TabsContent>
+
+      <TabsContent value="montecarlo">
+        <MonteCarloLab
           assets={assets}
           coinId={selectedCoinId}
           onCoinIdChange={setCoinId}

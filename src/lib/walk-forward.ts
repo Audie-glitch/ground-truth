@@ -1,3 +1,4 @@
+import { mean } from "./indicators";
 import { runBacktest } from "./backtest";
 import { defaultParams, getStrategy } from "./strategies";
 import type {
@@ -5,9 +6,11 @@ import type {
   ParamSpec,
   StrategyId,
   StrategySpec,
+  WalkForwardFold,
   WalkForwardObjective,
   WalkForwardPeriodMetrics,
   WalkForwardResult,
+  RollingWalkForwardResult,
 } from "./types";
 
 const MIN_TRAIN_BARS = 40;
@@ -142,6 +145,171 @@ function runSlice(
   });
 }
 
+function optimizeParams(
+  train: Candle[],
+  input: Omit<WalkForwardInput, "candles" | "trainRatio" | "objective">,
+  spec: ReturnType<typeof getStrategy>,
+  defaults: Record<string, number>,
+  objective: WalkForwardObjective,
+): { params: Record<string, number>; combinationsTried: number } {
+  let bestParams = { ...defaults };
+  let bestScore = -Infinity;
+  let combinationsTried = 0;
+
+  for (const params of paramCombinations(spec)) {
+    combinationsTried++;
+    const trainResult = runSlice(train, input, params);
+    const s = score(
+      objective,
+      trainResult.metrics.totalReturn,
+      trainResult.metrics.sharpe,
+    );
+    if (s > bestScore) {
+      bestScore = s;
+      bestParams = params;
+    }
+  }
+
+  return { params: bestParams, combinationsTried };
+}
+
+/** Expanding-window folds: each train set includes all prior test data. */
+export function buildRollingFolds(
+  candles: Candle[],
+  foldCount: number,
+): { train: Candle[]; test: Candle[] }[] | null {
+  const folds = Math.max(2, Math.min(6, Math.round(foldCount)));
+  const minTrain = MIN_TRAIN_BARS;
+  const remaining = candles.length - minTrain;
+
+  if (remaining < folds * MIN_TEST_BARS) return null;
+
+  const testSize = Math.floor(remaining / folds);
+  const out: { train: Candle[]; test: Candle[] }[] = [];
+  let cursor = minTrain;
+
+  for (let i = 0; i < folds; i++) {
+    const testEnd =
+      i === folds - 1 ? candles.length : cursor + testSize;
+    if (testEnd - cursor < MIN_TEST_BARS) break;
+    out.push({
+      train: candles.slice(0, cursor),
+      test: candles.slice(cursor, testEnd),
+    });
+    cursor = testEnd;
+  }
+
+  return out.length >= 2 ? out : null;
+}
+
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? (sorted[mid - 1] + sorted[mid]) / 2
+    : sorted[mid];
+}
+
+export function runRollingWalkForward(
+  input: WalkForwardInput & { foldCount?: number },
+): RollingWalkForwardResult {
+  const {
+    candles,
+    strategyId,
+    initialCapital,
+    feeBps,
+    slippageBps,
+    coinId,
+    coinLabel,
+    foldCount = 3,
+    objective = "return",
+  } = input;
+
+  const splits = buildRollingFolds(candles, foldCount);
+  if (!splits) {
+    throw new Error(
+      `Need more history for ${foldCount} rolling folds (minimum ~${MIN_TRAIN_BARS + foldCount * MIN_TEST_BARS} daily bars).`,
+    );
+  }
+
+  const spec = getStrategy(strategyId);
+  const defaults = defaultParams(strategyId);
+  const folds: WalkForwardFold[] = [];
+  let combinationsTriedPerFold = 0;
+
+  for (let i = 0; i < splits.length; i++) {
+    const { train, test } = splits[i];
+    const { params, combinationsTried } = optimizeParams(
+      train,
+      input,
+      spec,
+      defaults,
+      objective,
+    );
+    combinationsTriedPerFold = combinationsTried;
+
+    const trainOptimized = runSlice(train, input, params);
+    const testOptimized = runSlice(test, input, params);
+    const testDefault = runSlice(test, input, defaults);
+
+    const trainMetrics = toPeriodMetrics(train, trainOptimized);
+    const testOptMetrics = toPeriodMetrics(test, testOptimized);
+    const testDefMetrics = toPeriodMetrics(test, testDefault);
+
+    folds.push({
+      fold: i + 1,
+      optimizedParams: params,
+      overfitGap: trainMetrics.totalReturn - testOptMetrics.totalReturn,
+      train: {
+        ...trainMetrics,
+        params,
+        benchmarkReturn: trainOptimized.benchmark.totalReturn,
+      },
+      testOptimized: {
+        ...testOptMetrics,
+        benchmarkReturn: testOptimized.benchmark.totalReturn,
+      },
+      testDefault: {
+        ...testDefMetrics,
+        params: defaults,
+        benchmarkReturn: testDefault.benchmark.totalReturn,
+      },
+    });
+  }
+
+  const oosReturns = folds.map((f) => f.testOptimized.totalReturn);
+  const gaps = folds.map((f) => f.overfitGap);
+
+  return {
+    strategyId,
+    strategyName: spec.name,
+    coinId,
+    coinLabel,
+    initialCapital,
+    feeBps,
+    slippageBps,
+    foldCount: folds.length,
+    objective,
+    combinationsTriedPerFold,
+    folds,
+    aggregate: {
+      meanOosReturn: mean(oosReturns),
+      medianOosReturn: median(oosReturns),
+      meanOverfitGap: mean(gaps),
+      foldsBeatingHold: folds.filter(
+        (f) => f.testOptimized.totalReturn > f.testOptimized.benchmarkReturn,
+      ).length,
+      foldsBeatingDefault: folds.filter(
+        (f) => f.testOptimized.totalReturn > f.testDefault.totalReturn,
+      ).length,
+      foldsOptimisationHelped: folds.filter(
+        (f) => f.testOptimized.totalReturn > f.testDefault.totalReturn,
+      ).length,
+    },
+  };
+}
+
 export function runWalkForward(input: WalkForwardInput): WalkForwardResult {
   const {
     candles,
@@ -165,23 +333,13 @@ export function runWalkForward(input: WalkForwardInput): WalkForwardResult {
   const spec = getStrategy(strategyId);
   const defaults = defaultParams(strategyId);
 
-  let bestParams = { ...defaults };
-  let bestScore = -Infinity;
-  let combinationsTried = 0;
-
-  for (const params of paramCombinations(spec)) {
-    combinationsTried++;
-    const trainResult = runSlice(split.train, input, params);
-    const s = score(
-      objective,
-      trainResult.metrics.totalReturn,
-      trainResult.metrics.sharpe,
-    );
-    if (s > bestScore) {
-      bestScore = s;
-      bestParams = params;
-    }
-  }
+  const { params: bestParams, combinationsTried } = optimizeParams(
+    split.train,
+    input,
+    spec,
+    defaults,
+    objective,
+  );
 
   const trainOptimized = runSlice(split.train, input, bestParams);
   const testOptimized = runSlice(split.test, input, bestParams);
