@@ -14293,6 +14293,131 @@ managers and LedgerImpl
 B/C/D trade / Sol
 withdraw paths.
 
+## 2026-09-03: Orderly Operator / Fee / Market + LedgerImpl B/C/D (`462e129`)
+
+Immunefi program
+`orderlynetwork`
+($100,000, `kyc: false`).
+Vault, Ledger withdraw,
+and `evm-cross-chain`
+are already logged. This
+slice is the remaining
+listed `contract-evm`
+`src/` at `462e129`.
+Local clone
+`/tmp/orderly-evm`. No
+mainnet interaction.
+
+Files: `OperatorManager.sol`,
+`OperatorManagerImplA.sol`,
+`OperatorManagerImplB.sol`,
+`FeeManager.sol`,
+`MarketManager.sol`,
+`LedgerImplB.sol`,
+`LedgerImplC.sol`,
+`LedgerImplD.sol`,
+plus the `Ledger.sol`
+wrappers for those
+selectors.
+
+Checked for: a stranger
+uploading trades /
+settlements / fees;
+engine-sig skip on
+batch id; deposit or
+Sol withdraw that
+registers a hijacked
+pubkey; withdraw2Contract
+to an arbitrary
+receiver; swap upload
+that credits without
+the operator.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- OperatorManager
+  `onlyOperator` (or the
+  owner-set zip) gates
+  every upload. Impl A
+  verifies the engine
+  perp / market /
+  rebalance signer and
+  requires a matching
+  sequential
+  `futuresUploadBatchId`.
+  Impl B does the same
+  for events
+  (`eventUploadBatchId`
+  + `engineEventUploadAddress`)
+  then `ledger.call`s
+  the owner-inited
+  `bizTypeToSelectors`.
+  Unknown bizType
+  reverts. Engine keys
+  are owner-set.
+- FeeManager collectors
+  are owner-set;
+  `setBrokerAccountId`
+  is owner or
+  `BROKER_MANAGER_ROLE`.
+  Getters only.
+- MarketManager price /
+  funding writes are
+  `onlyOperatorManager`.
+  `setLastFundingUpdated`
+  is `onlyLedger`. Cfg
+  is owner-set.
+- Ledger wrappers:
+  trades / settlement /
+  liq / ADL / fee /
+  delegate / balance
+  transfer / swap /
+  withdraw2Contract are
+  `onlyOperatorManager`.
+  Sol deposit is
+  `onlyCrossChainManagerV2`.
+- Impl B batch trades
+  apply the same symbol
+  allowlist and position
+  math as Impl A, using
+  transient storage for
+  gas. Operator-only.
+- Impl C Sol deposit
+  requires
+  `accountId ==
+  keccak256(pubkey,
+  brokerHash)` then
+  credits that id. Sol
+  withdraw requires
+  Ed25519 (EOA memo or
+  ledger tx) from
+  `sender`, then
+  freeze+finish in one
+  tx (no async finish,
+  documented). Balance
+  transfer is a
+  two-sided debit/credit
+  keyed by `transferId`
+  (engine trust).
+- Impl D
+  withdraw2Contract
+  pays only a Ceffu
+  prime wallet mapped
+  to the account, or a
+  protocol vault whose
+  accountId matches.
+  Swap `applyDelta` is
+  operator-only; vault
+  deltas apply only
+  when `swapStatus ==
+  1`.
+
+Not submitted. Listed
+Orderly GitHub leftover
+is exhausted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -14756,13 +14881,14 @@ are logged (listed
 MtPelerin GitHub
 Solidity leftover
 exhausted);
-Orderly Vault and Ledger
-withdraw (`462e129`) are
-logged (remaining Orderly
-is Operator / Fee /
-Market and LedgerImpl
-B/C/D; `evm-cross-chain`
-`9a8ba76` is logged);
+Orderly Vault, Ledger
+withdraw, Operator / Fee
+/ Market + LedgerImpl
+B/C/D (`462e129`), and
+`evm-cross-chain`
+(`9a8ba76`) are logged
+(listed Orderly GitHub
+leftover exhausted);
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover
