@@ -58919,3 +58919,332 @@ Arbitrum Fee governor / Delay / Pair / Relayer
 impl, TwapDelay, TwapPair, TwapRelayer impl). Official GitHub still
 private / 404.
 
+## 2026-09-03: Enzyme Onyx leftover ValuationHandler + trackers leftover (`7b48d24`)
+
+Immunefi program
+`enzyme-onyx`
+($200,000, `kyc: false`).
+Follow-on leftover
+after ACE issuance
+(`Shares` /
+deposit-redeem
+queues /
+`FeeHandler`)
+and
+`CreWorkflowConsumer`.
+Official clone
+`/tmp/enzyme-onyx`
+`7b48d24`.
+Opened
+`src/components/value/ValuationHandler.sol`,
+`position-trackers/LinearCreditDebtTracker.sol`,
+`AccountERC20Tracker.sol`,
+`fees/management-fee-trackers/ContinuousFlatRateManagementFeeTracker.sol`,
+`fees/performance-fee-trackers/ContinuousFlatRatePerformanceFeeTracker.sol`,
+`roles/OpenAccessLimitedCallForwarder.sol`,
+`LimitedAccessLimitedCallForwarder.sol`,
+`lists/SharesOwnedAddressList.sol`,
+`infra/lists/address-list/OwnableAddressList.sol`,
+`AddressListBase.sol`,
+`shares-transfer-validators/AddressListsSharesTransferValidator.sol`,
+`infra/oracles/OneToOneAggregator.sol`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+`updateShareValue`
+or
+`setAssetRate`;
+credit/debt
+item add that
+inflates NAV
+without admin;
+ERC20 tracker
+that reads a
+victim wallet
+into live
+valuation;
+fee settle
+that a
+non-handler
+can call;
+forwarder
+`executeCalls`
+that runs an
+unlisted
+selector;
+address-list
+add by a
+non-auth
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `ValuationHandler.setAssetRate`
+  /
+  `updateShareValue`
+  /
+  `addPositionTracker`
+  are
+  `onlyAdminOrOwner`.
+  Tracked
+  value is
+  the sum of
+  `getPositionValue()`
+  on the
+  admin-set
+  tracker
+  set.
+  Untracked
+  value is
+  an admin
+  `int256`.
+  Net share
+  value is
+  `(tracked +
+  untracked -
+  feesOwed) /
+  supply`.
+  Rates
+  expire and
+  must be
+  non-zero
+  before
+  convert.
+  Admin-
+  reported
+  NAV is the
+  documented
+  model
+  (already
+  noted on
+  the ACE
+  leftover).
+
+- `LinearCreditDebtTracker`
+  add /
+  remove /
+  `updateSettledValue`
+  are
+  `onlyAdminOrOwner`.
+  `getPositionValue`
+  is view
+  and sums
+  settled
+  plus
+  pro-rated
+  `totalValue`
+  after
+  `start`.
+  Duration
+  `0` is a
+  discrete
+  step after
+  start.
+  No
+  permissionless
+  write.
+
+- `AccountERC20Tracker.init`
+  is a
+  one-shot
+  set of
+  the
+  tracked
+  account
+  (same
+  clone
+  front-run
+  DoS as
+  `CreWorkflowConsumer`).
+  It cannot
+  attach
+  itself to
+  a live
+  valuation:
+  `addPositionTracker`
+  is admin.
+  `addAsset`
+  /
+  `removeAsset`
+  are
+  admin.
+  Value is
+  `balanceOf(account)`
+  converted
+  by the
+  Shares
+  valuation
+  handler
+  rates.
+
+- Management
+  and
+  performance
+  fee
+  trackers
+  settle
+  `onlyFeeHandler`.
+  Rate /
+  HWM /
+  hurdle /
+  `resetLastSettled`
+  are
+  admin.
+  Management
+  fee is
+  `netValue *
+  rate *
+  elapsed /
+  year`.
+  Performance
+  fee
+  charges
+  only
+  above
+  hurdle-
+  adjusted
+  HWM and
+  then
+  writes
+  HWM to
+  post-fee
+  share
+  value.
+  Rate
+  `< 100%`.
+
+- `OpenAccessLimitedCallForwarder.executeCalls`
+  is
+  permissionless
+  but each
+  call must
+  match an
+  admin-
+  listed
+  `(target,
+  selector)`.
+  `LimitedAccess`
+  additionally
+  requires
+  `isUser`
+  (`addUser`
+  admin).
+  `msg.value`
+  is not
+  summed
+  against
+  per-call
+  value
+  (caller
+  overpay
+  stays on
+  the
+  forwarder;
+  not
+  stranger
+  theft).
+
+- Address
+  list
+  add/remove
+  is
+  `onlyAuth`.
+  Shares-
+  owned
+  list
+  auth is
+  admin/
+  owner.
+  Ownable
+  list
+  `init`
+  is
+  OZ
+  initializer
+  (owner
+  set
+  once).
+  Transfer
+  validator
+  list
+  config
+  is
+  admin;
+  `validateSharesTransfer`
+  is view
+  and
+  checks
+  sender /
+  recipient
+  allow or
+  deny
+  lists.
+
+- `OneToOneAggregator`
+  always
+  returns
+  `1e18`
+  at
+  `block.timestamp`.
+  No
+  storage,
+  no
+  withdraw.
+
+Do not file
+admin NAV /
+rate /
+untracked
+value,
+admin
+tracker
+attachment,
+clone
+`init`
+front-run
+of an
+unbound
+instance,
+or an
+admin-
+listed
+forwarder
+selector
+as
+stranger
+theft.
+
+Not submitted.
+Listed leftover
+that official
+GitHub opens
+for Enzyme
+Onyx
+ValuationHandler /
+position
+trackers /
+continuous
+fee
+trackers /
+call
+forwarders /
+address
+lists is
+exhausted at
+the
+opened-file
+level.
+Remaining
+listed:
+`Global.sol`,
+`ComponentBeaconProxy.sol`,
+`StorageHelpersLib.sol`,
+and the
+immunefi.com
+placeholder.
+
