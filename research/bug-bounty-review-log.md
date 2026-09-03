@@ -67762,3 +67762,21 @@ Do not file a facilitator-bucket mint as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: protocol-v2 / upgradeability proxies. Official PriceOracleSentinel + OwnableFacilitator 404.
 
+
+## 2026-09-03: Aave leftover remaining upgradeability leftover (`cff15de` / `7a7548c`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after UpgradeableGhoToken leftover. Official `aave-dao/aave-v3-origin` `cff15de` upgradeability helpers plus pinned `bgd-labs/solidity-utils` `7a7548c` `TransparentUpgradeableProxy.sol`. Opened listed `BaseImmutableAdminUpgradeabilityProxy.sol`, `InitializableImmutableAdminUpgradeabilityProxy.sol`, `VersionedInitializable.sol`, and `TransparentUpgradeableProxy.sol`. Do not rematch Pool / L2Pool leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `upgradeTo` / `upgradeToAndCall` without admin; admin-fallback executing implementation logic as the proxy admin; `initializer` re-running on a live revision.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `BaseImmutableAdminUpgradeabilityProxy` stores `_admin` immutably. `upgradeTo` / `upgradeToAndCall` / `admin` / `implementation` are `ifAdmin` (non-admin `_fallback`s). `_willFallback` reverts if `msg.sender == _admin`.
+- `InitializableImmutableAdminUpgradeabilityProxy` only wires that fallback override onto the OZ initializable proxy.
+- `VersionedInitializable` constructor sets `lastInitializedRevision = getRevision()`, bricking the implementation. Proxy `initializer` requires `revision > lastInitializedRevision` (or constructor / nested init).
+- `TransparentUpgradeableProxy` is the OZ transparent pattern: `changeAdmin` / `upgradeTo` / `upgradeToAndCall` are `ifAdmin`; admin cannot fallback.
+
+Do not file an admin-gated proxy upgrade as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: protocol-v2 LendingPool / configurator / collateral manager / v2 tokens.
+
