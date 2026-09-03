@@ -50710,3 +50710,126 @@ listed: rewards
 incentives) and
 the Algorand
 docs path.
+
+## 2026-09-03: Folks leftover Algorand xALGO consensus (`67467b8`)
+
+Immunefi program
+`folksfinance`
+($200,000, `kyc: true`).
+Listed remaining after
+EVM spokes
+(`fde2103`). Docs
+URL
+`docs.folks.finance/developer/contracts`
+is the Algorand
+path. Official
+lend app IDs live
+in
+`algorand-js-sdk`
+(`MainnetDepositsAppId`
+971353536,
+`MainnetPoolManagerAppId`
+971350278) but
+loan / deposit /
+pool TEAL is not
+in a public repo
+(ABI JSON only).
+Opened public
+`algo-liquid-staking-contracts`
+`/tmp/folks-xalgo`
+`67467b8`. Mainnet
+consensus app
+`1134695678`,
+xALGO ASA
+`1134696561`. No
+mainnet writes.
+
+Files:
+`contracts/xalgo/consensus_v3.py`,
+`contracts/xalgo/consensus_state_v3.py`,
+`contracts/common/inner_txn.py`.
+
+Checked for: a
+stranger
+`immediate_mint`
+that spends
+another user's
+ALGO; `burn` that
+sends ALGO
+without an
+xALGO transfer
+from the caller;
+`claim_delayed_mint`
+that mints to the
+claimer; admin
+fee drain by a
+non-admin.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `immediate_mint`
+  /
+  `delayed_mint`
+  require
+  `check_algo_sent`
+  (`sender ==
+  Txn.sender()`,
+  receiver is the
+  app, no rekey /
+  close).
+- `burn` requires
+  `check_x_algo_sent`
+  of the xALGO
+  ASA from
+  `Txn.sender()`
+  to the app,
+  then pays ALGO
+  to the chosen
+  receiver.
+- `claim_delayed_mint`
+  is permissionless
+  after the delay
+  round and mints
+  to the stored
+  receiver. The
+  caller only
+  receives the box
+  min-balance
+  refund.
+- `claim_fee`
+  sends unclaimed
+  fees to the
+  admin, not the
+  caller.
+- `update_sc` is
+  admin + time
+  delay +
+  scheduled
+  program hashes.
+
+Do not file
+self-funded mint,
+xALGO-gated burn,
+permissionless
+claim-to-stored-
+receiver, or
+admin fee claim
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Folks
+Algorand public
+xALGO leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed: Algorand
+lend TEAL if a
+public source
+drop opens.
