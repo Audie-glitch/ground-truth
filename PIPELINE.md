@@ -28,6 +28,7 @@ LayerZero leftover remaining other-chain twins OmniCounter leftover is logged;
 LayerZero leftover remaining Aptos Endpoint leftover is logged;
 LayerZero leftover remaining Solana EndpointV2 leftover is logged;
 LayerZero leftover remaining Solana ULN302 + DVN leftover is logged;
+LayerZero leftover remaining TON Controller + ULNManager + DVNProxy leftover is logged;
 Ether.fi leftover remaining Auction leftover is logged;
 Ether.fi leftover remaining bridge adapters leftover is logged;
 Ether.fi leftover remaining weETH-cross-chain leftover is logged;
