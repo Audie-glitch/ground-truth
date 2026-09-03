@@ -112,8 +112,11 @@ Ordered by urgency. Each is a few minutes.
    you a patch and you push it.
 6. Post the #2240 design proposal (I will write it in `keeperhub/`) as a
    comment on the issue so maintainers can agree before code lands.
-7. Make this repository public before any submission links to it, or create a
-   separate public repo per submission and tell me the names.
+7. Publish each entry as its own public repository: standalone branches with
+   the entry at the root and full history are pushed as
+   `cursor/creditpassport-standalone-4667` and `cursor/signlens-standalone-4667`.
+   Create an empty public repo and push the branch to its `main`
+   (exact commands in each entry's `SUBMISSION.md`).
 8. Demo videos: I record the screen; you upload to YouTube or Loom and paste
    the link in the submission form. If a track wants narration, I write the
    script.

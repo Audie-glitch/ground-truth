@@ -22,7 +22,10 @@ presentation covering problem, solution, technology, innovation, impact.
 ## You do
 
 1. Register on Devpost and join the hackathon from the event page.
-2. Make the repository public (or create a public `signlens` repository and tell me; I push the tree).
+2. Publish the standalone repository: create an empty public GitHub repository
+   (e.g. `signlens`) and, from any clone of this repository, run
+   `git push https://github.com/<you>/signlens.git cursor/signlens-standalone-4667:main`.
+   That branch has this directory as its root with full history.
 3. Upload the demo video (YouTube unlisted or Loom) and paste the URL.
 4. Submit with the answers below.
 

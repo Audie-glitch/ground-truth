@@ -48,12 +48,21 @@ web app is reachable at submission time; otherwise the video shows it.
 
 ## 2. Repository (you)
 
-- Make this repository public, or create a public repository named
-  `creditpassport` and tell me; I will push the `creditpassport/` tree there
-  with history. The submission form needs a public GitHub URL with a README.
-- The deck URL for the form is the raw link to `creditpassport/docs/deck.pdf`
-  on the default branch, for example
-  `https://raw.githubusercontent.com/<owner>/<repo>/main/creditpassport/docs/deck.pdf`.
+The entry is judged at repository level, so it should stand alone. A standalone
+branch with this directory as its root and full history is already pushed:
+`cursor/creditpassport-standalone-4667` (submodule config included; a fresh
+`git clone --recurse-submodules` of it builds and passes all tests).
+
+1. Create an empty public GitHub repository, e.g. `creditpassport`.
+2. From any clone of this repository:
+   `git push https://github.com/<you>/creditpassport.git cursor/creditpassport-standalone-4667:main`
+3. Use that repository's URL in the form. Its README is at the root.
+
+Alternatively make this whole repository public and submit the subdirectory
+URL; the standalone repository is cleaner for judges.
+- The deck URL for the form is the raw link to `docs/deck.pdf` in the
+  standalone repository, for example
+  `https://raw.githubusercontent.com/<you>/creditpassport/main/docs/deck.pdf`.
 
 ## 3. Demo video (agent records, you upload)
 
