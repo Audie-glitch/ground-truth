@@ -4949,6 +4949,230 @@ Remaining 0x: EulerSwap, Curve,
 PancakeInfinity, Bebop, Renegade, Ekubo,
 Hanji, NucleusTeller. Not submitted.
 
+## 2026-09-03: Extra Finance ExtraX factory + Aave-fork Pool
+
+Same Immunefi program `extrafinance` ($100,000,
+`kyc: false`, updated 2026-09-02). Same
+Sourcify + ExtraFi/extra-contracts method
+as the LYF slice. Live Optimism RPC
+`https://mainnet.optimism.io` used only
+for `initialized` / EIP-1967 views — no
+state-changing calls. No mainnet
+interaction beyond those reads.
+
+Files: Sourcify exact_match ExtraX impl
+`/tmp/extrafinance/xacct`
+`contracts/extra-x-account/ExtraXAccountFactory.sol`
+(`0x345e8250cB11F61F0d8cFaBAC6be59A356309a58`);
+Safe creator
+`/tmp/extrafinance/creator_safe`
+`…/SafeAccount130Creator.sol`
+(`0x1EEA0464D31F349D31FF7D318ce236F48AD92438`);
+Coinbase creator
+`/tmp/extrafinance/creator_cb`
+`…/CoinbaseAccountCreator.sol`
+(`0xd4b5D2A9F8e9Ec1883Ef997eB508EA6Cc12B240f`);
+Sourcify match (not exact) Aave V3 fork
+`/tmp/extrafinance/poolimpl`
+`contracts/core-v3/protocol/pool/Pool.sol`
+(`0x0353b6221B23B8320202320Ca450EEB9fB0de9E5`)
+plus PoolConfigurator / AToken /
+VariableDebtToken under
+`/tmp/extrafinance/{poolcfg,atoken,debt}`.
+Live ExtraX proxy
+`0x90cF2763CC710B9Ce215584A89c77F70bbb96B44`.
+
+Checked for: uninitialized ExtraX proxy
+takeover; `createAccountFor` that assigns
+a Safe/Coinbase account to a stranger;
+import of an account the caller does not
+own; ExtraFi-specific money-flow in the
+Aave-fork Pool.
+
+Result: no user-exploitable finding.
+
+- Live proxy and impl both return
+  `initialized() == 1`. EIP-1967
+  implementation is the ExtraX factory
+  impl; admin is
+  `0x750f7153e6c92a24089a34ec6afe65740c9bd40a`.
+  `initialize` is `public initializable`
+  (once). Not an uninitialized-proxy
+  takeover.
+- `createAccount` / `createAccountFor`
+  are public. They create a Safe 1.3.0
+  or Coinbase smart account *owned by
+  `owner`* via official L2 factories
+  (`0xC228…10BC` + singleton
+  `0xfb1b…91EA`; Coinbase
+  `0x0BA5…428a`). That is a gift, not
+  a steal. Creators are `onlyFactory`.
+  Nonce is
+  `keccak(factory, EXTRA_X_ACCOUNT_SEED,
+  accType, owner, id)`.
+- Live `totalAccTypes == 2` and
+  `isAccountImportEnabled == false`.
+  Import, when enabled, calls
+  `validateAccountOwner` (`isOwner` +
+  singleton / implementation match).
+- Aave-fork Pool is stock Aave V3
+  Supply / Borrow / Liquidation /
+  FlashLoan / Validation. Grep found no
+  ExtraFi-specific money-flow. Do not
+  spend a later pass re-auditing Aave
+  V3.
+- Official extra-contracts repo still
+  has only `VaultFactory` + `IveToken`
+  for vault / veToken. Registry logic
+  ids 101–105 and live vault 1
+  (`0x2f8305…A33C`) are Sourcify 404.
+
+Remaining Extra Finance: vault position
+logic (not Sourcify) and veToken. Not
+submitted.
+
+## 2026-09-03: Index Coop Set Protocol V2
+
+Immunefi program `indexcoop` ($200,000,
+`kyc: false`, updated 2026-09-01). Scope
+is five Ethereum mainnet etherscan
+addresses, no GH tree in the program
+JSON. Sourcify exact_match fetched to
+`/tmp/indexcoop/`. No mainnet
+interaction.
+
+| Address | Contract | Path |
+| --- | --- | --- |
+| `0xD2463675a099101E36D85278494268261a66603A` | Controller | `ic_controller` |
+| `0x2758BF6Af0EC63f1710d3d7890e1C263a247B75E` | SetTokenCreator | `ic_creator` |
+| `0xa0a98EB7Af028BE00d04e46e1316808A62a8fd59` | DebtIssuanceModuleV2 | `ic_dimv2` |
+| `0x165EDF07Bb61904f47800e13F5120E64C4B9A186` | StreamingFeeModule | `ic_sfm` |
+| `0xb9083dee5e8273E54B9DB4c31bA9d4aB7C6B28d3` | IntegrationRegistry | `ic_registry` |
+
+These are Set Protocol V2 (Set Labs,
+Apache-2.0, Solidity 0.6.10).
+
+Files: `Controller.sol`,
+`SetTokenCreator.sol`,
+`DebtIssuanceModuleV2.sol` +
+`IssuanceValidationUtils.sol`,
+`StreamingFeeModule.sol`,
+`IntegrationRegistry.sol`.
+
+Checked for: a non-factory that
+registers a Set; issue/redeem that
+leaves the Set undercollateralized
+beyond the documented aToken ±1 wei
+tolerance; streaming fee that inflates
+past the committed max; a public
+adapter add.
+
+Result: no user-exploitable finding.
+
+- Controller `initialize` is
+  `onlyOwner` once. `addSet` is
+  `onlyFactory`. Factories / modules /
+  resources / fees are owner-gated.
+- `SetTokenCreator.create` deploys a
+  new Set the caller manages and
+  registers it via `controller.addSet`.
+  Components / units / modules are
+  checked; modules must already be
+  enabled. Intended factory path.
+- DIMV2 overrides V1 issue/redeem with
+  looser post-transfer
+  collateralization checks (aToken ±1
+  wei rounding). Still
+  `onlyValidAndInitializedSet`, pulls
+  components from `msg.sender`,
+  mints/burns, and charges
+  manager/protocol fees. V1 manager
+  hooks stay `onlyManagerAndValidSet`.
+  Equity in uses
+  `preciseMulCeil` as a lower bound
+  after the transfer.
+- StreamingFee inflates Set supply to
+  the manager (and protocol cut).
+  `feeStates` are per Set. Max fee is
+  committed at `initialize`
+  (`onlySetManager` + pending Set).
+  `updateStreamingFee` accrues first
+  and requires the new fee `< max`.
+- IntegrationRegistry add/edit/remove
+  are `onlyOwner` and require
+  `controller.isModule`.
+
+Remaining Index Coop: none of the five
+in-scope addresses. Not submitted.
+
+## 2026-09-03: 0x leftover Bebop / EulerSwap / Curve (`1df9087`)
+
+Same Immunefi program `0x` ($1,000,000,
+`kyc: true`). Same clone
+`/tmp/0x-settler` at `1df9087`. No
+mainnet interaction. Maverick / Dodo /
+BalancerV3 already logged.
+
+Files: `src/core/{Bebop,EulerSwap,
+CurveTricrypto}.sol`.
+
+Checked for: Bebop that fills more
+taker tokens than Settler holds or
+sends maker proceeds to the operator;
+EulerSwap that spends a pool the
+account did not authorize as operator,
+or that incurs a second EVC
+controller; Curve callback that spends
+a Permit2 the taker did not sign.
+
+Result: no user-exploitable finding.
+
+- Bebop settlement is hardcoded
+  `_BEBOP =
+  0xbbbbbBB520d69a9775E85b458C58c648259FAD5F`
+  and is a restricted target. Taker
+  fill is `min(Settler balance,
+  order.taker_amount)`; maker fill
+  scales with that. `amountOutMin`
+  applies before approve +
+  `fastSwapSingle`. Calldata forces
+  `taker_address = address()`
+  (Settler) and `receiver =
+  recipient`. Maker signature is
+  required.
+- EulerSwap `sellToEulerSwap` reads
+  pool params/reserves first (safe
+  because Euler admits only listed
+  tokens), caps `ppm` of Settler
+  balance at `calcLimits` (supply cap,
+  cash, borrow cap, operator
+  authorization). Curve solve then
+  `fastSwap` to `recipient` if
+  `amountOut > 1`. `checkSolvency`
+  refuses a deferred-check account,
+  refuses a second controller, and
+  LTV-adjusts remaining collaterals
+  against the single debt vault’s
+  oracle. A fake pool can only take
+  tokens already in this execution.
+- Curve Tricrypto VIP derives the pool
+  via CREATE2 from `_curveFactory()` +
+  `factoryNonce` packed in `poolInfo`.
+  Callback is installed with
+  `_setOperatorAndCall`. Permit
+  fields live in transient storage.
+  Callback asserts `payer == 0` and
+  `_transferFrom`s Permit2 /
+  AllowanceHolder to `msg.sender`
+  (the pool). Code-prefix hash check
+  is commented out; a colliding
+  CREATE2 at that nonce would still
+  only spend the signed permit.
+
+Remaining 0x: PancakeInfinity,
+Renegade, Ekubo, Hanji,
+NucleusTeller. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -5005,20 +5229,23 @@ RFQ / UniV3 / AllowanceHolder / BridgeSettler
 plus UniV2 / Velodrome / Across /
 POSITIVE_SLIPPAGE, Stargate / LayerZero /
 CCIP / Mayan / DeBridge, UniV4 / Relay /
-SETTLER_SWAP, and Maverick / Dodo /
-BalancerV3 (`1df9087`) are logged;
-remaining 0x is EulerSwap, Curve,
-PancakeInfinity, Bebop, Renegade, Ekubo,
-Hanji, NucleusTeller. Extra Finance LYF LendingPool +
+SETTLER_SWAP, Maverick / Dodo /
+BalancerV3, and Bebop / EulerSwap /
+Curve (`1df9087`) are logged;
+remaining 0x is PancakeInfinity,
+Renegade, Ekubo, Hanji, NucleusTeller.
+Extra Finance LYF LendingPool +
 VeloPositionManager + RewardDistributor
-(Sourcify, 2024-08 verified) are logged;
+(Sourcify, 2024-08 verified) plus ExtraX
+factory / creators / live proxy and the
+Aave-fork Pool skim are logged;
 remaining Extra Finance is vault logic
-(not Sourcify), ExtraX factory, Aave-fork
-Pool, veToken. Next unreviewed Immunefi
-GitHub-or-recent trees: those 0x leftover
-adapters, Extra Finance leftover,
-Index Coop etherscan set
-($200k, no KYC), Jito `jito-solana` /
+(not Sourcify) and veToken. Index Coop
+Set Protocol V2 (all five in-scope
+addresses) is logged. Next unreviewed
+Immunefi GitHub-or-recent trees: those
+0x leftover adapters, Extra Finance
+vault / veToken, Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted),
@@ -5061,7 +5288,7 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-03:53 UTC 3 Sep: KeeperHub #2105 still `open` +
+04:20 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
