@@ -872,9 +872,56 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: TermMax V2 router + swap adapters (`e314f3f`)
+
+Same Immunefi program (`termstructurelabs`). Local clone `/tmp/termmax-v2`.
+No mainnet interaction.
+
+Files: `contracts/v2/router/TermMaxRouterV2.sol`,
+`contracts/v2/access/WithWhitelistCheck.sol`,
+`contracts/v2/lib/{OnlyProxyCall,TransferUtilsV2}.sol`,
+`contracts/v2/router/swapAdapters/{ERC20SwapAdapterV2,TermMaxSwapAdapter,OneInchSwapAdapter,LifiSwapAdapter,OdosV2AdapterV2,UniswapV3AdapterV2,PendleSwapV3AdapterV2}.sol`.
+
+Checked for: leftover tokens after swap/leverage/flash-repay; leftover
+approvals; per-order `minTokenOut=0` vs aggregate `netTokenAmt`;
+adapters callable without the router; whitelist bypass; LiFi
+user-supplied calldata sending output elsewhere.
+
+Result: no user-exploitable finding.
+
+- Adapters are `onlyProxy` (`address(this)` must differ from the
+  deployed implementation), so `swap` only runs via the router's
+  `delegatecall`. Markets and adapters are checked against
+  `WhitelistManager` (`MARKET` / `ADAPTER`). Flash callbacks use a
+  transient store that is cleared after one use.
+- `TermMaxSwapAdapter` exact-in passes `minTokenOut=0` to each order
+  and then reverts if the sum is below `netTokenAmt`. A sandwich on
+  one order can only fail the user's tx, not extract protocol funds.
+  Exact-out refunds unused input to a user-set `refundAddress`.
+  Order callbacks and 4626 pools must be whitelisted.
+- Aggregator adapters scale `minOut` with input, require 1inch
+  `spentAmount == amountIn`, and measure LiFi output on the router
+  before forwarding. A LiFi payload that pays a third party yields
+  zero `tokenOut` and reverts on `netAmount`.
+- `TransferUtilsV2.safeApprove` never lowers a leftover allowance.
+  Uniswap / 1inch / Odos still pull only the amount in the current
+  swap params, so a stale allowance does not let a third party drain
+  the router.
+- `useBalanceOnchain` is the intentional leftover sweep inside a
+  multi-path tx. `leverage` / `flashRepayFromColl` can leave unused
+  debt or collateral on the router if the caller underspends; that
+  is the user's own leftover (or dust), not an attacker extract of
+  protocol reserves. `swapAndRepay` returns remaining repay token
+  to `msg.sender`.
+
+Not submitted. Remaining TermMax adapters (Kyber, OKX, Pancake,
+Kodiak, vault helpers) are lower-priority copies of the same
+approve-and-call pattern.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. the402.ai still paused. No KeeperHub implementation before the
-6 Sep build window. Remaining TermMax slice: V2 router adapters if
-still unreviewed.
+6 Sep build window. Next Immunefi slice: a newly added GH-scoped
+program that is not Sky (legacy Maker surface) or Money on Chain
+(strict OOS + existing AI dump).
