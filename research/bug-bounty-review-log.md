@@ -6939,9 +6939,152 @@ Remaining SparkLend: the rest
 of the 359-asset table (ALM
 controllers, other-chain
 vaults, Robinhood / X Layer
-13 Jul rows). Twyne sources
-still unavailable. Not
+13 Jul rows). Not submitted.
+
+## 2026-09-03: Twyne Aave V3 operators (Sourcify)
+
+Immunefi program `twyne`
+($50,000, `kyc: false`). GitHub
+is private from this VM. Vault /
+wrapper / EVC / factory rows
+are still Sourcify 404. The
+three Aave V3 operators
+(listed June 2026) are exact
+Sourcify matches
+(verified 2026-03-06):
+Teleport `0x868a…bd78`,
+Leverage `0x4519…4A4C`,
+Deleverage `0x229f…5e91`.
+Extract under
+`/tmp/twyne-sourcify`. No
+state-changing txs.
+
+Files:
+`src/operators/AaveV3{Leverage,
+Deleverage,Teleport}Operator.sol`.
+
+Checked for: a stranger
+flashloan that borrows from
+someone else’s vault; swap
+`multicall` that keeps the
+Morpho loan; teleport that
+pulls another user’s aTokens
+without being the borrower.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `executeLeverage` /
+  `executeDeleverage` /
+  `executeTeleport` require
+  `isCollateralVault` and
+  `borrower() == _msgSender()`.
+  `onMorphoFlashLoan` is
+  Morpho-only. Morpho only
+  callbacks the initiator, so
+  encoded args stay the
+  caller’s.
+- Leverage pulls the
+  borrower’s underlying /
+  aTokens via Permit2, supplies
+  Aave, `depositATokens` to the
+  vault, then EVC-batch
+  `skim` + `borrow` on behalf
+  of that borrower. A hostile
+  `swapData` can only strand
+  this tx (Morpho repay
+  reverts). Leftover aTokens
+  on the operator are deposited
+  to the current vault
+  (donation).
+- Deleverage swaps the
+  flashloaned underlying to
+  the target, `repay`s the
+  vault’s Aave debt, checks
+  `<= maxDebt`, then
+  `redeemUnderlying` on behalf
+  of the borrower. Dust of
+  target / underlying is sent
+  to the borrower.
+- Teleport `repay`s the
+  borrower’s existing Aave
+  debt, Permit2-pulls their
+  aTokens, deposits the
+  wrapper into their vault,
+  and borrows the flashloan
+  amount back. `debtAmount`
+  is clamped to the user’s
+  live variable-debt
+  balance.
+
+Remaining Twyne: vaults,
+wrappers, EVC, factories
+(still Sourcify 404). Not
 submitted.
+
+## 2026-09-03: Yearn stYFI February core (`69e262e`)
+
+Immunefi program `yearnfinance`
+($200,000, `kyc: false`). July
+YBC / funding / bonus leftover
+already logged. This pass is
+the 15 Feb 2026 stYFI core:
+StakedYFI `0x42b2…c016`,
+liquid-locker depositors
+(StakeDAO / 1up / Cove), and
+the staking reward distributor
+pattern. Official tree
+[yearn/stYFI](https://github.com/yearn/stYFI)
+at `69e262e`. No mainnet
+interaction.
+
+Files: `contracts/{StakedYFI,
+LiquidLockerDepositor,
+StakingRewardDistributor}.vy`.
+
+Checked for: withdraw that
+pays a stream that is still
+locked; redeem of another
+account without allowance;
+reward `claim` that pays the
+subject instead of the
+claimer; first-depositor
+inflation (1:1 vault).
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- StakedYFI is 1:1. `deposit`
+  / `mint` pull from
+  `msg.sender` and mint to
+  `_receiver`. `unstake` burns
+  the caller and starts a 14-day
+  stream. `withdraw` /
+  `redeem` spend allowance if
+  `_owner != msg.sender` and
+  only transfer the streamed
+  (or hook-instant) amount.
+  `sweep` cannot take
+  `asset`.
+- LiquidLockerDepositor is
+  `1:scale`. Transfers of
+  shares are not implemented
+  (only `approve`). `unstake`
+  is `msg.sender`. `_redeem`
+  enforces the same stream
+  math and allowance.
+- StakingRewardDistributor
+  `claim(_account)` requires
+  `claimers[msg.sender]` and
+  pays `msg.sender` (the
+  already-logged RewardClaimer
+  pattern).
+
+Remaining Yearn stYFI Feb:
+liquid-locker middleware /
+redemption / veYFI
+distributors if a later pass
+wants them. Not submitted.
 
 ## Next candidates
 
@@ -7050,15 +7193,19 @@ Remaining SparkLend is the rest
 of the 359-asset table. Next
 unreviewed Immunefi
 GitHub-or-recent trees:
-Twyne June-2026 wrappers
-(`aPT22Oct2026`, EVC) $50k no KYC
-(GitHub private from this VM;
-Sourcify 404); TermMax TMX
+Twyne June-2026 Aave V3
+operators (Sourcify) are logged;
+remaining Twyne vaults /
+wrappers / EVC / factories are
+still Sourcify 404. TermMax TMX
 token (24 Aug leftover after V2
 core). Yearn stYFI
-July leftover (`69e262e`) is
-logged; remaining Yearn stYFI is
-Feb 2026 core if wanted. Remaining
+July leftover + February
+StakedYFI / LL depositor
+(`69e262e`) are logged;
+remaining Yearn stYFI Feb is
+LL middleware / redemption /
+veYFI distributors. Remaining
 Lista leftover slices (new-contracts
 oracles / VeLista lock / airdrop /
 CDP ResilientOracle + pips at
