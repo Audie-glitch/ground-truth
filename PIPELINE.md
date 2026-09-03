@@ -11,7 +11,7 @@ ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
 246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana snapshot_controller leftover is logged;
-Jito leftover remaining jito-solana serde_snapshot leftover is logged;
+Optimism leftover remaining op-reth consensus + txpool leftover is logged;Jito leftover remaining jito-solana serde_snapshot leftover is logged;
 Optimism leftover remaining op-reth leftover is logged;
 Jito leftover remaining jito-solana stake_weighted_timestamp leftover is logged;
 Optimism leftover remaining ProxyAdmin leftover is logged;
@@ -1775,9 +1775,18 @@ op-node sequencing leftover
 (`eea9542`; KYC) is logged.
 Optimism leftover remaining
 ProxyAdmin leftover
-(Sourcify; KYC) is logged
-(remaining listed is websites /
-rust/op-reth if still unused).
+(Sourcify; KYC) is logged.
+Optimism leftover remaining
+op-reth leftover
+(`eea9542`; KYC) is logged.
+Optimism leftover remaining
+op-reth consensus + txpool leftover
+(`a8a3b818`; KYC) is logged
+(remaining listed is unused
+official rust/op-reth leftover
+that listed trees still open
+(flashblocks / storage) /
+websites if still unused).
 Filecoin leftover remaining
 go-jsonrpc leftover
 (`059363558429`; KYC) is logged.
@@ -2919,6 +2928,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Optimism leftover remaining
   ProxyAdmin leftover
   (Sourcify; KYC),
+  Optimism leftover remaining
+  op-reth leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  op-reth consensus + txpool leftover
+  (`a8a3b818`; KYC),
   Filecoin leftover remaining
   go-jsonrpc leftover
   (`059363558429`; KYC),

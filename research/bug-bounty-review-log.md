@@ -46453,6 +46453,134 @@ rust/op-reth
 (if still unused).
 
 
+## 2026-09-03: Optimism leftover remaining op-reth consensus + txpool leftover (`a8a3b818`)
+
+Immunefi program
+`optimism`
+($2,000,042,
+`kyc: true`).
+Official remaining
+listed after
+op-reth leftover.
+Official
+`ethereum-optimism/optimism`
+`rust/op-reth`
+on develop
+`a8a3b818`.
+`eea9542`
+404s this
+tree.
+Extract
+`/tmp/op-reth/`.
+Do not rematch
+op-reth leftover
+(payload / rpc).
+No mainnet
+writes.
+
+Files:
+`rust/op-reth/crates/consensus/src/{lib.rs,validation/mod.rs}`,
+`rust/op-reth/crates/txpool/src/{validator.rs,transaction.rs}`,
+`rust/op-reth/crates/evm/src/{l1.rs,tx.rs}`.
+
+Checked for:
+txpool that
+admits a
+deposit tx;
+L1-fee helper
+that
+undercharges
+so a stranger
+tx is free;
+consensus
+that treats a
+pool deposit
+as a mint.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Txpool
+  rejects
+  EIP-4844.
+  Deposits
+  are not
+  admitted
+  from the
+  pool.
+  Validation
+  reserves
+  L1 data
+  fee plus
+  Isthmus
+  operator
+  fee
+  against
+  the
+  sender
+  balance
+  and caps
+  gas below
+  the L1-
+  info
+  deposit
+  overhead.
+- `l1.rs`
+  reads
+  `L1BlockInfo`
+  from the
+  L1-block
+  predeploy
+  storage.
+  It does
+  not mint.
+- Consensus
+  validation
+  is fork
+  field
+  gates
+  (Canyon
+  withdrawals,
+  Isthmus
+  withdrawals
+  root).
+  It does
+  not
+  transfer
+  ETH.
+- Leftover-
+  logged
+  payload
+  builder
+  already
+  rejects
+  pool
+  deposits.
+
+Do not file
+a txpool L1-
+fee reserve
+or fork
+field gate
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+unused official
+rust/op-reth leftover
+that listed trees
+still open
+(flashblocks /
+storage) /
+websites
+(if still unused).
+
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -46764,6 +46892,10 @@ Optimism leftover remaining op-node sequencing leftover (`eea9542`)
 is logged.
 Optimism leftover remaining ProxyAdmin leftover
 is logged.
+Optimism leftover remaining op-reth leftover (`eea9542`)
+is logged.
+Optimism leftover remaining op-reth consensus + txpool leftover (`a8a3b818`)
+is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
 Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
@@ -46801,7 +46933,7 @@ Remaining listed Filecoin: unused official leftover that listed trees open is ex
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`snapshot_utils` / `snapshot_bank_utils` / `snapshot_minimizer` / `bank.rs`) if still unused. Jito leftover remaining jito-solana serde_snapshot leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana snapshot_controller leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
-Remaining listed Optimism: remaining official op-reth (consensus / txpool) / websites if still unused. Optimism leftover remaining op-node p2p leftover is logged. Optimism leftover remaining op-node sequencing leftover is logged. Optimism leftover remaining ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged.
+Remaining listed Optimism: unused official rust/op-reth leftover that listed trees still open (flashblocks / storage) / websites if still unused. Optimism leftover remaining op-node p2p leftover is logged. Optimism leftover remaining op-node sequencing leftover is logged. Optimism leftover remaining ProxyAdmin leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus + txpool leftover is logged.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
 Do not rematch Hedera consensus-node,
@@ -46894,6 +47026,7 @@ Do not rematch Optimism leftover remaining op-node p2p leftover.
 Do not rematch Optimism leftover remaining op-node sequencing leftover.
 Do not rematch Optimism leftover remaining ProxyAdmin leftover.
 Do not rematch Optimism leftover remaining op-reth leftover.
+Do not rematch Optimism leftover remaining op-reth consensus + txpool leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -49700,8 +49833,11 @@ Optimism leftover remaining op-node sequencing leftover
 Optimism leftover remaining ProxyAdmin leftover
 is logged;
 Optimism leftover remaining op-reth leftover
-(`eea9542`) is logged (remaining listed is remaining
-op-reth consensus / txpool / websites);
+(`eea9542`) is logged;
+Optimism leftover remaining op-reth consensus + txpool leftover
+(`a8a3b818`) is logged (remaining listed is unused official
+rust/op-reth leftover that listed trees still open
+(flashblocks / storage) / websites);
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
