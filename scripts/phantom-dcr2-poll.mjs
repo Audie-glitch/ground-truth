@@ -10,7 +10,16 @@ const device = JSON.parse(fs.readFileSync(deviceFile, "utf-8"));
 const clientId = device.clientId;
 
 function writeStatus(obj) {
-  fs.writeFileSync(statusFile, JSON.stringify({ ...obj, t: new Date().toISOString() }, null, 2));
+  let mintedAt = new Date().toISOString();
+  try {
+    const prev = JSON.parse(fs.readFileSync(statusFile, "utf-8"));
+    if (obj.stage === "waiting" && prev.stage === "waiting" && prev.user_code === obj.user_code && prev.t) {
+      mintedAt = prev.t;
+    }
+  } catch {
+    /* first write */
+  }
+  fs.writeFileSync(statusFile, JSON.stringify({ ...obj, t: mintedAt }, null, 2));
   console.log(JSON.stringify(obj));
 }
 

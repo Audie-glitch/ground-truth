@@ -4,6 +4,8 @@ import { join } from "node:path";
 
 import { NextResponse } from "next/server";
 
+import { connectCodeTtlLeftSec } from "@/lib/phantom-connect-url";
+
 export const dynamic = "force-dynamic";
 
 type StatusFile = {
@@ -44,18 +46,12 @@ export async function GET() {
 
   const portal = readStatus("/tmp/phantom-portal-status.json");
   const dcr2 = readStatus("/tmp/phantom-dcr2-status.json");
-  const portalMs = portal.t ? Date.parse(portal.t) : NaN;
-  const portalTtl = Number.isFinite(portalMs)
-    ? Math.max(0, Math.round(600 - (Date.now() - portalMs) / 1000))
-    : 0;
+  const portalTtl = connectCodeTtlLeftSec(portal, "/tmp/phantom-portal-app/device.json");
   const usePortal = portal.stage === "waiting" && portalTtl > 0;
   const connect = usePortal ? portal : dcr2;
-
-  const mintedMs = connect.t ? Date.parse(connect.t) : NaN;
-  const ttlLeftSec =
-    connect.stage === "waiting" && Number.isFinite(mintedMs)
-      ? Math.max(0, Math.round(600 - (Date.now() - mintedMs) / 1000))
-      : 0;
+  const ttlLeftSec = usePortal
+    ? portalTtl
+    : connectCodeTtlLeftSec(connect, "/tmp/phantom-dcr2-device.json");
 
   let userInput: {
     stage: string | null;
