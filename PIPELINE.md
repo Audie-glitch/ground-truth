@@ -309,6 +309,11 @@ UserRegistry / SphereXEngine; KYC) is
 logged (remaining listed is
 Sourcify-404 DAO / registry / factory
 rows).
+Kiln On-Chain v1 leftover (Sourcify
+StakingContract / fee dispatchers /
+FeeRecipient; KYC) is logged (listed
+mainnet leftover exhausted; remaining
+listed is Goerli testnet rows).
 Royco factory + Makina strategy leftover
 (Sourcify Factory /
 RoycoVaultMakinaStrategy; KYC) is
@@ -827,6 +832,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   DeXe Protocol leftover
   (Sourcify UserRegistry /
   SphereXEngine; KYC),
+  Kiln On-Chain v1 leftover
+  (Sourcify StakingContract /
+  fee dispatchers; KYC),
   Royco factory + Makina
   strategy leftover (Sourcify;
   KYC),
