@@ -72582,3 +72582,18 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a fork-DAG helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Chainlink leftover remaining CCIP Aptos leftover (`2cb9bad`)
+
+Immunefi program `chainlink` ($3,000,000, `kyc: true`). Official remaining listed after CCIP Sui leftover. Official `smartcontractkit/chainlink-aptos` `2cb9bad` (`2cb9bad4c49eae682d6da957a1cc6d93662b3844`). Opened listed `contracts/ccip/ccip_offramp/sources/offramp.move`, `ccip_onramp/sources/onramp.move`, `ccip_router/sources/router.move`, `ccip_token_pools/lock_release_token_pool/sources/lock_release_token_pool.move`, `ccip_token_pools/burn_mint_token_pool/sources/burn_mint_token_pool.move`, `ccip_token_pools/token_pool/sources/token_pool.move`. Extract `/tmp/ccip-aptos/`. Do not rematch CCIP Solana leftover or CCIP Sui leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `release_or_mint` that pays the caller; `withdraw_liquidity` without a rebalancer; `execute` that mints from an uncommitted merkle root.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Lockrelease `release_or_mint` / `lock_or_burn` abort unless invoked via `token_admin_registry` (`CallbackProof`). Validate dest token / remote pool / RMN curse / rate limit, then withdraw from the pool store. `withdraw_liquidity` / `provide_liquidity` call `assert_is_rebalancer`.
+- Offramp `commit` / `execute` go through OCR3 `transmit`. `execute_single_report` requires a committed merkle root (manual path waits the enable window), dest-chain match, and untouched sequence. Onramp `ccip_send` is the sender-initiated lock path.
+
+Do not file an Aptos pool release as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink chainlink-evm / OCR / core node / websites if still unused.
