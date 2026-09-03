@@ -36785,13 +36785,13 @@ Serai leftover listed crypto
 exhausted);
 Felix leftover feUSD +
 borrower + redeem leftover
+(`10b5457`; KYC) is logged;
+Felix leftover zappers +
+leftover pools leftover
 (`10b5457`; KYC) is logged
-(remaining listed is UBTC
-branch twins / price feeds /
-Hint Helpers / WHYPE /
-zappers / admin controllers /
-pool twins /
-`TroveManagerLst` / Primacy);
+(remaining listed is
+RedStone / composite price
+feeds / Primacy);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -53067,5 +53067,216 @@ Gas /
 Surplus
 pools,
 `TroveManagerLst`,
+and Primacy
+of Impact.
+
+## 2026-09-03: Felix leftover zappers + leftover pools leftover (`10b5457`)
+
+Immunefi program
+`felix`
+($100,000, `kyc: true`).
+Listed remaining after
+feUSD + borrower +
+redeem leftover
+(`b569abc`). Official
+clone
+`/tmp/felix-contracts`
+`10b5457`. No mainnet
+writes. No exploit
+PoCs.
+
+Files:
+`src/Zappers/{Base,WHYPE,GasComp,LeverageLST,LeverageWHYPE,Wrapper,FeUSD}Zapper.sol`,
+`LeftoversSweep.sol`,
+`Modules/FlashLoans/BalancerFlashLoan.sol`,
+`src/{CollSurplus,Default,Gas}Pool.sol`,
+`src/SortedTroves.sol`,
+`src/HintHelpers.sol`,
+`src/TroveManagerLst.sol`,
+`src/{Base,}AdminController{,NoDelays,V2,V3}.sol`,
+`src/PriceFeeds/HLPriceFeed.sol`.
+
+Checked for: a
+stranger
+`closeTroveFromCollateral`
+that drains
+another NFT;
+flash-loan
+callback that
+closes without
+being the
+remove manager;
+CollSurplus
+`claimColl` of
+another
+account;
+admin apply
+without a
+role.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- WHYPE /
+  GasComp
+  `closeTroveFromCollateral`
+  and
+  `closeTroveToRawHYPE`
+  require
+  owner or
+  remove
+  manager.
+  Flash-loan
+  receive is
+  `flashLoanProvider`
+  only.
+  Coll leftover
+  and gas-comp
+  go to that
+  receiver.
+- Leverage
+  `leverUp` /
+  `leverDown`
+  use the same
+  owner /
+  remove-manager
+  gate. Open
+  sets the
+  zapper as
+  add/remove
+  manager then
+  restores the
+  caller's
+  managers.
+- Wrapper
+  close / raw
+  HYPE /
+  flash-loan
+  receives are
+  empty no-ops.
+- FeUSD zapper
+  pulls the
+  caller's coll
+  / USDC.
+  Extra borrow
+  requires this
+  contract to
+  be both
+  remove
+  manager and
+  receiver.
+- Balancer
+  flash loan
+  sets
+  `receiver =
+  msg.sender`
+  for one
+  callback and
+  requires the
+  Balancer
+  vault.
+- CollSurplus
+  `accountSurplus`
+  is TM;
+  `claimColl`
+  is BO.
+  DefaultPool
+  send /
+  debt are TM
+  or Active
+  Pool.
+  GasPool only
+  approves BO
+  and TM.
+- SortedTroves
+  insert /
+  reInsert are
+  BO; remove
+  is BO or TM.
+- HintHelpers
+  is view /
+  predict only.
+- `TroveManagerLst`
+  is
+  `TroveManager`
+  with
+  `fetchRedemptionPrice`
+  instead of
+  `fetchPrice`.
+- Admin
+  propose is
+  `PROPOSER_ROLE`;
+  apply /
+  upgrade is
+  `DEFAULT_ADMIN_ROLE`;
+  shutdown is
+  `SHUTDOWN_ROLE`.
+  `AdminControllerNoDelays`
+  sets both
+  delays to
+  `0 days`
+  (admin, not
+  stranger).
+- `HLPriceFeed`
+  reads
+  Hyperliquid
+  L1
+  `oraclePx`
+  at
+  `0x44AFB4F9…CA2a`.
+  A zero
+  price shuts
+  the branch
+  via BO.
+- UBTC branch
+  twins are
+  the same
+  types
+  already
+  reviewed.
+  WHYPE
+  `0x5555…5555`
+  is the
+  Hyperliquid
+  system wrap,
+  not a Felix
+  minter.
+
+Do not file
+zapper close
+when the
+zapper is the
+owner-set
+remove
+manager, or
+zero-delay
+admin apply
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub opens
+for Felix
+zappers /
+leftover pools /
+Sorted /
+HintHelpers /
+`TroveManagerLst`
+/ admin /
+HLPriceFeed is
+exhausted at
+the opened-file
+level.
+Remaining
+listed:
+RedStone /
+composite
+price feeds,
 and Primacy
 of Impact.
