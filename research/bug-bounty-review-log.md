@@ -19996,6 +19996,104 @@ Not submitted.
 Remaining Instadapp
 is `inst-governance`.
 
+## 2026-09-03: Instadapp inst-governance leftover (`3fc54af`)
+
+Immunefi program
+`instadapp` ($500,000,
+`kyc: false`). DSA,
+Avocado, and Fluid
+leftovers are already
+logged. This slice is
+the last listed tree:
+`inst-governance`.
+Local clone
+`/tmp/instadapp-gov`
+at `3fc54af`. No
+mainnet interaction.
+
+Files:
+`contracts/GovernorBravoDelegate.sol`,
+`GovernorBravoDelegator.sol`,
+`Timelock.sol`,
+`TokenDelegate.sol`,
+`TokenDelegator.sol`,
+`payloads/common/main.sol`,
+`payloads/IGP139/PayloadIGP139.sol`.
+
+Checked for: a
+stranger `execute`
+of an unqueued
+payload; payload
+`propose` that
+bypasses the
+threshold; Timelock
+`executePayload`
+callable without a
+queued admin tx;
+token `mint` by a
+non-master.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Governor Bravo
+  `propose` requires
+  prior votes above
+  `proposalThreshold`.
+  `queue` requires
+  Succeeded.
+  `execute` requires
+  Queued, marks
+  executed, then
+  `timelock.executeTransaction`.
+  `cancel` is the
+  proposer or a
+  proposer now below
+  threshold.
+- Timelock
+  `queueTransaction`
+  / `executeTransaction`
+  are `admin` only
+  (the Governor).
+  `executePayload` is
+  `msg.sender ==
+  this` and
+  `delegatecall`s the
+  payload so
+  `address(this)` is
+  the Timelock.
+- Payload
+  `propose` is
+  proposer / team /
+  Avo multisigs.
+  `execute` requires
+  `address(this) ==
+  TIMELOCK` and
+  `isProposalExecutable`.
+  Team can skip
+  actions or toggle
+  executable on the
+  payload; that is
+  operator privilege,
+  not a stranger
+  drain. IGP139
+  `withdrawFunds` of
+  155 stETH runs
+  only after
+  `super.execute()`.
+- Token `mint` is
+  `isMaster`, after
+  `mintingAllowedAfter`,
+  with a percent cap
+  and a mint
+  cooldown.
+
+Not submitted.
+Listed Instadapp
+GitHub leftover is
+exhausted.
 
 ## Next candidates
 
@@ -20511,9 +20609,11 @@ Instadapp Fluid DEX T1 leftover
 Instadapp Fluid dexLite leftover
 (`a9949b4`) is logged;
 Instadapp Fluid stETH leftover
-(`a9949b4`) is logged
-(remaining Instadapp is
-`inst-governance`);
+(`a9949b4`) is logged;
+Instadapp inst-governance leftover
+(`3fc54af`) is logged
+(listed Instadapp leftover
+exhausted);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
 dissolve / rewards /
