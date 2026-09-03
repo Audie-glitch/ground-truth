@@ -56311,3 +56311,198 @@ listed: the
 immunefi.com
 scope
 placeholder.
+
+## 2026-09-03: MUX leftover mux-degen orderbook + pool leftover (`c5bfe81`)
+
+Immunefi program
+`mux`
+($100,000, `kyc: false`).
+Listed leftover
+after mux3
+and
+mux-protocol.
+Official clone
+`/tmp/mux-degen`
+`c5bfe81`.
+Opened
+`contracts/orderbook/OrderBook.sol`,
+`Admin.sol`,
+`libraries/LibOrderBook.sol`,
+`facets/Account.sol`,
+`Liquidity.sol`,
+`Trade.sol`,
+`peripherals/DegenPOL.sol`,
+`DegenFeeDistributor.sol`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger
+place/fill that
+spends another
+subAccountId;
+cancel that
+refunds to
+the caller;
+add/remove
+liquidity that
+pays a
+non-LP;
+core
+deposit/withdraw
+callable
+outside the
+OrderBook;
+POL
+sweeps by a
+non-owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `placePositionOrder`,
+  `placeWithdrawalOrder`,
+  `depositCollateral`,
+  and
+  `withdrawAllCollateral`
+  require
+  `_verifyCaller`
+  (`msg.sender
+  ==
+  subAccountId.owner()`
+  or
+  admin-set
+  `delegators`).
+  `placeLiquidityOrder`
+  records
+  `_msgSender()`
+  as the
+  LP
+  account
+  and
+  `_transferIn`
+  /
+  `transferFrom`
+  pulls
+  from that
+  account.
+- Fills
+  (`fillPositionOrder`,
+  `fillLiquidityOrder`,
+  `fillWithdrawalOrder`,
+  `liquidate`,
+  `fillAdlOrder`)
+  are
+  `onlyRole(BROKER_ROLE)`.
+  Pool
+  `depositCollateral`,
+  `withdrawCollateral`,
+  `withdrawAllCollateral`,
+  `addLiquidity`,
+  `removeLiquidity`,
+  `donateLiquidity`,
+  and
+  open/close /
+  liquidate
+  on
+  Trade
+  are
+  `onlyOrderBook`.
+  Withdraw
+  and
+  remove-liquidity
+  `transferOut`
+  to the
+  decoded
+  trader /
+  `orderData.account`.
+  Add
+  liquidity
+  mints
+  MLP to
+  `trader`.
+- Cancel:
+  owner
+  (or
+  broker
+  after
+  expiry)
+  for
+  position /
+  withdrawal.
+  Open-position
+  collateral
+  refunds
+  to
+  `orderData.account`.
+  Liquidity
+  cancel is
+  owner-only
+  and
+  returns
+  collateral
+  or MLP
+  to that
+  account.
+- `setDelegator`
+  is
+  `DEFAULT_ADMIN_ROLE`.
+  `DegenPOL`
+  ETH /
+  ERC20
+  sweeps
+  and
+  cancel
+  are
+  owner /
+  maintainer.
+  Fee
+  distributor
+  maintainers
+  are
+  owner-set.
+
+Do not file
+broker-only
+fills,
+admin
+delegator
+lists,
+owner-only
+POL
+sweeps, or
+a trader
+paying
+their own
+tokens into
+a priced
+order as
+stranger
+theft.
+
+Not submitted.
+Listed leftover
+that official
+GitHub opens
+for
+mux-degen
+OrderBook /
+Account /
+Liquidity /
+Trade /
+POL is
+exhausted at
+the
+opened-file
+level.
+Remaining
+listed MUX
+trees:
+`mux-aggregator-protocol`
+proxyFactory /
+gmxV2,
+and
+`mux-staking`.
+
