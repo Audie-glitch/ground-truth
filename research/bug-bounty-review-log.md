@@ -798,10 +798,48 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: TermMax V2 gearing token + vault (`e314f3f`)
+
+Immunefi program `termstructurelabs` ($80,000, `kyc: false`). Primary
+in-scope repo is `term-structure/termmax-contract-v2`. The 24 Aug 2026
+adds were the TMX OFT token addresses; this pass reviewed the V2
+money-movers instead. Local clone `/tmp/termmax-v2`. No mainnet
+interaction.
+
+Files: `contracts/v2/tokens/{AbstractGearingTokenV2,GearingTokenWithERC20V2}.sol`,
+`contracts/v2/vault/TermMaxVaultV2.sol` (deposit/withdraw/dealBadDebt).
+
+Checked for: minting an underwater GT; liquidating a healthy loan;
+taking more collateral than the repaid share; flash-repay stealing
+another user’s collateral; vault withdraw of someone else’s shares.
+
+Result: no user-exploitable finding.
+
+- `mint` is `onlyOwner` (the market) and refuses LTV above `maxLtv`.
+  Collateral is pulled from the provider. Capacity is checked against
+  the token balance plus the encoded amount.
+- `liquidate` requires `liquidatable`, a true `_getLiquidationInfo`
+  hit (LLTV before maturity, or the post-maturity window), and caps
+  `repayAmt` at `maxRepayAmt`. After the window it reverts. Debt
+  tokens go to the market first. Collateral to the liquidator is
+  repay-equivalent plus the configured bonus, then min’d against
+  `collateral * repay / debt`, so a partial close cannot drain the
+  rest. Remainder returns to the owner on a full close.
+- `flashRepay` / `repayAndRemoveCollateral` are owner-or-delegate.
+  Collateral is sent, then `executeOperation`, then
+  `safeTransferFrom` of the repay. `nonReentrant`. A third party
+  cannot flash someone else’s GT.
+- Vault `_deposit` / `_withdraw` are standard 4626 with allowance
+  on a non-owner redeem. `dealBadDebt` burns the owner’s shares
+  (or an approved spender’s) and cannot target the vault asset as
+  “collateral”.
+
+Not submitted. LayerZero internals of the flattened `TMX.sol` were
+not reviewed.
+
 ## Next candidates
 
 Superteam `AGENT_ALLOWED` is still only Steve Arena and ZNS — do not
 execute. the402.ai still paused. No KeeperHub implementation before the
-6 Sep build window. In-scope GMTrade / Origin / sBTC / Horizen slices
-from these clones are largely covered. Next time-box: a newly added
-Immunefi program.
+6 Sep build window. Remaining TermMax slice: V2 market/order curves if
+still unreviewed.
