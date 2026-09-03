@@ -16827,6 +16827,148 @@ Not submitted. Listed
 Rocket Pool GitHub
 leftover is exhausted.
 
+## 2026-09-03: Stader registries / vaults / SD / pools leftover (`9d4a921`)
+
+Immunefi program
+`staderforeth`
+($1,000,000, `kyc: false`).
+User path and oracle /
+factory / insurance /
+auction / socializing
+on the same pin
+`9d4a921` are already
+logged. This slice is
+the remaining listed
+operator / validator
+path:
+PermissionedNodeRegistry
+`0xaf42d795A6D279e9DCc19DC0eE1cE3ecd4ecf5dD`,
+PermissionedPool
+`0x09134C643A6B95D342BdAf081Fa473338F066572`,
+PermissionlessNodeRegistry
+`0x4f4Bfa0861F62309934a5551E0B2541Ee82fdcF1`,
+PermissionlessPool
+`0xd1a72Bd052e0d65B7c26D3dd97A98B74AcbBb6c5`,
+SDCollateral
+`0x7Af4730cc8EbAd1a050dcad5c03c33D2793EE91f`,
+OperatorRewardsCollector
+`0x84ffDC9De310144D889540A49052F6d1AdB2C335`,
+NodeELRewardVault
+`0x97c92752DD8a8947cE453d3e35D2cad5857367af`,
+ValidatorWithdrawalVault
+`0x3073cC90aD39E0C30bb0d4c70F981FbD00f3458f`.
+Local clone
+`/tmp/stader-ethx`. No
+mainnet interaction.
+
+Files:
+`PermissionlessNodeRegistry.sol`,
+`PermissionedNodeRegistry.sol`,
+`PermissionlessPool.sol`,
+`PermissionedPool.sol`,
+`SDCollateral.sol`,
+`OperatorRewardsCollector.sol`,
+`ValidatorWithdrawalVault.sol`,
+`NodeELRewardVault.sol`.
+
+Checked for: a stranger
+settling a vault and
+taking user ETH; SD
+slash that is not the
+withdraw vault; pool
+deposit that sends ETH
+to a fake credential;
+collector claim that
+pays a stranger;
+permissionless EL /
+reward withdraw that
+inflates ETHx.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Withdraw-vault
+  `settleFunds` is the
+  node registry only.
+  `distributeRewards`
+  is permissionless
+  under the rewards
+  threshold (manager
+  above it). User share
+  goes to SPM, protocol
+  to treasury, operator
+  to the collector.
+- Node-EL `withdraw` is
+  permissionless and
+  splits the same way.
+  User share is
+  `receiveExecutionLayerRewards`
+  (raw balance only).
+  Not a finding.
+- Registry
+  `markValidatorReadyToDeposit`
+  / `withdrawnValidators`
+  are oracle-only.
+  Front-run sends 3 ETH
+  of the 4 ETH bond to
+  insurance and
+  deactivates the
+  operator. Invalid
+  signature refunds the
+  leftover 3 ETH to the
+  operator collector.
+- Pool
+  `stakeUserETHToBeaconChain`
+  is SPM-only. Pre /
+  full deposits go to
+  the official deposit
+  contract with the
+  factory withdraw
+  credential for that
+  vault. `receive` /
+  `fallback` revert.
+  Permissioned
+  defective-key refund
+  is registry-only and
+  pays SPM from
+  insurance + pool
+  ETH.
+- SD
+  `slashValidatorSD`
+  requires
+  `msg.sender` to be
+  that validator’s
+  withdraw vault.
+  `withdrawOnBehalf` is
+  permissionless but
+  only excess above
+  threshold and pays
+  the operator reward
+  address (or utility
+  repay). A gift, not
+  theft.
+- Collector `claim` /
+  `claimWithAmount`
+  debit `msg.sender`
+  and pay
+  `getOperatorRewardAddress
+  (msg.sender)`.
+  `depositFor` is a
+  gift.
+
+Do not file
+permissionless vault
+reward split or
+oracle-gated front-run
+as user theft.
+
+Not submitted.
+Remaining Stader
+listed: StaderConfig,
+Penalty, PoolSelector,
+PoolUtils.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -17387,13 +17529,12 @@ Stader ETHx user deposit
 (`9d4a921`) plus oracle /
 factory / insurance /
 auction / socializing
-leftover is logged
-(remaining Stader is
-node registries /
-validator and node EL
-vaults / SD collateral /
-permissioned and
-permissionless pools);
+plus registries / vaults
+/ SD / pools leftover is
+logged (remaining Stader
+is StaderConfig /
+Penalty / PoolSelector /
+PoolUtils);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
