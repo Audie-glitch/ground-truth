@@ -341,12 +341,57 @@ Result: no user-exploitable finding.
   non-coinbase UTXO and `validate_tx` on the bitcoin transaction. Script
   parsing lives in the `sbtc` crate, which was not in this clone.
 
-Not submitted. Payment requires user KYC. Next slice: `emily/handler`
-and/or `sbtc` deposit scripts.
+Not submitted. Payment requires user KYC.
+
+## 2026-09-03: sBTC emily deposit/withdraw API + deposit scripts (`18caa9d`)
+
+Same Immunefi program. Expanded the sparse clone to `emily/handler` and
+`sbtc/src`. Reviewed the public create/update surfaces and the taproot
+deposit/reclaim parsers. No mainnet interaction.
+
+Files: `sbtc/src/deposits.rs`; `emily/handler/src/api/handlers/{deposit,withdrawal,new_block,limits}.rs`;
+`emily/handler/src/api/models/deposit/requests.rs`;
+`emily/handler/src/api/routes/{deposit,withdrawal}.rs`;
+`emily/handler/src/database/accessors.rs` (trusted vs untrusted updates).
+
+Checked for: posting a crafted deposit that later mints; marking another
+user's request Confirmed/Failed; unauthenticated withdrawal rows that
+cause a BTC sweep; reclaim scripts that skip OP_CSV via OP_SUCCESS;
+deposit-script parse that accepts a mismatched ScriptPubKey or
+wrong-network recipient.
+
+Result: no user-exploitable finding.
+
+- `CreateDepositRequestBody::validate` deserializes the submitted
+  transaction hex and runs `CreateDepositRequest::validate_tx`: txid
+  match, vout exists, deposit/reclaim parse, reconstructed taproot
+  ScriptPubKey equals the UTXO, recipient network matches. Emily does
+  **not** check that the tx is in a bitcoin block; signers re-fetch the
+  outpoint from bitcoin-core and drop missing/unconfirmed UTXOs.
+- Deposit script parse requires the standard
+  `<max-fee><recipient> OP_DROP <xonly> OP_CHECKSIG` layout, rejects
+  non-minimal PUSHDATA1, and rejects invalid x-only keys. Reclaim parse
+  requires a block-height CSV prefix, rejects the disable-locktime bit
+  and time-based units, caps user-script length, and rejects BIP-342
+  OP_SUCCESSx so the lock cannot be skipped.
+- Untrusted `PUT /deposit` (and the matching withdrawal update) may only
+  move Pending → Accepted. Confirmed/Failed/RBF need the trusted sidecar
+  flag. Warp routes do not enforce the OpenAPI `ApiGatewayKey` themselves;
+  production is expected to sit behind API Gateway. Even a public Accepted
+  flip is Emily bookkeeping — signers vote and sweep from local bitcoin
+  and Stacks state.
+- `POST /withdrawal` and `POST /new_block` are likewise key-annotated
+  but unauthenticated in warp. `new_block` only accepts committed
+  `sbtc-registry` print events for the configured deployer. Signers do
+  not sweep from Emily rows; a fake withdrawal index entry cannot unlock
+  BTC.
+
+Not submitted. Payment requires user KYC. Remaining sBTC slices: `wsts`,
+emily chainstate/reorg, signer DKG verification internals.
 
 ## Next candidates
 
-sBTC `emily` / `sbtc` crate / `wsts` (KYC) or a later `gmsol_model`
+sBTC `wsts` / emily reorg (KYC) or a later `gmsol_model`
 decrease/liquidation pass. Sherlock `/api/contests` returned no live
 items as of 01:28 UTC 3 Sep 2026. No KeeperHub implementation before
 the 6 Sep build window.
