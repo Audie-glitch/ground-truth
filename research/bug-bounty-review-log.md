@@ -68787,3 +68787,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a self-funded PFDA transfer as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` (if still unused).
+
+## 2026-09-03: Jito leftover remaining jito-solana tip_manager leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after priority-fee-distribution leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `core/src/tip_manager.rs` plus `tip_manager/{tip_payment,tip_distribution}.rs`. Do not rematch mev-programs tip leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: crank that points `old_tip_receiver` at a stranger so the leftover-logged tip-payment drain pays the caller; deserialize of an attacker-owned config PDA as the singleton.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `TipManager` only builds validator-signed instructions. PDAs are `find_program_address` of the configured program IDs (`CONFIG_ACCOUNT` / `TIP_ACCOUNT_0..7` / `TIP_DISTRIBUTION_ACCOUNT` + vote + epoch). Config decode requires `owner == program_id` and the leftover-logged Anchor discriminator.
+- `change_tip_receiver_and_block_builder_tx` passes the **current** on-chain `tip_receiver` / `block_builder` as the old accounts, then the new TDA PDA and block-builder fee info. The leftover-logged program drains to those old accounts first. This crate does not `transfer` lamports itself.
+- Init helpers are local-dev cranks (`get_initialize_tip_programs_bundle`). `should_init_tip_distribution_account` treats a PDA with the wrong owner as uninitialized so a stranger lamport gift cannot skip init.
+
+Do not file a validator-local instruction builder as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` bundle_stage / rpc bundles (if still unused).
