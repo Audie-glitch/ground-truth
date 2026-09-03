@@ -45480,6 +45480,10 @@ Jito leftover remaining jito-solana proxy leftover (`d0e3a47`)
 is logged.
 Jito leftover remaining jito-solana replay leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana replay_stage leftover (`d0e3a47`)
+is logged.
+Jito leftover remaining jito-solana poh leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45501,7 +45505,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official `jito-solana` leftover that listed trees open after replay, if still unused.
+Remaining listed Jito: `jito-solana` tvu / scheduler if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45558,6 +45562,8 @@ Do not rematch Aave v3 ReserveLogic leftover.
 Do not rematch Jito jito-solana banking_stage leftover.
 Do not rematch Jito jito-solana proxy leftover.
 Do not rematch Jito jito-solana replay leftover.
+Do not rematch Jito jito-solana replay_stage leftover.
+Do not rematch Jito jito-solana poh leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -70164,3 +70170,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator replay loop as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: none on official Jito leftover trees that still open.
+
+## 2026-09-03: Jito leftover remaining jito-solana poh leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after replay leftovers. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `poh/src/{lib,poh_controller,poh_recorder,poh_service,record_channels,transaction_recorder}.rs`. Do not rematch banking_stage leftover, bundle_stage leftover, tip_manager leftover, proxy leftover, or replay leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `record` that mixes an attacker mixin into the leader PoH; `reset` / `set_bank` from a public RPC; `TransactionRecorder` signing or moving validator funds; a tip-program crank in this crate.
+
+Result: no user-exploitable finding. Not submitted.
+
+- This crate has no tip / bundle / block-engine hooks. `PohController` is a local 16-slot crossbeam (`Reset` / `SetBank`). Leftover-logged replay is the caller. It is not a public submit API.
+- `TransactionRecorder` hashes the supplied txs and `try_send`s a `Record`. `RecordSender` CAS-matches `bank_id` and an insertion quota; shutdown / inactive / full map to `MaxHeightReached` / `ChannelFull`. A mismatched bank id is dropped.
+- `PohRecorder::record` requires a working bank, matching `bank_id`, and a non-empty tx list. The mixin is the local `hash_transactions` of those txs. `reset` / `set_bank` / `clear_bank` only run from leftover-logged `PohService` after a controller message.
+- `PohService` hashes locally and drains the record channel. It does not sign or transfer lamports.
+
+Do not file a validator-local PoH recorder as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` tvu / scheduler if still unused.
