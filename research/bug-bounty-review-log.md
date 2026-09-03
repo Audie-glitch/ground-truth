@@ -27946,12 +27946,12 @@ is IdleCreditVault
 strategy / epoch admin /
 proxy impls / other docs
 addresses).
-RootstockLabs listed a new SC
-on 2026-09-03: RIF token
-`0x2aCc…C9D5` (program `kyc:
-true`; next unique explorer
-slice if a later pass wants
-it).
+RootstockLabs RIF token leftover
+(Sourcify `match` `RIFToken`)
+is logged (KYC; remaining
+listed is PegIn / PegOut /
+Collateral / Flyover rows
+plus GitHub DLT / web).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -28479,9 +28479,11 @@ is IdleCreditVault
 strategy / epoch admin /
 proxy impls / other docs
 addresses);
-RootstockLabs listed a new
-SC on 2026-09-03: RIF token
-`0x2aCc…C9D5` (KYC);
+RootstockLabs RIF token leftover
+(Sourcify) is logged (KYC;
+remaining listed is PegIn /
+PegOut / Collateral / Flyover
+rows plus GitHub DLT / web);
 Beets stS
 (`877087b`) + token
 leftover is logged
@@ -29481,3 +29483,97 @@ typescript and
 Starknet / Sui /
 Solana explorer
 rows.
+
+## 2026-09-03: RootstockLabs RIF token leftover (Sourcify)
+
+Immunefi program
+`RootstockLabs`
+($200,000, `kyc: true`).
+Unique listed SC added
+2026-09-03. Rootstock
+Sourcify `match`
+`RIFToken`
+`0x2aCc95758f8b5F583470bA265Eb685a8f45fC9D5`.
+Extract `/tmp/rif-token`.
+No mainnet interaction.
+
+Files:
+`RIFToken.sol`.
+
+Checked for: a
+stranger
+`redeem` that moves
+another contributor
+without that
+contributor's
+signature;
+`transferFrom`
+without allowance;
+`setAuthorizedManagerContract`
+by a non-owner after
+the manager is set.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Fixed supply is
+  minted to the
+  token then moved
+  once to the
+  authorized manager.
+  `setAuthorizedManagerContract`
+  is `onlyOwner` and
+  only while the
+  manager is still
+  zero.
+- `transferToContributor`
+  /
+  `transferToShareholder`
+  /
+  `transferBonus` /
+  `delegate` are
+  manager-only.
+- `redeem` requires
+  an original
+  contributor, an
+  unused destination,
+  and
+  `acceptLinkedRskAddress`
+  for that
+  contributor.
+  `contingentRedeem`
+  is `onlyOwner` plus
+  a DELEGATION
+  signature.
+- `transfer` /
+  `transferFrom` /
+  `approve` spend
+  the caller or
+  allowance after
+  distribution.
+  `transferAndCall`
+  is the caller's
+  ERC-677 send.
+
+Do not file ERC-20
+approve race,
+ERC-677 callback on
+a user-chosen `_to`,
+owner
+`contingentRedeem`,
+or unredeemed
+contributor lock as
+a stranger drain.
+
+Not submitted.
+Remaining listed:
+PegIn / PegOut /
+Collateral /
+Flyover / Pause /
+Quotes / BtcUtils /
+SignatureValidator
+(2026-07-03 rows)
+plus GitHub DLT /
+web assets (KYC).
