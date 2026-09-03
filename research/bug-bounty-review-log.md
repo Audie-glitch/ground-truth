@@ -71302,3 +71302,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a digest-checked proof-param downloader as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches (`go-commp-utils` if still unused).
+
+## 2026-09-03: Filecoin leftover remaining go-commp-utils leftover (`b487eb14c907`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after go-paramfetch leftover (avoid lotus collision). Official `filecoin-project/go-commp-utils` `b487eb14c907` (`b487eb14c907471d730809e484e072b56ae8e437`). Opened listed `commp.go`, `commd.go`, `writer/writer.go`, and `zerocomm/zerocomm.go`. Do not rematch go-fil-commcid leftover or proofs leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `PieceAggregateCommP` that accepts a non-power-of-two piece and yields a stranger CommD; `GeneratePieceCIDFromFile` that hashes fewer bytes than `pieceSize`; `Writer.Sum` that returns another payload's PieceCID.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `GeneratePieceCIDFromFile` copies exactly `pieceSize` bytes into `go-fil-commp-hashhash.Calc` and wraps the digest as a PieceCID. Short reads error.
+- `PieceAggregateCommP` rejects empty lists, unknown seal proofs, piece size &lt; 128, size &gt; sector, and non-power-of-two sizes. Each `PieceCID` must decode as CommP v1. Equal-size limbs SHA-256-fold with `d[31] &= 0b00111111`; leftover limbs pad from `zerocomm.PieceComms`.
+- `Writer` buffers 16 MiB unpadded leaves, hashes them concurrently, pads to a power of two with `ZeroPieceCommitment`, then aggregates. Payload size is the raw write length; PieceCID is the tree root.
+- This crate does not send messages or hold FIL. On-chain deal verification lives in leftover-logged builtin-actors / market.
+
+Do not file a CommP/CommD hasher as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining Filecoin go-* that official trees still open and are not lotus rematches.
