@@ -30880,6 +30880,184 @@ and TON /
 other-chain
 rows.
 
+## 2026-09-03: Ether.fi leftover LiquidityPool leftover (Sourcify)
+
+Immunefi program
+`etherfi`
+($500,000,
+`kyc: true`).
+Unique unused
+standing program.
+Sourcify ETH
+UUPS proxies
+resolve to
+`match`
+LiquidityPool
+`0x17A16747D03006c9754548AC0d0afF48783A4a45`
+behind
+`0x308861A430be4cce5502d0A12724771Fc6DaF216`,
+WeETH
+`0xA6Ca0607190d03CF16fe6F2865Cf40c3D160ccf3`
+behind
+`0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee`,
+Liquifier
+`0x263A74E56EB07C2A2A84FD510615a17b66e10E70`
+behind
+`0x9FFDF407cDe9a93c47611799DA23924Af3EF764F`,
+WithdrawRequestNFT
+`0x41617D01362770ebAAC10311aB899FBc8a4E4A7E`
+behind
+`0x7d5706f6ef3F89B3951E23e557CDFBC3239D4E2c`,
+EtherFiRedemptionManager
+`0x5D53B303D62a7861f88650045b8D5DeB59dfb3Dc`
+behind
+`0xDadEf1fFBFeaAB4f68A9fD181395F68b4e4E7Ae0`,
+DepositAdapter
+`0xE774E19f087523EA316fCCb4B156169153f18b9d`
+behind
+`0xcfC6d9Bd7411962Bfe7145451A7EF71A24b6A7A2`,
+StakingManager
+`0x66e1C53e846eF3E9f3722591868AfcFfB7f39800`
+behind
+`0x25e821b7197B146F7713C3b89B6A4D83516B912d`.
+eETH impl
+`0xd1901dD36CBf4a81386d0162DF2707f7dDb60527`
+Sourcify 404.
+Extract
+`/tmp/ef-liqpool-impl`
+/ `/tmp/ef-weeth-impl`
+/ `/tmp/ef-liq-impl`
+/ `/tmp/ef-wnft-impl`
+/ `/tmp/ef-redeem-impl`
+/ `/tmp/ef-dep-impl`
+/ `/tmp/ef-stake-impl`.
+No mainnet
+interaction.
+
+Files:
+`src/core/LiquidityPool.sol`,
+`src/core/WeETH.sol`,
+`src/deposits/Liquifier.sol`,
+`src/deposits/DepositAdapter.sol`,
+`src/withdrawals/WithdrawRequestNFT.sol`,
+`src/withdrawals/EtherFiRedemptionManager.sol`,
+`src/staking/StakingManager.sol`.
+
+Checked for: a
+stranger deposit
+that mints eETH
+to the caller
+while spending
+another user's
+ETH; withdraw
+that burns
+someone else's
+eETH; wrap that
+pulls a victim;
+claim that pays
+the caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- LiquidityPool
+  `deposit`
+  charges
+  `msg.value`
+  and mints to
+  the caller.
+  `depositToRecipient`
+  is liquifier /
+  admin only.
+  `requestWithdraw`
+  `transferFrom`s
+  `msg.sender`
+  eETH and mints
+  the NFT to the
+  named
+  recipient.
+  Live-rate
+  `withdraw` is
+  membership /
+  redemption
+  manager only
+  and burns
+  `msg.sender`.
+- WeETH `wrap`
+  pulls
+  `msg.sender`
+  eETH and mints
+  weETH to the
+  caller.
+  `unwrap` burns
+  `msg.sender`.
+- Liquifier
+  ERC20 deposit
+  pulls
+  `msg.sender`
+  and mints eETH
+  to the caller.
+- DepositAdapter
+  ETH / WETH
+  deposits pull
+  the caller and
+  wrap to weETH
+  for the
+  caller.
+- Redemption
+  pulls
+  `msg.sender`
+  eETH / weETH
+  and pays the
+  named
+  receiver.
+- WithdrawRequestNFT
+  `claimWithdraw`
+  is
+  permissionless
+  and pays
+  `ownerOf(tokenId)`.
+- StakingManager
+  validator
+  register /
+  fund paths
+  are
+  executor /
+  oracle gated.
+
+Do not file
+permissionless
+claim of a
+finalized
+withdraw NFT to
+its owner,
+liquifier-only
+`depositToRecipient`,
+or operator
+validator
+funding as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+ETH pool / wrap
+/ redeem types
+is exhausted.
+Remaining listed:
+eETH impl
+Sourcify 404,
+Auction /
+Oracle / OFT /
+bridge adapters,
+and other-chain
+weETH.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -32348,6 +32526,14 @@ EthenaMinting / StakedUSDeV2
 is logged (remaining listed
 is StakedENA / USDtb
 proxies / other OFT / TON);
+Ether.fi leftover
+LiquidityPool leftover
+(Sourcify LiquidityPool /
+WeETH / Liquifier /
+Redemption / WRNFT; KYC)
+is logged (remaining listed
+is eETH impl 404 / Auction
+/ Oracle / adapters);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

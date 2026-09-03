@@ -38,7 +38,8 @@ Hyperlane leftover is logged; Veda leftover
 is logged; Immutable leftover is logged;
 Stargate leftover is logged;
 LayerZero leftover is logged;
-Ethena leftover is logged).
+Ethena leftover is logged;
+Ether.fi leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -448,6 +449,11 @@ Ethena leftover minting + staking leftover
 LP staking / PSM; KYC) is logged
 (remaining listed is StakedENA / USDtb
 proxies / other OFT / TON).
+Ether.fi leftover LiquidityPool leftover
+(Sourcify LiquidityPool / WeETH /
+Liquifier / Redemption / WRNFT; KYC)
+is logged (remaining listed is eETH
+impl 404 / Auction / Oracle / adapters).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1037,6 +1043,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (Sourcify; KYC),
   Ethena leftover minting +
   staking leftover
+  (Sourcify; KYC),
+  Ether.fi leftover
+  LiquidityPool leftover
   (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
