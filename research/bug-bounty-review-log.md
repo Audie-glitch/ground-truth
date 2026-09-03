@@ -252,9 +252,45 @@ Result: no exploitable finding at this depth.
 Not a full store review: oracle price assembly, revertible swap internals,
 and `gmsol_model` liquidation thresholds were not read. Not submitted.
 
+## 2026-09-03: sBTC Clarity contracts (sbtc `18caa9d`)
+
+Unofficial Immunefi program `sbtc` ($250k, KYC). Reviewed only
+`contracts/contracts` (in-scope Clarity). Did not review emily / signer /
+sbtc / wsts Rust. Local clone `/tmp/sbtc`. No mainnet interaction.
+
+Files: `sbtc-deposit.clar`, `sbtc-withdrawal.clar`, `sbtc-token.clar`,
+`sbtc-registry.clar`, `sbtc-bootstrap-signers.clar`.
+
+Checked for: user mint/burn; deposit replay; withdrawal lock vs unlock;
+fee refund; protocol-caller gating; signer rotation; protocol-contract
+update leaving stale roles.
+
+Result: no exploitable finding.
+
+- `complete-deposit-wrapper` is signer-principal-only, rejects replay on
+  `(txid, vout-index)`, checks burn-header at `burn-height`, then mints
+  and records. Batch deposits re-enter that wrapper.
+- `initiate-withdrawal-request` locks `amount + max-fee` from `tx-sender`
+  before the dust check (the failed assert reverts the lock). Accept burns
+  the locked amount and mints back `max-fee - fee` when the signer fee is
+  lower. Reject unlocks the full lock. Both are signer-only and require
+  pending status.
+- Token protocol mint/burn/lock/unlock require `is-protocol-caller` for
+  the matching role. SIP-010 `transfer` allows `tx-sender` or
+  `contract-caller` as sender (standard). `get-balance` includes locked
+  tokens by design.
+- Registry `is-protocol-caller` checks both the flag→contract and
+  contract→flag maps. After `update-protocol-contract` the old contract
+  fails the flag→contract check even if a stale role row remains.
+- Key rotation requires the current signer principal, >50% threshold,
+  33-byte keys, and a never-seen aggregate pubkey.
+
+Bitcoin peg-in/out correctness is signer-trusted and was not verified
+against emily/signer. Not submitted. Payment requires user KYC.
+
 ## Next candidates
 
-sBTC (Rust/Clarity, KYC) or a later `gmsol_model` decrease/liquidation
-pass if a full workspace clone is available. Sherlock `/api/contests`
-returned no live items as of 01:28 UTC 3 Sep 2026. No KeeperHub
-implementation before the 6 Sep build window.
+sBTC `signer` / `emily` (large Rust, KYC) or a later `gmsol_model`
+decrease/liquidation pass. Sherlock `/api/contests` returned no live
+items as of 01:28 UTC 3 Sep 2026. No KeeperHub implementation before
+the 6 Sep build window.
