@@ -74255,3 +74255,20 @@ Immunefi program `ethena` ($3,000,000, `kyc: true`). Official remaining unused l
 Result: **unopened** — insufficient verified official TVM source to perform a defensible Immunefi-scope review in this session. Not submitted.
 
 Not submitted. Payment requires user KYC. Ethena listed EVM leftovers that official trees open are exhausted at leftover-heading level (TON rows logged as unopened with reason). Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: ENS audit competition smart-account + transaction-manager + faucet (`1c9b47f`)
+
+Immunefi program `audit-competition-ens` ($70,000 pool, `kyc: true`, launched 18 Aug 2026). In-scope GitHub tree `immunefi-team/audit-comp-ens` branch `audit-comp-ready`. Pin `1c9b47f` (`1c9b47f18fcddd2e864dfe385c4171061c9811ae`). Local clone `/tmp/audit-comp-ens`. Reviewed off-chain money paths: `packages/smart-account` (Rhinestone session salt/enable, HCA budget estimator, session localStorage), `packages/transaction-manager` (`hca-intent-funding`, registration HCA actors), `workers/api-worker` `/wallet/fund` Sepolia faucet. Contracts live in separate `ensdomains/contracts-v2` deployments referenced by manifest; not re-read on-chain here. No mainnet interaction. No exploit PoCs.
+
+Checked for: session-key theft via storage scope confusion leading to stranger registration spend; permit shortfall under-sizing that drains owner USDC beyond quoted fee; refund-cap bypass in session enable args; unauthenticated faucet double-mint or mainnet-value drain; JWT/auth bypass on privileged worker routes; resolver salt / permissionId mismatch on resume.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Destination session salt binds `hcaSessionNonce`, `validUntil`, `resolver`, and refund token with on-chain caps (`MAX_REFUND_AMOUNT` 100 USDC, gas overhead, exchange rate). `buildEnableSessionWithRefundCall` passes the same caps; undersizing would revert on-chain, not over-pull.
+- `estimateHcaBudget` prefers Rhinestone `spendTokens` quotes; fallback reasons are surfaced. `planHcaIntentFunding` throws on unread HCA balance or unpriceable quote rather than guessing permit value; shortfall is `quotedFee - balance` only.
+- Session persistence stores ephemeral session private key in browser `localStorage` (expected client threat model); `getValidSessionForAccount` evicts on owner/chain mismatch to block cross-HCA reuse.
+- `/wallet/fund` is unauthenticated but Sepolia-only: mints MockUSDC/DAI (1000 units) when balance < 10% threshold, plus best-effort 0.01 ETH drip gated on v1-name ownership via subgraph (fail-closed). Per-address KV lock prevents concurrent double-mint for same address; not mainnet value.
+
+Time spent: roughly 50 minutes on TS paths only. Remaining scope: portal/manager UI auth flows, workers notification/auth services, on-chain `contracts-v2` HCA validator bytecode. Submission requires Immunefi account + KYC.
+
+Not submitted. Next unused Immunefi program: Quantus app/circuit repos or `audit-competition-ens` portal/manager if continuing this program.
