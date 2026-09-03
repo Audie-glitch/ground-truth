@@ -39040,6 +39040,213 @@ builtin-actors
 reward, account)
 and filecoin.io.
 
+## 2026-09-03: Filecoin leftover remaining miner + account leftover (`d894a1a`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+after market +
+paych leftover.
+Official
+`filecoin-project/builtin-actors`
+`d894a1a`.
+Extract
+`/tmp/filecoin-actors`
+`actors/miner`,
+`actors/account`.
+No mainnet
+writes.
+
+Files:
+`actors/miner/src/lib.rs`,
+`actors/account/src/lib.rs`.
+
+Checked for:
+a stranger
+`withdraw_balance`
+that pays
+the caller;
+`change_owner_address`
+that steals
+the miner;
+account
+`authenticate_message`
+that skips
+signature
+check.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Miner
+  `withdraw_balance`
+  requires
+  caller
+  owner or
+  beneficiary
+  and
+  `send`s
+  to
+  `info.beneficiary`
+  after
+  vesting
+  and fee
+  debt.
+- `change_owner_address`
+  is a
+  two-step
+  owner
+  propose +
+  pending
+  owner
+  confirm.
+- `change_beneficiary`
+  is owner
+  propose
+  then
+  current /
+  proposed
+  beneficiary
+  confirm
+  (FIP-0029).
+- Account
+  constructor
+  is
+  system-
+  only.
+  `authenticate_message`
+  verifies
+  the stored
+  pubkey
+  over the
+  message.
+  Fallback
+  is a
+  no-op
+  for
+  exported
+  methods
+  (no
+  transfer).
+
+Do not file
+owner /
+beneficiary
+withdraw to
+the
+beneficiary,
+two-step
+owner
+change, or
+pubkey
+auth as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+lotus / proofs /
+boost / go-f3 /
+power / reward
+and filecoin.io.
+
+## 2026-09-03: Hedera leftover remaining TokenMint leftover (`0d3d9a2`)
+
+Immunefi program
+`hedera`
+($30,000,
+`kyc: true`).
+Listed remaining
+after
+CryptoTransfer
+leftover.
+Official
+`hiero-ledger/hiero-consensus-node`
+`0d3d9a2`.
+Extract
+`/tmp/hedera-consensus`
+`TokenMintHandler`
+/
+`TokenBurnHandler`.
+No mainnet
+writes.
+
+Files:
+`handlers/TokenMintHandler.java`,
+`handlers/TokenBurnHandler.java`.
+
+Checked for:
+a stranger
+`TokenMint`
+that mints
+without the
+supply key;
+`TokenBurn`
+that burns
+another
+account's
+tokens.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `TokenMint`
+  `preHandle`
+  `requireKey`
+  the token
+  supply
+  key when
+  present.
+  An empty
+  HIP-540
+  sentinel
+  is treated
+  as no
+  supply
+  key
+  (mint
+  disabled).
+- `TokenBurn`
+  likewise
+  `requireKey`
+  the
+  supply
+  key.
+  Handle
+  burns
+  from the
+  treasury
+  after
+  that
+  check.
+
+Do not file
+supply-key
+mint or
+burn as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+`hiero-mirror-node`,
+`hiero-cryptography`,
+other consensus
+modules, SDKs,
+and the
+transaction-tool
+website leftover.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -41512,6 +41719,12 @@ mirror-node / cryptography / other modules / SDKs);
 Filecoin leftover builtin-actors market + paych leftover
 (`d894a1a`) is logged (remaining listed is lotus /
 proofs / boost / other actors);
+Filecoin leftover remaining miner + account leftover
+(`d894a1a`) is logged (remaining listed is lotus /
+proofs / boost / power / reward);
+Hedera leftover remaining TokenMint leftover
+(`0d3d9a2`) is logged (remaining listed is
+mirror-node / cryptography / other modules / SDKs);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged (remaining listed is sei-js / go-ethereum /
 other modules);

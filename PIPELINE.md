@@ -10,7 +10,9 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~11:00 UTC;
-246 programs; no Sep 2026 launches; Filecoin leftover builtin-actors market + paych leftover is logged;
+246 programs; no Sep 2026 launches; Filecoin leftover remaining miner + account leftover is logged;
+Hedera leftover remaining TokenMint leftover is logged;
+Filecoin leftover builtin-actors market + paych leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 ZKsync OS leftover evm_interpreter leftover is logged;
 Hedera leftover json-rpc-relay leftover is logged;
@@ -248,6 +250,8 @@ Velvet leftover remaining BSC handlers leftover is logged;
 Wormhole leftover remaining Solana + Sui NTT leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 Filecoin leftover builtin-actors market + paych leftover is logged;
+Filecoin leftover remaining miner + account leftover is logged;
+Hedera leftover remaining TokenMint leftover is logged;
 Immunefi leftover ETH Splitter leftover is logged;
 Serai leftover bitcoin-serai leftover is logged;
 Pragma leftover cairo oracle leftover is logged).
@@ -1107,6 +1111,18 @@ paych leftover (`d894a1a`;
 KYC) is logged (remaining
 listed is lotus / proofs /
 boost / other actors).
+Filecoin leftover remaining
+miner + account leftover
+(`d894a1a`; KYC) is logged
+(remaining listed is lotus /
+proofs / boost / power /
+reward).
+Hedera leftover remaining
+TokenMint leftover
+(`0d3d9a2`; KYC) is logged
+(remaining listed is
+mirror-node / cryptography /
+other modules / SDKs).
 Immunefi leftover ETH Splitter leftover
 (Sourcify) is logged (listed SC leftover
 exhausted; remaining listed is websites
@@ -1908,6 +1924,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   builtin-actors market +
   paych leftover (`d894a1a`;
   KYC),
+  Filecoin leftover remaining
+  miner + account leftover
+  (`d894a1a`; KYC),
+  Hedera leftover remaining
+  TokenMint leftover
+  (`0d3d9a2`; KYC),
   Immunefi leftover ETH Splitter leftover
   (Sourcify),
   Serai leftover bitcoin-serai
