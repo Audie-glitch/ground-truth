@@ -72118,3 +72118,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a snapshot request or package wrapper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`snapshot_utils` / `snapshot_bank_utils` / `snapshot_minimizer` / `bank.rs`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
+
+## 2026-09-03: Optimism leftover remaining op-reth consensus leftover (`eea9542`)
+
+Immunefi program `optimism` ($2,000,042, `kyc: true`). Official remaining listed after op-reth leftover. Official `ethereum-optimism/optimism` `eea9542` (`eea9542814bdb8784a4d8d8628b31d19f2af4129`). Opened listed `rust/op-reth/crates/consensus/src/{lib,proof,error}.rs`, `rust/op-reth/crates/consensus/src/validation/{mod,canyon,isthmus}.rs`, and `rust/op-reth/crates/txpool/src/{validator,pool,maintain,transaction,lib,error,interop}.rs`. Extract `/tmp/op-reth2/`. Do not rematch op-reth leftover (payload / engine RPC). No mainnet writes. No exploit PoCs.
+
+Checked for: consensus that accepts a stranger withdrawal as L1 ETH; a receipt-root helper that credits a caller; a txpool validator that admits a deposit typed as a user tx and mints.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `OpBeaconConsensus` is read-only header/body validation: ommers empty, tx root, Canyon empty Shanghai withdrawals and empty withdrawals root, Ecotone excess-blob-gas 0, Isthmus `withdrawals_root` present. Post-execution compares receipt root / logs bloom / gas used (Jovian DA footprint too).
+- Isthmus `verify_withdrawals_root` checks the header field against the `L2ToL1MessagePasser` storage root after execution. Canyon forbids non-empty body withdrawals. This is not a withdraw-to-caller path.
+- Receipt-root helpers strip deposit nonce only in the Regolith-before-Canyon window to match op-geth. They do not transfer value.
+- `OpTransactionValidator` rejects EIP-4844, reserves `L1_INFO_GAS_OVERHEAD` so a user tx cannot consume the full block gas, and requires sender balance to cover L2 cost plus L1 data fee plus Isthmus/Jovian operator fee. Interop comment: deposits do not enter the pool. `OpPool` wraps/filters; it does not mint.
+
+Do not file a consensus receipt root or txpool admission as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining `op-reth` websites / other unused official leftovers if still open.
