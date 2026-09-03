@@ -36774,6 +36774,11 @@ impl / Silk; KYC) is logged
 gala.com / app / wallet /
 node / film / music
 websites);
+Serai leftover listed crypto
++ bitcoin leftover
+(`4b89cf0`; KYC) is logged
+(listed leftover
+exhausted);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -52469,3 +52474,217 @@ gala.com /
 app / wallet /
 node / film /
 music websites.
+
+## 2026-09-03: Serai leftover listed crypto + bitcoin leftover (`4b89cf0`)
+
+Immunefi program
+`serai`
+($30,000, `kyc: true`).
+No leftover heading
+existed. Official
+clone `/tmp/serai`
+`4b89cf0` (`develop`).
+Opened every listed
+path. No mainnet
+writes. No exploit
+PoCs.
+
+Files:
+`crypto/ciphersuite/src/lib.rs`
++ `kp256/src/lib.rs`,
+`crypto/dkg/src/lib.rs`,
+`crypto/dkg/musig/src/lib.rs`,
+`crypto/frost/src/{lib,sign,nonce,algorithm}.rs`,
+`crypto/schnorr/src/lib.rs`,
+`crypto/schnorrkel/src/lib.rs`,
+`crypto/transcript/src/lib.rs`,
+`crypto/dalek-ff-group/src/lib.rs`,
+`crypto/multiexp/src/lib.rs`,
+`networks/bitcoin/src/{crypto,wallet/mod,wallet/send}.rs`.
+
+Checked for: a
+stranger
+Schnorr / FROST
+forge without a
+share; MuSig
+aggregation that
+drops another
+key; Bitcoin
+`SignableTransaction`
+that spends a
+UTXO the caller
+does not hold;
+DKG `view` that
+leaks another
+participant's
+secret share.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Ciphersuite
+  `read_F` /
+  `read_G` reject
+  non-canonical
+  encodings.
+  `hash_to_F`
+  documents DST
+  substring
+  risk; suites
+  use
+  expand-message
+  XMD.
+- DKG
+  `ThresholdParams`
+  rejects
+  `t==0` /
+  `t>n` /
+  participant
+  `0`.
+  `ThresholdKeys::new`
+  checks share
+  count and
+  Constant
+  interpolation
+  only when
+  `t==n`.
+  `scale(0)` is
+  `None`.
+  `view` requires
+  the local `i`
+  in the set.
+  Offset is
+  added only to
+  the lowest
+  included
+  participant
+  after
+  interpolation.
+  Serialize
+  omits the
+  ephemeral
+  scalar/offset.
+- MuSig is
+  n-of-n.
+  Duplicate
+  keys revert.
+  Binding
+  factor is
+  `hash_to_F("dkg-musig",
+  context ||
+  n || keys ||
+  i)`.
+  Missing own
+  pubkey is
+  `NotPresent`.
+- Schnorr is
+  `s = r + cx`
+  with a
+  caller-supplied
+  challenge
+  (documented
+  binding
+  requirement).
+- FROST is
+  two-round.
+  `CachedPreprocess`
+  reuse is
+  documented
+  share
+  recovery
+  (operator).
+  Binding
+  factors bind
+  group key +
+  message +
+  preprocess
+  transcript.
+  Nonce is
+  `d + e*rho`.
+  `complete`
+  verifies the
+  group sig,
+  then blames
+  a bad share.
+  Preprocess
+  must be on an
+  authenticated
+  channel
+  (documented).
+- Schnorrkel
+  HRAm prefixes
+  context
+  length.
+  Verify uses
+  `schnorrkel`
+  against the
+  group key.
+- Bitcoin
+  `tweak_keys`
+  adds the
+  BIP-341
+  unspendable
+  script path
+  then even-Y
+  scale.
+  `multisig`
+  refuses keys
+  whose P2TR
+  script does
+  not match
+  the prevout.
+  `sign`
+  requires an
+  empty msg and
+  signs the
+  taproot key-
+  spend sighash.
+  Preprocess
+  cache is
+  unimplemented.
+- Transcript
+  length-
+  prefixes
+  typed
+  members and
+  forks the
+  challenge to
+  block length
+  extension.
+  Multiexp /
+  dalek-ff-group
+  are math
+  wrappers.
+
+Do not file
+FROST
+preprocess
+reuse, an
+unauthenticated
+signing
+channel, or a
+threshold spend
+of keys the
+signers already
+hold as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub of listed
+types opens for
+Serai crypto +
+bitcoin is
+exhausted at the
+opened-file
+level. Remaining
+listed: none
+(other Serai
+crates are not
+in the asset
+list).
