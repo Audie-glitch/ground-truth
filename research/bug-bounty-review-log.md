@@ -46361,126 +46361,94 @@ rust/op-reth
 (if still unused).
 
 
-## 2026-09-03: Optimism leftover remaining op-node sequencing leftover (`eea9542`)
+## 2026-09-03: Optimism leftover remaining ProxyAdmin leftover
 
 Immunefi program
 `optimism`
 ($2,000,042,
 `kyc: true`).
-Official remaining
-listed after
-op-node p2p leftover.
-Official
-`ethereum-optimism/optimism`
-`eea9542`.
+Official unused
+listed ProxyAdmin
+and AddressManager
+after SystemConfig
+leftover.
+Sourcify ETH
+ProxyAdmin
+`0x543bA4AADBAb8f9025686Bd03993043599c6fB04`,
+Lib_AddressManager
+`0xdE1FCfB0851916CA5101820A69b13a4E276bd81F`.
 Extract
-`/tmp/op-seq/`.
+`/tmp/op-unused/ProxyAdmin/`.
 Do not rematch
-deposits leftover,
-engine leftover,
-or p2p leftover.
+SystemConfig leftover
+or L1 portal leftover.
 No mainnet
 writes.
 
 Files:
-`op-node/rollup/sequencing/{sequencer,origin_selector,iface}.go`.
+`src/universal/ProxyAdmin.sol`,
+`src/legacy/AddressManager.sol`.
 
 Checked for:
-`Start` that
-lets a
 stranger
-become the
-sequencer;
-`startBuildingBlock`
-that injects
-extra
-deposits;
-`FindL1Origin`
-that skips
-to a
-stranger L1
-origin.
+`upgrade` /
+`upgradeAndCall`
+that swaps
+an impl;
+`changeProxyAdmin`
+that steals
+admin;
+`setAddress`
+that
+rewrites a
+name.
 
 Result: no
 user-exploitable
 finding. Not
 submitted.
 
-- `Start`
-  requires
-  `conductor.Leader`
-  and that
-  `head`
-  equals the
-  known
-  unsafe
-  head.
-- Attributes
-  come from
-  leftover-
-  logged
-  `PreparePayloadAttributes`.
-  Drift and
-  upgrade
-  blocks set
-  `NoTxPool`.
-- After
-  `SealBuild`
-  the
-  conductor
-  commits
-  the
-  envelope,
-  then
-  gossip
-  and
-  `ProcessPayload`
-  insert it.
-  Stale /
-  denied /
-  invalid
-  payloads
+- ProxyAdmin
+  mutators
+  (`setProxyType`,
+  `setImplementationName`,
+  `setAddressManager`,
+  `setAddress`,
+  `setUpgrading`,
+  `changeProxyAdmin`,
+  `upgrade`,
+  `upgradeAndCall`)
   are
-  dropped.
-- Origin
-  selector
-  requires
-  current
-  origin
-  hash
-  equals
-  `l2Head.L1Origin`
-  and
-  rejects an
-  orphaned
-  next
-  origin.
-- This
-  package
+  `onlyOwner`.
+- AddressManager
+  `setAddress`
+  is
+  `onlyOwner`.
+  Getters are
+  view.
+- `upgradeAndCall`
+  forwards
+  `msg.value`
+  only after
+  the owner
+  upgrade.
+  This
+  contract
   does not
-  send L1
-  transactions
-  or move
-  user
+  hold user
   funds.
 
 Do not file
-an operator
-sequencer
-loop as
-stranger
-theft.
+an owner-
+gated proxy
+admin as
+stranger theft.
 
 Not submitted.
 Payment requires
 user KYC.
 Remaining listed:
-unused official
-op-node leftover
-that listed trees
-still open after
-this sequencing
-slice / websites /
+websites /
 rust/op-reth
 (if still unused).
 
@@ -46794,6 +46762,8 @@ Optimism leftover remaining op-node p2p leftover (`eea9542`)
 is logged.
 Optimism leftover remaining op-node sequencing leftover (`eea9542`)
 is logged.
+Optimism leftover remaining ProxyAdmin leftover
+is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
 Filecoin leftover remaining go-fil-markets leftover (`6e1b1dc05c39`)
@@ -46831,8 +46801,7 @@ Remaining listed Filecoin: unused official leftover that listed trees open is ex
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`snapshot_*` / `bank.rs`) if still unused. Jito leftover remaining jito-solana stake_weighted_timestamp leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
-Remaining listed Optimism: unused official op-node leftover that listed trees still open after this sequencing slice / websites / rust/op-reth if still unused. Optimism leftover remaining op-node p2p leftover is logged. Optimism leftover remaining op-node sequencing leftover is logged.
-
+Remaining listed Optimism: websites / rust/op-reth if still unused. Optimism leftover remaining op-node p2p leftover is logged. Optimism leftover remaining op-node sequencing leftover is logged. Optimism leftover remaining ProxyAdmin leftover is logged.
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
 Do not rematch Hedera consensus-node,
@@ -46920,6 +46889,7 @@ Do not rematch Optimism leftover remaining L2OutputOracle leftover.
 Do not rematch Optimism leftover remaining SystemConfig leftover.
 Do not rematch Optimism leftover remaining op-node p2p leftover.
 Do not rematch Optimism leftover remaining op-node sequencing leftover.
+Do not rematch Optimism leftover remaining ProxyAdmin leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -49717,9 +49687,10 @@ is logged;
 Optimism leftover remaining op-node p2p leftover
 (`eea9542`) is logged;
 Optimism leftover remaining op-node sequencing leftover
-(`eea9542`) is logged (remaining listed is unused official
-op-node leftover that listed trees still open after this
-sequencing slice / websites / rust/op-reth);
+(`eea9542`) is logged;
+Optimism leftover remaining ProxyAdmin leftover
+is logged (remaining listed is websites /
+rust/op-reth);
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
