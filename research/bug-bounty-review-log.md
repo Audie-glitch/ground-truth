@@ -63774,3 +63774,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a wrapper that forwards prover_id and commitments as stranger theft. This crate does not move FIL.
 
 Not submitted. Payment requires user KYC. Remaining listed: rust-fil-proofs / rust-fil-proofs-ffi / filecoin.io.
+
+## 2026-09-03: Wormhole leftover remaining Solana token-bridge leftover (`c58827e`)
+
+Immunefi program `wormhole` ($1,000,000, `kyc: true`). Official remaining listed after ETH core / TokenBridge Sourcify, NTT, circle-integration, and Solana+Sui NTT leftovers. Official clone `/tmp/wormhole` `c58827e` (sparse `solana/modules/token_bridge` + `solana/bridge` claim). Opened `token_bridge/program/src/api/transfer.rs`, `complete_transfer.rs`, `complete_transfer_payload.rs`, `bridge/program/src/accounts/claim.rs`. No mainnet writes. No exploit PoCs.
+
+Checked for: `transfer_native` locking another wallet's SPL; `complete_native` / `complete_wrapped` paying a stranger; payload redeem without the VAA recipient.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `transfer_native` verifies custody PDA + mint, rejects wrapped mint-authority, truncates to 8 decimals without burning the remainder, then `spl_token::transfer` from the caller-approved `from` via `authority_signer`. `transfer_wrapped` requires `from.owner == from_owner` (signer) and burns that account.
+- `complete_native` / `complete_wrapped` require a registered emitter endpoint, matching mint/meta, `vaa.to == to` token account, and `claim::consume` (uninitialized claim PDA = replay protection). Native un-truncates then custody-transfers `amount - fee` to `to`; wrapped mints the same split.
+- Payload complete requires the redeemer to be `vaa.to` or a `"redeemer"` PDA of that program, and the token account owner to be that recipient or redeemer.
+
+Do not file approved lock/burn of the signer's tokens or claim-gated release to the VAA recipient as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / wormchain / cosmwasm / algorand / aptos / near, and Relayer Sourcify 404.
