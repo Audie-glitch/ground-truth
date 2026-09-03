@@ -66119,3 +66119,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a Control-signed voucher helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Aave leftover remaining StableDebtToken leftover (`782f519`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after v3 Pool leftover. Official `aave/aave-v3-core` `782f519` (`chore: deprecate for 3.1 origin`). Opened listed `StableDebtToken.sol` plus `DebtTokenBase` / `IncentivizedERC20` `onlyPool`. Do not rematch Pool / Supply / Borrow / VariableDebt leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `mint` of stable debt onto another user; `burn` of someone else's debt without Pool; ERC-20 transfer of debt tokens.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `mint` / `burn` are `onlyPool` (`msg.sender == POOL`). If `user != onBehalfOf`, `mint` `_decreaseBorrowAllowance` (underflow-reverts without delegation).
+- Accrued interest is compounded into principal on mint/burn. Last-repayer supply underflow zeros `_avgStableRate` / `_totalSupply` rather than minting a stranger credit.
+- `transfer` / `approve` / `transferFrom` / allowance mutators revert `OPERATION_NOT_SUPPORTED`. This token does not move underlying.
+
+Do not file a Pool-gated non-transferable debt token as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: PoolConfigurator / ACL / oracles / periphery / rewards / GHO instances.
