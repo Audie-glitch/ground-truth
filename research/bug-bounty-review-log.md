@@ -64054,3 +64054,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file signer-keyed deposit/withdraw, signer-approved lock/burn, or claim-gated release to the VAA recipient as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / wormchain / other cosmwasm contracts / algorand / aptos / near, and Relayer Sourcify 404.
+
+## 2026-09-03: Wormhole leftover remaining CosmWasm core leftover (`c58827e`)
+
+Immunefi program `wormhole` ($1,000,000, `kyc: true`). Official remaining listed after Solana token-bridge and CosmWasm token-bridge leftovers. Official clone `/tmp/wormhole` `c58827e` (sparse `cosmwasm/contracts/wormhole`). Opened `src/contract.rs` (`handle_post_message`, `handle_submit_vaa`, `parse_and_verify_vaa`, governance handlers) and `src/state.rs` (`ParsedVAA::deserialize`, `GuardianSetInfo::quorum`, VAA archive). No mainnet writes. No exploit PoCs.
+
+Checked for: forged VAA acceptance without quorum; replay; guardian-set skip; `PostMessage` moving another wallet's coins; `TransferFee` paying a stranger without a governance VAA.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `ParsedVAA::deserialize` double-keccak256s the body. `parse_and_verify_vaa` requires version 1, a non-expired guardian set, strictly increasing signer indexes, and `len_signers >= quorum` (`((n*10/3)*2)/10 + 1`). Each recoverable secp256k1 signature must recover to the guardian address at that index (`keys_equal` = keccak256 of uncompressed pubkey[1:] last 20 bytes). Already-archived hashes are rejected.
+- `SubmitVAA` archives after verify, then only handles governance (`emitter == gov_chain/gov_address`, current guardian set). Module must be `Core` and `chain` 0 or this chain. Guardian-set upgrade requires `new_index == current + 1`. Contract upgrade is `WasmMsg::Migrate` to the VAA code id. `SetFee` / `TransferFee` are governance-only.
+- `PostMessage` requires the configured fee (if any), attributes the emitter as `info.sender`, and increments that emitter's sequence. It does not transfer third-party bank balances.
+
+Do not file a quorum-checked governance VAA or a fee-gated self-attributed post as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `wormhole` node / wormchain / other cosmwasm contracts / algorand / aptos / near, and Relayer Sourcify 404.
