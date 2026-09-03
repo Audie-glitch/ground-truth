@@ -32102,3 +32102,171 @@ listed: Sourcify
 404 docs addresses
 and other docs
 rows.
+
+## 2026-09-03: CapyFi Comptroller / CEther / CErc20 leftover (Sourcify)
+
+Immunefi program
+`CapyFi`
+($1,000,000, `kyc: true`).
+Unique unused standing
+program. Not previously
+logged. Ethereum
+Sourcify `exact_match`
+on Comptroller
+`0x00dc4965916e03A734190fA382633657c71f867E`,
+CEther caETH
+`0x37DE57183491Fa9745d8Fa5DCd950f0c3a4645c9`,
+CErc20Delegator markets
+caUSDC / caUSDT /
+caWBTC / caRPC /
+caWARS / caLAC, and
+CErc20Delegate
+`0x0f1adffffd84749e816066348d4c1256d285965f`
+behind caUSDC.
+Unitroller
+`0x0b9af1fd73885aD52680A1aeAa7A3f17AC702afA`
+is Sourcify 404; its
+admin / fallback source
+is in the Comptroller
+extract. Read-only
+`eth_call` on
+`https://ethereum.publicnode.com`
+and
+`https://rpc.mevblocker.io`
+(no writes). Extract
+`/tmp/capyfi-src`.
+
+Files:
+`src/contracts/Comptroller.sol`,
+`src/contracts/Unitroller.sol`,
+`src/contracts/CToken.sol`,
+`src/contracts/CEther.sol`,
+`src/contracts/CErc20.sol`,
+`src/contracts/CErc20Delegate.sol`,
+`src/contracts/CErc20Delegator.sol`,
+`src/contracts/Access/WhitelistAccess.sol`.
+
+Checked for: a
+stranger mint that
+credits the caller
+without pulling that
+caller; redeem /
+borrow that pays the
+caller from another
+account's cTokens;
+`seize` that accepts a
+spoofed seizer token;
+`_setWhitelist` by a
+non-admin.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Comptroller
+  `enterMarkets` only
+  adds `msg.sender`.
+  `mintAllowed` is
+  listed + not paused.
+  `borrowAllowed`
+  auto-enters only
+  when `msg.sender`
+  is the cToken,
+  reverts on a zero
+  oracle price, and
+  requires no
+  hypothetical
+  shortfall.
+  `liquidateBorrowAllowed`
+  needs shortfall
+  (unless the market
+  is deprecated) and
+  a close-factor cap.
+  `seizeAllowed`
+  requires both
+  markets listed and
+  the same
+  Comptroller.
+  `_setPriceOracle` /
+  `_supportMarket` /
+  `_setCollateralFactor`
+  / `_become` /
+  pause / borrow-cap
+  setters are admin
+  or named guardians.
+- `CToken.mintInternal`
+  is
+  `_checkWhitelist(msg.sender)`
+  then `mintFresh`
+  for that sender.
+  `doTransferIn` on
+  CErc20
+  `transferFrom`s the
+  minter; CEther
+  requires
+  `msg.sender == from`
+  and
+  `msg.value == amount`.
+  Redeem burns the
+  redeemer's tokens
+  and pays that
+  redeemer. Borrow
+  pays the borrower
+  after a liquidity
+  check. Repay pulls
+  the payer.
+- `seize` passes
+  `msg.sender` as the
+  seizer cToken.
+  Transfer spends
+  allowance when
+  `spender != src`.
+- `_setWhitelist`
+  requires admin and
+  `isWhitelistAccess()`.
+  The modifier is a
+  no-op when
+  whitelist is unset
+  or inactive.
+  `_setImplementation`
+  / `_becomeImplementation`
+  are admin.
+  Unitroller
+  pending-impl /
+  pending-admin
+  accept is the
+  pending address.
+
+Do not file first-
+depositor exchange-rate
+inflation, admin /
+pause-guardian
+privilege, optional
+mint whitelist, or
+permissionless
+liquidation of an
+undercollateralized
+account as theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed CapyFi
+Comptroller / CEther /
+CErc20 leftover is
+exhausted at the
+opened-contract
+level. Remaining
+listed: Unitroller
+proxy (Sourcify 404)
+and other-market
+CErc20Delegate
+implementations not
+independently
+Sourcify-fetched
+(same CErc20Delegate
+type as caUSDC).
+The listed website
+is out of this
+slice.
