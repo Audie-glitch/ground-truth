@@ -35159,3 +35159,158 @@ explorer still
 404 on guessed
 L2 chain ids).
 
+## 2026-09-03: Celer leftover ETH staking / SGN / cBridge (Sourcify)
+
+Immunefi program
+`celer`
+($2,000,000, `kyc: true`).
+Unique unused standing
+program. Not previously
+logged. Ethereum
+Sourcify `exact_match`
+on every listed ETH
+row.
+Staking
+`0x8a4B4C2aCAdeAa7206Df96F00052e41d74a015CE`
+(`Staking`).
+SGN
+`0xCb4A7569a61300C50Cf80A2be16329AD9F5F8F9e`
+(`SGN`).
+StakingReward
+`0xb01fd7Bc0B3c433e313bf92daC09FF3942212b42`.
+FarmingRewards
+`0x61f85fF2a2f4289Be4bb9B72Fc7010B3142B5f41`.
+Govern
+`0xea129aE043C4cB73DcB241AAA074F9E667641BA0`.
+Viewer
+`0x5803457E3074E727FA7F9aED60454bf2F127853b`.
+cBridge Ethereum
+`0x5427FEFA711Eff984124bFBB1AB6fbf5E3DA1820`
+(`Bridge` + `Pool`).
+No mainnet writes.
+Extract `/tmp/celer-src`.
+
+Files:
+`contracts/Staking.sol`,
+`contracts/SGN.sol`,
+`contracts/StakingReward.sol`,
+`contracts/FarmingRewards.sol`,
+`contracts/Govern.sol`,
+`contracts/Viewer.sol`,
+`contracts/Bridge.sol`,
+`contracts/Pool.sol`,
+`contracts/Signers.sol`.
+
+Checked for: a
+stranger delegate
+that credits
+another address;
+undelegate /
+complete that
+pays the caller
+someone else's
+CELR; SGN
+withdraw that
+ignores the
+signed account;
+reward claim that
+pays msg.sender;
+cBridge `send` /
+`relay` /
+`withdraw` that
+skips quorum or
+pays the caller;
+signer-set
+replacement
+without current
+quorum.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Staking
+  `delegate` pulls
+  `msg.sender` and
+  credits that
+  delegator.
+  Undelegate /
+  complete use
+  `delegators[msg.sender]`
+  and pay
+  `msg.sender`.
+  `slash` needs
+  bonded-validator
+  quorum. Zero
+  collector
+  account pays
+  `msg.sender` only
+  inside a signed
+  slash.
+- SGN deposit
+  records
+  `msg.sender`.
+  Withdraw is
+  cumulative to
+  `withdrawal.account`
+  after
+  `verifySignatures`.
+- StakingReward /
+  FarmingRewards
+  pay the signed
+  `recipient` the
+  delta over
+  claimed
+  cumulative.
+  `drainToken` is
+  owner + paused.
+- Bridge `send`
+  pulls
+  `msg.sender`.
+  `relay` /
+  Pool `withdraw`
+  verify
+  `ssHash` signer
+  quorum and pay
+  the signed
+  receiver.
+  Delayed execute
+  pays stored
+  receiver after
+  `delayPeriod`.
+- Signers update
+  requires current
+  quorum.
+  `resetSigners`
+  is owner after
+  notice.
+- Viewer is
+  read-only.
+
+Do not file
+quorum-signed
+relay / withdraw /
+slash, owner
+paused drain, or
+gov param votes
+as stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Celer ETH
+staking / SGN /
+rewards / govern /
+viewer / cBridge
+leftover is
+exhausted.
+Remaining listed:
+cBridge on BSC /
+Arbitrum /
+Polygon /
+Avalanche /
+Fantom /
+Optimism / Boba,
+and the cBridge
+web app.
