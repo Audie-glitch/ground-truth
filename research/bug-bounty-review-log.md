@@ -3881,6 +3881,89 @@ Fluid Dex T2–T4, `eulerV2`, `aaveV4` / leftover
 Aave, `llamalend`, `mcd`, `tx-saver`, triggers.
 Not submitted.
 
+## 2026-09-03: DeFi Saver Euler V2 actions (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/defisaver-v3` at `e623f20`. No mainnet
+interaction.
+
+Files: `contracts/actions/eulerV2/{EulerV2Supply,
+EulerV2Withdraw,EulerV2Borrow,EulerV2Payback,
+EulerV2PaybackWithShares,EulerV2PullDebt,
+EulerV2CollateralSwitch,EulerV2ReorderCollaterals}.sol`,
+`helpers/{EulerV2Helper,MainnetEulerV2Addresses}.sol`.
+
+Checked for: borrow/withdraw of an account the
+wallet does not own; `enableController` on a
+stranger; `pullDebt` that loads a victim with
+debt; `repayWithShares` that burns another
+account’s eTokens; a fake vault that
+`withdrawTokens` of a requested amount.
+
+Result: no user-exploitable finding.
+
+- EVC is hardcoded
+  `0x0C9a3dd6b8F28529d72d7f9cE918D493519EE383`.
+  Borrow / withdraw / repayWithShares /
+  disableController go through
+  `IEVC.call(vault, account, …)`. EVC only
+  accepts the account owner or an operator.
+  `account == 0` defaults to the wallet.
+  Sub-accounts share the wallet’s 19-byte
+  prefix.
+- Supply deposits to `account` (donation if it
+  is not the wallet) after a pull/approve.
+  Payback caps at `debtOf(account)` and, on a
+  full repay, disables the controller via EVC.
+- `pullDebt` takes `from`’s debt onto `account`
+  (the wallet / its sub-account). That is
+  debt-relief for `from`, not an extract.
+  `repayWithShares` burns shares of `from`
+  via EVC (`from` must be wallet-owned).
+- A hostile `vault` address is owner-or-bot
+  fake-target (same class as Comp cToken /
+  Spark AddressProvider). It cannot pass EVC
+  as a real Euler account.
+
+## 2026-09-03: DeFi Saver LlamaLend core money actions (`e623f20`)
+
+Same program and clone. LlamaLend is the
+crvUSD-style controller fork; CurveUsd already
+logged.
+
+Files: `contracts/actions/llamalend/{LlamaLendCreate,
+LlamaLendBorrow,LlamaLendWithdraw,LlamaLendPayback}.sol`,
+`helpers/LlamaLendHelper.sol`.
+
+Checked for: a fake controller that
+`withdrawTokens` of minted debt from the wallet;
+borrow/withdraw of another user’s llamma
+position; payback `onBehalfOf` that closes and
+sends someone else’s coll to `to`.
+
+Result: no user-exploitable finding.
+
+- Create / borrow / withdraw do **not** call
+  `isControllerValid` (unlike CurveUsd).
+  `isControllerValid` exists
+  (`factory.controllers(id) == addr`) but is
+  unused here. A hostile controller plus
+  `withdrawTokens` of the requested amount
+  would drain the wallet’s existing
+  debt/coll tokens — owner-or-bot fake-target,
+  same class already logged for Comp / Spark.
+  Positions on a *real* controller are the
+  wallet’s (`create_loan` / `borrow_more` /
+  `remove_collateral`).
+- Payback caps at `debt(onBehalfOf)` and on
+  close sends only wallet balance deltas.
+  `onBehalfOf` repay is a donation.
+
+Remaining LlamaLend: supply / self-liquidate /
+advanced swapper paths. Remaining DFS: those,
+Fluid Dex T2–T4, `aaveV4` / leftover Aave,
+`mcd`, `tx-saver`, triggers. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3922,10 +4005,11 @@ exhausted. DeFi Saver V3 executor + FL + auth
 (`e623f20`) and exchangeV3 + sell actions (`e623f20`)
 are logged; Morpho Blue, Liquity V2, Fluid T1
 + liquidity logic, Aave V3, Comp V2/V3, Spark,
-Liquity V1, CurveUsd core, and CurveUsd
-advanced/transient (`e623f20`) are logged.
-Remaining DFS is Fluid Dex T2–T4, `eulerV2`,
-`aaveV4` / leftover Aave, `llamalend`, `mcd`,
+Liquity V1, CurveUsd core, CurveUsd
+advanced/transient, Euler V2, and LlamaLend
+core (`e623f20`) are logged. Remaining DFS is
+LlamaLend leftover / Fluid Dex T2–T4 /
+`aaveV4` / leftover Aave / `mcd`,
 `tx-saver`, and triggers. Next unreviewed
 Immunefi GitHub-or-recent trees: those DFS
 trees, Jito `jito-solana` / `mev-programs` ($250k,
