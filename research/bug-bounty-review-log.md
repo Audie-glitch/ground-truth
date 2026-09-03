@@ -11879,9 +11879,8 @@ Result: no user-exploitable finding.
 
 Listed Silo V3 GitHub Solidity leftover is
 exhausted. Next leftover: PancakeSwap
-Infinity (logged below), Twyne
-Sourcify-404 vaults, or Mux
-`mux3-protocol`.
+Infinity (logged below), Mux3 (logged
+below), or Twyne Sourcify-404 vaults.
 Not submitted.
 
 ## 2026-09-03: PancakeSwap Infinity leftover (`61cd131` / `8261f8d` / `33dbf5a`)
@@ -12019,9 +12018,72 @@ Not submitted. Remaining Pancake listed
 Solidity: `pancake-v3-contracts` and
 `pancake-swap-periphery` (older V3/V2
 trees added the same day). Next leftover:
-Mux `mux3-protocol` (`mux`, $100k, no
-KYC, GitHub leftover 28 Aug 2025) or
-Twyne Sourcify-404 vaults.
+Mux3 (logged below) or Twyne
+Sourcify-404 vaults.
+
+## 2026-09-03: Mux3 core trade + pool + orderbook (`8674f2b`)
+
+Immunefi program `mux` ($100,000, `kyc:
+false`). mux3-protocol tree added 17 Mar
+2025. Local clone `/tmp/mux3` at
+`8674f2b`. No mainnet interaction.
+
+Files: `core/trade/{FacetPositionAccount,
+FacetOpen,FacetClose,PositionAccount}.sol`,
+`orderbook/OrderBook.sol`,
+`libraries/{LibOrderBook2,LibCodec}.sol`,
+`pool/CollateralPool.sol` (add/remove/
+rebalance), `peripherals/Swapper.sol`
+(`swapAndTransfer`).
+
+Checked for: deposit into a stranger's
+positionId; withdraw that skips MM after
+fees; liquidate of a solvent account;
+LP remove that spends reserved collateral;
+swapper that keeps tokens on failure;
+broker-less fill.
+
+Result: no user-exploitable finding.
+
+- PositionId encodes `address || index`.
+  OrderBook deposit / withdraw / modify
+  require `decode(positionId) == msg.sender`
+  unless `DELEGATOR`. Fills, liquidate,
+  ADL, and rebalance-fill are
+  `BROKER_ROLE`. Core trade facets are
+  `ORDER_BOOK_ROLE`.
+- Deposit: OrderBook pulls tokens to the
+  facet, then `_depositToAccount` credits
+  wad. Sub-1e18 amounts on tokens with
+  decimals > 18 credit 0 (dust donation
+  to the core, user self-grief).
+- Withdraw deducts wad, sends raw to
+  Swapper. Failed / skipped swap transfers
+  `tokenIn` to `positionAccount.owner`.
+  Partial withdraw then requires leverage
+  and IM safe. `withdrawAll` requires
+  `activeMarkets.length == 0`.
+- Open/close size must be a lot multiple.
+  Fees come from collateral. Close
+  realizes capped PnL then requires MM
+  safe. Liquidate gathers all markets,
+  requires MM unsafe including pending
+  borrowing, closes profits then losses.
+- Reallocate is broker-only; `toPool`
+  `reservedUsd <= collateralUsd`.
+- LP add/remove `onlyOrderBook`. Shares =
+  `(amount - fee) * price / nav`. Remove
+  burns shares held by the pool and
+  refuses if new collateral USD <
+  reserved. Rebalance sends token0 then
+  expects collateral back under slippage.
+- Swap paths are admin `SET_ROUTE_ROLE`.
+  `receive()` only accepts WETH.
+
+Not submitted. Remaining Mux: mux-protocol
+core/orderbook (Aug 2025 leftover),
+aggregator proxyFactory / gmxV2,
+mux-degen, mux-staking.
 
 ## 2026-09-03: Obyte Coop AA leftover (`d7d5e57`)
 
@@ -12699,6 +12761,12 @@ universal-router
 (remaining Pancake is
 listed V3 + V2
 periphery);
+Mux3 core trade / pool /
+orderbook (`8674f2b`) is
+logged (remaining Mux is
+mux-protocol core,
+aggregator, degen,
+staking);
 Obyte Coop AA
 (`d7d5e57`) and Friends
 AA (`45019f9`) are
