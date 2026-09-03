@@ -32927,3 +32927,134 @@ opened-contract
 level. Remaining
 listed: the website
 Restaking page.
+
+## 2026-09-03: Aera Base vault leftover (Sourcify)
+
+Immunefi program
+`Aera`
+($500,000, `kyc: true`).
+Unique unused standing
+program. Not previously
+logged. Base chain
+8453 Sourcify `match`
+on the five listed
+contracts (no proxy
+resolution):
+TransferBlacklistHook
+`0x6e5430C10fce10e5c6F67dC54506e4564dD7A6E5`,
+PriceAndFeeCalculator
+`0x69dd4d44eed6bbc33b8a0bdfe17897ab9044372e`,
+MultiDepositorVault
+`0x000000000001CdB57E58Fa75Fe420a0f4D6640D5`,
+Provisioner
+`0x18cf8d963e1a727f9bbf3aeffa0bd04fb4dbda07`,
+Whitelist
+`0xdDfd960a7150520548dD1F6E53CC2f201b364692`.
+No mainnet writes.
+Extract `/tmp/aera-src`.
+
+Files:
+`src/core/MultiDepositorVault.sol`,
+`src/core/Provisioner.sol`,
+`src/core/PriceAndFeeCalculator.sol`,
+`src/core/Whitelist.sol`,
+`src/periphery/hooks/transfer/TransferBlacklistHook.sol`.
+
+Checked for: a
+stranger `enter` that
+mints units without
+pulling the sender;
+`exit` that burns
+another user's units
+without the
+provisioner;
+`requestDeposit` /
+`requestRedeem` that
+credit a stranger;
+`refundRequest` that
+pays the solver the
+queued tokens;
+`setWhitelisted` by
+a random caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Vault `enter` /
+  `exit` are
+  `onlyProvisioner`.
+  `enter` pulls
+  `token` from
+  `sender` and mints
+  units to
+  `recipient`.
+  `exit` burns
+  `sender` and pays
+  `recipient`.
+  `setProvisioner` /
+  hook setter are
+  `requiresAuth`.
+- Sync `deposit` /
+  `mint` convert via
+  the price
+  calculator, then
+  `_syncDeposit`
+  calls
+  `enter(msg.sender,
+  …, msg.sender)`.
+  `refundDeposit` is
+  `requiresAuth` and
+  returns tokens to
+  the original
+  sender.
+- `requestDeposit`
+  pulls tokens from
+  `msg.sender`.
+  `requestRedeem`
+  pulls vault units
+  from `msg.sender`.
+  `refundRequest`
+  after deadline
+  (or auth) pays
+  `request.user`.
+- Authorized vault
+  solve mints units
+  to `request.user`
+  or pays that user
+  after `exit`.
+  Permissionless
+  direct solve
+  swaps the solver's
+  other side for the
+  queued tokens /
+  units; the user
+  still receives
+  their side.
+- `setUnitPrice` is
+  `onlyVaultAccountant`.
+  Whitelist mutation
+  is `requiresAuth`.
+  Transfer hook
+  blocks sanctioned
+  `from` / `to`.
+
+Do not file
+accountant price
+privilege, auth
+sync-deposit refund,
+permissionless
+direct solve with a
+solver tip, or
+sanctions blocking
+as stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Aera Base
+vault leftover is
+exhausted at the
+opened-contract
+level.
