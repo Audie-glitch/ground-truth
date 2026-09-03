@@ -18104,6 +18104,98 @@ JumpRateModel
 (Sourcify 404), Pause
 Guardian.
 
+## 2026-09-03: Benqi QI token leftover (Sourcify + `e0cfd24`)
+
+Immunefi program
+`benqi`
+($500,000, `kyc: false`).
+Core markets leftover
+is already logged.
+This slice is QI
+`0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5`.
+Avalanche Sourcify
+`match` (solc 0.5.16,
+verified 2024-08-08,
+`Qi.sol:Qi`). Official
+tree
+`lending/Governance/Qi.sol`
+at `e0cfd24` matches
+aside from line
+endings. Extract
+`/tmp/benqi/src/QI.sol`.
+No mainnet
+interaction.
+
+Files:
+`lending/Governance/Qi.sol`.
+
+Checked for: a mint
+after construct; a
+transfer / transferFrom
+that credits more than
+it debits; permit or
+delegateBySig that
+moves another user’s
+tokens without their
+signature.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Constructor mints
+  the constant
+  `totalSupply`
+  (7.2e9 × 1e18) to
+  one account. There
+  is no later mint.
+  Balances are
+  `uint96`; supply
+  fits.
+- `transfer` /
+  `transferFrom` use
+  `safe96` / `sub96` /
+  `add96`. Zero
+  address is blocked.
+  Infinite allowance
+  is `uint96(-1)`.
+- `permit` hashes
+  `rawAmount` and
+  increments the
+  nonce before
+  `ecrecover`. Invalid
+  signatures burn the
+  nonce (COMP-token
+  griefing). Do not
+  file.
+- `delegateBySig`
+  binds chain id and
+  consumes
+  `nonces[signatory]`.
+  Votes follow
+  balances via
+  `_moveDelegates`.
+
+Do not file COMP-style
+permit nonce griefing
+or missing mint as a
+finding.
+
+Not submitted.
+Remaining Benqi
+listed: isolated
+unitroller (Sourcify
+404), gauges / sAVAX /
+veQI (Sourcify is the
+proxy only), Ignite /
+MultiReward /
+JumpRateModel / Pause
+Guardian / sAVAX
+timelock (Sourcify
+404), token sale
+(proxy `exact_match`),
+staking proxies.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -18634,15 +18726,20 @@ markets leftover
 (unitroller / qiAVAX /
 qiUSDC / Maximillion,
 Sourcify `match` +
-`e0cfd24`) is logged
+`e0cfd24`) is logged.
+Benqi QI token leftover
+is logged
 (remaining Benqi is
 isolated unitroller
-Sourcify 404 / QI /
-gauges / sAVAX / Ignite
-/ veQI / distributors /
-token sale / staking
-proxies / JumpRateModel
-/ Pause Guardian);
+Sourcify 404 / gauges /
+sAVAX / veQI proxy-only
+/ Ignite / MultiReward /
+JumpRateModel / Pause
+Guardian / sAVAX
+timelock Sourcify 404 /
+token sale
+`exact_match` / staking
+proxies);
 Harvest vault / controller
 leftover (`0364901`) and
 4626 / Dolomite lend

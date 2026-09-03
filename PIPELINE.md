@@ -34,10 +34,13 @@ leftover is logged (yvUSD / Woofy still Sourcify 404).
 Benqi Dual Oracle leftover is logged. Benqi core
 markets leftover (unitroller / qiAVAX / qiUSDC /
 Maximillion, Sourcify `match` + `e0cfd24`) is
-logged (remaining Benqi is isolated unitroller
-Sourcify 404 / QI / gauges / sAVAX / Ignite /
-veQI / distributors / token sale / staking
-proxies / JumpRateModel / Pause Guardian).
+logged. Benqi QI token leftover (Sourcify
+`match` + `e0cfd24`) is logged (remaining
+Benqi is isolated unitroller Sourcify 404 /
+gauges / sAVAX / veQI proxy-only / Ignite /
+MultiReward / JumpRateModel / Pause Guardian /
+sAVAX timelock Sourcify 404 / token sale
+`exact_match` / staking proxies).
 Harvest vault /
 controller leftover (`0364901`) and 4626 / Dolomite
 lend leftover and Convex / Aura / Aave fold leftover
