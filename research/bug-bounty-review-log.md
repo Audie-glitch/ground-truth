@@ -36210,9 +36210,11 @@ finality leftover
 (`132d050`; KYC) is logged;
 Babylon leftover node
 costaking + mint leftover
+(`132d050`; KYC) is logged;
+Babylon leftover node
+checkpointing + epoching leftover
 (`132d050`; KYC) is logged
 (remaining listed is
-checkpointing / epoching,
 btclightclient, websites);
 Wormhole leftover ETH core +
 TokenBridge leftover
@@ -50211,3 +50213,218 @@ tokens if they
 diverge, and the
 Algorand docs
 path.
+
+## 2026-09-03: Babylon leftover node checkpointing + epoching leftover (`132d050`)
+
+Immunefi program
+`babylon-labs`
+($500,000, `kyc: true`).
+Node btcstaking +
+incentive +
+finality +
+costaking/mint
+leftovers already
+logged on
+`v4.4.0`
+`132d050`. This
+slice is
+`x/checkpointing`
+wrapped create-
+validator / BLS
+vote extensions /
+seal / BTC verify
+and `x/epoching`
+wrapped staking
+queue / mature
+unbonding.
+No chain writes
+from this VM.
+
+Files:
+`x/checkpointing/keeper/msg_server.go`,
+`x/checkpointing/types/msgs.go`,
+`proto/babylon/checkpointing/v1/tx.proto`,
+`x/checkpointing/keeper/registration_state.go`,
+`x/checkpointing/keeper/keeper.go`,
+`x/checkpointing/vote_extensions/vote_ext.go`,
+`x/checkpointing/prepare/proposal.go`,
+`x/checkpointing/abci.go`,
+`x/epoching/keeper/msg_server.go`,
+`proto/babylon/epoching/v1/tx.proto`,
+`x/epoching/keeper/delegation_pool.go`,
+`x/epoching/keeper/epoch_msg_queue.go`,
+`x/epoching/keeper/modified_staking.go`,
+`x/epoching/keeper/hooks.go`,
+`x/epoching/abci.go`.
+
+Checked for: a
+stranger wrap
+that undelegate
+another address;
+drain of the
+delegate pool;
+a fake BLS
+checkpoint that
+finalizes early
+unbonding;
+permissionless
+epoch/staking
+params.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Checkpointing's
+  only Msg is
+  `WrappedCreateValidator`.
+  Proto signer is
+  nested
+  `msg_create_validator`.
+  `CheckMsgCreateValidator`
+  rejects an
+  existing owner /
+  consensus PK,
+  wrong denom,
+  and below-min
+  self-bond, then
+  locks that
+  validator's
+  coins into the
+  epoching
+  delegate pool.
+- `CreateRegistration`
+  refuses a
+  second BLS PK
+  for the same
+  validator and
+  refuses the
+  same BLS PK
+  under another
+  validator.
+  PoP lives in
+  `ValidateBasic`
+  (CLI calls it);
+  msg_server does
+  not re-verify.
+  A validator
+  that skips PoP
+  can only brick
+  its own BLS
+  slot.
+- Vote
+  extensions
+  apply on the
+  last epoch
+  block. Verify
+  matches the
+  CometBFT
+  signer, epoch,
+  block hash, and
+  `VerifyBLSSig`.
+  PrepareProposal
+  also rejects a
+  wrong-epoch VE
+  (cometbft#2361
+  late-precommit
+  path).
+- `SealCheckpoint`
+  re-runs
+  `VerifyRawCheckpoint`
+  (`voted*3 >
+  total*2` + BLS
+  multi-sig) before
+  persist.
+- BTC
+  `VerifyCheckpoint`
+  accepts the
+  local sealed
+  ckpt or another
+  valid quorum on
+  the same hash.
+  A valid quorum
+  on a different
+  hash sets the
+  conflicting
+  flag;
+  EndBlocker
+  panics.
+  Status walks
+  Sealed →
+  Submitted →
+  Confirmed →
+  Finalized.
+- Epoching
+  wrapped staking
+  Msgs use proto
+  signer `msg`
+  (inner
+  delegator /
+  validator /
+  authority).
+  `UpdateParams`
+  and
+  `WrappedStakingUpdateParams`
+  are authority-
+  gated.
+- Delegate /
+  create-validator
+  lock from the
+  inner address
+  into
+  `DelegatePool`
+  and unlock to
+  that same
+  address at
+  epoch end
+  before
+  `HandleQueuedMsg`.
+  Unlock failure
+  skips execute
+  (funds stay in
+  the pool).
+  Failed unwraps
+  are skipped
+  inside a cache.
+- `ApplyMatureUnbonding`
+  runs only from
+  `AfterRawCheckpointFinalized`
+  and completes
+  the staking
+  module's mature
+  pairs. It is
+  not a user Msg.
+
+Do not file
+nested-signer
+wrapped staking,
+gov-gated
+params, BLS
+self-brick, or
+intended
+checkpoint-gated
+unbonding as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+babylon `v4.4.0`
+opens for
+checkpointing
+create-validator
+/ BLS VE / seal
+/ BTC verify and
+epoching wrapped
+staking / mature
+unbonding is
+exhausted at the
+opened-file
+level. Remaining
+listed:
+btclightclient,
+and website /
+toolkit rows.
