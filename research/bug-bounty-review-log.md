@@ -28271,6 +28271,116 @@ Sourcify opens is
 exhausted. Remaining
 listed: the website.
 
+## 2026-09-03: DeGate leftover (Sourcify)
+
+Immunefi program
+`boosteddegatebugbounty`
+($400,000, `kyc: false`).
+Unique no-KYC listed
+Ethereum slice. Sourcify
+`exact_match` Compound
+`Timelock`
+`0xf2991507952d9594E71A44A54fb19f3109D213A5`
++
+`0x0D2eC0a5858730E7D49f5B4aE6f2C665e46c1d9d`
+and `match`
+`OwnedUpgradabilityProxy`
+deposit
+`0x54D7aE423Edb07282645e740C046B9373970a168`
+→ impl
+`DefaultDepositContract`
+`0x8CCc06C4C3B2b06616EeE1B62F558f5b9C08f973`
++ exchange
+`0x9C07A72177c5A05410cA338823e790876E79D73B`
+→ impl `ExchangeV3`
+`0xc56C1dfE64D21A345E3A3C715FFcA1c6450b964b`
++ `MultiSigWallet`
+`0x2028834B2c0A36A918c10937EeA71BE4f932da52`.
+Extract `/tmp/degate`.
+No mainnet interaction.
+
+Files:
+`tl_dep/contracts/TimelockCompound.sol`,
+`gnosis/MultiSigWallet.sol`,
+`dep_impl/contracts/core/impl/DefaultDepositContract.sol`,
+`ex_impl/contracts/core/impl/ExchangeV3.sol`,
+`ex_impl/contracts/core/impl/libexchange/ExchangeDeposits.sol`,
+`ex_impl/contracts/core/impl/libexchange/ExchangeWithdrawals.sol`.
+
+Checked for: a stranger
+`deposit` that credits
+another account or pulls
+a third party without
+agent rights; on-chain
+withdrawals that pay the
+caller instead of the
+owner; unguarded
+`onchainTransferFrom`.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- ExchangeV3 `deposit`
+  is
+  `onlyFromUserOrAgent(from)`
+  and the library
+  requires `from == to`.
+  The deposit contract
+  `transferFrom`s that
+  `from` and credits
+  `pendingDeposits[to]`.
+- `forceWithdraw` /
+  `setWithdrawalRecipient`
+  /
+  `onchainTransferFrom`
+  /
+  `approveTransaction`
+  use the same gate.
+  Batch
+  `approveTransactions`
+  requires the caller
+  is an agent of every
+  listed owner.
+- `withdrawFromMerkleTree`
+  /
+  `withdrawFromDepositRequest`
+  /
+  `withdrawFromApprovedWithdrawals`
+  are permissionless
+  helpers that pay the
+  account owner, not
+  the caller.
+- Deposit-contract
+  `deposit` / `withdraw`
+  / `transfer` are
+  `onlyExchange`.
+- Timelock queue /
+  cancel / execute are
+  admin; `setDelay` /
+  `setPendingAdmin` are
+  self-only. Multisig
+  confirm is owner-
+  gated.
+
+Do not file
+permissionless owner-
+paying withdraw
+helpers, registered-
+agent deposits, owner
+`submitBlocks` / fee
+sweep, or timelock /
+multisig admin as
+theft.
+
+Not submitted.
+Listed leftover that
+Sourcify opens is
+exhausted (all five
+listed addresses plus
+the two proxy impls).
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -29402,6 +29512,13 @@ BondIssuer) is logged
 Sourcify opens is
 exhausted; remaining
 listed is the website);
+DeGate leftover (Sourcify
+ETH Timelock /
+DepositContract /
+ExchangeV3 / MultiSig)
+is logged (listed leftover
+that Sourcify opens is
+exhausted);
 Beefy Finance leftover
 (Sourcify Polygon
 `BeefyVaultV6` + common

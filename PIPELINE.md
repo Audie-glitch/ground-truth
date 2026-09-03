@@ -207,7 +207,11 @@ BondFactory / BondIssuer) is logged
 (listed leftover that Sourcify opens is
 exhausted; remaining listed is the
 website).
-Beefy Finance leftover (Sourcify Polygon
+DeGate leftover (Sourcify ETH Timelock /
+DepositContract / ExchangeV3 / MultiSig)
+is logged (listed leftover that Sourcify
+opens is exhausted).
+Beefy Finance leftover (Sourcify Polygon)
 `BeefyVaultV6` + common chef / DFYN /
 Curve / BIFI-maxi strategies) is logged.
 Beefy leftover remaining Polygon vaults
@@ -631,6 +635,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   listed leftover that
   Sourcify opens is
   exhausted),
+  DeGate leftover (Sourcify ETH
+  Timelock / DepositContract /
+  ExchangeV3 / MultiSig; listed
+  leftover that Sourcify opens
+  is exhausted),
   and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
