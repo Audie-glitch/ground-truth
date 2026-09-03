@@ -34341,3 +34341,251 @@ BaseManager money
 paths. Remaining
 listed: PMRM /
 feeds.
+
+## 2026-09-03: DeXe Protocol leftover (Sourcify + official GitHub)
+
+Immunefi program
+`dexeprotocol`
+($500,000, `kyc: true`).
+Unique unused standing
+program. Not previously
+logged. BSC (56)
+Sourcify `exact_match`
+UserRegistry proxy
+`0x427a1214f12117b1AD48C817c203c5CF3Eb7E7C4`
+impl
+`0x4FA40ed48c5671500DFeC9F307e7ad0617fc3196`
+(`UserRegistry`);
+SphereXEngine
+`0x41260f637a993ce714Ece1ee9875F489e483e9b3`
+(`SphereXEngine`).
+Remaining listed
+addresses are
+Sourcify 404:
+DeXe DAO
+`0xB562127efDC97B417B3116efF2C23A29857C0F0B`,
+ContractsRegistry
+`0x46B46629B674b4C0b48B111DEeB0eAfd9F84A1c0`,
+CoreProperties
+`0xaB9d2a2347D5fF5B760C0226C52d5C673b8D9e44`,
+PriceFeed
+`0xc7730074736c10ed0d3F928A10Ee4162DA9a7983`,
+ERC721Expert
+`0x892B3292cF80CB298b7fA20D04EF4732640db404`,
+PoolFactory
+`0x85f86ef7E72e86BdEAb5F65e2B76A2c551f22109`,
+PoolRegistry
+`0xFEB26AAB75638440B3CEFe8B10de6118972f9C6B`,
+PoolSphereXEngine
+`0x4fa2092E32934Dd3823E58C79ceD0e410a5B0D4b`.
+Official clone
+`/tmp/dexe-protocol` from
+`dexe-network/DeXe-Protocol`
+(README production
+table matches the
+Immunefi asset list).
+No mainnet writes.
+Extract `/tmp/dexe-src`
+and `/tmp/dexe-impl`.
+
+Files:
+`contracts/user/UserRegistry.sol`,
+`contracts/core/ContractsRegistry.sol`,
+`contracts/core/CoreProperties.sol`,
+`contracts/core/PriceFeed.sol`,
+`contracts/factory/PoolFactory.sol`,
+`contracts/factory/PoolRegistry.sol`,
+`contracts/gov/GovPool.sol`,
+`contracts/gov/user-keeper/GovUserKeeper.sol`,
+`contracts/gov/ERC721/experts/ERC721Expert.sol`,
+`contracts/libs/gov/gov-pool/GovPoolExecute.sol`,
+`contracts/libs/gov/gov-pool/GovPoolCreate.sol`,
+`@spherex-xyz/engine-contracts/src/SphereXEngine.sol`.
+
+Checked for: a
+stranger profile
+write that binds
+another address;
+KMS-style signature
+reuse that marks a
+victim as agreed;
+factory deploy that
+hijacks an existing
+DAO / salt; deposit
+that credits a
+different user;
+withdraw / undelegate
+that pays the
+caller someone
+else's tokens;
+`execute` /
+`tryExecute` that
+runs unpassed
+actions; PriceFeed
+spot quotes used as
+a settlement
+oracle; SphereX
+sender-adder that
+a stranger can
+grant.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- UserRegistry
+  `changeProfile`
+  writes
+  `_users[msg.sender]`.
+  `agreeToPrivacyPolicy`
+  recovers EIP-712
+  over the current
+  `documentHash` and
+  requires
+  `recover == msg.sender`.
+  `setPrivacyPolicyDocumentHash`
+  is `onlyOwner`.
+  No token path.
+- SphereXEngine
+  `configureRules` /
+  sender and pattern
+  edits are
+  `onlyOperator`.
+  `addAllowedSenderOnChain`
+  is
+  `onlySenderAdderRole`.
+  Validate hooks
+  are
+  `onlyApprovedSenders`
+  and no-op when
+  rules are
+  deactivated.
+- PoolFactory
+  `deployGovPool`
+  CREATE2-salts
+  from
+  `tx.origin` +
+  pool name and
+  registers a new
+  beacon proxy.
+  Ownership of
+  settings / keeper /
+  validators /
+  expert NFT /
+  multiplier
+  transfers to the
+  new pool.
+  `createTokenAndDeployPool`
+  clones the
+  caller-supplied
+  implementation
+  and inits it;
+  allocation only
+  pulls the new
+  clone after
+  factory approve.
+- PoolRegistry
+  `addProxyPool` is
+  `onlyPoolFactory`.
+  SphereX toggle /
+  protect selectors
+  are `onlyOwner`.
+- ContractsRegistry
+  add / inject /
+  SphereX protect
+  and UUPS
+  `_authorizeUpgrade`
+  are `onlyOwner`.
+- CoreProperties
+  parameter setters
+  are `onlyOwner`.
+  Treasury address
+  comes from the
+  registry.
+- PriceFeed
+  path / pool-type
+  setters are
+  `onlyOwner`.
+  Quotes are
+  Uniswap spot
+  helpers. No
+  other listed
+  contract
+  consumes them
+  for settlement.
+- ERC721Expert
+  mint / burn /
+  tags / URI are
+  `onlyOwner`.
+  `_transfer`
+  reverts.
+- GovPool (DeXe
+  DAO) deposit
+  credits
+  `msg.sender`.
+  Withdraw /
+  undelegate use
+  `GovUserKeeperLocal`
+  so the keeper
+  payer is
+  `msg.sender`.
+  `execute` requires
+  `SucceededFor` /
+  `SucceededAgainst`.
+  `delegateTreasury`
+  / credit setters
+  are `onlyThis`
+  (self-call via
+  passed proposal).
+  `transferCreditAmount`
+  is
+  `onlyValidatorContract`.
+  `tryExecute`
+  always reverts
+  the simulation
+  frame.
+  Create-power
+  check plus
+  internal-selector
+  allowlist.
+  Treasury quorum
+  exemption only
+  applies to
+  expert-NFT burn
+  and treasury
+  (un)delegate
+  actions.
+
+Do not file
+owner/operator
+registry or
+SphereX admin,
+permissionless
+new-DAO deploy,
+or AMM spot
+quotes with no
+in-scope
+settlement
+consumer as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed DeXe
+leftover is
+exhausted at the
+opened-contract
+level. Remaining
+listed:
+PoolSphereXEngine
+bytecode (Sourcify
+404; same SphereX
+engine product),
+and live bytecode
+vs GitHub HEAD
+not independently
+matched for the
+Sourcify-404
+rows.
