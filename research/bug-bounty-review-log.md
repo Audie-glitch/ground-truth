@@ -45476,6 +45476,10 @@ Aave leftover remaining v3 ReserveLogic leftover (`cff15de`)
 is logged.
 Jito leftover remaining jito-solana banking_stage leftover (`d0e3a47`)
 is logged.
+Jito leftover remaining jito-solana proxy leftover (`d0e3a47`)
+is logged.
+Jito leftover remaining jito-solana replay leftover (`d0e3a47`)
+is logged.
 Rootstock leftover remaining powpeg-node pegout leftover (`254fb3d`)
 is logged.
 Filecoin leftover remaining lotus lib sigs leftover (`7740217`)
@@ -45497,7 +45501,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official lotus leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: `jito-solana` other crates (proxy / forwarding / replay) if still unused.
+Remaining listed Jito: unused official `jito-solana` leftover that listed trees open after replay, if still unused.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 
 Remaining listed ZKsync OS: official GitHub leftover
@@ -45552,6 +45556,8 @@ Do not rematch Aave v3 ValidationLogic + GenericLogic leftover.
 Do not rematch Aave v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover.
 Do not rematch Aave v3 ReserveLogic leftover.
 Do not rematch Jito jito-solana banking_stage leftover.
+Do not rematch Jito jito-solana proxy leftover.
+Do not rematch Jito jito-solana replay leftover.
 Do not rematch Rootstock rsk-powhsm leftover.
 Do not rematch Filecoin lotus lib sigs leftover.
 Do not rematch Filecoin lotus lib backupds leftover.
@@ -70125,3 +70131,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a validator-to-relayer client as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `jito-solana` replay_stage (if still unused).
+
+## 2026-09-03: Jito leftover remaining jito-solana replay leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining listed after proxy leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `core/src/replay_stage.rs`, `replay_stage/dead_slots.rs`, and `replay_stage/update_parent.rs`. Do not rematch banking_stage leftover, bundle_stage leftover, tip_manager leftover, or proxy leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger shreds that replay as a funded vote; `generate_vote_tx` signing without the authorized voter; dump/repair that rewrites another validator's leader slot; a tip-program crank during replay.
+
+Result: no user-exploitable finding. Not submitted.
+
+- This crate has no tip / bundle / block-engine hooks. Replay is validator-local: `replay_blockstore_into_bank` calls leftover-logged `blockstore_processor::confirm_slot` on shreds already in the local ledger.
+- `generate_vote_tx` requires a local `authorized_voter` keypair whose pubkey matches the vote account for the epoch, and `node_pubkey == identity`. A hot-spare mismatch returns `HotSpare` and does not vote. The vote tx is `partial_sign`ed with identity + authorized voter only.
+- `dump_then_repair_correct_slots` refuses to dump a slot this identity led, a PoH bank still building on that fork, or a frozen hash that already matches the correct hash.
+- `dead_slots` only classifies replay failures and notifies RPC / repair. `update_parent` defers child-bank start until SlotMeta parent matches the discovered parent.
+
+Do not file a validator replay / vote signer as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused official `jito-solana` leftover that listed trees open after replay, if still unused.

@@ -10,7 +10,9 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
-246 programs; no Sep 2026 launches; Aave leftover remaining v3 ReserveLogic leftover is logged;
+246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana replay leftover is logged;
+Jito leftover remaining jito-solana proxy leftover is logged;
+Aave leftover remaining v3 ReserveLogic leftover is logged;
 Jito leftover remaining jito-solana banking_stage leftover is logged;
 Aave leftover remaining v3 PoolLogic + ConfiguratorLogic + CalldataLogic leftover is logged;
 Aave leftover remaining v3 ValidationLogic + GenericLogic leftover is logged;
@@ -1617,11 +1619,17 @@ logic leftover that listed
 trees open is exhausted).
 Jito leftover remaining
 jito-solana banking_stage leftover
+(`d0e3a47`; KYC) is logged.
+Jito leftover remaining
+jito-solana proxy leftover
+(`d0e3a47`; KYC) is logged.
+Jito leftover remaining
+jito-solana replay leftover
 (`d0e3a47`; KYC) is logged
-(remaining listed is
-`jito-solana` other crates
-(proxy / forwarding / replay)
-if still unused).
+(remaining listed is unused
+official `jito-solana` leftover
+that listed trees open after
+replay, if still unused).
 Rootstock leftover remaining
 powpeg-node pegout leftover
 (`254fb3d`; KYC) is logged.
@@ -2639,6 +2647,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   (`cff15de`; KYC),
   Jito leftover remaining
   jito-solana banking_stage leftover
+  (`d0e3a47`; KYC),
+  Jito leftover remaining
+  jito-solana proxy leftover
+  (`d0e3a47`; KYC),
+  Jito leftover remaining
+  jito-solana replay leftover
   (`d0e3a47`; KYC),
   Rootstock leftover remaining
   rsk-powhsm leftover
