@@ -42118,6 +42118,298 @@ merkletree /
 neptune.
 
 
+## 2026-09-03: Filecoin leftover remaining merkletree leftover (`34825e6`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`filecoin-project/merkletree`
+after bellperson leftover.
+Official
+`filecoin-project/merkletree`
+`34825e6`.
+Extract
+`/tmp/filecoin-mt`.
+Do not rematch
+bellperson leftover.
+Do not rematch
+rust-fil-proofs leftover.
+No mainnet
+writes.
+
+Files:
+`src/proof.rs`,
+`src/merkle.rs`.
+
+Checked for:
+a
+`validate`
+that
+accepts
+a
+path
+whose
+rebuilt
+node
+is
+not
+the
+claimed
+root;
+a
+`validate_with_data`
+that
+skips
+the
+leaf
+hash.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `validate`
+  rebuilds
+  each
+  arity
+  node
+  from
+  the
+  lemma
+  and
+  path
+  index.
+  A
+  missing
+  sibling
+  returns
+  false.
+  The
+  last
+  hash
+  must
+  equal
+  `root()`.
+- `validate_with_data`
+  hashes
+  the
+  caller
+  leaf
+  first.
+  Mismatch
+  is
+  false.
+- This
+  crate
+  is a
+  Merkle
+  library.
+  It
+  does
+  not
+  move FIL.
+
+Do not file
+an inclusion
+proof as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+lotus non-miner /
+neptune.
+
+## 2026-09-03: Filecoin leftover remaining neptune leftover (`b06f03c`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`lurk-lab/neptune`
+after merkletree leftover.
+Official
+`lurk-lab/neptune`
+`b06f03c`.
+Extract
+`/tmp/filecoin-nep`.
+Do not rematch
+bellperson leftover.
+No mainnet
+writes.
+
+Files:
+`src/poseidon.rs`,
+`src/lib.rs`.
+
+Checked for:
+a
+`hash`
+that
+skips
+full
+or
+partial
+rounds;
+a
+constant-length
+pad
+that
+accepts
+the
+wrong
+preimage
+length.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `hash_optimized_static`
+  runs
+  half
+  full
+  rounds,
+  then
+  partial
+  rounds,
+  then
+  the
+  remaining
+  full
+  rounds.
+  Constants
+  consumed
+  must
+  match
+  the
+  table.
+- `apply_padding`
+  for
+  `ConstantLength`
+  asserts
+  the
+  preimage
+  length.
+- This
+  crate
+  is a
+  Poseidon
+  hash.
+  It
+  does
+  not
+  move FIL.
+
+Do not file
+a Poseidon
+hash as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+lotus non-miner /
+neptune-triton.
+
+## 2026-09-03: Filecoin leftover remaining neptune-triton leftover (`9f2c2f4`)
+
+Immunefi program
+`filecoin`
+($50,000,
+`kyc: true`).
+Listed remaining
+`lurk-lab/neptune-triton`
+after neptune leftover.
+Official
+`lurk-lab/neptune-triton`
+`9f2c2f4`.
+Extract
+`/tmp/filecoin-ntr`.
+Do not rematch
+neptune leftover.
+No mainnet
+writes.
+
+Files:
+`README.md`,
+`library/neptune-triton/src/lib.rs`.
+
+Checked for:
+a
+GPU
+Poseidon
+that
+moves
+FIL
+or
+swaps
+round
+constants
+so
+a
+false
+tree
+matches
+CPU
+neptune.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- This
+  crate
+  is a
+  Futhark
+  /
+  OpenCL
+  Poseidon
+  used
+  by
+  leftover-
+  logged
+  neptune
+  for
+  batched
+  hashes.
+  Round
+  constants
+  come
+  from
+  the
+  caller
+  at
+  runtime.
+- It
+  does
+  not
+  debit
+  FIL.
+
+Do not file
+a GPU
+Poseidon
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+lotus non-miner.
+
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -42207,8 +42499,14 @@ ZKsync OS leftover remaining airbender verifier_common leftover
 (`6ec4ea7`) is logged.
 Filecoin leftover remaining bellperson leftover (`a215065`)
 is logged.
+Filecoin leftover remaining merkletree leftover (`34825e6`)
+is logged.
+Filecoin leftover remaining neptune leftover (`b06f03c`)
+is logged.
+Filecoin leftover remaining neptune-triton leftover (`9f2c2f4`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
-Remaining listed Filecoin: lotus non-miner / merkletree / neptune.
+Remaining listed Filecoin: lotus non-miner.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -42225,6 +42523,9 @@ go-padreader leftover.
 Do not rematch go-statemachine, go-statestore, go-sectorbuilder,
 go-hamt-ipld, go-ipld-cbor, or cbor-gen leftover.
 Do not rematch Filecoin bellperson leftover.
+Do not rematch Filecoin merkletree leftover.
+Do not rematch Filecoin neptune leftover.
+Do not rematch Filecoin neptune-triton leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
 Do not rematch ZKsync airbender prover leftover.
@@ -44821,6 +45122,15 @@ remaining go-* / lotus non-miner);
 Filecoin leftover remaining cbor-gen leftover
 (`443b860`) is logged (remaining listed is
 lotus non-miner / bellperson / merkletree / neptune);
+Filecoin leftover remaining merkletree leftover
+(`34825e6`) is logged (remaining listed is
+lotus non-miner / neptune);
+Filecoin leftover remaining neptune leftover
+(`b06f03c`) is logged (remaining listed is
+lotus non-miner / neptune-triton);
+Filecoin leftover remaining neptune-triton leftover
+(`9f2c2f4`) is logged (remaining listed is
+lotus non-miner);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
