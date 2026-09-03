@@ -57955,3 +57955,393 @@ impls) and
 the
 immunefi.com
 placeholder.
+
+## 2026-09-03: Berachain leftover BGT + LST + BeaconDeposit leftover (`70e392f` + airdrop `dda56c5`)
+
+Immunefi program
+`berachain`
+($100,000, `kyc: true`).
+Follow-on leftover
+after RewardVault /
+Honey / WBERA
+(`9c982dd`).
+Official clones
+`/tmp/bera-contracts`
+`70e392f` and
+`/tmp/bera-airdrop`
+`dda56c5`.
+Opened
+`src/pol/BGT.sol`
+(`redeem`),
+`BeaconDeposit.sol`,
+`lst/LSTStakerVault.sol`,
+`LSTStakerVaultWithdrawalRequest.sol`,
+`InfraredBeraAdapter.sol`,
+`rewards/Distributor.sol`,
+`BGTIncentiveDistributor.sol`,
+`BeraChef.sol`,
+`BGTStaker.sol`,
+`FeeCollector.sol`,
+`IncentivesCollector.sol`,
+plus airdrop
+`Distributor1.sol`,
+`StreamingNFT.sol`,
+`ClaimBatchProcessor.sol`,
+`PayMaster.sol`,
+`Transferable.sol`.
+No mainnet writes.
+No exploit PoCs.
+
+Checked for: a
+stranger redeem
+of another user's
+BGT; BeaconDeposit
+operator overwrite
+or ETH withdraw;
+LST queue/complete
+that pays the
+caller instead of
+the stored
+receiver; merkle
+incentive claim
+that pays
+`msg.sender`;
+Distributor mint
+to an arbitrary
+vault; BeraChef
+reward-weight
+queue by a
+non-operator;
+FeeCollector /
+IncentivesCollector
+drain without
+paying the
+auction; airdrop
+claim that
+redirects the
+recipient's
+tokens.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `BGT.redeem`
+  burns
+  `msg.sender`'s
+  unboosted
+  balance and
+  sends native
+  BERA 1:1 to
+  the chosen
+  `receiver`.
+  `_checkUnboostedBalance`
+  subtracts
+  active plus
+  queued boost.
+  `invariantCheck`
+  requires
+  contract ETH
+  `>= totalSupply()`.
+  Transfers /
+  approvals are
+  `onlyApprovedSender`.
+  `mint` is
+  `onlyBlockRewardController`.
+  `burnExceedingReserves`
+  sends only
+  ETH above
+  `totalSupply +
+  HISTORY_BUFFER *
+  maxBGTPerBlock`
+  to
+  `address(0)`.
+
+- `BeaconDeposit.deposit`
+  burns
+  `msg.value` to
+  `address(0)`
+  after Gwei /
+  minimum checks.
+  Operator is
+  set only on
+  the first
+  deposit for a
+  pubkey;
+  later deposits
+  must pass
+  `operator == 0`
+  so a
+  front-run
+  cannot
+  overwrite.
+  Operator
+  change is
+  current-operator
+  queue, 1-day
+  delay, then
+  the queued
+  new operator
+  accepts.
+
+- `LSTStakerVault`
+  ERC4626
+  `_withdraw`
+  always
+  reverts
+  (`MethodNotAllowed`).
+  `queueRedeem` /
+  `queueWithdraw`
+  spend
+  allowance
+  when
+  `caller !=
+  owner`, burn
+  the owner's
+  shares,
+  reserve
+  assets, and
+  mint a
+  non-transferable
+  NFT to
+  `caller`.
+  `completeWithdrawal`
+  burns via
+  vault-only
+  `LSTStakerVaultWithdrawalRequest`
+  (7-day
+  cooldown)
+  and pays
+  `request.receiver`.
+  Cancel is
+  NFT-owner
+  only and
+  remints
+  shares to
+  that owner
+  from the
+  reserved
+  assets.
+  `receiveRewards`
+  pulls LST
+  from the
+  caller into
+  the vault
+  (donation).
+
+- `InfraredBeraAdapter.stake`
+  pulls the
+  caller's
+  WBERA,
+  unwraps, and
+  mints iBera
+  to
+  `msg.sender`.
+  If
+  `previewMint`
+  is 0 the
+  unwrap still
+  happens and
+  ETH sits in
+  the adapter
+  (self-grief
+  / broken
+  Infrared,
+  not stranger
+  theft).
+
+- `Distributor.distributeFor`
+  with proofs
+  is closed
+  after
+  `PECTRA11`
+  (`1756915200`).
+  Live path is
+  `onlySystemCall`
+  (`0xffff…FfE`).
+  Rewards go
+  to BeraChef
+  weights /
+  default
+  allocation
+  via
+  `notifyRewardAmount`
+  plus
+  allowance.
+  No user
+  withdraw.
+
+- `BeraChef.queueNewRewardAllocation`
+  is the
+  stored
+  reward
+  allocator,
+  else the
+  BeaconDeposit
+  operator.
+  `setValRewardAllocator`
+  and
+  commission
+  queue are
+  `onlyOperator`.
+  Activation
+  of a ready
+  allocation
+  is
+  `onlyDistributor`.
+  Vault
+  whitelist
+  and default
+  weights are
+  owner-only.
+
+- `BGTIncentiveDistributor.claim`
+  pays the
+  merkelized
+  `_account`,
+  not
+  `msg.sender`.
+  Lifetime
+  amount is
+  in the
+  leaf.
+  Manager
+  sets roots
+  after a
+  claim-delay.
+  `receiveIncentive`
+  only
+  increases
+  the
+  validator
+  token
+  bucket.
+
+- `BGTStaker.stake`
+  /
+  `withdraw`
+  are
+  `onlyBGT`
+  (no token
+  transfer;
+  BGT stays
+  in the
+  holder).
+  `getReward`
+  pays
+  `msg.sender`.
+  `notifyRewardAmount`
+  is
+  `onlyFeeCollector`.
+
+- `FeeCollector.claimFees`
+  and
+  `IncentivesCollector.claim`
+  are
+  permissionless
+  auctions:
+  the caller
+  pays
+  `payoutAmount`
+  of the
+  payout
+  token
+  (WBERA /
+  configured)
+  then takes
+  the listed
+  fee tokens.
+  Incentive
+  WBERA is
+  split to
+  WBERA /
+  LST vaults
+  via
+  `receiveRewards`.
+  Admin
+  recover is
+  role-gated.
+
+- Airdrop
+  `Distributor1.claim`
+  requires
+  merkle leaf
+  `(_onBehalfOf,
+  amount)`
+  plus an
+  owner
+  signer
+  ECDSA over
+  account /
+  amount /
+  contract /
+  chainid.
+  Tokens go
+  to
+  `_onBehalfOf`.
+  If
+  `tx.origin
+  !=
+  _onBehalfOf`
+  a configured
+  fee is paid
+  to
+  `tx.origin`
+  (intended
+  paymaster).
+  `withdraw`
+  is
+  owner-only.
+  `StreamingNFT.createStream`
+  pays the
+  current NFT
+  owner;
+  non-owner
+  `tx.origin`
+  reverts
+  unless
+  registered
+  paymaster.
+  `claimRewards`
+  requires
+  `tx.origin
+  ==
+  ownerOf`.
+  `ClaimBatchProcessor`
+  forwards
+  the same
+  `_onBehalfOf`
+  /
+  `tx.origin`
+  checks.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that official
+GitHub opens
+for Berachain
+BGT redeem /
+BeaconDeposit /
+LST vault /
+distributor /
+BeraChef /
+FeeCollector /
+IncentivesCollector /
+airdrop-contracts
+is exhausted at
+the
+opened-file
+level.
+Remaining
+listed:
+beacon-kit /
+bera-reth
+DLT (skip
+unless a
+small money
+path is
+isolated).
+
