@@ -4082,6 +4082,77 @@ amount drain existing wallet tokens of that
 asset — owner-or-bot, same class already
 logged.
 
+## 2026-09-03: DeFi Saver LlamaLend leftover + swapper (`e623f20`)
+
+Same Immunefi program `defisaver` ($350,000, `kyc: false`).
+Same clone `/tmp/reviews/defisaver-v3` at `e623f20`.
+No mainnet interaction. Core create/borrow/withdraw/
+payback already logged.
+
+Files: `contracts/actions/llamalend/{LlamaLendSupply,
+LlamaLendSelfLiquidate,LlamaLendGetDebt}.sol`,
+`advanced/{LlamaLendLevCreate,LlamaLendBoost,
+LlamaLendRepay,LlamaLendSelfLiquidateWithColl,
+LlamaLendSwapper}.sol`.
+
+Checked for: self-liquidate of another user’s
+position; swapper callback from a fake controller;
+lev-create that spends wallet coll without a valid
+factory id; leftover sweep that sends more than
+the action’s delta.
+
+Result: no user-exploitable finding.
+
+- Supply `onBehalfOf` is a donate `add_collateral`.
+  Self-liquidate calls `liquidate(address(this))`,
+  pulls a 1000-wei buffer only if coll-in-debt <
+  debt, refunds unused debt token to `from`, and
+  sends the coll delta to `to`. Same un-gated
+  controller + `withdrawTokens` fake-target class
+  as the core slice.
+- Lev-create / boost / repay / self-liquidate-with-
+  coll require `factory.controllers(id) == addr`.
+  Swapper callbacks revert unless `msg.sender` is
+  that controller. Transient `exData` is written
+  in the same tx. Leftovers use a starting-balance
+  snapshot. `withdrawAll` returns leftover swapper
+  balances to `msg.sender` (the wallet).
+- `GetDebt` is a view.
+
+LlamaLend treated as exhausted. Remaining DFS:
+`aaveV4` / leftover Aave, `mcd`, `tx-saver`,
+triggers. Not submitted.
+
+## 2026-09-03: DeFi Saver Aave V4 sig + premium (`e623f20`)
+
+Same program and clone. No mainnet interaction.
+
+Files: `contracts/actions/aaveV4/{AaveV4DelegateBorrowWithSig,
+AaveV4DelegateWithdrawWithSig,
+AaveV4DelegateSetUsingAsCollateralWithSig,
+AaveV4SetUserManagersWithSig,AaveV4RefreshPremium}.sol`.
+
+Checked for: a recipe that sets a stranger’s
+managers or borrow/withdraw permits without their
+signature; premium refresh that mutates another
+account without Aave approval.
+
+Result: no user-exploitable finding.
+
+- Delegate / set-managers actions only relay
+  EIP-712 signatures to hardcoded Taker /
+  Config position managers or a caller-chosen
+  Spoke. Aave verifies the signer.
+- `RefreshPremium` defaults `onBehalf` to the
+  wallet. On another `onBehalf` it goes through
+  `ConfigPositionManager` `*OnBehalfOf`, which
+  Aave gates (wallet must already be an approved
+  manager). No tokens move.
+
+Aave V4 listed wrappers treated as exhausted.
+Remaining DFS: `mcd`, `tx-saver`, triggers.
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -4125,9 +4196,9 @@ are logged; Morpho Blue, Liquity V2, Fluid T1
 + liquidity logic, Fluid Dex T2/T3/T4, Aave V3
 + GHO/Umbrella, Comp V2/V3, Spark, Liquity V1,
 CurveUsd core, CurveUsd advanced/transient,
-Euler V2, and LlamaLend core (`e623f20`) are
-logged. Remaining DFS is LlamaLend leftover /
-`aaveV4` / leftover Aave / `mcd`, `tx-saver`,
+Euler V2, LlamaLend core, LlamaLend leftover +
+swapper, and Aave V4 sig/premium (`e623f20`) are
+logged. Remaining DFS is `mcd`, `tx-saver`,
 and triggers. Next unreviewed Immunefi
 GitHub-or-recent trees: those DFS trees, Jito
 `jito-solana` / `mev-programs` ($250k, KYC;
