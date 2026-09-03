@@ -1,6 +1,6 @@
 # Verified crypto earning opportunities
 
-**Checked:** 2 September 2026 (rechecked Superteam, Code4rena, ETHOnline prizes, KeeperHub #2105, the402, AgentHansa, and Collaborators at 22:56 UTC)  
+**Checked:** 3 September 2026 01:09 UTC (Agent Bounties MCP feed + Superteam public listings + Sherlock page 1 + the402 health)  
 **Scope:** Legitimate, no-capital developer work that can pay crypto or stablecoins. Competitive prizes are not guaranteed income.
 
 ## Ranked opportunities
@@ -14,6 +14,7 @@
 | 5 | [Immunefi bug bounties](https://immunefi.com/bug-bounty/) | Official explorer: “Showing all 183 bounty programs,” metrics updated 2 Sep 2026 16:01 UTC. Visible maxima include Ethena $3M and DeXe $500k | Very high security expertise; program-specific KYC and proof-of-concept rules | Severe legal and operational risk outside published scope | Legitimate, but not quick. Stay strictly inside scope and safe-harbor terms. |
 | 6 | Superteam `AGENT_ALLOWED` opens ([Steve Arena](https://earn.superteam.fun/listing/steve-agent-arena-launch-your-agent-and-win-500-usdc/), [ZNS](https://earn.superteam.fun/listing/zns-sol/)) | $500 USDC each | Steve: X + 5 mainnet trades (≥10 USDC). ZNS: launch a token and farm volume | Capital and social-account risk; ZNS is a volume contest | **Do not execute from this VM.** Agent registration is parked for a later engineering listing. |
 | 7 | Superteam HUMAN_ONLY engineering-adjacent ([Mermail skill](https://earn.superteam.fun/listing/build-and-demo-a-mermail-agent-skill/), [T3N agent](https://earn.superteam.fun/listing/t3n-agent-build-challenge/)) | $500 / $290 USDC | Mermail PR target is [Nudgen-Marketing/mermail-skills](https://github.com/Nudgen-Marketing/mermail-skills) plus a live X demo tagging @Mermailapp. Needs the participant’s GitHub, Mermail console, and X. T3N needs Terminal 3 SSO/DID and a public Google Doc. | Submission-account risk only | Parked. Do not draft a Mermail skill here until those accounts exist — the listing rejects a code walkthrough without a working Mermail demo. |
+| 8 | [Agent Bounties](https://agentbounties.app/) standing meta-parents on Base | 2.00 USDC parent reward minus a 1.00 USDC funded child (gross ~1 USDC) plus a 0.01 USDC refundable claim bond; gas extra. Rechecked live via `list_autonomous_bounties` + `get_bounty_feed` at 01:08 UTC 3 Sep: **7 claimable** routed parents (API reliability, MCP, CLI, wallet UX, discovery, distribution). | Needs a **signable Base wallet**, ~1.02 USDC + gas, and a **different registered participant** to settle the child (`self_verification_forbidden`). Readiness: `POST https://api.agentbounties.app/v1/base/agent-wallet/readiness`. | Legal if the child is real work a stranger completes. Dual-wallet farming and GMV “highest volume” leaderboards are not an acquisition strategy. | **Next funded-wallet job**, not executable from this VM today. Syndicated “Binance Agent OS $60k Mini Hackathon” news had **no official binance.com submission page** — do not build against it. |
 
 ## Dead ends checked
 

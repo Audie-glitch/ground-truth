@@ -20,7 +20,7 @@ const deviceFile = "/tmp/phantom-dcr2-device.json";
 const urlFile = "/tmp/phantom-dcr2-url.txt";
 const homeSession = path.join(process.env.HOME, ".phantom-mcp/session.json");
 const clientId = "b90d07cd-2585-4ced-af0c-41a2841abb16";
-const maxMints = 36;
+const maxMints = 200;
 
 class FileStorage {
   requiresExtractableKeys = true;
