@@ -42801,6 +42801,140 @@ Remaining listed:
 transfer
 strategies.
 
+## 2026-09-03: Aave leftover remaining WrappedTokenGateway leftover (`cff15de`)
+
+Immunefi program
+`aave`
+($1,000,000,
+`kyc: true`).
+Listed remaining
+after periphery
+leftover.
+Official
+`aave-dao/aave-v3-origin`
+`cff15de`.
+Extract
+`/tmp/aave-gw`.
+Do not rematch
+Pool leftover.
+Do not rematch
+periphery leftover.
+No mainnet
+writes.
+
+Files:
+`src/contracts/helpers/WrappedTokenGatewayV3.sol`.
+
+Checked for:
+a
+`withdrawETH`
+that
+pulls
+another
+user's
+aWETH
+without
+allowance;
+a
+`borrowETH`
+that
+credits
+ETH
+to
+the
+caller
+on
+a
+stranger's
+debt.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `depositETH`
+  wraps
+  `msg.value`
+  and
+  `POOL.deposit`s
+  to
+  `onBehalfOf`.
+- `withdrawETH`
+  /
+  `withdrawETHWithPermit`
+  `transferFrom`
+  `msg.sender`'s
+  aWETH,
+  withdraw
+  to
+  this
+  contract,
+  unwrap,
+  and
+  send
+  ETH
+  to
+  `to`.
+  Permit
+  is
+  try/catch;
+  pull
+  still
+  needs
+  allowance.
+- `repayETH`
+  wraps
+  up
+  to
+  the
+  on-behalf
+  debt
+  and
+  refunds
+  dust
+  to
+  `msg.sender`.
+- `borrowETH`
+  borrows
+  on
+  behalf
+  of
+  `msg.sender`
+  (credit
+  delegation)
+  and
+  sends
+  ETH
+  to
+  `msg.sender`.
+- `emergencyTokenTransfer`
+  /
+  `emergencyEtherTransfer`
+  are
+  `onlyOwner`.
+  `receive`
+  requires
+  `msg.sender == WETH`.
+
+Do not file
+an
+allowance-
+gated
+ETH
+wrapper
+as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+Collector /
+transfer
+strategies.
+
 ## Next candidates
 
 Hedera leftover remaining Node leftover (`0d3d9a2`) is
@@ -42922,9 +43056,11 @@ Aave leftover remaining RewardsController leftover (`cff15de`)
 is logged.
 Aave leftover remaining periphery leftover (`cff15de`)
 is logged.
+Aave leftover remaining WrappedTokenGateway leftover (`cff15de`)
+is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: transfer strategies.
+Remaining listed Aave: Collector / transfer strategies.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -42954,6 +43090,7 @@ Do not rematch Filecoin lotus market leftover.
 Do not rematch Aave ACL + PoolConfigurator leftover.
 Do not rematch Aave RewardsController leftover.
 Do not rematch Aave periphery leftover.
+Do not rematch Aave WrappedTokenGateway leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -45569,6 +45706,9 @@ remaining lotus non-miner);
 Aave leftover remaining periphery leftover
 (`cff15de`) is logged (remaining listed is
 transfer strategies);
+Aave leftover remaining WrappedTokenGateway leftover
+(`cff15de`) is logged (remaining listed is
+Collector / transfer strategies);
 ZKsync OS leftover zkos-wrapper leftover (`8b679aa`)
 is logged (remaining listed is airbender CS / prover /
 verifier);
