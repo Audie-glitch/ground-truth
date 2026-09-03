@@ -24651,7 +24651,6 @@ with a swapped
 script; a delegate
 that votes without
 assignment.
-
 Result: no
 user-exploitable
 finding. Not
@@ -24778,7 +24777,6 @@ that unpauses or
 schedules without
 committee quorum
 or outside a tie.
-
 Result: no
 user-exploitable
 finding. Not
@@ -25133,6 +25131,126 @@ Claims / Assessment
 / Ramm / LimitOrders
 / CoverBroker /
 legacy modules.
+## 2026-09-03: dHEDGE leftover (Sourcify)
+
+Immunefi program
+`dHEDGE` ($50,000,
+`kyc: false`). Unique
+no-KYC listed slice
+not previously
+logged. Listed
+`PoolFactory and
+linked contracts`
+Sourcify-open on
+Ethereum
+`0x96D33bCF84DdE326014248E2896F79bbb9c13D6d`
+impl
+`0x5ee204C28217e30b45784ECd9e9aFDE029334a5F`
+`exact_match`
+`PoolFactory` (solc
+0.7.6); same impl
+source on Optimism
+`0xC25bf381B2580211eE48813cD7c2119D5B015b62`,
+Base
+`0x7256070a6340E0A8d8a2b4eC3969bb4c5977Ec3c`,
+Arbitrum
+`0xD0EAe0fBa24FA2817BBa16fe5030a9a5B63946a3`.
+Extract `/tmp/dhedge`.
+No mainnet
+interaction.
+
+Files:
+`PoolFactory.sol`,
+`ProxyFactory.sol`,
+`InitializableUpgradeabilityProxy.sol`,
+`BaseUpgradeabilityProxy.sol`,
+`SafeSignerAccess.sol`.
+
+Checked for: a
+stranger
+`createFund` that
+binds another
+manager’s logic;
+`deploy` that
+re-initializes a
+live pool; pause /
+`setPoolsPaused`
+by a non-owner;
+`setLogic` that
+swaps
+implementations
+without owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `createFund` is
+  permissionless
+  when unpaused. It
+  deploys a new
+  pool + manager
+  proxy, then
+  `setPoolManagerLogic`
+  and marks
+  `isPool`. Fee
+  caps are stored
+  for the manager
+  initializer.
+- `deploy` is
+  public and
+  creates an
+  uninitialized-
+  looking clone
+  whose EIP-1967
+  slot is the
+  factory. It is
+  not added to
+  `isPool`.
+  `onlyPool` /
+  `onlyPoolManager`
+  stay false.
+- Proxies resolve
+  logic via
+  `HasLogic(factory).
+  getLogic(type)`.
+  `setLogic` is
+  `onlyOwner`.
+- Pause /
+  `setPoolsPaused`
+  are owner or Safe
+  signer. Signers
+  can only pause,
+  not unpause.
+  DAO / fee /
+  asset-handler /
+  validator writes
+  are `onlyOwner`.
+
+Do not file
+permissionless
+`createFund`,
+public unregistered
+`deploy` clones, or
+owner `setLogic` /
+pause as a stranger
+drain.
+
+Not submitted.
+Listed leftover is
+the Sourcify-open
+ETH / OP / Base /
+Arb `PoolFactory`.
+Remaining listed:
+Polygon factory
+Sourcify 404.
+PoolLogic /
+PoolManagerLogic
+implementations are
+not independently
+Sourcify-fetched.
+
 
 ## Next candidates
 
@@ -25528,6 +25646,10 @@ Vesper leftover (Sourcify Ethereum
 + Optimism `VPool` / `VETH`) is
 logged (remaining listed is Base
 vaults Sourcify 404).
+dHEDGE leftover (Sourcify ETH / OP /
+Base / Arb `PoolFactory`) is logged
+(remaining listed is Polygon factory
+Sourcify 404).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -25928,6 +26050,12 @@ Ethereum + Optimism `VPool`
 / `VETH`) is logged
 (remaining listed is Base
 vaults Sourcify 404);
+dHEDGE leftover (Sourcify
+ETH / OP / Base / Arb
+`PoolFactory`) is logged
+(remaining listed is
+Polygon factory Sourcify
+404);
 Beets stS
 (`877087b`) + token
 leftover is logged

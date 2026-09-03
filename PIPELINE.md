@@ -113,9 +113,15 @@ easy-track leftover factories leftover
 Voting leftover (`e44f928`) is logged.
 Lido dual-governance Tiebreaker leftover
 (`ba9dfc9`) is logged. Lido CSM leftover
-modules leftover (`2824e21`) is logged
-(remaining opened Lido tree is
-Agreement).
+modules leftover (`2824e21`) is logged.
+Lido aragon-apps Agreement leftover
+(`e44f928`) is logged (remaining opened
+Lido leftovers in already-opened trees
+are exhausted).
+Nexus Mutual cover / pool / staking leftover
+(`9e88562`) is logged (remaining listed
+GitHub is Claims / Assessment / Ramm /
+LimitOrders / CoverBroker / legacy).
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis
@@ -139,6 +145,10 @@ Vesper leftover (Sourcify Ethereum
 + Optimism `VPool` / `VETH`) is
 logged (remaining listed is Base
 vaults Sourcify 404).
+dHEDGE leftover (Sourcify ETH / OP /
+Base / Arb `PoolFactory`) is logged
+(remaining listed is Polygon factory
+Sourcify 404).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
 CCS + Fusion leftover (`58b8a42` /
