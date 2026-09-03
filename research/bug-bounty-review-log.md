@@ -27355,6 +27355,92 @@ independently
 Sourcify-fetched, and
 other docs addresses.
 
+## 2026-09-03: Puffer Finance leftover (Sourcify)
+
+Immunefi program
+`pufferfinance-boost`
+($200,000, `kyc: false`).
+Unique no-KYC listed
+Ethereum slice.
+Sourcify `exact_match`
+`PufferDepositor`
+`0x7276925e42f9c4054afa2fad80fa79520c453d6a`,
+`PufferVaultV5` impl
+`0x3b2fdFdEFE919dBcCE0bc5ac426097d5523B8AFA`
+behind pufETH proxy
+`0xd9a442856c234a39a81a089c06451ebaa4306a72`,
+and `Timelock`
+`0x3C28B7c7Ba1A1f55c9Ce66b263B33B204f2126eA`.
+Official clone
+`/tmp/puffer-contracts`
+at `5ebdeaa`.
+No mainnet interaction.
+
+Files:
+`src/PufferDepositor.sol`,
+`src/PufferVaultV5.sol`.
+
+Checked for: a
+stranger mint of
+pufETH without ETH /
+stETH; withdraw that
+burns another owner
+without allowance;
+`mintRewards` by a
+random caller;
+`transferETH` of vault
+ETH.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Depositor
+  `depositStETH` /
+  `depositWstETH` /
+  swap-and-deposit
+  pull from
+  `msg.sender` and
+  mint pufETH to that
+  sender. All entry
+  points are
+  `restricted`
+  (AccessManager
+  pause-style).
+- Vault
+  `depositETH` mints
+  to `receiver` for
+  `msg.value`.
+  `depositStETH`
+  pulls the caller's
+  stETH shares.
+  `withdraw` /
+  `redeem` burn
+  `owner` shares
+  (ERC4626 allowance)
+  and wrap ETH for
+  `receiver`.
+- `mintRewards` /
+  `depositRewards` /
+  `revertMintRewards`
+  /
+  `initiateETHWithdrawalsFromLido`
+  /
+  `claimWithdrawalsFromLido`
+  /
+  `transferETH` /
+  `burn` are
+  `restricted` to
+  their matching
+  roles.
+
+Not submitted.
+Remaining listed
+Puffer Timelock is
+OZ-style delay, not a
+user money path.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -27823,6 +27909,9 @@ Threshold Bridge leftover
 Threshold leftover gov /
 relay leftover
 (`502cd39`) is logged.
+Puffer Finance leftover
+(Sourcify depositor +
+pufETH vault) is logged.
 Threshold leftover
 wallet registry leftover
 (Sourcify) is logged.
