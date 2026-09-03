@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~11:00 UTC. Dates verified against each
+Status as of 3 September 2026, ~11:25 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
@@ -26,6 +26,7 @@ Hedera leftover remaining File leftover is logged;
 Hedera leftover remaining Schedule leftover is logged;
 Hedera leftover remaining Contract leftover is logged;
 Hedera leftover remaining Node leftover is logged;
+Hedera leftover remaining cryptography leftover is logged;
 Filecoin leftover builtin-actors market + paych leftover is logged;
 Hedera leftover remaining CryptoTransfer leftover is logged;
 ZKsync OS leftover evm_interpreter leftover is logged;

@@ -40414,6 +40414,15 @@ website leftover.
 
 ## Next candidates
 
+Hedera leftover remaining Node leftover (`0d3d9a2`) is
+logged. Hedera leftover remaining cryptography leftover
+(`39f28f3`) is logged. Remaining listed Hedera:
+`hiero-mirror-node` (sparse only), `hiero-sdk-js` /
+`hiero-sdk-java` / `hiero-sdk-go`, transaction-tool
+website. Do not rematch consensus-node handlers,
+json-rpc-relay, cryptography, or Node handlers.
+Do not loop `reffinance` 404s or mux-staking auth.
+
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
 the full `diamond-pau` facet tree at `1b6743a`,
 Intuition MultiVault / AtomWallet / curves / emissions /
@@ -42922,6 +42931,9 @@ mirror-node / cryptography / other modules / SDKs);
 Hedera leftover remaining Node leftover
 (`0d3d9a2`) is logged (remaining listed is
 mirror-node / cryptography / other modules / SDKs);
+Hedera leftover remaining cryptography leftover
+(`39f28f3`) is logged (remaining listed is
+mirror-node / SDKs / transaction-tool);
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged;
 Sei leftover go-ethereum leftover (`bb451e2`) is logged;
@@ -63204,3 +63216,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file freeze-key account freezes or pause-key token pauses as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: `hiero-consensus-node` other handlers, `hiero-mirror-node`, `hiero-cryptography`, SDKs, and the hashed transaction-tool website leftover.
+
+## 2026-09-03: Hedera leftover remaining cryptography leftover (`39f28f3`)
+
+Immunefi program `hedera` ($30,000, `kyc: true`). Listed remaining after File / Schedule / Contract leftovers. Official clone `/tmp/hiero-cryptography` at `39f28f3` (`chore(release): 3.15.2`). Opened `TSS.java`, `WRAPSLibraryBridge.java`, `HintsLibraryBridge.java`, `ContextualLibsecp256k1.java`, `Libsecp256k1.java`. Consensus-node handler leftover that official trees open is already leftover-logged. No mainnet writes. No exploit PoCs.
+
+Checked for: `TSS.verifyTSS` accepting a composite signature without a WRAPS proof or hinTS aggregate; JNI verify wrappers returning true on malformed keys; libsecp256k1 recover/verify skipping parse or normalize.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `TSS.verifyTSS` requires a 32-byte `ledgerId`, rejects short/long composites, then either `WRAPS.verifyCompressedProof` (704-byte proof + hardcoded current WRAPS verification key) or genesis `WRAPS.verifySignature` over `ledgerId || hash(hintsVerificationKey)` using the caller-set AddressBook. Only then `HINTS.verifyAggregate` (default threshold strictly greater than 1/2).
+- `WRAPS.verifySignature` / `verifyCompressedProof` and `HINTS.verifyAggregate` fail closed on null, length, weight-sum, or empty-message inputs. `isProofSupported` rejects relative paths and `..`.
+- `ContextualLibsecp256k1` verify/recover wrap bitcoin-core libsecp256k1; `*NoChecks` variants are documented unsafe and still return the native 0/1 result.
+
+Do not file library-only JNI wrappers or threshold-gated TSS verify as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `hiero-mirror-node` (sparse only), `hiero-sdk-js` / `hiero-sdk-java` / `hiero-sdk-go`, and the transaction-tool website leftover.
