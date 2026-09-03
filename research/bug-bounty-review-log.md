@@ -19650,6 +19650,110 @@ is Fluid vault T2–T4
 steth and
 `inst-governance`.
 
+## 2026-09-03: Instadapp Fluid vault T2–T4 leftover (`a9949b4`)
+
+Immunefi program
+`instadapp` ($500,000,
+`kyc: false`). Fluid
+liquidity / fToken
+and vault T1 leftovers
+on pin `a9949b4` are
+already logged. This
+slice is T2 (smart
+col), T3 (smart debt),
+T4 (both) plus the
+shared operate /
+secondary path. Same
+clone
+`/tmp/instadapp-fluid`.
+No mainnet
+interaction.
+
+Files:
+`vaultT2/coreModule/main.sol`,
+`mainOperate.sol`,
+`vaultT3/coreModule/main.sol`,
+`vaultT4/coreModule/main.sol`,
+`vaultTypesCommon/coreModule/mainOperate.sol`,
+`helpers.sol`,
+`main.sol`,
+`main2.sol`.
+
+Checked for: a
+stranger withdraw of
+DEX shares before the
+NFT owner check;
+`_dexFromAddress`
+impersonation;
+`dexCallback` pull
+from a victim;
+permissionless
+`rebalance` that
+drains reserve.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- T2–T4 `operate` /
+  `operatePerfect`
+  delegatecall
+  `OPERATE_IMPLEMENTATION`.
+  Shared `_operate`
+  still requires
+  `ownerOf ==
+  msg.sender` for
+  withdraw or
+  borrow. New NFT
+  mints to
+  `msg.sender`.
+- T2 withdraw burns
+  DEX supply shares
+  before `_operate`;
+  T2 perfect
+  withdraw burns
+  after. Either way
+  the call is
+  atomic: a failed
+  owner check reverts
+  the DEX move.
+  T3/T4 wrap smart
+  debt the same way.
+- `_dexFromAddress`
+  stores
+  `msg.sender` and
+  reverts if already
+  set. `dexCallback`
+  requires
+  `msg.sender` is
+  SUPPLY or BORROW
+  and the reentrancy
+  bit, then
+  `transferFrom`
+  `dexFromAddress`.
+  `liquidityCallback`
+  is LIQUIDITY-only
+  as on T1.
+- `rebalance` is
+  `msg.sender ==
+  rebalancer`.
+  `absorb` /
+  secondary admin
+  are
+  `_verifyCaller`
+  (delegatecall).
+  Liquidate remains
+  permissionless
+  for underwater
+  ticks.
+
+Not submitted.
+Remaining Instadapp
+is Fluid dex /
+dexLite / steth and
+`inst-governance`.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -20156,10 +20260,12 @@ Instadapp Fluid
 liquidity + fToken leftover
 (`a9949b4`) is logged;
 Instadapp Fluid vault T1 leftover
+(`a9949b4`) is logged;
+Instadapp Fluid vault T2–T4 leftover
 (`a9949b4`) is logged
 (remaining Instadapp is
-Fluid vault T2–T4 / dex /
-dexLite / steth and
+Fluid dex / dexLite /
+steth and
 `inst-governance`);
 Rocket Pool v1.4 deposit
 / rETH / megapool queue,
