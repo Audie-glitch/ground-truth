@@ -146,13 +146,16 @@ are in [`PIPELINE.md`](PIPELINE.md). Entries built in this repository:
 | [`mermail-onchain-receipts/`](mermail-onchain-receipts/) | Mermail skill that files explorer links and `0x` payment hashes from the inbox | Superteam Earn, due 23 Sep | Official-format skill + `upstream.patch`. Needs your fork/PR, Mermail MCP, and an X demo. See `mermail-onchain-receipts/SUBMISSION.md`. |
 | [`t3n-vendor-receipts/`](t3n-vendor-receipts/) | Vendor Receipts: hashed invoices in a Terminal 3 TEE (KV only, no HTTP) | Superteam Earn T3N, due 16 Sep | Contract + host ready. Needs your SSO, two keys, public Google Doc, and Superteam form. See `t3n-vendor-receipts/SUBMISSION.md`. |
 | [`x402-api/`](x402-api/) | Statement PDFs to reconciled CSV, paid per page over x402 | ETHOnline 2026, Sep 4-16 | Design only until the window opens. |
-| [`keeperhub/`](keeperhub/) | #2240 design, elizaOS main-track plan, and the #2105 OpenAPI examples patch spec | KeeperHub Agent Economy hackathon, Sep 6-18 | Designs ready; no KeeperHub source until Sep 6. |
+| [`keeperhub/`](keeperhub/) | #2240 design, elizaOS main-track plan, and the #2105 OpenAPI examples patch spec | KeeperHub Agent Economy hackathon, Sep 6-18 | Failing tests pushed to [Audie-glitch/keeperhub `prep/2105-failing-test`](https://github.com/Audie-glitch/keeperhub/tree/prep/2105-failing-test); implementation after 6 Sep. |
 | `/earn` | Dated window board for the live earning paths | This repo | Open windows ranked in code; not a payout. |
 
 Bug-bounty target selection and review notes: [`research/bug-bounty-review-log.md`](research/bug-bounty-review-log.md).
 
 # Research notes
 
+**Published docs (Cloudflare Pages):** https://crypto-accumulation-research.pages.dev
+
+- [`research/uk-buy-and-hold-sizing-2026-09.md`](research/uk-buy-and-hold-sizing-2026-09.md) — UK sizing, tax, and DCA checklist for Audie-glitch
 - [`research/gaining-crypto-assets.md`](research/gaining-crypto-assets.md) — the
   plan: BTC as core, recurring buys from surplus income, hold through drawdowns.
   Includes what this Cloud Agent environment can and cannot do.
@@ -162,6 +165,8 @@ Bug-bounty target selection and review notes: [`research/bug-bounty-review-log.m
 - [`research/crypto-earning-opportunities-2026-09.md`](research/crypto-earning-opportunities-2026-09.md)
   — verified bounties and hackathons, ranking, required resources, and the
   KeeperHub contribution queue.
+- [`research/keeperhub-prep-2105.md`](research/keeperhub-prep-2105.md) — failing
+  test + PR plan for issue #2105 (implement on/after 6 Sep)
 - [`research/environment-capabilities-2026-09.md`](research/environment-capabilities-2026-09.md)
   — live audit of what this Cloud Agent VM can actually execute without taking
   user funds.
@@ -174,6 +179,17 @@ Bug-bounty target selection and review notes: [`research/bug-bounty-review-log.m
 - [`research/phantom-wallet-blocker-2026-09.md`](research/phantom-wallet-blocker-2026-09.md) —
   device-code login succeeded; Phantom KMS still refuses the DCR app
   (`whitelist-disabled`). No agent address yet.
+
+Rebuild and publish the static research site:
+
+```bash
+cd site
+npm install
+npm run build
+npx wrangler pages deploy dist --project-name=crypto-accumulation-research
+```
+
+Store Cloudflare credentials in your environment — **never commit them**.
 
 Ground Truth is the executable counterpart to the scorecard in those notes: the
 research argues that fast trading is negative expected value for retail, and the

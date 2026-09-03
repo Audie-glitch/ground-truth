@@ -9,6 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+site/node_modules/
 
 # testing
 /coverage
@@ -19,10 +20,13 @@
 
 # production
 /build
+site/dist/
 
 # misc
 .DS_Store
 *.pem
+agent-tools/
+.wrangler/
 
 # debug
 npm-debug.log*

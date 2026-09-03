@@ -1,0 +1,93 @@
+:root {
+  color-scheme: light dark;
+  --bg: #0f1419;
+  --panel: #1a2332;
+  --text: #e7ecf3;
+  --muted: #9aa8bc;
+  --accent: #6ee7b7;
+  --border: #2d3a4f;
+  --warn: #fbbf24;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a { color: var(--accent); }
+
+header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #152033, var(--bg));
+}
+
+.brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.tagline { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.95rem; }
+
+.shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+nav {
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+nav ul { list-style: none; margin: 0; padding: 0; }
+nav li + li { margin-top: 0.35rem; }
+nav a { text-decoration: none; font-size: 0.92rem; }
+nav a[aria-current="page"] { font-weight: 600; color: var(--text); }
+
+main {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  min-width: 0;
+}
+
+main h1, main h2, main h3 { line-height: 1.25; }
+main table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+main th, main td { border: 1px solid var(--border); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+main th { background: #111827; }
+main code { background: #111827; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.9em; }
+main pre { overflow-x: auto; background: #111827; padding: 1rem; border-radius: 8px; }
+main pre code { background: none; padding: 0; }
+
+.home-list { padding-left: 1.2rem; }
+.warn { color: var(--warn); font-weight: 600; }
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  padding: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 860px) {
+  .shell { grid-template-columns: 1fr; }
+  nav { position: static; }
+}
