@@ -3416,6 +3416,68 @@ V2 governance tree treated as exhausted. Remaining
 MoC: live Rootstock v1 proxy implementations (not
 this repo). Not submitted. Payouts need Immunefi KYC.
 
+## 2026-09-03: DeFi Saver exchangeV3 + sell actions (`e623f20`)
+
+Same Immunefi program (`defisaver`, $350,000, `kyc: false`).
+Same clone `/tmp/defisaver-v3` at `e623f20`. No mainnet
+interaction. Follows the already-logged executor / FL /
+auth spine.
+
+Files: `contracts/exchangeV3/DFSExchange{Core,Helper,Data,WithTxSaver}.sol`,
+`registries/{WrapperExchangeRegistry,ExchangeAggregatorRegistry,TokenGroupRegistry}.sol`,
+`offchainWrappersV3/{OneInch,Zerox,Paraswap,Odos,KyberAggregator,Bebop,Pendle}Wrapper.sol`,
+`onchainWrappersV3/{Uniswap,UniV3,Kyber,Curve}WrapperV3.sol`,
+`contracts/actions/exchange/{DFSSell,DFSSellNoFee,LSVSell,LimitSell,LimitSellL2,LimitOrderSubProxy}.sol`.
+
+Checked for: an unregistered wrapper or aggregator
+call; off-chain `takeOrder` that keeps src and still
+returns false so `_executeSwap` double-spends; dest
+amount taken from a lying wrapper return; `minPrice`
+checked against pre-fee src; recipe fee divider of 1;
+Pendle calldata that spends more than the post-fee
+src; LimitSell gas fee above the fill; TxSaver
+injection of an unregistered wrapper.
+
+Result: no user-exploitable finding.
+
+- Off-chain path requires both
+  `ExchangeAggregatorRegistry` and
+  `WrapperExchangeRegistry`. On-chain `sell` requires
+  the wrapper registry. Owner-only add/remove.
+- `takeOrder` on the 1inch-style wrappers always
+  `sendLeftover` src+dest+ETH to `msg.sender` (the
+  wallet) before returning. A failed aggregator call
+  refunds src, then the on-chain fallback spends the
+  wallet’s refunded balance — not a second pull of
+  already-consumed tokens. Zero dest on success
+  reverts `ZeroTokensSwapped`.
+- `_sell` records dest by wallet balance delta, not
+  the wrapper return. Slippage is
+  `wmul(minPrice, srcAmount)` after the DFS fee is
+  subtracted (user-favorable vs the pre-fee amount).
+  `minPrice` is caller-chosen except LimitSell, which
+  requires it equal the trigger `CURR_PRICE`.
+- Recipe `DFSSell` replaces any `dfsFeeDivider` other
+  than 400 with `TokenGroupRegistry.getFeeForTokens`
+  (standard 400, same-group 1000, banned src 0).
+  Direct sells and `DFSSellNoFee` take no DFS fee.
+  `getFee` is skipped when `Discount.serviceFeesDisabled`.
+- Pendle does not patch calldata with the post-fee
+  amount (documented: use `DFSSellNoFee`). A mismatch
+  fails the call or refunds leftover; it does not
+  spend more than the transferred src.
+- LimitSell gas fee is capped at 20% of dest.
+  TxSaver injects wrapper/off-chain data from
+  transient storage set by the already-reviewed
+  executor; injected addresses still hit the
+  registries.
+
+exchangeV3 + sell actions treated as exhausted.
+Remaining DFS: protocol `actions/*` (Aave / Morpho /
+Liquity / CurveUsd swappers / …) and `tx-saver`
+beyond the gas-cost hook already read here. Not
+submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3454,14 +3516,16 @@ the V2 tree. V2 governance machines (`d770477`) are
 exhausted. 1inch Aqua opcode set and Aqua-listed
 solidity-utils mixins / libraries (`5b597e4`) are
 exhausted. DeFi Saver V3 executor + FL + auth
-(`e623f20`) is logged; remaining DFS is `exchangeV3`
-and protocol `actions/*`. Next unreviewed Immunefi
-GitHub-or-recent trees: DeFi Saver protocol actions
-and exchange, Jito restaking `restaking_*` / `vault_*`
+(`e623f20`) and exchangeV3 + sell actions (`e623f20`)
+are logged; remaining DFS is protocol `actions/*`
+(Aave / Morpho / Liquity / CurveUsd swappers) and
+the rest of `tx-saver`. Next unreviewed Immunefi
+GitHub-or-recent trees: DeFi Saver protocol actions,
+Jito restaking `restaking_*` / `vault_*`
 plus `jito-solana` / `mev-programs` ($250k, KYC;
 interceptor `dbd8ce4` is exhausted), Enzyme Blue
 adapters added as etherscan addresses after Apr 2026
-(Bebop / ThreeOneThird / SharesSplitter). Superteam API rechecked 03:40 UTC
+(Bebop / ThreeOneThird / SharesSplitter). Superteam API rechecked 03:34 UTC
 3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built

@@ -108,7 +108,8 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Enzyme Blue gated-redemption wrapper + share-price
   throttle (`da3b870`), Charm Alpha Pro Vault (`0174095`),
   1inch Aqua solidity-utils mixins (`5b597e4`),
-  DeFi Saver V3 executor + FL + auth (`e623f20`),
+  DeFi Saver V3 executor + FL + auth and
+  exchangeV3 + sell actions (`e623f20`),
   Jito stake-deposit-interceptor (`dbd8ce4`),
   and Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
