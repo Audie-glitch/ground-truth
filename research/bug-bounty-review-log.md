@@ -48497,3 +48497,168 @@ costaking / mint,
 btclightclient,
 and website /
 toolkit rows.
+
+## 2026-09-03: Axelar leftover Aurora/Fantom gateways + remaining axlUSDC
+
+Immunefi program
+`axelarnetwork`
+($500,000, `kyc: true`).
+Listed remaining after
+other-chain gateways
+(`3e5d78d`). Official
+clones
+`/tmp/axelar-cgp`
+`43ec407` and
+`/tmp/axelar-its`
+`ff21991`. Extract
+`/tmp/axelar-remaining-src`.
+Aurora Sourcify
+`match` gateway
+`0x304acf330bbE08d1e512eefaa92F6a57871fD895`
+(same CREATE3
+address as BSC).
+Official Fantom
+gateway (cgp
+`mainnet.json` +
+deployments
+`AxelarGateway`)
+is the same
+address;
+Sourcify `match`
+`AxelarGatewayProxyMultisig`.
+Avalanche Routescan
+verified axlUSDC
+`0xfaB550568C688d5D8A52C7d794cb93Edc26eC0eC`.
+Fantom axlUSDC
+`0x1B6382DBDEa11d97f24495C9A90b7c88469134a4`
+and Moonbeam
+axlUSDC
+`0xCa01a1D0993565291051daFF390892518ACfAD3A`
+are Sourcify 404;
+runtime bytecode
+hashes match the
+Avalanche token
+(`c62c1cea8912ca54`,
+code_len 9924).
+Immunefi-listed
+Fantom proxy
+`0x5e3C572A97D898Fe359a2Cea31c7D46ba5386895`
+is Sourcify 404
+with unique
+bytecode
+(`b93b9f8b8364e3a7`);
+official docs
+supersede it.
+No mainnet writes.
+
+Files:
+`AuroraGateway/AxelarGatewayProxy.sol`,
+`FantomOfficialGateway/AxelarGateway.sol`,
+`FantomOfficialGateway/AxelarGatewayMultisig.sol`,
+`AvaxAxlUSDC/BurnableMintableCappedERC20.sol`.
+
+Checked for: an
+Aurora / Fantom
+fork that lets
+`setup` take over
+the proxy; axlUSDC
+`mint` / `burn` /
+`burnFrom` a
+stranger can call.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Aurora verified
+  source hash
+  `8662d57459f55164`
+  matches the BSC
+  `AxelarGatewayProxy`
+  already opened.
+  Constructor
+  `setup`
+  delegatecall;
+  public `setup`
+  is a no-op;
+  `receive`
+  reverts
+  `NO_ETHER`.
+  Runtime
+  bytecode also
+  matches BSC
+  (`6ba05a4232da8515`).
+- Official Fantom
+  `0x304acf…`
+  source hashes
+  match Avax /
+  Polygon /
+  Moonbeam
+  (`e5d2f8fa62b565d8`
+  /
+  `4b2e8ff81137e79d`
+  /
+  `cd558c77e454c8d5`).
+  Runtime
+  bytecode matches
+  those proxies
+  (`28b80f5e462aa20f`).
+  `execute` still
+  needs owner /
+  operator quorum.
+- Avalanche
+  axlUSDC source
+  hash
+  `cc8e280c4b8081c2`
+  matches Polygon
+  axlUSDC.
+  `mint` /
+  `burn` /
+  `burnFrom` are
+  `onlyOwner`.
+  Fantom and
+  Moonbeam tokens
+  share that
+  runtime
+  bytecode.
+
+Do not file
+proxy `setup`
+no-op, quorum
+gateway mint, or
+owner-gated
+axlUSDC mint as
+stranger theft
+on Aurora /
+Fantom /
+Avalanche /
+Moonbeam.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Axelar
+Aurora gateway,
+official Fantom
+gateway, and
+Avalanche /
+Fantom /
+Moonbeam axlUSDC
+leftover is
+exhausted at the
+opened-file /
+bytecode-match
+level. Remaining
+listed: Immunefi
+Fantom historic
+proxy
+`0x5e3C57…` if a
+public source
+drop opens, ITS
+GitHub tree
+beyond the two
+entry contracts,
+and DLT
+axelar-core /
+tofnd.
