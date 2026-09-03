@@ -43952,11 +43952,21 @@ Aave leftover remaining L2Pool leftover (`cff15de`)
 is logged.
 Aave leftover remaining CCIP GHO leftover (`d5c6ced`)
 is logged.
+Aave leftover remaining UpgradeableGhoToken leftover (`23859bb`)
+is logged.
+Aave leftover remaining upgradeability leftover (`cff15de` / `7a7548c`)
+is logged.
+Aave leftover remaining protocol-v2 AddressesProvider leftover (`ce53c4a`)
+is logged.
 Aave leftover remaining protocol-v2 LendingPool leftover (`ce53c4a`)
+is logged.
+Aave leftover remaining protocol-v2 CollateralManager leftover (`ce53c4a`)
+is logged.
+Filecoin leftover remaining lotus genesis leftover (`7740217`)
 is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: remaining lotus non-miner.
-Remaining listed Aave: v2 configurator / oracle / tokens.
+Remaining listed Aave: LendingPoolConfigurator / v2 AToken / debt tokens / v2 AaveOracle.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -43985,6 +43995,7 @@ Do not rematch Filecoin lotus store leftover.
 Do not rematch Filecoin lotus node leftover.
 Do not rematch Filecoin lotus vm leftover.
 Do not rematch Filecoin lotus events leftover.
+Do not rematch Filecoin lotus genesis leftover.
 Do not rematch Filecoin lotus miner leftover.
 Do not rematch Filecoin lotus market leftover.
 Do not rematch Aave ACL + PoolConfigurator leftover.
@@ -44008,6 +44019,10 @@ Do not rematch Aave VotingStrategy leftover.
 Do not rematch Aave L2Pool leftover.
 Do not rematch Aave CCIP GHO leftover.
 Do not rematch Aave protocol-v2 LendingPool leftover.
+Do not rematch Aave protocol-v2 CollateralManager leftover.
+Do not rematch Aave UpgradeableGhoToken leftover.
+Do not rematch Aave upgradeability leftover.
+Do not rematch Aave protocol-v2 AddressesProvider leftover.
 Do not rematch Wormhole Relayer leftover.
 Do not rematch Hedera hashed transaction-tool leftover.
 Do not rematch ZKsync airbender CS leftover.
@@ -67882,7 +67897,6 @@ Do not file a facilitator-bucket mint as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: protocol-v2 / upgradeability proxies. Official PriceOracleSentinel + OwnableFacilitator 404.
 
-
 ## 2026-09-03: Aave leftover remaining upgradeability leftover (`cff15de` / `7a7548c`)
 
 Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after UpgradeableGhoToken leftover. Official `aave-dao/aave-v3-origin` `cff15de` upgradeability helpers plus pinned `bgd-labs/solidity-utils` `7a7548c` `TransparentUpgradeableProxy.sol`. Opened listed `BaseImmutableAdminUpgradeabilityProxy.sol`, `InitializableImmutableAdminUpgradeabilityProxy.sol`, `VersionedInitializable.sol`, and `TransparentUpgradeableProxy.sol`. Do not rematch Pool / L2Pool leftovers. No mainnet writes. No exploit PoCs.
@@ -67916,7 +67930,6 @@ Result: no user-exploitable finding. Not submitted.
 Do not file an owner-gated address registry as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: protocol-v2 LendingPool / LendingPoolConfigurator / LendingPoolCollateralManager / v2 AToken / debt tokens / v2 AaveOracle.
-
 
 ## 2026-09-03: Aave leftover remaining protocol-v2 LendingPool leftover (`ce53c4a`)
 
@@ -67954,3 +67967,19 @@ Do not file a HF-gated close-factor liquidation as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: LendingPoolConfigurator / v2 AToken / debt tokens / v2 AaveOracle.
 
+## 2026-09-03: Filecoin leftover remaining lotus genesis leftover (`7740217`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after lotus events leftover. Official sparse clone `/tmp/filecoin-lotus` at `7740217`, `chain/gen`. Opened `genesis/genesis.go`, `genesis/f02_reward.go`, `gen.go`, and `slashfilter/slashfilter.go`. Bootstrap template / test chain-gen / local slash filter. Do not rematch lotus miner leftover or builtin-actors leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `MakeInitialStateTree` minting accounts outside the template; `SetupRewardActor` setting a stranger-chosen reward balance; `ChainGen` fake verifier applying on a live node; `SlashFilter.MinedBlock` slashing a miner this node does not control.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `MakeInitialStateTree` / `CreateAccountActor` take balances from `genesis.Template`. Reward actor balance is `buildconstants.InitialRewardBalance`. This is bootstrap construction, not a stranger RPC.
+- `MakeGenesisBlock` pins the Filecoin genesis parent CID (`bafyrei…honoi`) via `expectedCid()` / `getGenesisBlock()`. A mismatched CID fails closed.
+- `ChainGen` is a local test generator (`genFakeVerifier` always returns true). It is not consensus validation.
+- `SlashFilter.MinedBlock` is a local datastore of this node’s own mined headers. A fault CID is a witness for a later signed report, not an on-chain slash by itself.
+
+Do not file a template-driven genesis builder as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
