@@ -21362,14 +21362,12 @@ Listed leftover is
 the Arb Vault +
 Socket plug and the
 ETH ChugSplash
-proxy. Remaining
-Aevo: Ethereum
+proxy. ETH
+ChugSplash
 implementation
-behind the
-ChugSplash proxy
-is not
-independently
-Sourcify-matched.
+leftover is logged
+(listed Aevo leftover
+exhausted).
 
 ## 2026-09-03: Lido core submit / withdrawal leftover (`2da0f48`)
 
@@ -27054,9 +27052,11 @@ Boost GitHub leftover
 exhausted);
 Aevo deposit leftover
 (Sourcify Arb `Vault` + ETH
-`L1ChugSplashProxy`) is logged
-(remaining Aevo is the ETH
-ChugSplash implementation);
+`L1ChugSplashProxy`) is logged.
+Aevo ETH ChugSplash
+implementation leftover is
+logged (listed Aevo leftover
+exhausted);
 Lido core submit /
 withdrawal leftover
 (`2da0f48`) is logged.
@@ -27859,3 +27859,88 @@ Listed Hydration
 leftover that a
 public tree would
 open is exhausted.
+
+## 2026-09-03: Aevo ETH ChugSplash implementation leftover (Sourcify)
+
+Immunefi program
+`Aevo` ($300,000,
+`kyc: false`).
+Deposit leftover
+already logged the
+ETH
+`L1ChugSplashProxy`
+`0x4082…c574` as
+proxy-only. EIP-1967
+implementation
+`0xb37a11aadf167b2f0b8dd85372de4bc66cd4a891`
+is now Sourcify
+`match` `L1StandardBridge`
+(solc 0.8.15,
+`verifiedAt`
+2026-06-17). Extract
+`/tmp/aevo-l1bridge`.
+Read-only `eth_getStorageAt`
+on publicnode; no
+other mainnet
+interaction.
+
+Files:
+`src/L1/L1StandardBridge.sol`,
+`src/universal/StandardBridge.sol`.
+
+Checked for: a
+stranger
+`finalizeBridgeETH`
+that pays the
+caller; `depositERC20`
+that pulls another
+user without
+allowance;
+`finalizeBridgeERC20`
+without the other
+bridge.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `depositETH` /
+  `depositETHTo` /
+  `bridgeETH` take
+  `msg.value` from
+  the caller.
+  `depositERC20` /
+  `bridgeERC20` set
+  `_from` to
+  `msg.sender` and
+  `transferFrom` /
+  burn that sender.
+- `finalizeBridgeETH`
+  / `finalizeERC20`
+  are
+  `onlyOtherBridge`
+  (`msg.sender` is
+  the messenger and
+  `xDomainMessageSender`
+  is the other
+  bridge). ETH pays
+  `_to`. ERC20 mints
+  or transfers to
+  `_to`.
+- `initialize` is
+  initializer /
+  proxy-admin owned.
+  `paused` reads
+  SuperchainConfig.
+
+Do not file
+messenger-trusted
+finalize, documented
+failed-L2-ETH lock,
+or owner pause as
+theft.
+
+Not submitted.
+Listed Aevo leftover
+is exhausted.

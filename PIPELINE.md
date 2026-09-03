@@ -4,7 +4,7 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~07:55 UTC. Dates verified against each
+Status as of 3 September 2026, ~08:00 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
@@ -81,8 +81,10 @@ eBTC Boost leftover (`c9b95ac`, listed
 eBTC Boost GitHub leftover exhausted).
 Aevo deposit leftover (Sourcify Arb
 `Vault` + ETH `L1ChugSplashProxy`) is
-logged (remaining Aevo is the ETH
-ChugSplash implementation).
+logged. Aevo ETH ChugSplash
+implementation leftover (Sourcify
+`L1StandardBridge` `0xb37a…a891`) is
+logged (listed Aevo leftover exhausted).
 Lido core submit / withdrawal leftover
 (`2da0f48`) is logged. Lido StakingRouter
 leftover (`2da0f48`) is logged. Lido
