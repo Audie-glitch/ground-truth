@@ -10821,9 +10821,10 @@ finding. Not submitted.
   No caller payout.
 
 Remaining Sky listed
-Solidity is
-`sky-oapp-oft`. Not
-submitted.
+Solidity was
+`sky-oapp-oft`; logged
+in the OFT pass below.
+Not submitted.
 
 ## 2026-09-03: StackingDAO strategy-v6 + stakers + rewards leftover (Hiro 13 Aug 2026)
 
@@ -10900,13 +10901,207 @@ finding. Not submitted.
   STX and `add-rewards`
   are keeper-only.
 
-Remaining StackingDAO:
-native-pool +
+Remaining StackingDAO
+was native-pool +
 signer-managers /
-signer-payout if a
-later pass wants those
-wrappers. Not
-submitted.
+signer-payout; logged
+in the native-pool pass
+below. Not submitted.
+
+## 2026-09-03: Sky sky-oapp-oft leftover (`0baba10`)
+
+Immunefi program `sky`
+($10,000,000, `kyc:
+false`). Last listed
+Sky leftover after
+PAUFactory / Kicker:
+sky-ecosystem/sky-oapp-oft
+`0baba10` (19 Nov 2025
+assets). Listed files
+`SkyOFTAdapter.sol`,
+`GovernanceOAppSender.sol`,
+`programs/oft/src/state/oft.rs`,
+`programs/governance/src/state/governance.rs`.
+Also read the money
+path around those:
+`SkyOFTCore` /
+`SkyRateLimiter` /
+`SkyOFTAdapterMintBurn`
+/ `GovernanceOAppReceiver`,
+Solana `send` /
+`lz_receive` /
+`withdraw_fee`. Official
+raw GitHub
+(`/tmp/sky-oapp`). No
+mainnet interaction.
+
+Checked for: adapter
+`_credit` that unlocks
+more than was locked;
+fee withdraw that
+pulls TVL; mint-burn
+`_debit` that burns
+less than it credits
+remotely; inbound
+without an LZ peer;
+Solana withdraw that
+ignores `tvl_ld`;
+governance `_lzReceive`
+that executes for a
+non-peer.
+
+Result: no user-exploitable
+finding. Not submitted.
+Listed Sky leftover
+Solidity / Solana OFT
+is exhausted.
+
+- Adapter `_debit`
+  pulls `amountSentLD`
+  from `_from`, rate-
+  limits
+  `amountReceivedLD`,
+  and parks the fee in
+  `feeBalance`.
+  `_credit` is
+  `whenNotPaused`,
+  inbound-limited, and
+  unlocks exactly
+  `_amountLD`. Zero /
+  token recipients go
+  to `0xdead`.
+  `withdrawFees` and
+  `migrateLockedTokens`
+  are `onlyOwner` and
+  exclude
+  `feeBalance` from
+  migration.
+- Mint-burn adapter
+  burns `amountSentLD`
+  and mints the fee to
+  itself; `_credit`
+  mints to the
+  recipient. Fee
+  withdraw is owner
+  rescue of the
+  adapter balance.
+- Unset rate-limit
+  windows have
+  `limit == 0` so
+  `_calculateDecay`
+  returns 0 capacity
+  (fail-closed).
+- Governance sender
+  `sendTx` requires
+  `canCallTarget`
+  (`onlyOwner` set).
+  Receiver
+  `_lzReceive` is
+  peer-gated by
+  OAppCore and does
+  a raw call to the
+  decoded target;
+  targets must check
+  `messageOrigin`.
+- Solana Adapter send
+  escrows
+  `amount_sent_ld` and
+  increments `tvl_ld`
+  by `amount_received_ld`.
+  Receive requires
+  `peer.peer_address ==
+  params.sender`,
+  clears via the
+  endpoint, then
+  unlocks / mints
+  `sd2ld(amount_sd)`.
+  `withdraw_fee` is
+  admin and requires
+  `escrow.amount -
+  tvl_ld >= fee_ld`.
+
+Next leftover:
+TermMax leftover
+adapters, Twyne
+Sourcify-404 vaults.
+Not submitted.
+
+## 2026-09-03: StackingDAO native-pool + signer leftover (Hiro 13 Aug 2026)
+
+Same Immunefi program
+`stackingdao` ($100,000,
+`kyc: false`). Remaining
+wrappers after
+strategy-v6 / stakers /
+rewards: Hiro
+`native-pool-v1`,
+`native-pool-signer-manager`,
+`signer-manager-stacking-dao-v1`,
+`signer-manager-bond-1-v1`,
+`signer-payout-v1`,
+`signer-admin-v1`.
+Source pulled read-only
+(`/tmp/stacking-dao`).
+No mainnet interaction.
+
+Checked for: native-pool
+delegate that stakes a
+stranger's STX; signer
+`validate-stake!` that
+accepts any staker;
+`claim-rewards` that
+pays the caller;
+payout `distribute`
+that is not keeper-
+gated; admin bootstrap
+that seizes a manager
+before the DAO wires
+it.
+
+Result: no user-exploitable
+finding. Not submitted.
+Listed StackingDAO
+Clarity leftover is
+exhausted.
+
+- `native-pool-v1
+  delegate` /
+  `delegate-update` /
+  `undelegate` use
+  `tx-sender` and the
+  protocol-set
+  `native-pool-sm`.
+  The `delegating`
+  flag is set only
+  around the user's
+  own PoX call.
+- Native-pool signer
+  `validate-stake!`
+  requires
+  `is-delegating
+  (staker, this)`.
+  `claim-staker-rewards`
+  pays `tx-sender`.
+- Protocol signer-
+  managers
+  `validate-stake!`
+  against an admin
+  allowlist.
+  `claim-rewards`
+  forwards sBTC to
+  the admin-set
+  recipient, not the
+  caller.
+- `signer-admin-v1
+  set-admin` is
+  `dao.check-is-protocol`
+  with no self-
+  bootstrap.
+- `signer-payout-v1
+  distribute` is
+  keeper-only.
+  `withdraw-residual`
+  is protocol-gated.
 
 ## Next candidates
 
@@ -11079,11 +11274,13 @@ data and STX reserve / data
 are logged. StackingDAO
 strategy-v6 + STX/sBTC
 stakers + commission +
-rewards-stx are logged.
-Remaining StackingDAO is
-native-pool /
-signer-managers /
-signer-payout.
+rewards-stx plus
+native-pool / signer-
+managers / payout /
+admin are logged.
+Listed StackingDAO
+Clarity leftover is
+exhausted.
 Next
 unreviewed Immunefi
 GitHub-or-recent trees:
@@ -11117,10 +11314,11 @@ DefaultPAUAssembler
 (`c13e80f`) +
 AdministeredAgent
 (`5e6b52f`) are logged.
-Remaining Sky leftover:
-`sky-oapp-oft` after
-`PAUFactory` + `Kicker`
-logged below.
+Remaining Sky leftover
+`sky-oapp-oft` is
+logged below; listed
+Sky leftover is
+exhausted.
 Yearn Accountant
 `0x5A74…DE69` (Sourcify)
 plus 3.0.4 Tokenized
@@ -11264,8 +11462,13 @@ Sky PAUFactory + Kicker
 and StackingDAO
 strategy-v6 / stakers /
 commission / rewards-stx
-are logged; remaining
-Sky is `sky-oapp-oft`;
+are logged; Sky
+`sky-oapp-oft` and
+StackingDAO native-pool
+/ signer leftover are
+logged (listed Sky and
+StackingDAO leftover
+exhausted);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
