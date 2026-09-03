@@ -12,13 +12,15 @@ recheck), and Immunefi unofficial mirror rechecked 3 Sep. KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
-is exhausted. MtPelerin leftover is exhausted. Orderly Vault and
-Ledger withdraw leftovers are logged. Orderly evm-cross-chain
-leftover is logged (remaining Orderly is Operator / Fee / Market
-and LedgerImpl B/C/D). Yearn yCRV
-token + Boosted Staker / distributor leftover is logged (yvUSD
-still Sourcify 404). Hermetica hBTC vault leftover is logged
-(listed Clarity exhausted). Twyne vaults still Sourcify 404.
+is exhausted. MtPelerin leftover is exhausted. Listed Orderly
+GitHub leftover is exhausted (Vault / Ledger / evm-cross-chain /
+Operator / Fee / Market / LedgerImpl B/C/D). Raydium CLMM leftover
+(`ed7c84a`) is logged (remaining Raydium is classic AMM +
+cp-swap). Compound Finance PR 127 / 2.9 leftover is logged
+(listed Compound GitHub leftover exhausted). Yearn yCRV token + Boosted Staker / distributor leftover
+is logged (yvUSD still Sourcify 404). Hermetica hBTC vault leftover
+is logged (listed Clarity exhausted). Twyne vaults still Sourcify
+404.
 
 ## Opportunities, ranked by expected payout per unit of work
 

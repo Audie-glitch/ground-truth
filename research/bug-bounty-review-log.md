@@ -14509,6 +14509,148 @@ Not submitted. Listed
 Compound GitHub leftover
 (PR 127) is exhausted.
 
+## 2026-09-03: Raydium CLMM leftover (`ed7c84a`)
+
+Immunefi program
+`raydium` ($505,000,
+`kyc: false`). Listed
+leftover is per-file
+GitHub URLs under
+`raydium-io/raydium-amm-v3`
+`programs/amm/src`
+(instructions +
+libraries + states +
+`lib.rs` / `error.rs`,
+added 24 Apr 2023).
+Local clone
+`/tmp/raydium-amm-v3` at
+`ed7c84a` (“Feat/position
+nft freeze (#197)”).
+Program id
+`CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK`.
+No mainnet interaction.
+
+This slice is the listed
+swap / liquidity / fee /
+reward / admin money
+path at current HEAD
+(tree has later limit-
+order and Token-2022
+helpers that are not in
+the 2023 file list).
+
+Files:
+`instructions/swap.rs`,
+`increase_liquidity.rs`,
+`decrease_liquidity.rs`,
+`close_position.rs`,
+`open_position.rs`,
+`create_pool.rs`,
+`initialize_reward.rs`,
+`collect_remaining_rewards.rs`,
+`admin/collect_protocol_fee.rs`,
+`admin/collect_fund_fee.rs`,
+`admin/update_amm_config.rs`.
+
+Checked for: swap that
+pulls the wrong vault or
+skips slippage; increase
+that credits a stranger’s
+NFT; decrease that pays
+without burning liquidity;
+close that burns a live
+position; remaining-reward
+collect that takes
+unclaimed LP rewards;
+permissionless protocol /
+fund fee collect.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Swap `exact_internal`
+  binds input/output
+  vaults to
+  `pool.token_vault_0/1`
+  by mint direction.
+  Input ATA must be
+  payer-owned and match
+  the input vault mint.
+  Tick arrays must
+  belong to the pool.
+  Exact-in/out amounts
+  are checked against
+  `other_amount_threshold`.
+  Zero limit price
+  forbids a partial fill.
+  Fees split into LP /
+  protocol / fund from
+  the trade fee; LP
+  growth is
+  `mul_div_floor`.
+- Increase liquidity
+  requires the position
+  NFT (amount 1,
+  authority =
+  `nft_owner`) and pulls
+  only from the signer’s
+  token accounts into
+  the pool vaults.
+  Position ticks come
+  from the PDA, not the
+  caller.
+- Decrease requires the
+  same NFT. Liquidity
+  burned cannot exceed
+  the position.
+  Payout is burned
+  amounts plus zeroed
+  `token_fees_owed_*`.
+  Recipients need only
+  the vault mint (gift).
+  Rewards pay recorded
+  `reward_amount_owed`
+  and never more than
+  the reward vault.
+- Close requires zero
+  liquidity, fees, and
+  reward owed, then
+  burns the NFT. Frozen
+  NFT thaws with the
+  pool PDA after the
+  remaining account is
+  checked against
+  `personal_position.pool_id`.
+- Create pool is a PDA
+  (`config`, mint0 <
+  mint1) and creates
+  vault PDAs; it does
+  not take user tokens.
+- `update_amm_config`
+  is `admin::ID` only.
+  Protocol / fund fee
+  collect is admin or
+  config owner /
+  fund_owner and caps
+  at the recorded
+  balances.
+- Remaining rewards:
+  funder must be the
+  reward authority,
+  emissions must have
+  ended
+  (`last_update_time ==
+  end_time`), and the
+  payout is vault minus
+  unclaimed
+  (`emitted - claimed`).
+
+Not submitted. Remaining
+Raydium listed GitHub:
+`raydium-amm` (classic)
+and `raydium-cp-swap`.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -14987,6 +15129,11 @@ leftover exhausted;
 remaining assets are
 explorer addresses +
 PoI);
+Raydium CLMM leftover
+(`ed7c84a`) is logged
+(remaining Raydium is
+`raydium-amm` +
+`raydium-cp-swap`);
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover
