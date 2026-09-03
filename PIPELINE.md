@@ -11,8 +11,9 @@ ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~12:55 UTC;
 246 programs; no Sep 2026 launches; Jito leftover remaining jito-solana epoch_stakes leftover is logged;
-Optimism leftover remaining op-node leftover is logged;
-Optimism leftover remaining op-dispute-mon leftover is logged;
+Optimism leftover remaining mintable factory leftover is logged;
+Optimism leftover remaining op-node engine leftover is logged;
+Optimism leftover remaining op-node deposits + withdrawals leftover is logged;Optimism leftover remaining op-dispute-mon leftover is logged;
 Optimism leftover remaining ETHLockbox leftover is logged;
 Optimism leftover remaining L2 ETH liquidity leftover is logged;
 Jito leftover remaining jito-solana stakes leftover is logged;
@@ -1721,9 +1722,6 @@ remaining-runtime slices
 `stake_weighted_timestamp`
 if still unused).
 Optimism leftover remaining
-op-node deposits + withdrawals leftover
-(`eea9542`; KYC) is logged.
-Optimism leftover remaining
 PolicyEngineStaking leftover
 (`eea9542`; KYC) is logged.
 Optimism leftover remaining
@@ -1736,13 +1734,18 @@ Optimism leftover remaining
 op-dispute-mon leftover
 (`eea9542`; KYC) is logged.
 Optimism leftover remaining
-op-node leftover
+op-node deposits + withdrawals leftover
+(`eea9542`; KYC) is logged.
+Optimism leftover remaining
+op-node engine leftover
+(`eea9542`; KYC) is logged.
+Optimism leftover remaining
+mintable factory leftover
 (`eea9542`; KYC) is logged
-(remaining listed is unused
-official op-node leftover
-that listed trees still open
-after this deposit/withdrawal
-helper slice / websites /
+(remaining listed is remaining
+op-node leftover (p2p /
+sequencing) / L2OutputOracle /
+SystemConfig / websites /
 rust/op-reth if still unused).
 Filecoin leftover remaining
 go-jsonrpc leftover
@@ -2862,7 +2865,13 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   op-dispute-mon leftover
   (`eea9542`; KYC),
   Optimism leftover remaining
-  op-node leftover
+  op-node deposits + withdrawals leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  op-node engine leftover
+  (`eea9542`; KYC),
+  Optimism leftover remaining
+  mintable factory leftover
   (`eea9542`; KYC),
   Filecoin leftover remaining
   go-jsonrpc leftover

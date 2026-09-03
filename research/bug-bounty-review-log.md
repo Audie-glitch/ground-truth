@@ -46033,119 +46033,120 @@ PolicyEngineStaking /
 websites
 (if still unused).
 
-## 2026-09-03: Optimism leftover remaining op-node leftover (`eea9542`)
+## 2026-09-03: Optimism leftover remaining mintable factory leftover (`eea9542`)
 
 Immunefi program
 `optimism`
 ($2,000,042,
 `kyc: true`).
-Official remaining
-listed after
-op-dispute-mon leftover.
+Official unused
+listed factory
+after L1 portal
+leftover.
 Official
 `ethereum-optimism/optimism`
 `eea9542`.
+Sourcify ETH
+OptimismMintableERC20Factory
+proxy
+`0x75505a97BD334E7BD3C476893285569C4136Fa0F`
+impl
+`0xaAbEA75Da509fA518Fd8a91Eae4BE5813B829b12`.
 Extract
-`/tmp/op-node/`.
+`/tmp/op-unused/OptimismMintableERC20Factory/`.
 Do not rematch
 L1 portal /
-StandardBridge leftover,
-dispute games leftover,
-L2 ETH liquidity leftover,
-or op-dispute-mon leftover.
+StandardBridge leftover
+or L2 ETH
+liquidity leftover.
 No mainnet
 writes.
 
 Files:
-`op-node/rollup/derive/{deposits,deposit_log,deposit_source,attributes}.go`,
-`op-node/withdrawals/{utils,proof}.go`.
+`packages/contracts-bedrock/src/universal/{OptimismMintableERC20Factory,OptimismMintableERC20}.sol`.
 
 Checked for:
-deposit decode
+`createOptimismMintableERC20`
 that mints
 caller-chosen
-ETH without
-a portal log;
-`PreparePayloadAttributes`
-that injects
-extra deposits;
-withdrawal
-helpers that
-submit
-`proveWithdrawal`
-for a stranger.
+supply;
+`mint` /
+`burn` that
+anyone can
+call;
+stranger
+`burn` of
+another
+account.
 
 Result: no
 user-exploitable
 finding. Not
 submitted.
 
-- `UserDeposits`
-  only reads
-  successful
-  receipts from
-  `depositContractAddr`
-  with the
-  `TransactionDeposited`
-  topic.
-- `UnmarshalDepositLogEvent`
-  binds `from` /
-  `to` / version
-  from indexed
-  topics and
-  mint / value
-  from
-  version-0
-  opaqueData.
-  `SourceHash`
-  is L1 block
-  hash + log
-  index.
-- A malformed
-  deposit log
-  is a critical
-  derive error,
-  not a skipped
-  mint.
-- Attributes
-  builder
-  derives
-  deposits only
-  on L1-origin
-  change, after
-  parent-hash
-  checks.
-- Withdrawal
-  helpers only
-  parse
-  `MessagePassed`
-  logs, hash
-  the recorded
-  fields, and
-  verify an
-  L2 storage
-  proof. They
-  do not send
-  transactions.
+- Factory
+  `initialize`
+  is ProxyAdmin
+  gated.
+  `create*`
+  CREATE2s a
+  token with
+  salt
+  `keccak
+  (remote,
+  name,
+  symbol,
+  decimals)`
+  and records
+  `deployments
+  [local] =
+  remote`.
+  It does
+  not mint.
+- Token
+  `mint` /
+  `burn` are
+  `onlyBridge`.
+  Constructor
+  binds
+  immutable
+  `BRIDGE`
+  and
+  `REMOTE_TOKEN`.
+- `allowance`
+  returns
+  `type(uint256).max`
+  for the
+  Permit2
+  preinstall.
+  That is
+  documented
+  Optimism
+  design,
+  not a
+  stranger
+  drain of
+  this
+  factory.
 
 Do not file
-a receipt-bound
-deposit decode
-or a proof
-helper as
+a bridge-gated
+mintable token
+or a CREATE2
+factory as
 stranger theft.
 
 Not submitted.
 Payment requires
 user KYC.
 Remaining listed:
-unused official
+remaining
 op-node leftover
-that listed trees
-still open
-(batch / channel
-/ p2p / driver)
-/ websites /
+(p2p /
+sequencing) /
+L2OutputOracle /
+SystemConfig /
+websites /
 rust/op-reth
 (if still unused).
 
@@ -46445,7 +46446,11 @@ Optimism leftover remaining ETHLockbox leftover (`eea9542`)
 is logged.
 Optimism leftover remaining op-dispute-mon leftover (`eea9542`)
 is logged.
-Optimism leftover remaining op-node leftover (`eea9542`)
+Optimism leftover remaining op-node deposits + withdrawals leftover (`eea9542`)
+is logged.
+Optimism leftover remaining op-node engine leftover (`eea9542`)
+is logged.
+Optimism leftover remaining mintable factory leftover (`eea9542`)
 is logged.
 Filecoin leftover remaining go-jsonrpc leftover (`059363558429`)
 is logged.
@@ -46484,7 +46489,7 @@ Remaining listed Filecoin: unused official leftover that listed trees open is ex
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
 Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`snapshot_*` / `bank.rs` / `stake_weighted_timestamp`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
-Remaining listed Optimism: unused official op-node leftover that listed trees still open after this deposit/withdrawal helper slice (batch / channel / p2p / driver) / websites / rust/op-reth if still unused.
+Remaining listed Optimism: remaining official op-node leftover (p2p / sequencing) / L2OutputOracle / SystemConfig / websites / rust/op-reth if still unused.
 
 Remaining listed ZKsync OS: official GitHub leftover
 that trees open is exhausted.
@@ -46565,6 +46570,9 @@ Do not rematch Optimism leftover remaining L2 ETH liquidity leftover.
 Do not rematch Optimism leftover remaining ETHLockbox leftover.
 Do not rematch Optimism leftover remaining op-dispute-mon leftover.
 Do not rematch Optimism leftover remaining op-node leftover.
+Do not rematch Optimism leftover remaining op-node deposits + withdrawals leftover.
+Do not rematch Optimism leftover remaining op-node engine leftover.
+Do not rematch Optimism leftover remaining mintable factory leftover.
 Do not rematch Filecoin go-commp-utils leftover.
 Do not rematch Filecoin go-fil-commp-hashhash leftover.
 Do not rematch Optimism leftover remaining dispute games leftover.
@@ -49347,10 +49355,14 @@ Optimism leftover remaining ETHLockbox leftover
 (`eea9542`) is logged;
 Optimism leftover remaining op-dispute-mon leftover
 (`eea9542`) is logged;
-Optimism leftover remaining op-node leftover
-(`eea9542`) is logged (remaining listed is unused official
-op-node leftover that listed trees still open after this
-deposit/withdrawal helper slice / websites / rust/op-reth);
+Optimism leftover remaining op-node deposits + withdrawals leftover
+(`eea9542`) is logged;
+Optimism leftover remaining op-node engine leftover
+(`eea9542`) is logged;
+Optimism leftover remaining mintable factory leftover
+(`eea9542`) is logged (remaining listed is remaining
+op-node leftover (p2p / sequencing) / L2OutputOracle /
+SystemConfig / websites / rust/op-reth);
 Filecoin leftover remaining go-jsonrpc leftover
 (`059363558429`) is logged;
 Filecoin leftover remaining go-fil-markets leftover
