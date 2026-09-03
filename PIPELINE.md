@@ -19,6 +19,7 @@ Optimism leftover remaining LegacyMessagePasser leftover is logged;
 Optimism leftover remaining L2ProxyAdmin leftover is logged;
 Ethena leftover remaining StakedENA leftover is logged;
 Ethena leftover remaining USDtb leftover is logged;
+LayerZero leftover remaining ULN301 leftover is logged;
 Jito leftover remaining jito-solana runtime_config leftover is logged;
 Jito leftover remaining jito-solana static_ids leftover is logged;
 Jito leftover remaining jito-solana read_optimized_dashmap leftover is logged;
@@ -907,9 +908,11 @@ mETH twins / other FeeLib / other-chain).
 LayerZero leftover ETH Endpoint leftover
 (Sourcify EndpointV2 / SendUln302 /
 ReceiveUln302 / DVN / Endpoint V1; KYC)
-is logged (remaining listed is
-FPValidator / ULN301 / OApp examples /
-other chains).
+is logged.
+LayerZero leftover remaining ULN301 leftover
+(`9c741e7`; KYC) is logged
+(remaining listed is ExecutorFeeLib /
+PriceFeed / OApp examples / other-chain).
 Ethena leftover minting + staking leftover
 (Sourcify EthenaMinting / StakedUSDeV2 /
 LP staking / PSM; KYC) is logged.
@@ -2611,6 +2614,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   LayerZero leftover ETH
   Endpoint leftover
   (Sourcify; KYC),
+  LayerZero leftover remaining
+  ULN301 leftover
+  (`9c741e7`; KYC),
   Ethena leftover minting +
   staking leftover
   (Sourcify; KYC),
