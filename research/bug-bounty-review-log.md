@@ -6397,8 +6397,8 @@ Remaining Lista leftover: none
 of the named VeLista lock /
 airdrop / oracle slices.
 Extra Finance leftover listed
-Solidity is EXTRA token. Not
-submitted.
+Solidity (EXTRA) is logged
+below. Not submitted.
 
 ## 2026-09-03: Hashflow factory / pool / router (`e41cfaa`)
 
@@ -6456,13 +6456,194 @@ finding. Not submitted.
   is router-only and
   one-shots `txid`.
 
-Remaining Hashflow: x-chain
-messengers / Aave portal if a
-later pass wants them. Twyne
-GitHub is private from this
-VM. Extra Finance leftover
-listed Solidity is EXTRA
-token. Not submitted.
+Remaining Hashflow: the listed
+Wormhole messenger (this pass
+below). There is no Aave portal
+row in the Immunefi table.
+Twyne GitHub is still private
+from this VM. Extra Finance
+leftover listed Solidity is
+EXTRA token. Not submitted.
+
+## 2026-09-03: Extra Finance EXTRA token (Sourcify)
+
+Immunefi program `extrafinance`
+($100,000, `kyc: false`). Last
+listed leftover Solidity is
+Optimism EXTRA
+`0x2dAD3a13ef0C6366220f989157009e501e7938F8`
+(token row, 2023-08-30). Sourcify
+v2 exact match, verified
+2024-08-08. Contract name
+`EXTRA`. Extract under
+`/tmp/extrafinance/extra-token`.
+No mainnet interaction.
+
+Files: `contracts/EXTRA.sol`
+plus stock OZ `ERC20` /
+`Ownable`.
+
+Checked for: permissionless
+mint; mint that ignores the
+cap; ownerless mint via a
+public initializer.
+
+Result: no user-exploitable
+finding. This is a capped
+owner-mint ERC-20. Closes
+Extra Finance listed Solidity
+(vault factory ids 101–105
+stay off the table). Not
+submitted.
+
+- Constructor sets an
+  immutable `supplyCap`.
+  `mint` is `onlyOwner` and
+  reverts when
+  `totalSupply() + amount`
+  exceeds `cap()`. No burn,
+  no permit, no hooks.
+- Primacy of Impact still
+  covers ExtraFi-owned
+  Critical / High / Medium
+  off-table assets; this pass
+  only closes the EXTRA row.
+
+## 2026-09-03: Hashflow Wormhole messenger (Sourcify)
+
+Same Immunefi program
+`hashflow` ($50,000,
+`kyc: false`). Fourth 8 Jun
+2026 listed asset:
+Hashflow Wormhole Messenger
+`0x0a09B370950f69ADC4c2FbF8677C7b0047599c9F`.
+Sourcify v2 exact match,
+verified 2024-08-08. Contract
+name `HashflowWormholeMessenger`.
+Extract under
+`/tmp/hashflow/wormhole`.
+Factory / pool / router
+already logged (`e41cfaa`).
+No mainnet interaction.
+
+Files:
+`contracts/xchain/
+{HashflowWormholeMessenger,
+HashflowXChainMessengerBase}.sol`.
+
+Checked for: `tradeXChain`
+from a non-router; a VAA
+from an unauthorized emitter
+that still fills; a
+permissioned-relayer bypass;
+payload amounts that ignore
+the source partial fill;
+replay of the slow + fast
+VAAs against the same
+`txid`.
+
+Result: no user-exploitable
+finding. Listed Hashflow
+Solidity is now exhausted.
+Not submitted.
+
+- `tradeXChain` is
+  router-only and requires
+  `quote.srcChainId ==
+  hChainId`. Payload
+  `quoteTokenAmount` is the
+  amount the router already
+  scaled for a partial RFQ-T.
+- `publishMessage` spends
+  `messageFee` (doubled when
+  a fast consistency level
+  and a permissioned relayer
+  are set). Excess `msg.value`
+  stays on the messenger;
+  `withdrawFunds` is owner.
+  Self-grief, not theft.
+- `wormholeReceive` requires
+  a Guardian-valid VAA, a
+  configured source H-chain,
+  and `vm.emitterAddress ==`
+  the stored remote (left-
+  padded). Destination
+  addresses must be canonical
+  EVM (high 12 bytes zero).
+  A non-zero
+  `permissionedRelayer` must
+  be the caller.
+- Router `fillXChain` still
+  gates messenger + peer
+  pool; pool `fillXChain`
+  one-shots `txid`, so the
+  slow and fast VAAs cannot
+  double-pay.
+- `dstContract` /
+  `dstCalldata` are not MM-
+  signed. Destination
+  callback still requires the
+  callee to opt in both the
+  source caller and the
+  messenger. Dust partial
+  fills of an x-chain RFQ-T
+  can burn `dstTrader`’s
+  nonce; that is quote
+  griefing, not a redirect.
+
+## 2026-09-03: Magpie Wombat USDC deposit helper (Sourcify)
+
+Immunefi program `magpiexyz`
+($200,000, `kyc: false`).
+Listed 2023-01-13 asset
+“Main Pool USDC Deposit
+Helper”
+`0xb68F5247f31fe28FDe0b0F7543F635a4d6EDbD7F`
+(BSC). Sourcify v2 exact
+match, verified 2026-06-03.
+Contract name
+`WombatPoolHelper`. Extract
+under `/tmp/magpie/helper`.
+The 26 Aug 2026 add is
+Primacy of Impact only. No
+mainnet interaction.
+
+Files:
+`contracts/wombat/
+WombatPoolHelper.sol`.
+
+Checked for: deposit that
+stakes to the caller while
+pulling a stranger; withdraw
+that burns someone else’s
+receipt; native path that
+keeps the wrapped BNB.
+
+Result: no user-exploitable
+finding. Listed Magpie
+Solidity is this helper;
+POI remains. Not submitted.
+
+- `deposit` / `depositLP`
+  measure `stakingToken`
+  balance, call
+  `wombatStaking`, then
+  `_stake` the delta to
+  `msg.sender`. A donated
+  receipt is a gift to the
+  next depositor, not a
+  theft.
+- `depositNative` wraps
+  `msg.value`, approves
+  exactly that amount, and
+  deposits from the helper.
+- `withdraw` pulls from
+  Wombat for the caller,
+  `withdrawFor`s the same
+  liquidity from MasterMagpie,
+  then burns the receipt.
+- `harvest` is anyone-calls
+  into `wombatStaking`.
 
 ## Next candidates
 
@@ -6532,9 +6713,10 @@ factory / creators / live proxy, the
 Aave-fork Pool skim, and VeToken
 (`0xe0Be…1466`) are logged;
 remaining Extra Finance listed
-Solidity is EXTRA token (Aave-fork
-ACL / config / aToken / debt
-logged). Vault factory ids 101–105
+Solidity (EXTRA token, Sourcify)
+is logged; Aave-fork ACL / config
+/ aToken / debt already logged.
+Vault factory ids 101–105
 are **not** listed. Index Coop
 Set Protocol V2 (all five in-scope
 addresses) is logged. Lista DAO Moolah
@@ -6554,15 +6736,20 @@ LisAster / leftover distributors
 (`fa5dfa5`) are logged.
 Enzyme Blue BebopBlend / ThreeOneThird /
 SharesSplitter (`da3b870` + Sourcify) are
-logged. Next unreviewed Immunefi
-GitHub-or-recent trees: Extra Finance
-EXTRA token; Twyne June-2026 wrappers
+logged. Extra Finance EXTRA token
+(Sourcify), Hashflow Wormhole
+messenger (listed 8 Jun row,
+Sourcify), and Magpie
+WombatPoolHelper (Sourcify) are
+logged. Listed Extra Finance and
+Hashflow Solidity are exhausted.
+Magpie leftover is Primacy of
+Impact only. Next unreviewed
+Immunefi GitHub-or-recent trees:
+Twyne June-2026 wrappers
 (`aPT22Oct2026`, EVC) $50k no KYC
-(GitHub private from this VM).
-Hashflow factory / pool / router
-(`e41cfaa`) is logged; remaining
-Hashflow is x-chain messengers /
-Aave portal if wanted. Yearn stYFI
+(GitHub private from this VM;
+Sourcify 404). Yearn stYFI
 July leftover (`69e262e`) is
 logged; remaining Yearn stYFI is
 Feb 2026 core if wanted. Remaining
