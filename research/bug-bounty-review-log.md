@@ -36766,6 +36766,14 @@ DelegatorPool / PollCreator /
 L1Migrator / data caches; KYC)
 is logged (remaining listed is
 the go-livepeer website);
+Gala leftover ETH MTRM +
+GALA + SILK leftover
+(Sourcify Materium / Gala
+impl / Silk; KYC) is logged
+(remaining listed is the
+gala.com / app / wallet /
+node / film / music
+websites);
 Wormhole leftover ETH core +
 TokenBridge leftover
 (Sourcify Core / TokenBridge
@@ -52293,3 +52301,171 @@ listed: historic
 Fantom gateway
 proxy if source
 opens.
+
+## 2026-09-03: Gala leftover ETH MTRM + GALA + SILK leftover (Sourcify)
+
+Immunefi program
+`galagames`
+($50,000, `kyc: true`).
+No leftover heading
+existed. Sourcify
+opens all three
+listed ETH tokens.
+Websites stay out
+of this SC track.
+No mainnet writes
+from this VM.
+No exploit PoCs.
+
+Files (Sourcify):
+Materium
+`0xcd17fa52…7581`
+(`exact_match`,
+`Materium.sol` +
+`MinterRole.sol`),
+GALA proxy
+`0xd1d2eb1b…7cae`
+(EIP-1967 impl
+`0x8D92A681…a5f9`,
+`Gala.sol` match),
+Silk
+`0xb045f7f3…7b23`
+(`exact_match`,
+`Silk.sol` +
+`MinterRole.sol`).
+
+Checked for: a
+stranger
+`mintBulk` /
+`mint` that
+inflates supply;
+stranger
+`addMinter` /
+`grantRole`;
+GALA UUPS
+upgrade without
+`UPGRADER_ROLE`;
+permit that
+drains another
+account without
+their sig.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Materium
+  `mintBulk` is
+  `onlyMinter`.
+  `addMinter` is
+  overridden
+  `onlyOwner`
+  (constructor
+  owner + first
+  minter). Cap
+  10_000_000_000
+  at 0 decimals
+  via
+  `_beforeTokenTransfer`
+  on mint.
+  Burn does not
+  unwind
+  `_totalMinted`
+  (cap is
+  cumulative).
+- Silk
+  `mintBulk` is
+  `onlyMinter`.
+  `addMinter` is
+  `onlyOwner`.
+  Cap
+  100_000_000e8.
+  `burn` /
+  `burnFrom`
+  subtract
+  `_totalMinted`
+  so a minter
+  can remint
+  burned units
+  up to the cap.
+- GALA impl is
+  UUPS
+  upgradeable
+  ERC20 +
+  permit +
+  pause +
+  AccessControl.
+  `initialize`
+  is disabled
+  in the
+  constructor.
+  `mint` /
+  `mintBulk` are
+  `onlyRole(MINTER_ROLE)`.
+  Cap
+  50_000_000_000e8
+  on mint.
+  `addMinter` /
+  `addUpgrader` /
+  `addBlocklister`
+  /
+  `transferAdmin`
+  go through
+  `grantRole`
+  (`onlyRole`
+  of the role
+  admin).
+  `_authorizeUpgrade`
+  is
+  `onlyRole(UPGRADER_ROLE)`.
+  Pause is
+  `DEFAULT_ADMIN_ROLE`.
+  Blocklist is
+  `BLOCKLISTER_ROLE`
+  and cannot
+  list a live
+  minter /
+  upgrader /
+  blocklister.
+  `permit` is
+  OZ
+  ERC20Permit
+  plus
+  blocklist /
+  pause.
+- Transfers
+  use the
+  inherited
+  ERC20
+  `msg.sender`
+  /
+  `transferFrom`
+  allowance
+  paths.
+
+Do not file
+minter-gated
+`mintBulk`,
+owner-gated
+`addMinter`,
+or admin-gated
+GALA upgrade
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for Gala
+ETH tokens is
+exhausted at the
+opened-file
+level. Remaining
+listed: the
+gala.com /
+app / wallet /
+node / film /
+music websites.
