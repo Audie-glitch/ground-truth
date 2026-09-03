@@ -36315,3 +36315,156 @@ EVM / XCM /
 honzon-bridge /
 liquid-crowdloan /
 NFT pallets.
+
+## 2026-09-03: Ostium leftover vault / trading (Sourcify)
+
+Immunefi program
+`ostium`
+($200,000, `kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Arbitrum
+Sourcify
+`exact_match`
+Transparent
+proxies:
+Vault
+`0x20D419a8e12C45f88fDA7c5760bb6923Cee27F98`
+impl
+`0xACff332d0d8c34162Be6BbABF7D676fEa7cD0F3E`
+(`OstiumVault`);
+Trading
+`0x6D0bA1f9996DBD8885827e1b2e8f6593e7702411`
+impl
+`0x8CBb5bd2b46f993078407CEa26704aF0A901515a`
+(`OstiumTrading`,
+`match`);
+Callbacks
+`0x7720fC8c8680bF4a1Af99d44c6c265a74e9742a9`
+impl
+`0x9214159E33A48A252203FB47bA513B272B888F7D`
+(`OstiumTradingCallbacks`,
+`match`);
+Storage
+`0xccd5891083a8acd2074690f65d3024e7d13d66e7`
+impl
+`0xd40C55475D4FEA67415cD12Abc28c949fc7a7FEE`
+(`OstiumTradingStorage`).
+Listed
+LockedDepositNft
+`0xB71ec9eBD8145daCaCF6724363143cb5667A3d36`
+is Sourcify
+`exact_match`
+proxy whose impl
+is
+`OstiumPrivatePriceUpKeep`,
+not an NFT.
+Official clone
+`/tmp/ostium`
+`8390ce4`.
+Extract
+`/tmp/ostium-src`
+and
+`/tmp/ostium-impl`.
+No mainnet writes.
+
+Files:
+`src/OstiumVault.sol`,
+`src/OstiumTrading.sol`,
+`src/OstiumTradingCallbacks.sol`,
+`src/OstiumTradingStorage.sol`,
+`src/abstract/Delegatable.sol`.
+
+Checked for: a
+stranger
+`requestDeposit`
+that credits
+another address;
+`claimDeposit` /
+`claimWithdraw`
+that pays the
+caller someone
+else's assets;
+`sendAssets` that
+is not callbacks-
+only; `openTrade`
+that pulls a
+victim's USDC;
+`transferUsdc`
+callable by
+anyone;
+`openTradeMarketCallback`
+that skips the
+price upkeep.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- ERC4626
+  deposit / mint /
+  withdraw /
+  redeem revert
+  `FunctionDisabled`.
+  `requestDeposit`
+  pulls
+  `msg.sender` into
+  `pendingDepositRequest[msg.sender]`.
+  Claim / cancel /
+  reclaim use that
+  mapping and pay
+  `msg.sender`.
+- `sendAssets` is
+  `onlyCallbacks`.
+  `receiveAssets`
+  and
+  `distributeReward`
+  pull
+  `msg.sender`.
+- Trading
+  `openTrade` /
+  `closeTradeMarket`
+  use
+  `_msgSender()`
+  (direct caller
+  or an approved
+  EIP-712
+  delegate).
+  Collateral
+  `transferUsdc`
+  is
+  `onlyTradingOrCallbacks`.
+- Callbacks
+  `isPriceUpKeep`
+  requires the
+  registry
+  price-upkeep
+  for that pair.
+
+Do not file
+keeper-gated
+settlement, gov
+fee claim, or
+user-approved
+delegate trading
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Ostium
+vault / trading /
+callbacks /
+storage leftover
+is exhausted at
+the opened-contract
+level. Remaining
+listed: keepers,
+registry,
+pair/price
+routers, timelock,
+and the web /
+Telegram apps.
