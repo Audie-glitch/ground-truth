@@ -10,7 +10,10 @@ OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; page-1 Tare is
 `SHERLOCK_JUDGING`, no live RUNNING contest this
 recheck), and Immunefi unofficial mirror rechecked 3 Sep (~11:00 UTC;
-246 programs; no Sep 2026 launches; Sei leftover evm + bank + tokenfactory leftover is logged;
+246 programs; no Sep 2026 launches; Hedera leftover json-rpc-relay leftover is logged;
+Lombard leftover Sui LBTC + bridge_vault leftover is logged;
+Lombard leftover Starknet cairo packages leftover is logged;
+Sei leftover evm + bank + tokenfactory leftover is logged;
 Wormhole leftover remaining Solana + Sui NTT leftover is logged;
 Velvet leftover remaining BSC handlers leftover is logged;
 Lombard leftover BridgeV2 + Mailbox + Bascule leftover is logged;

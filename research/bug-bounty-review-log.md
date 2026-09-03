@@ -41253,7 +41253,12 @@ Lombard leftover BARD token + TokenDistributor leftover
 Lombard leftover StakeAndBake + NativeLBTC + AssetRouter leftover
 (`7fe83e5`) is logged;
 Lombard leftover BridgeV2 + Mailbox + Bascule leftover
-(`7fe83e5`) is logged (remaining listed is Sui / Starknet);
+(`7fe83e5`) is logged;
+Lombard leftover Sui LBTC + bridge_vault leftover
+(`d78ebef`) is logged;
+Lombard leftover Starknet cairo packages leftover
+(`0358a40`) is logged (listed Lombard GitHub leftover
+that official trees open is exhausted);
 Velvet leftover BSC v1 IndexSwap leftover (Sourcify)
 is logged;
 Velvet leftover remaining BSC handlers leftover (Sourcify)
@@ -41263,6 +41268,9 @@ Wormhole leftover remaining Solana + Sui NTT leftover
 Sei leftover evm + bank + tokenfactory leftover (`2e256b5`)
 is logged (remaining listed is sei-js / go-ethereum /
 other modules);
+Hedera leftover json-rpc-relay leftover (`2b51a98`)
+is logged (remaining listed is consensus-node /
+mirror-node / cryptography / SDKs / transaction-tool);
 official CTC HTML still blocked by DoraHacks “Human
 Verification” (last good count 47 BUIDLs / 203 hackers,
 deadline 13 Sep 2026 23:59 ET). No KeeperHub
@@ -61213,3 +61221,44 @@ Result: no user-exploitable finding. Not submitted.
 Do not file payload-recipient mints, caller-owned redeem burns, claimer/token-admin stake-and-bake, or below-threshold Bascule skips as stranger theft.
 
 Not submitted. Payment requires user KYC. Listed leftover that official GitHub opens for Lombard Sui move packages and Starknet cairo packages is exhausted at the opened-file level. Remaining listed: none from this Lombard GitHub slice.
+
+## 2026-09-03: Hedera leftover json-rpc-relay leftover (`2b51a98`)
+
+Immunefi program `hedera` ($30,000, `kyc: true`). Unique unused standing DLT
+program (updated 2026-08-31). Official clone `/tmp/hiero-json-rpc-relay` at
+`2b51a98` (`main`). Opened `src/relay/lib/eth.ts` (send / sign / accounts),
+`src/relay/lib/services/ethService/transactionService/TransactionService.ts`,
+`src/relay/lib/precheck.ts`, `src/relay/lib/clients/sdkClient.ts`
+(`submitEthereumTransaction` / `createFile`), and
+`src/relay/lib/services/ethService/ethCommonService/CommonService.ts`
+paymaster gate. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `eth_sendRawTransaction` that spends another account;
+`eth_sendTransaction` / `eth_sign` / `eth_signTransaction` that signs as a
+victim; paymaster / operator wrap that pulls user funds; `eth_call` that
+submits a value transfer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `eth_sendTransaction`, `eth_sign`, and `eth_signTransaction` return
+  `UNSUPPORTED_METHOD`. `eth_accounts` is always `[]`.
+- `sendRawTransaction` parses with `ethers.Transaction.from`. `from` is the
+  recovered signer. Stateless precheck then per-sender locks. Consensus
+  submission is `EthereumTransaction` wrapping that signed payload. The
+  operator is the HAPI payer, not the Ethereum sender.
+- `createFile` (HFS sidecar for large callData) is operator-keyed. It does
+  not move user HBAR / HTS.
+- Paymaster (`setMaxGasAllowanceHbar`) is operator / configured paymaster
+  HBAR. Default `PAYMASTER_ENABLED` is `false`; dedicated maps are
+  whitelist-only. That is operator budget, not user funds.
+- `receiverAccount` rejects `receiver_sig_required`. `eth_call` is a
+  query (`call` immediately, no consensus transfer).
+
+Do not file operator-paid EthereumTransaction wraps, default-off paymaster
+gas allowance, HFS callData files, or unsupported `eth_sendTransaction` as
+stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed:
+`hiero-consensus-node`, `hiero-mirror-node`, `hiero-cryptography`,
+`hiero-sdk-go` / `hiero-sdk-js` / `hiero-sdk-java`, and the hashed
+transaction-tool website leftover.
