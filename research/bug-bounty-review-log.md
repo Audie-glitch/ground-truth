@@ -32692,6 +32692,226 @@ level.
 Remaining listed:
 Bridge UI.
 
+## 2026-09-03: Chainlink leftover remaining VRF leftover (`c75c193`)
+
+Immunefi program
+`chainlink`
+($3,000,000,
+`kyc: true`).
+Already leftover-logged
+as CCIP EVM.
+Official
+`smartcontractkit/chainlink-evm`
+HEAD
+`c75c193`.
+Extract
+`/tmp/cl-evm`
+via jsDelivr.
+Functions /
+Automation /
+Keystone / LLO
+CDN fetch 404
+at this SHA —
+leftover this
+slice as VRF
+only. No
+mainnet
+interaction.
+
+Files:
+`contracts/src/v0.8/vrf/VRFCoordinatorV2_5.sol`,
+`contracts/src/v0.8/vrf/VRFCoordinatorV2.sol`.
+
+Checked for: a
+stranger
+`requestRandomWords`
+billed to
+another
+consumer's
+subscription;
+a commitment
+swap so
+fulfill
+delivers to a
+different
+consumer; a
+stranger
+`cancelSubscription`
+that drains
+LINK to the
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `requestRandomWords`
+  on V2.5
+  requires
+  `s_consumers[msg.sender][subId].active`
+  and writes a
+  commitment
+  bound to
+  `msg.sender`.
+  `fulfillRandomWords`
+  is
+  permissionless
+  after a valid
+  VRF proof plus
+  matching
+  commitment,
+  then delivers
+  entropy to
+  `rc.sender`.
+- `cancelSubscription`
+  /
+  `requestSubscriptionOwnerTransfer`
+  are
+  `onlySubOwner`.
+  `ownerCancelSubscription`
+  is
+  `onlyOwner`.
+  `oracleWithdraw`
+  pays the
+  registered
+  oracle.
+
+Do not file
+permissionless
+fulfill of a
+valid VRF
+proof to the
+recorded
+consumer.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+Functions /
+Automation if a
+later SHA opens;
+CCIP Solana /
+Sui / Aptos;
+OCR plugins;
+core node;
+LibOCR; owner
+contracts;
+websites.
+
+## 2026-09-03: Stacks leftover pox-5 leftover (`1aa80f89`)
+
+Immunefi program
+`stacks`
+($250,000,
+`kyc: true`).
+Unique unused
+standing program.
+Official
+`stacks-network/stacks-core`
+HEAD
+`1aa80f89`.
+Extract
+`/tmp/pox-5.clar`
+via jsDelivr.
+`lockup.clar`
+is a 6-line
+stub. Leftover
+this slice as
+pox-5 money
+path. No
+mainnet
+interaction.
+
+Files:
+`stackslib/src/chainstate/stacks/boot/pox-5.clar`.
+
+Checked for: a
+stranger
+`stake` /
+`stake-update`
+that locks
+another
+account's STX;
+a stranger
+`unstake` /
+`announce-l1-early-exit`
+that hijacks a
+stake; a
+`claim-rewards`
+that pays sBTC
+to an
+arbitrary
+caller.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `stake` /
+  `stake-update`
+  /
+  `unstake`
+  bind
+  `tx-sender`
+  and check
+  `stx-account`
+  of
+  `tx-sender`.
+  `announce-l1-early-exit`
+  requires
+  `contract-caller
+  == tx-sender
+  == staker`.
+- `setup-bond`
+  is
+  `bond-admin`.
+  `register-for-bond`
+  requires
+  `tx-sender`
+  on the
+  allowlist.
+- `claim-rewards`
+  pays
+  `contract-caller`
+  (the signer)
+  via
+  `as-contract`
+  sBTC
+  transfer of
+  computed
+  rewards.
+  `grant-signer-key`
+  is
+  `contract-caller
+  == signer-manager`
+  plus a
+  secp256k1
+  grant sig.
+
+Do not file
+signer-claimed
+rewards as
+stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+costs.clar /
+lockup if a
+later SHA
+opens a real
+lockup;
+stacks-node /
+stackslib /
+stacks-signer;
+stacks-common;
+Clarity VM.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -34364,6 +34584,22 @@ Avail leftover ETH bridge leftover
 Fusion / AvailWormhole; KYC) is
 logged (remaining listed is
 Bridge UI);
+Chainlink leftover remaining VRF leftover
+(`c75c193` VRFCoordinatorV2_5 /
+VRFCoordinatorV2; KYC) is
+logged (remaining listed is
+Functions / Automation if a
+later SHA opens; CCIP Solana /
+Sui / Aptos; OCR plugins;
+core node; LibOCR; owner
+contracts; websites);
+Stacks leftover pox-5 leftover
+(`1aa80f89` pox-5.clar; KYC) is
+logged (remaining listed is
+costs.clar / lockup if a
+later SHA opens; stacks-node /
+stackslib / stacks-signer;
+stacks-common; Clarity VM);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
