@@ -1617,14 +1617,55 @@ Result: no user-exploitable finding.
 
 Not submitted.
 
+## 2026-09-03: Sky emergency clip / OSM / DDM / splitter / SPBEAM (`45651a4`)
+
+Same Immunefi program (`sky`) and clone `/tmp/dss-emergency-spells`.
+No mainnet interaction. Completes the in-scope emergency-spell
+tree after the hub + stUSDS / lite-psm / line-wipe pass.
+
+Files: `src/clip-breaker/{Single,Grouped,Multi}ClipBreakerSpell.sol`,
+`src/osm-stop/{Single,Multi}OsmStopSpell.sol`,
+`src/ddm-disable/SingleDdmDisableSpell.sol`,
+`src/splitter-stop/SplitterStopSpell.sol`,
+`src/spbeam-halt/SPBEAMHaltSpell.sol`,
+`src/line-wipe/MultiLineWipeSpell.sol`.
+
+Checked for: a multi-ilk batch that skips the hat check;
+`setBreaker` / `stop` on `address(0)` moving funds; swallowing
+`not-authorized` so an unhatted poke still halts some ilks;
+empty-registry `count() - 1` underflow used as a range.
+
+Result: no user-exploitable finding.
+
+- Single / grouped clip, OSM, DDM, splitter, and SPBEAM all
+  call the matching MOM. Integration tests for the hub
+  already show MOM reverts `not-authorized` unless the
+  spell is the `MCD_ADM` hat. Factories deploy unhatted
+  copies that cannot mutate production.
+- Multi clip / OSM catch per-ilk failures and `require` if
+  the reason is `ClipperMom/not-authorized` or
+  `osm-mom/not-authorized`, so an unhatted poke cannot
+  silently skip the auth check. Other reasons emit `Fail`
+  and continue (gas-limit escape hatch).
+- Multi line wipe does **not** swallow: `lineMom.wipe`
+  reverts the whole `schedule` if the hat is missing.
+  Ilks with `lineMom.ilks(ilk) == 0` are skipped.
+- `xlip` / `osms` / `plan` of `address(0)` makes `done()`
+  true and the MOM call would revert, not move tokens.
+- Batch helpers use `maxEnd = count() - 1`. An empty
+  registry underflows `maxEnd`; `list(start, end)` then
+  depends on the registry and is a poke DoS, not an
+  extract. Live MCD ilk count is not zero.
+
+`dss-emergency-spells` at `45651a4` is exhausted.
+
+Not submitted.
+
 ## Next candidates
 
-Sky PAS / SBEBeam, emergency-spell hub + stUSDS / lite-psm /
-line-wipe, diamond-pau core + CCTP/4626/7540/OTC/transfer/
-Ethena, and Intuition MultiVault / AtomWallet / curves /
-emissions / registry are exhausted. Remaining Sky:
-clip-breaker / osm-stop / ddm-disable / splitter-stop /
-spbeam-halt, then other `diamond-pau` facets (Aave,
+Sky PAS / SBEBeam, the full `dss-emergency-spells` tree, and
+diamond-pau core + CCTP/4626/7540/OTC/transfer/Ethena are
+exhausted. Remaining Sky: other `diamond-pau` facets (Aave,
 LayerZero, Pendle, Maple, farms, wraps). Remaining
 Intuition: `TrustSwapAndBridgeRouter` (Base, not in the v2
 repo). Superteam API rechecked 02:50 UTC 3 Sep: 28 open
