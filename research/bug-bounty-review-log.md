@@ -25521,6 +25521,132 @@ referrals / route-
 executor / EVM
 adapters.
 
+## 2026-09-03: Velvet Capital leftover (Sourcify)
+
+Immunefi program
+`Velvet Capital`
+($51,000, `kyc: false`).
+Unique no-KYC listed
+slice not previously
+logged. 28 of 30 BSC
+listed addresses
+Sourcify-open (chain
+56). Extract
+`/tmp/velvet`. No
+mainnet interaction.
+
+Listed Sourcify-open:
+`IndexSwap` /
+`OffChainIndexSwap` /
+`Exchange` /
+`Rebalancing` /
+`OffChainRebalance` /
+`RebalanceAggregator` /
+`FeeModule` /
+`VelvetSafeModule` /
+`AssetManagerConfig` /
+`PriceOracle` /
+`IndexSwapLibrary` /
+`FeeLibrary` /
+`RebalanceLibrary` /
+Pancake / Venus / Ape /
+BiSwap / Wombat / Beefy
+handlers /
+`ZeroExHandler` /
+`OneInchHandler` /
+`ParaswapHandler`. Two
+IndexSwap /
+OffChainRebalance
+instances share the
+same impl source.
+
+Checked for: stranger
+`investInFund` that
+mints to the caller
+from another user's
+transfer; `withdrawFund`
+that pays without
+burning the caller;
+Exchange
+`_pullFromVault`
+without
+INDEX_MANAGER_ROLE;
+VelvetSafeModule
+`executeWallet` by a
+non-owner; handler
+`redeem` that pulls
+from a vault.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `investInFund` /
+  `investInFundOffChain`
+  pull `msg.sender` (or
+  `msg.value`) then mint
+  to that sender.
+  `withdrawFund` /
+  `redeemTokens` burn
+  the caller and pay
+  that caller (or hold
+  redeemed underlyings
+  in the caller's
+  mapping).
+- Exchange vault pulls
+  and swaps are
+  `onlyIndexManager`.
+  VelvetSafeModule
+  `executeWallet` /
+  `executeWalletDelegate`
+  are `onlyOwner`; setup
+  transfers ownership
+  to Exchange.
+- Rebalance /
+  aggregator vault
+  pulls are
+  `onlyAssetManager`.
+  IndexSwap mint/burn
+  shares are
+  `MINTER_ROLE`.
+- Handlers operate on
+  tokens already on the
+  handler. Public
+  `redeem` / aggregator
+  `swap` cannot pull
+  the Gnosis Safe.
+- `chargeFees` is
+  public and mints fee
+  shares to the
+  configured
+  treasuries.
+
+Do not file first-
+depositor inflation,
+public fee mint to
+treasury, handler
+leftover grief, asset-
+manager rebalance /
+pause, owner UUPS
+upgrade, or public
+unpause after 15
+minutes.
+
+Not submitted.
+Listed leftover is the
+Sourcify-open BSC
+IndexSwap / Exchange /
+rebalance / fee / Safe
+module / handlers.
+Remaining listed:
+`0xB9669646EBb93A03dB67CC05f2894487C9923775`
+and
+`0xE61472Ce45e559830ECF12F6a215Cd732F4D798B`
+Sourcify 404.
+Velvet Capital V2 is a
+separate KYC program.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -25930,6 +26056,11 @@ dHEDGE leftover (Sourcify ETH / OP /
 Base / Arb `PoolFactory`) is logged
 (remaining listed is Polygon factory
 Sourcify 404).
+Velvet Capital leftover (Sourcify BSC
+IndexSwap / Exchange / rebalance /
+fee / Safe module / handlers) is
+logged (remaining listed is two BSC
+addresses Sourcify 404).
 Remaining OZ hooks: none of the money-moving
 general/fee/base files. Leather still requires a
 working PoC against the published store build; do not
@@ -26346,6 +26477,14 @@ ETH / OP / Base / Arb
 `PoolFactory`) is logged
 (remaining listed is
 Polygon factory Sourcify
+404);
+Velvet Capital leftover
+(Sourcify BSC IndexSwap /
+Exchange / rebalance /
+fee / Safe module /
+handlers) is logged
+(remaining listed is two
+BSC addresses Sourcify
 404);
 Beets stS
 (`877087b`) + token

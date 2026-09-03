@@ -119,9 +119,15 @@ Lido aragon-apps Agreement leftover
 Lido leftovers in already-opened trees
 are exhausted).
 Nexus Mutual cover / pool / staking leftover
+(`9e88562`) is logged. Nexus Mutual claims leftover
 (`9e88562`) is logged (remaining listed
-GitHub is Claims / Assessment / Ramm /
-LimitOrders / CoverBroker / legacy).
+GitHub is Assessment / Ramm / LimitOrders /
+CoverBroker / legacy).
+Hydration DCA leftover (`672e02f`) is logged.
+Hydration pool leftover (`672e02f`) is logged
+(remaining listed is liquidity-mining /
+staking / LBP / referrals / route-executor /
+EVM adapters).
 StakeWise Mainnet leftover (Sourcify
 Pool / sETH2 / rETH2 / Oracles /
 MerkleDistributor / Vesting / genesis
@@ -148,6 +154,11 @@ vaults Sourcify 404).
 dHEDGE leftover (Sourcify ETH / OP /
 Base / Arb `PoolFactory`) is logged
 (remaining listed is Polygon factory
+Sourcify 404).
+Velvet Capital leftover (Sourcify BSC
+IndexSwap / Exchange / rebalance / fee /
+Safe module / handlers) is logged
+(remaining listed is two BSC addresses
 Sourcify 404).
 1inch cross-chain-swap leftover
 (`ada243b`) is logged. 1inch Solana
