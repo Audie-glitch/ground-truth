@@ -32843,6 +32843,17 @@ SyrupRouter; KYC) is logged
 (remaining listed is
 factories / cyclical WM /
 strategies);
+Granite leftover money-path
+leftover (Hiro borrower /
+LP / flash-loan /
+liquidator / state /
+withdrawal-caps / staking;
+KYC) is logged (remaining
+listed is governance /
+meta-governance / listed
+Pyth+Wormhole adapters and
+the website);
+
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
@@ -40423,3 +40434,219 @@ listed: minter,
 VELO, sink stack,
 and reward
 factories.
+
+## 2026-09-03: Granite leftover money-path leftover (Hiro)
+
+Immunefi program
+`granite-protocol`
+($100,000, `kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Two live
+Stacks markets from
+the unofficial
+asset list: aeUSDC
+market
+`SP26NGV9AFZBX7XBDBS2C7EC7FCPSAV9PKREQNMVS`
++ state
+`SP35E2BBMDT2Y1HB0NTK139YBGYV3PAPK3WA8BRNA`
+(publish height
+2853789 / 503684)
+and usdCx market
+`SP3M2BYF7RGF8WKW5FVDNJ6WR8D7AR9BHDXAKPXZE`
+(publish height
+5466162). Official
+repo
+`GraniteProtocol/core-v1`
+at `518603e`. Source
+pulled read-only from
+Hiro (`/tmp/granite-src`).
+No mainnet writes.
+
+Files:
+`borrower-v1`,
+`liquidity-provider-v1`,
+`flash-loan-v1`,
+`liquidator-v1`,
+`state-v1`,
+`withdrawal-caps-v1`,
+`staking-v1`,
+`math-v1`,
+`linear-kinked-ir-v1`,
+`staking-reward-v1`.
+
+Checked for: a
+stranger LP
+`deposit` /
+`withdraw` that
+mints or burns
+another account's
+shares; first-
+depositor share
+inflation via
+donation;
+`borrow` /
+`add-collateral` /
+`remove-collateral`
+that move a
+victim's position
+without
+`tx-sender`;
+`repay` that
+pulls a non-payor;
+flash-loan that
+skips repay;
+liquidation of a
+healthy account
+or same-block
+borrow; staking
+`finalize-unstake`
+that pays a
+non-owner ticket.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- State
+  `add-assets` /
+  `remove-assets` /
+  `transfer-from` /
+  `transfer-to` /
+  borrow / repay /
+  collateral /
+  liquidate writers
+  require
+  `allowed-contracts`.
+  LP deposit pulls
+  `contract-caller`
+  and mints the
+  named recipient.
+  Withdraw / redeem
+  burn
+  `contract-caller`
+  shares (withdraw
+  rounds shares up;
+  redeem rounds
+  assets down) and
+  pay the named
+  recipient. Share
+  price uses the
+  `total-assets`
+  var, not the raw
+  SIP-010 balance,
+  so a donation
+  does not inflate
+  shares.
+  `increase-total-assets`
+  is testnet-only.
+  The newer usdCx
+  LP also rejects
+  a 1-asset first
+  deposit.
+- `borrow` /
+  `add-collateral` /
+  `remove-collateral`
+  bind
+  `maybe-user` to
+  `tx-sender` (else
+  `contract-caller`).
+  Collateral add
+  pulls `user`.
+  Collateral remove
+  and borrow pay
+  `user` after an
+  LTV check on
+  Pyth prices.
+  `repay` may name
+  `on-behalf-of`
+  but pulls
+  `contract-caller`.
+- Flash loan
+  transfers the
+  market asset to
+  `contract-caller`,
+  callbacks an
+  allow-listed
+  (or
+  governance-enabled
+  `allow-any`)
+  contract, then
+  pulls principal
+  plus fee. Fee
+  config is
+  governance-only.
+- Liquidation
+  requires health
+  `< 1.0`, a
+  later block than
+  `borrowed-block`,
+  and post-health
+  `<= 1.005`.
+  Collateral pays
+  `contract-caller`;
+  repay pulls the
+  liquidator.
+  Same-block
+  liquidation is
+  rejected.
+- Withdrawal caps
+  are LP / borrower
+  / liquidator
+  callers only.
+  Bucket refill
+  and decay are
+  not a theft
+  path.
+- Staking
+  `stake` pulls LP
+  from
+  `contract-caller`.
+  `initiate-unstake`
+  burns that
+  caller's staked
+  LP and writes
+  the ticket under
+  the caller.
+  `finalize-unstake`
+  pays only that
+  caller's ticket
+  after
+  `finalization-at`.
+  `increase-lp-staked-balance`
+  / slash are
+  allowed-contract
+  only.
+
+Do not file
+governance pause /
+reserve withdraw /
+allowed-contract
+admin, Pyth feed
+updates signed by
+Pyth, or
+permissionless
+liquidation of an
+unhealthy account
+as stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Hiro opens
+for these money-
+path types is
+exhausted at the
+opened-contract
+level. Remaining
+listed: governance
+/ meta-governance
+(large admin
+trees), listed
+Pyth + Wormhole
+adapter rows
+(third-party),
+and the website.
