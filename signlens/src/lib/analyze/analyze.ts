@@ -81,6 +81,14 @@ function counterpartyFindings(info: AddressInfo, role: string): Finding[] {
   return out;
 }
 
+/** "an unlimited amount of your USDC" or "250 USDC from your wallet", without repeating the symbol. */
+function holding(amount: bigint, token: TokenInfo | null, fallbackName: string): string {
+  const name = token?.symbol ?? fallbackName;
+  if (isUnlimited(amount)) return `an unlimited amount of your ${name}`;
+  const text = formatAmount(amount, token?.decimals, token?.symbol);
+  return token?.symbol ? `${text} from your wallet` : `${text} of your ${name}`;
+}
+
 function amountFinding(amount: bigint, token: TokenInfo | null, verb: string): Finding | null {
   if (isUnlimited(amount)) {
     return {
@@ -175,7 +183,7 @@ async function analyzeTransaction(tx: TxRequest, enricher: Enricher): Promise<Re
         token = await tokenInfo(enricher, chainId, tokenAddr);
         counterparty = await addressInfo(enricher, chainId, spender);
         decoded.push({ name: "token", value: tokenAddr, note: token.symbol }, { name: "spender", value: spender, note: counterparty.label }, { name: "amount", value: formatAmount(amount, token.decimals, token.symbol) }, { name: "expiration", value: formatDeadline(expiration).text });
-        summary = `Via Permit2, lets ${describe(counterparty, "the spender")} move ${formatAmount(amount, token.decimals, token.symbol)} of your ${token.symbol ?? "tokens"}, ${formatDeadline(expiration).text}.`;
+        summary = `Via Permit2, lets ${describe(counterparty, "the spender")} move ${holding(amount, token, "tokens")}, ${formatDeadline(expiration).text}.`;
         const af = amountFinding(amount, token, "Permit2 allowance");
         if (af) findings.push(af);
         const df = deadlineFinding(expiration, "The allowance");
@@ -195,7 +203,7 @@ async function analyzeTransaction(tx: TxRequest, enricher: Enricher): Promise<Re
       } else {
         decoded.push({ name: "amount", value: formatAmount(amount, token.decimals, token.symbol) });
         const verb = dec.functionName === "increaseAllowance" ? "raises" : "sets";
-        summary = `${verb === "sets" ? "Lets" : "Additionally lets"} ${describe(counterparty, "the spender")} move ${formatAmount(amount, token.decimals, token.symbol)} of your ${token.symbol ?? (tx.to ? short(tx.to) : "this token")}, with no expiry.`;
+        summary = `${verb === "sets" ? "Lets" : "Additionally lets"} ${describe(counterparty, "the spender")} move ${holding(amount, token, tx.to ? short(tx.to) : "this token")}, with no expiry.`;
         const af = amountFinding(amount, token, "token allowance");
         if (af) findings.push(af);
         if (amount === 0n) findings.push({ severity: "info", title: "Revocation", detail: "An allowance of zero removes the spender's permission." });
@@ -262,7 +270,7 @@ async function analyzeTransaction(tx: TxRequest, enricher: Enricher): Promise<Re
       token = await tokenOfTarget();
       counterparty = await addressInfo(enricher, chainId, spender);
       decoded.push({ name: "owner", value: owner }, { name: "spender", value: spender, note: counterparty.label }, { name: "value", value: formatAmount(value, token.decimals, token.symbol) }, { name: "deadline", value: formatDeadline(deadline).text });
-      summary = `Submits a signed permit letting ${describe(counterparty, "the spender")} move ${formatAmount(value, token.decimals, token.symbol)} of ${short(owner)}'s ${token.symbol ?? "tokens"}.`;
+      summary = `Submits a signed permit letting ${describe(counterparty, "the spender")} move ${isUnlimited(value) ? "an unlimited amount of" : formatAmount(value, token.decimals, token.symbol) + " of"} ${short(owner)}'s ${token.symbol ?? "tokens"}.`;
       const af = amountFinding(value, token, "permit allowance");
       if (af) findings.push(af);
       findings.push(...counterpartyFindings(counterparty, "Spender"));
@@ -363,10 +371,10 @@ async function analyzeTypedData(td: TypedDataRequest, enricher: Enricher): Promi
     counterparty = await addressInfo(enricher, chainId, spender);
     if (verifying) token = await tokenInfo(enricher, chainId, verifying);
     const unlimited = "allowed" in m ? Boolean(m.allowed) : isUnlimited(big(m.value));
-    const amountText = "allowed" in m ? (m.allowed ? "an unlimited amount" : "nothing") : formatAmount(big(m.value), token?.decimals, token?.symbol);
+    const amountText = "allowed" in m ? (m.allowed ? `an unlimited amount of your ${token?.symbol ?? domainName ?? "tokens"}` : "nothing") : holding(big(m.value), token, domainName ?? "tokens");
     const deadline = big(m.deadline ?? m.expiry);
     decoded.push({ name: "spender", value: spender, note: counterparty.label }, { name: "amount", value: amountText }, { name: "deadline", value: formatDeadline(deadline).text });
-    summary = `Signs a gasless approval letting ${describe(counterparty, "the spender")} move ${amountText} of your ${token?.symbol ?? domainName ?? "tokens"}. Nothing is sent now; the spender can submit this later.`;
+    summary = `Signs a gasless approval letting ${describe(counterparty, "the spender")} move ${amountText}. Nothing is sent now; the spender can submit this later.`;
     findings.push({ severity: "medium", title: "Off-chain approval", detail: "Permit signatures cost no gas and do not appear in your wallet activity. The spender redeems them whenever they choose before the deadline." });
     if (unlimited) findings.push({ severity: "high", title: "Unlimited permit", detail: "The permitted amount is unlimited." });
     const df = deadlineFinding(deadline, "The permit");
