@@ -34716,3 +34716,146 @@ not independently
 matched for the
 Sourcify-404
 rows.
+
+## 2026-09-03: Kiln On-Chain v1 leftover (Sourcify)
+
+Immunefi program
+`kiln-on-chain-v1`
+($1,000,000, `kyc: true`).
+Unique unused standing
+program. Not previously
+logged. Ethereum
+Sourcify `exact_match`
+on every listed
+mainnet row.
+StakingContract
+`0x0A7272e8573aea8359FEC143ac02AED90F822bD0`
+behind TUPProxy
+`0x1e68238ce926dec62b3fbc99ab06eb1d85ce0270`
+impl
+`StakingContract`.
+ConsensusLayerFeeDispatcher
+`0x462Dd07A79e5DDfBe0C171449C5c01788d5d03C3`
+behind TUPProxy
+`0xE8EC6F702D68ded71112031D78bBFf959c7234C7`.
+ExecutionLayerFeeDispatcher
+`0xca4DD914fA713214844c84F153A5e1627536a7fC`
+behind TUPProxy
+`0x72b4C52f18f52EbA3E4290a002dF7c387427b058`.
+FeeRecipient
+implementation
+`0x933fBfeb4Ed1F111D12A39c2aB48657e6fc875C6`.
+Skipped listed
+Goerli testnet
+rows. No mainnet
+writes. Extract
+`/tmp/kiln-v1`.
+
+Files:
+`src/contracts/StakingContract.sol`,
+`src/contracts/ConsensusLayerFeeDispatcher.sol`,
+`src/contracts/ExecutionLayerFeeDispatcher.sol`,
+`src/contracts/FeeRecipient.sol`,
+`src/contracts/TUPProxy.sol`.
+
+Checked for: a
+stranger deposit
+that sets another
+address as
+withdrawer;
+`setWithdrawer`
+without the
+current owner;
+fee withdraw that
+pays the caller;
+permissionless
+`dispatch` that
+redirects a
+validator's ETH;
+FeeRecipient
+`init` hijack;
+proxy upgrade /
+pause by a
+non-admin.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `deposit` /
+  `receive` require
+  `msg.value` a
+  multiple of 32
+  ETH and write
+  withdrawer =
+  `msg.sender`.
+  ETH is forwarded
+  to the official
+  deposit contract
+  with 0x01
+  credentials of
+  the CREATE2 CL
+  fee recipient.
+- `setWithdrawer`
+  requires
+  customization
+  enabled and
+  `withdrawers[root]
+  == msg.sender`.
+- EL / CL fee
+  withdraws are
+  withdrawer-or-
+  admin. Funds
+  still go to the
+  stored withdrawer
+  via dispatcher
+  split. Admin
+  cannot redirect.
+- FeeRecipient
+  `withdraw` is
+  permissionless
+  but `dispatch`
+  pays
+  `getWithdrawerFromPublicKeyRoot`.
+  Clone + `init`
+  happen in the
+  same staking
+  transaction.
+- CL dispatcher
+  exempts up to
+  32 ETH once
+  when exit is
+  requested and
+  balance >= 31
+  ETH.
+  `toggleWithdrawnFromPublicKeyRoot`
+  is CL-dispatcher
+  only.
+- TUPProxy pause /
+  upgrade are
+  `ifAdmin`
+  Transparent
+  proxy admin.
+
+Do not file
+admin fee /
+operator /
+treasury
+commission, or
+permissionless
+trigger of a
+correctly-routed
+fee dispatch, as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Kiln
+On-Chain v1
+mainnet leftover
+is exhausted.
+Remaining listed:
+Goerli testnet
+rows only (skip).
