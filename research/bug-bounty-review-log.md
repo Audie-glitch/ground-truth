@@ -7411,8 +7411,74 @@ finding. Not submitted.
 
 Remaining Balancer 23 Jun
 rows: ProtocolFeeController
-and the V3 factory / oracle
-factory set. Not submitted.
+(this pass below) and the V3
+factory / oracle factory set.
+Not submitted.
+
+## 2026-09-03: Balancer ProtocolFeeController (Sourcify)
+
+Immunefi program `balancer`
+($1,000,000, `kyc: false`).
+23 Jun 2026 leftover after
+Router + CompositeLiquidityRouter:
+ProtocolFeeController (V2)
+`0x212F…C2879`. Sourcify
+exact match, verified
+2025-05-21. Extract under
+`/tmp/balancer/pfc`. No
+mainnet interaction.
+
+Files:
+`contracts/{ProtocolFeeController,
+VaultGuard}.sol`.
+
+Checked for: fee `collect` /
+`withdraw` that pays a
+non-creator; split math that
+credits the caller; `migratePool`
+that overwrites live fee
+balances.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `collectAggregateFees` is
+  permissionless and only
+  pulls the Vault’s aggregate
+  cut into this contract
+  (`onlyVault` hook).
+- Protocol withdraw is
+  `authenticate`. Creator
+  withdraw with a recipient
+  is `onlyPoolCreator`; the
+  public overload pays
+  `_getPoolCreator(pool)`.
+- Split math reconstructs
+  the pre-aggregate notional
+  then assigns protocol
+  first; underflow on a
+  rounding inversion
+  fail-closes.
+- `migratePool` copies
+  percentages from the
+  current Vault controller
+  and cannot run when this
+  contract is already the
+  controller. Fee balances
+  are not copied.
+
+Remaining Balancer 23 Jun
+rows: V3 factory / oracle
+factory set
+(FixedPriceLBPoolFactory,
+Gyro2CLPPoolFactory,
+StableLPOracleFactory,
+LBPoolFactory, Stable /
+Weighted / ReClamm /
+StableSurge factories,
+EclpLPOracleFactory,
+GyroECLPPoolFactory). Not
+submitted.
 
 ## Next candidates
 
@@ -7541,10 +7607,10 @@ LL+veYFI distributors
 remaining Yearn is Vault
 V3.1.0 if wanted. Balancer V3
 Router + CompositeLiquidityRouter
-(23 Jun, Sourcify) are logged;
-remaining Balancer is
-ProtocolFeeController /
-factories. Remaining
++ ProtocolFeeController (23 Jun,
+Sourcify) are logged; remaining
+Balancer is the V3 factory /
+oracle factory set. Remaining
 Lista leftover slices (new-contracts
 oracles / VeLista lock / airdrop /
 CDP ResilientOracle + pips at
