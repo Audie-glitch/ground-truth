@@ -190,8 +190,17 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Governor Bravo /
   BondTeller / BondCallback +
   CD Auctioneer / Cooler
-  leftovers / RANGE / YRF
-  (`3f918a0`), and
+  leftovers / RANGE / YRF +
+  DEPOS / CDEPO
+  (`3f918a0`), Sky
+  StarGuard +
+  SubProxyMethods + PAU
+  assembler, Yearn
+  Accountant `0x5A74…DE69`,
+  Zest Protocol V2 market
+  + vault + DAO / zvstBTC
+  (`f2fce52`; listed
+  Clarity exhausted), and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

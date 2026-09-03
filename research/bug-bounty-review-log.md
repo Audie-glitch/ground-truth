@@ -10055,12 +10055,18 @@ Listed GammaSwap Solidity
 is exhausted. Do not
 re-review factory /
 DeltaSwap / May 2026
-vault. Next leftover:
+vault. Olympus CDEPO is
+the official DEPOS
+module and is logged
+below. Next leftover:
 StackingDAO cores,
 TermMax adapters, Twyne
-Sourcify-404 vaults, or
-Olympus CDEPO if source
-appears. Not submitted.
+Sourcify-404 vaults, Sky
+`PAUFactory` / `Kicker` /
+`sky-oapp-oft`, or Yearn
+3.0.4 Tokenized Strategy
+/ Vault V3. Not
+submitted.
 
 ## 2026-09-03: Zest Protocol V2 DAO + zvstBTC strategy leftover (`f2fce52`)
 
@@ -10193,6 +10199,309 @@ is StackingDAO cores
 (separate Immunefi
 program), not a second
 Zest pass. Not submitted.
+
+## 2026-09-03: Olympus DEPOS / CDEPO (`3f918a0`)
+
+Same Immunefi program
+`olympus` ($3,333,333,
+`kyc: false`, critical
+only). Listed leftover
+CDEPO
+`0x02331A4c97a4841084dF54d7c0eC04DD3f1A9F1c`
+is still Sourcify 404.
+Official
+`OlympusDAO/olympus-v3`
+`3f918a0` + `env.json`
+map it to module
+`OlympusDepositPositionManager`
+(KEYCODE `DEPOS`), not a
+separate deposit vault.
+Renderer is
+`PositionTokenRenderer`.
+No state-changing txs.
+
+Files:
+`src/modules/DEPOS/{OlympusDepositPositionManager,DEPOS.v1,IDepositPositionManager,PositionTokenRenderer}.sol`,
+plus the already-logged
+`ConvertibleDepositFacility`
+/ `BaseDepositFacility`
+DEPOS call sites.
+
+Checked for: permissionless
+`mint` of conversion
+rights; `split` to a
+stranger; wrap/unwrap
+that steals an NFT;
+`transferFrom` that
+leaves `position.owner`
+and ERC721 owner
+desynced; `previewConvert`
+that overpays OHM;
+facility `convert` that
+mints without burning
+receipts.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `mint` /
+  `setRemainingDeposit` /
+  `split` /
+  `setAdditionalData` /
+  `setTokenRenderer` are
+  Kernel `permissioned`.
+  Only CDF requests
+  `mint` / `setRemainingDeposit`
+  / `split`.
+- `_create` binds
+  `operator = msg.sender`
+  (the policy). CDF
+  `createPosition` is
+  `ROLE_AUCTIONEER` and
+  mints remaining equal
+  to `DepositManager.deposit`
+  `actualAmount`.
+- CDF `split` requires
+  `position.operator ==
+  this` and
+  `position.owner ==
+  msg.sender`. DEPOS
+  `split` cannot be
+  called by the holder.
+- `wrap` / `unwrap` are
+  `onlyPositionOwner`.
+  Overridden
+  `transferFrom` updates
+  `position.owner` and
+  `_userPositions`
+  before Solmate
+  transfer. Unwrapped
+  IDs revert
+  `DEPOS_NotWrapped`.
+- CDF `convert` requires
+  `position.owner ==
+  msg.sender`,
+  `operator == this`,
+  decrements remaining,
+  then
+  `DepositManager.withdraw`
+  receipts from the
+  caller and `MINTR.mintOhm`
+  to the caller. NFT
+  without receipts
+  cannot convert.
+- `handlePositionRedemption`
+  / cancel are
+  authorized-operator
+  only (already-logged
+  DepositRedemptionVault).
+- Renderer is view-only
+  metadata.
+
+Listed Olympus leftover
+addresses that Sourcify
+or the public tree can
+open are exhausted.
+L2 MINTR / RolesAdmin /
+deprecated LZ bridge
+copies are the same
+tree already logged.
+Not submitted.
+
+## 2026-09-03: Sky StarGuard + SubProxyMethods + PAU assembler (`707c84d` / `8ab9daf` / `c13e80f`)
+
+Immunefi program `sky`
+($10,000,000, `kyc: false`).
+Feb 2026 leftover
+`star-guard`
+`src/StarGuard.sol`
+(`main` `707c84d`).
+6 Jul leftover
+`subproxy-methods`
+`src/SubProxyMethods.sol`
+(`8ab9daf`),
+`pau-assemblers`
+`DefaultPAUAssembler.sol`
+(`dev` `c13e80f`), and
+`pau-administered-agent`
+`AdministeredAgent{,Factory}.sol`
+(`5e6b52f`). Official
+clones under
+`/tmp/sky-star-guard`,
+`/tmp/sky-subproxy-methods`,
+`/tmp/sky-pau-assembler`,
+`/tmp/sky-administered-agent`.
+No mainnet interaction.
+
+Files as named above
+plus `deploy/StarGuardInit.sol`.
+
+Checked for: permissionless
+`plot` / `exec` of an
+unwhitelisted star
+spell; `exec` that
+keeps running after a
+codehash swap;
+SubProxyMethods
+`transfer` that drains
+a SubProxy without
+`wards`; assembler
+`deploy` that keeps
+DEFAULT_ADMIN on a
+live PAU; agent
+`call` without being
+an actor.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- StarGuard `plot` /
+  `drop` / `file` /
+  `rely` / `deny` are
+  `auth`. `exec` is
+  permissionless only
+  after a plotted
+  address, matching
+  `codehash`,
+  `deadline`, and
+  `isExecutable()`.
+  `spellData` is
+  deleted before
+  `subProxy.exec`.
+  Afterwards
+  `subProxy.wards(this)
+  == 1` or the tx
+  reverts. Cantina +
+  ChainSecurity reports
+  are in-repo. Trust
+  model is PauseProxy
+  wards + trusted
+  spells.
+- SubProxyMethods is a
+  one-function
+  `delegatecall` helper.
+  Direct calls move
+  tokens from the
+  helper (empty). Via
+  `SubProxy.exec` it
+  moves SubProxy
+  inventory; that path
+  is ward-gated.
+- `DefaultPAUAssembler.deploy`
+  is permissionless
+  factory wiring. It
+  is temporary admin,
+  grants caller-supplied
+  admins, then revokes
+  itself. It cannot
+  touch an already-
+  deployed stack.
+- `AdministeredAgentFactory.deploy`
+  is a create.
+  `call` / `batchCall` /
+  `sendValue` are
+  `onlyActor`. Last
+  admin cannot be
+  removed. Actors are
+  trusted allocators
+  for a new stack.
+
+Remaining Sky leftover
+that this pass did not
+open: `diamond-pau`
+`PAUFactory.sol` (not
+in the earlier facet
+pass), `dss-flappers`
+`Kicker.sol`, and
+`sky-oapp-oft`.
+Not submitted.
+
+## 2026-09-03: Yearn Accountant leftover (Sourcify)
+
+Immunefi program
+`yearnfinance`
+($200,000, `kyc: false`).
+29 Oct 2025 leftover
+Accountant
+`0x5A74Cb32D36f2f517DB6f7b0A0591e09b22cDE69`
+is **not** the already-
+logged stYFI
+TeamAccountant
+`0x1c22…DFD6`.
+Sourcify exact match
+`Accountant.sol:Accountant`
+(verified 2024-08-08).
+Extract
+`/tmp/yearn-accountant`.
+No state-changing txs.
+
+Files: Sourcify
+`Accountant.sol`
+(`report`,
+`addVault` /
+`removeVault`,
+`redeemUnderlying`,
+`distribute`,
+config / role
+handoff).
+
+Checked for: a stranger
+adding their vault and
+pulling refunds; `report`
+approving the caller
+for the accountant’s
+entire asset balance;
+permissionless
+`redeemUnderlying` /
+`distribute`.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `addVault` /
+  `removeVault` are
+  `feeManager` or
+  `vaultManager` (the
+  modifier name
+  `onlyVaultOrFeeManager`
+  does **not** let a
+  vault add itself).
+- `report` is
+  `onlyAddedVaults`.
+  Refunds approve the
+  reporting vault for
+  `min(loss *
+  refundRatio, idle
+  asset)`. Shared-asset
+  idle (fees from
+  another vault) is
+  trusted-vault
+  inventory, not an
+  external extract.
+- `redeemUnderlying`
+  is `onlyFeeManager`.
+  `distribute` is
+  `feeManager` or
+  `feeRecipient` and
+  always pays
+  `feeRecipient`.
+- Fee caps:
+  management ≤ 2%,
+  performance ≤ 50%.
+  Health-check skips
+  are one-shot and
+  manager-set.
+
+Remaining Yearn listed
+leftover: 3.0.4
+Tokenized Strategy
+`0xD377…139c` and
+3.0.4 Vault V3
+`0xd806…00d` if a
+later pass wants those
+impls (Factory 3.0.4
+is already logged).
+Not submitted.
 
 ## Next candidates
 
@@ -10372,12 +10681,34 @@ Borrower / Composites +
 RANGE / YRF / CHREG /
 RGSTY / DLGTE / RolesAdmin
 (`3f918a0`) are logged.
-Remaining Olympus leftover
-is CDEPO `0x0233…9F1c`
-(Sourcify 404). Spark 15
+Olympus leftover CDEPO
+`0x0233…9F1c` is the
+DEPOS
+`OlympusDepositPositionManager`
+in `3f918a0` and is
+logged. Spark 15
 Jul Ethereum `UsdcVault` +
 L2 `UsdcVaultL2` are
-logged. 
+logged. Sky StarGuard
+(`707c84d`) +
+SubProxyMethods
+(`8ab9daf`) +
+DefaultPAUAssembler
+(`c13e80f`) +
+AdministeredAgent
+(`5e6b52f`) are logged.
+Remaining Sky leftover:
+`PAUFactory.sol`,
+`Kicker.sol`,
+`sky-oapp-oft`.
+Yearn Accountant
+`0x5A74…DE69` (Sourcify)
+is logged. Remaining
+Yearn listed leftover:
+3.0.4 Tokenized
+Strategy `0xD377…139c`
+and 3.0.4 Vault V3
+`0xd806…00d`. 
 Twyne June-2026 Aave V3
 operators (Sourcify) are logged;
 remaining Twyne vaults /
@@ -10408,9 +10739,14 @@ plus splitter factory
 impl `0x8e8e…6f69` and
 3.0.4 Vault Factory
 `0x770D…812F` (Sourcify)
+plus Accountant
+`0x5A74…DE69` (Sourcify)
 are logged. Remaining
-Yearn listed leftover
-rows are exhausted.
+Yearn listed leftover:
+3.0.4 Tokenized
+Strategy `0xD377…139c`
+and 3.0.4 Vault V3
+`0xd806…00d`.
 Balancer V3
 Router + CompositeLiquidityRouter
 + ProtocolFeeController +
@@ -10478,7 +10814,8 @@ implement or claim;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 Hedera Harness #8 still `open`, 0 comments;
 CreditPassport deployer still 0 Sepolia ETH
-(publicnode / `ethereum-sepolia-rpc.publicnode.com`)
+(publicnode / Tenderly /
+`ethereum-sepolia-rpc.publicnode.com`)
 / 0 tCTC
 (`rpc.cc3-testnet.creditcoin.network`);
 Superteam still 28 open listings,
@@ -10487,8 +10824,16 @@ Sherlock page 1 still only contest `1234` (Tare)
 in `SHERLOCK_JUDGING`; no programs launched
 Sep 2026 in the unofficial Immunefi dump;
 no new Immunefi GitHub SC
-assets since 2026-09-02;
-Olympus CDEPO `0x0233…9F1c` still Sourcify 404;
+assets since 2026-09-02 (247
+programs);
+Olympus DEPOS / CDEPO is
+logged (Sourcify still
+404; official tree);
+Sky StarGuard +
+SubProxyMethods + PAU
+assembler, and Yearn
+Accountant leftover are
+logged;
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
