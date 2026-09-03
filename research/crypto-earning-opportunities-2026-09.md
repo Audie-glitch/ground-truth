@@ -1,6 +1,6 @@
 # Verified crypto earning opportunities
 
-**Checked:** 3 September 2026 01:09 UTC (Agent Bounties MCP feed + Superteam public listings + Sherlock page 1 + the402 health)  
+**Checked:** 3 September 2026 02:34 UTC (DoraHacks CTC + KeeperHub #2105 GitHub search + prior 01:09 UTC feed)  
 **Scope:** Legitimate, no-capital developer work that can pay crypto or stablecoins. Competitive prizes are not guaranteed income.
 
 ## Ranked opportunities
@@ -45,7 +45,7 @@ Repository state changes quickly. Recheck issues and pull requests before claimi
 
 | Candidate | Evidence on Sep 2 | Decision |
 | --- | --- | --- |
-| [#2105: OpenAPI workflow-call response examples](https://github.com/keeperhub/keeperhub/issues/2105) | Rechecked 22:56 UTC 2 Sep via GitHub API: still `open`, no `pull_request` field, search for PRs mentioning 2105 returned 0. Last issue update 2026-08-20. | Primary candidate after Sep 6: narrow, testable, useful, and likely mergeable. |
+| [#2105: OpenAPI workflow-call response examples](https://github.com/keeperhub/keeperhub/issues/2105) | Rechecked 02:34 UTC 3 Sep: issue still `open` + `accepted` + `confirmed`. GitHub search `repo:KeeperHub/keeperhub 2105 type:pr` returned **0**. Last issue update 2026-08-20. Patch spec in `keeperhub/2105-openapi-response-examples.md`. | Primary candidate after Sep 6. Do not implement against upstream before the build window. |
 | [#2097: protocol-action preflight and idempotency](https://github.com/keeperhub/keeperhub/issues/2097) | Accepted and confirmed; no linked or open PR found. | High safety value, but check overlap with #2004 and #2207 first. |
 | [#2062: onboarding ID glossary and cross-links](https://github.com/keeperhub/keeperhub/issues/2062) | Accepted with maintainer-narrowed scope; no linked PR found. | Low-risk documentation fallback; weaker “feature” fit. |
 | [#2247: trace-method provider survey](https://github.com/keeperhub/keeperhub/issues/2247) | Accepted, good-first-issue, help-wanted, apparently unclaimed. | Useful research, but the bounty asks for a feature. |

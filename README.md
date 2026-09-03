@@ -139,7 +139,8 @@ are in [`PIPELINE.md`](PIPELINE.md). Entries built in this repository:
 | [`creditpassport/`](creditpassport/) | CreditPassport: Attestcoin-verified cross-chain payment history and policy-capped credit lines on Creditcoin (contracts, agent, web, deck) | BUIDL CTC 2026 Fall, deadline Sep 13 | Built and proven against the live verifier; awaiting a funded testnet key for deployment. See `creditpassport/SUBMISSION.md`. |
 | [`signlens/`](signlens/) | SignLens: pre-signature inspector for wallet requests | 3rd-Web-Hack (Devpost), deadline Sep 27 | Built, tested, demo recorded. See `signlens/SUBMISSION.md`. |
 | [`x402-api/`](x402-api/) | Statement PDFs to reconciled CSV, paid per page over x402 | ETHOnline 2026, Sep 4-16 | Design only until the window opens. |
-| [`keeperhub/`](keeperhub/) | Design for issue #2240 (state-threshold trigger) and the elizaOS `plugin-keeperhub` main-track plan | KeeperHub Agent Economy hackathon, Sep 6-18 | Designs ready; implementation starts Sep 6. |
+| [`keeperhub/`](keeperhub/) | #2240 design, elizaOS main-track plan, and the #2105 OpenAPI examples patch spec | KeeperHub Agent Economy hackathon, Sep 6-18 | Designs ready; no KeeperHub source until Sep 6. |
+| `/earn` | Dated window board for the live earning paths | This repo | Open windows ranked in code; not a payout. |
 
 Bug-bounty target selection and review notes: [`research/bug-bounty-review-log.md`](research/bug-bounty-review-log.md).
 
@@ -159,6 +160,8 @@ Bug-bounty target selection and review notes: [`research/bug-bounty-review-log.m
   user funds.
 - [`research/goal-evidence-matrix.md`](research/goal-evidence-matrix.md) —
   requirement-by-requirement completion evidence and unresolved blockers.
+- [`research/ethonline-start-checklist.md`](research/ethonline-start-checklist.md) —
+  what may be built from 4 Sep 16:00 UTC, and what must wait.
 - [`research/phantom-wallet-blocker-2026-09.md`](research/phantom-wallet-blocker-2026-09.md) —
   device-code login succeeded; Phantom KMS still refuses the DCR app
   (`whitelist-disabled`). No agent address yet.

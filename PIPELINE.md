@@ -57,10 +57,13 @@ share the username.
 - `creditpassport/agent`: type-checks, unit tests pass, verified live against
   Creditcoin testnet chain info (Sepolia attested ~36 blocks behind head).
 - `keeperhub/2240-state-threshold-trigger-design.md`: ready to post.
+- `keeperhub/2105-openapi-response-examples.md`: failing-test-first patch spec for the other feature-bounty candidate. Rechecked 3 Sep: still 0 PRs.
 - `creditpassport/web`: passport dashboard, verified against the local demo chain.
 - `creditpassport/docs/deck.pdf`: 10-slide deck; `creditpassport/SUBMISSION.md`:
   deployment commands, form answers, and the human-only steps.
-- `research/demand-list-triage.md` and `x402-api/DESIGN.md`: the ETHOnline entry.
+- `research/demand-list-triage.md`, `x402-api/DESIGN.md`, and
+  `research/ethonline-start-checklist.md`: the ETHOnline entry (still design-only).
+- `/earn` on the Ground Truth app: dated open/closed windows for every live path.
 - `signlens/`: the 3rd-Web-Hack entry, working with live on-chain checks; demo video recorded.
 - `research/bug-bounty-review-log.md`: Immunefi target selection method and a
   90-minute review of Enzyme Onyx's new ACE scope (no finding).

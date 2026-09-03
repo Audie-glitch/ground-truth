@@ -39,7 +39,11 @@ export default async function Home() {
           <a href="/connect" className="underline underline-offset-4 hover:text-foreground">
             Connect
           </a>{" "}
-          page.
+          page. Live bounty and hackathon windows sit on the{" "}
+          <a href="/earn" className="underline underline-offset-4 hover:text-foreground">
+            Earn
+          </a>{" "}
+          desk.
         </p>
       </header>
 
