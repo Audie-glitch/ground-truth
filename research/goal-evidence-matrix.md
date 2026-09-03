@@ -1,6 +1,6 @@
 # Goal evidence matrix
 
-**Audited:** 3 September 2026 16:02 UTC  
+**Audited:** 3 September 2026 16:04 UTC  
 **Goal:** Gain crypto assets through legitimate, legal, non-custodial earning opportunities.
 
 | Requirement | Authoritative evidence | Status | Remaining proof |

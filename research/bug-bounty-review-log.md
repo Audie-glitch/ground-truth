@@ -74272,3 +74272,20 @@ Result: no user-exploitable finding. Not submitted.
 Time spent: roughly 50 minutes on TS paths only. Remaining scope: portal/manager UI auth flows, workers notification/auth services, on-chain `contracts-v2` HCA validator bytecode. Submission requires Immunefi account + KYC.
 
 Not submitted. Next unused Immunefi program: Quantus app/circuit repos or `audit-competition-ens` portal/manager if continuing this program.
+
+## 2026-09-03: Quantus audit competition hdwallet + wormhole (`94dfe6e`)
+
+Immunefi program `audit-comp-quantus` ($20,000 pool, `kyc: false`). In-scope tree `immunefi-team/audit-comp-quantus-qp-rusty-crystals` branch `audit-comp-ready/hdwallet`. Pin `94dfe6e` (`94dfe6e671b29689c66148991630406e983e2457`). Local clone `/tmp/quantus-hdwallet`. Reviewed `hdwallet/src/{lib,hderive,wormhole}.rs` plus zeroization regression tests. No mainnet interaction. No exploit PoCs.
+
+Checked for: mnemonic/seed secret leakage via stack copies or non-zeroizing returns; PBKDF2/HMAC DoS via unbounded paths or passphrases; path aliasing that derives identical keys for distinct strings; wormhole address forgery without secret; timing leaks on secret comparison; child-index overflow aliasing hardened indices.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Secrets use out-parameters into `SensitiveBytes32`/`SensitiveBytes64`; `Zeroizing` wrappers on heap copies; explicit stack probes in CI for PBKDF2 seed, HMAC state, wormhole felt buffers, and bip39 word-pointer leaks.
+- Path depth/byte caps (`MAX_DERIVATION_DEPTH`, `MAX_DERIVATION_PATH_BYTES`) enforced before HMAC; mnemonic/passphrase capped at 1 KiB; path validated before expensive PBKDF2 on mnemonic entrypoints.
+- Hardened-only child numbers with canonical decimal parsing; indexes with hardened bit pre-set rejected to prevent `2147483648'` aliasing `0'`.
+- Wormhole derivation is deterministic Poseidon double-hash with fixed salt; non-injective felt encoding only self-aliases; `PartialEq` uses constant-time compares on secret fields.
+
+Time spent: roughly 35 minutes on hdwallet only. Remaining Quantus scope: mobile SDK, Poseidon circuits (`audit-comp-quantus-qp-poseidon`), dilithium crate sibling, quantus-apps. Submission requires Immunefi account.
+
+Not submitted. Next unused Immunefi program: Quantus Poseidon/circuits or ENS portal/manager if continuing audit comps.
