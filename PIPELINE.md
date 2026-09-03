@@ -26,7 +26,7 @@ On-Chain v1 leftover is logged; Kiln DeFi
 leftover is logged; Acala leftover is logged;
 Ostium leftover is logged; GMX leftover V2
 AdlHandler leftover is logged; USDT0 leftover
-is logged). KeeperHub
+is logged; Ondo Finance leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -360,6 +360,10 @@ USDT0 leftover ETH adapter + Arb OFT
 OUpgradeable / ArbitrumExtensionV2;
 KYC) is logged (remaining listed is
 other-chain twins).
+Ondo Finance leftover TokenRouter +
+rOUSG (Sourcify; KYC) is logged
+(remaining listed is other oracles /
+tokens / managers).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -916,6 +920,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   ChainReader),
   USDT0 leftover ETH adapter +
   Arb OFT (Sourcify; KYC),
+  Ondo Finance leftover
+  TokenRouter + rOUSG
+  (Sourcify; KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover

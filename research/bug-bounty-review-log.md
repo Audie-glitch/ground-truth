@@ -29778,6 +29778,124 @@ unless a function
 differs) and the
 websites.
 
+## 2026-09-03: Ondo Finance leftover TokenRouter + rOUSG (Sourcify)
+
+Immunefi program
+`ondofinance`
+($1,000,000,
+`kyc: true`).
+Unique unused
+standing program.
+Not previously
+logged. Ethereum
+Sourcify `match`
+OndoTokenRouter
+`0x99B8d1D1c17a10CD1A878d1A44c11fd7E4daD7bC`
+and `exact_match`
+TokenProxy
+`0x54043c656F0FAd0652D9Ae2603cDF347c5578d00`
+impl
+`0x3f2A14eA8482b83c49f7e73D90D20611939C5135`
+(`ROUSG`).
+Extract
+`/tmp/ondo-router`
+and `/tmp/ondo-rousg`.
+No mainnet
+interaction.
+
+Files:
+`contracts/xManager/tokenRouter/OndoTokenRouter.sol`,
+`contracts/ousg/rOUSG.sol`.
+
+Checked for: a
+stranger
+`depositToken` that
+pulls another
+account; withdraw
+that pays the
+caller a user's
+RWA; `wrap` that
+mints shares to
+the caller for
+someone else's
+OUSG; `unwrap`
+that burns another
+account.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- TokenRouter
+  `depositToken` /
+  `withdrawToken`
+  are
+  `onlyRole(RWA_MANAGER_ROLE)`.
+  Deposit pulls
+  `msg.sender` and
+  forwards to the
+  configured
+  recipient.
+  Withdraw gathers
+  from configured
+  sources and pays
+  `msg.sender` (the
+  manager).
+- Source /
+  recipient /
+  oracle /
+  minimum-price
+  setters are
+  admin roles.
+- rOUSG `wrap`
+  mints shares to
+  `msg.sender` then
+  `transferFrom`s
+  that sender's
+  OUSG.
+  `unwrap` /
+  `unwrapShares`
+  burn the caller
+  and pay that
+  caller.
+  `transferFrom`
+  spends allowance.
+- `burnShares` is
+  `BURNER_ROLE` and
+  sends residual
+  OUSG to the
+  burner.
+
+Do not file
+manager-only
+router
+deposit/withdraw,
+admin burn of
+rOUSG shares,
+first-wrapper
+share rounding,
+or KYC-gated OUSG
+transfers as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed leftover
+that Sourcify
+opens for these
+two types is
+exhausted.
+Remaining listed:
+other Ondo
+oracles / tokens /
+managers
+(including
+`USDYOracleWrapper`)
+and other-chain
+rows.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -31140,6 +31258,11 @@ OUpgradeable /
 ArbitrumExtensionV2; KYC)
 is logged (remaining listed
 is other-chain twins);
+Ondo Finance leftover
+TokenRouter + rOUSG leftover
+(Sourcify; KYC) is logged
+(remaining listed is other
+oracles / tokens / managers);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.
