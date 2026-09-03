@@ -67247,3 +67247,20 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a local heaviest-tipset / checkpoint helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining lotus non-miner.
+
+## 2026-09-03: Aave leftover remaining StakedAaveV3 leftover (`0c4cb0b`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after Gsm4626 leftover. Official `bgd-labs/aave-stk-gov-v3` `0c4cb0b`. Opened listed `src/contracts/StakedAaveV3.sol` (REVISION 6) plus parent `StakedTokenV3._claimRewardsAndStakeOnBehalf` for the claim-and-stake entry points. Do not rematch GHO / GSM leftovers. Full `bgd-labs/stake-token` `StakeToken.sol` is a separate listed asset. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `claimRewardsAndStakeOnBehalf` without the claim helper; implementation `initialize` rewriting storage; GHO discount hook transferring stkAAVE.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Constructor sets `lastInitializedRevision = REVISION()` (6), bricking `initialize` on the implementation. Proxy `initialize()` is an empty `initializer`.
+- `claimRewardsAndStake` stakes `msg.sender`’s rewards to `to`. `claimRewardsAndStakeOnBehalf` is `onlyClaimHelper`. Parent requires `REWARD_TOKEN == STAKED_TOKEN`, claims to the contract, then `_stake(address(this), to, amount)`.
+- `_afterTokenTransfer` calls `ghoDebtToken.updateDiscountDistribution` with a 220k gas cap. A failed hook is swallowed when the caller supplied enough gas; it does not move stk/AAVE. `ghoDebtToken` is not set in this file (storage leftover from a prior initializer).
+
+Do not file a self-stake rewards helper as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: PriceOracleSentinel / StakeToken / OwnableFacilitator / governance.
+
