@@ -17848,6 +17848,105 @@ listed tree is
 `harvest-strategy-arbitrum`
 `125270d`.
 
+## 2026-09-03: Harvest Arbitrum Camelot / Silo / Venus leftover (`125270d`)
+
+Immunefi program
+`harvest` ($100,000,
+`kyc: false`). Listed
+GitHub tree
+`harvestfi/harvest-strategy-arbitrum`
+(3 Apr 2023; re-added
+15 Mar 2024). Local
+clone
+`/tmp/harvest-strategy-arbitrum`
+at `125270d`
+(`Merge pull request #29
+from Crypto-One-dev/stakedao-llama-vaults`).
+No mainnet interaction.
+
+Files:
+`contracts/strategies/camelot/CamelotV3Strategy.sol`,
+`silo/SiloLendStrategy.sol`,
+`silo/SiloVaultStrategy.sol`,
+`venus/VenusFoldStrategy.sol`.
+Aave / Aura / Dolomite /
+Euler / Fluid / Morpho /
+Notional / StakeDAO on
+this tree reuse the
+already-logged mainnet
+money paths.
+
+Checked for: a stranger
+redeeming Silo shares
+or hypervisor LP;
+Venus flash callback
+that is not Balancer;
+withdraw that pays more
+than idle plus supplied
+minus fee.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Camelot holds Gamma
+  hypervisor LP idle
+  (`underlying` is the
+  LP). Withdraw /
+  hard-work are
+  `restricted`.
+  Transfer of the
+  requested amount
+  reverts if short.
+  Reward swaps use
+  `minOut = 1`. xGRAIL
+  is deposited to a
+  configured vault and
+  notified to
+  `potPool` (extra
+  reward, not
+  principal).
+- Silo lend / vault
+  require 4626
+  `asset()` =
+  `underlying`.
+  Supply / redeem pay
+  `address(this)`.
+  Fee is a slice of
+  `current − stored`.
+  Withdraw is
+  `restricted`.
+  Transfer uses
+  `min(requested,
+  idle)` after redeem.
+- Venus fold requires
+  `cToken.underlying()`
+  = `underlying`.
+  Borrow target is
+  strictly below the
+  collateral factor.
+  `receiveFlashLoan`
+  requires
+  `msg.sender ==
+  bVault` and XOR of
+  `makingFlashDeposit`
+  / `makingFlashWithdrawal`.
+  Deposit supplies
+  then borrows the
+  repay. Withdraw
+  repays then redeems,
+  then pays Balancer
+  `amount + fee`.
+  `invested` is idle +
+  stored net −
+  `pendingFee`.
+
+Not submitted. Listed
+Harvest GitHub leftover
+(mainnet + polygon +
+Arbitrum unique bases)
+is exhausted.
+
 ## 2026-09-03: Marinade crank / withdraw-stake leftover (`b8fe3f8`)
 
 Immunefi program
@@ -19284,11 +19383,11 @@ and polygon Jarvis /
 Complifi / Compound /
 Yel leftover
 (`f24a06a`) are logged
-(listed Harvest polygon
-GitHub leftover
-exhausted; remaining
-Harvest is arbitrum
-`125270d`);
+and Arbitrum Camelot /
+Silo / Venus leftover
+(`125270d`) are logged
+(listed Harvest GitHub
+leftover exhausted);
 ICHI oneToken leftover
 (`4873873`) is logged;
 Yearn yCRV token +
