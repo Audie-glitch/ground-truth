@@ -45679,3 +45679,248 @@ ProxyCall,
 EIP712Mainnet);
 integrations
 helpers.
+
+## 2026-09-03: Kiln DeFi leftover Arbitrum + BSC vaults (Sourcify)
+
+Immunefi program
+`kiln-defi`
+($500,000, `kyc: true`).
+Listed remaining after
+ETH vault core
+(`39284`). Not
+previously logged.
+Official docs
+https://docs.kiln.fi/v1/kiln-products/defi/security/source-code
+Arbitrum Sourcify
+`match` Vault
+`0xacF8cafa86795Cd30A8cBB7157a75ef4c118D7E7`,
+VaultUpgradeableBeacon
+`0xB03DDF4375E879B8E3bc240527bc55988c975ac4`,
+VaultFactory
+`0x9fe6B2c958ba79b9EEf48608678eB6Be1Dbc6bD0`,
+BlockList
+`0x27f264eC0003e7309CC4A7201D4cC8b6fa46afd7`,
+CompoundV3MarketRegistry
+`0x9cb057f462BBd076E5dD30C5f5d5dfa97ab006D3`.
+`exact_match`
+AaveV3Connector
+`0x3990c145f71A32ff0A3A20cDa2090B9A786eb9aD`
+and
+CompoundV3Connector
+`0xB9B55f53dBfBCD46a8B85083054E4bbe1073AD53`.
+ConnectorRegistry
+`0xDceF4a9535becd16c4ec149980445a4DeA976D89`
+is Sourcify 404;
+Arbitrum Blockscout
+verified
+`ConnectorRegistry`.
+Bitnovo Comp v3
+USDC proxy
+`0x19A0F016Ac3989e754ab8216810beD8503bDA37e`
+is Sourcify 404;
+Blockscout
+`VaultBeaconProxy`.
+BSC Sourcify
+`match` Vault
+`0x5B5E6f108B2FBB72789A35D4E8FDD2f4822f4Fde`
+and factory /
+beacon /
+BlockList;
+`exact_match`
+AaveV3Connector
+`0x7cC875AbA6dE71c484205482A950F56bc1963726`
+and
+VenusConnector
+`0x045d8C112645301565935f250f4520008c26F50F`.
+BSC
+ConnectorRegistry
+and Cool Wallet
+proxy are
+Sourcify 404.
+Extract
+`/tmp/kiln-defi-arb-src`
+and
+`/tmp/kiln-defi-bsc-src`.
+Arb and BSC
+`Vault.sol` /
+`VaultFactory.sol` /
+`AaveV3Connector.sol` /
+`BlockList.sol`
+hashes match
+each other and
+differ from the
+older ETH extract
+in `/tmp/kiln-defi`.
+No mainnet writes.
+
+Files:
+`src/Vault.sol`,
+`src/VaultFactory.sol`,
+`src/FeeDispatcher.sol`,
+`src/BlockList.sol`,
+`src/ConnectorRegistry.sol`,
+`src/proxy/VaultUpgradeableBeacon.sol`,
+`src/connectors/AaveV3Connector.sol`,
+`src/connectors/CompoundV3Connector.sol`,
+`src/connectors/VenusConnector.sol`,
+`src/connectors/utils/MarketRegistry.sol`,
+`src/libraries/MultisendLib.sol`.
+
+Checked for: a
+stranger deposit
+that mints shares
+for someone
+else's assets;
+withdraw that
+skips allowance;
+public
+`forceWithdraw`
+that pays the
+caller; factory
+create that
+hijacks an
+existing vault;
+FeeDispatcher
+`dispatchFees` /
+`incrementPending*`
+that pull a
+vault's max
+approval when
+`msg.sender` is
+not the vault;
+connector
+`deposit` /
+`withdraw` /
+`claim` that
+move a vault's
+Aave / Compound /
+Venus position
+when called
+directly;
+`reinvest`
+swap-target
+calldata usable
+by a stranger.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Vault
+  `deposit` /
+  `mint` pull
+  `_msgSender()`
+  and mint to
+  `receiver`.
+  `withdraw` /
+  `redeem` spend
+  allowance when
+  `caller !=
+  owner`.
+  Connector
+  interactions
+  are
+  `functionDelegateCall`
+  so protocol
+  positions sit
+  on the vault.
+- `forceWithdraw`
+  is public but
+  requires the
+  user to be on
+  the internal
+  blocklist and
+  not OFAC, and
+  pays
+  `blockedUser`.
+- `delegateToFactory`
+  is
+  `onlyFactory`.
+  `initialize` /
+  `upgrade` are
+  `onlyFactory`.
+- Factory
+  `createVault` /
+  `upgradeVault` /
+  `removeVault`
+  are
+  `DEPLOYER_ROLE`.
+- FeeDispatcher
+  storage is
+  keyed by
+  `msg.sender`.
+  `dispatchFees`
+  `transferFrom`s
+  the caller to
+  stored
+  recipients.
+  Public
+  `incrementPending*`
+  and
+  `setFeeRecipients`
+  only write the
+  caller's slot.
+- Registry add /
+  update / remove
+  are
+  `CONNECTOR_MANAGER`.
+  Pause / freeze
+  are role-gated.
+- Aave / Compound
+  / Venus
+  connectors
+  supply or mint
+  to
+  `address(this)`.
+  Direct calls
+  cannot move a
+  vault's
+  delegated
+  position.
+  `claim` /
+  `reinvest`
+  payloads run
+  only through
+  vault
+  `CLAIM_MANAGER`.
+- Venus
+  `viewExchangeRate`
+  is view-only
+  for
+  `totalAssets`.
+  MarketRegistry
+  is constructor-
+  immutable.
+
+Do not file
+role-gated vault
+deploy, claim-
+manager swap
+payloads,
+permissionless
+`forceWithdraw`
+to the blocked
+user, or
+ERC4626
+self-deposit as
+stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Kiln DeFi
+Arbitrum + BSC
+leftover is
+exhausted at the
+opened-file
+level. Remaining
+listed: Polygon /
+Optimism / Base
+vault impls,
+factories,
+connectors
+(including Base
+Metamorpho), and
+additional live
+vault instances.
