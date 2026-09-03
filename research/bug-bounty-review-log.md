@@ -16258,6 +16258,158 @@ permissioned /
 permissionless pools,
 insurance, VaultFactory.
 
+## 2026-09-03: Rocket Pool v1.4 minipool leftover (`fb7d9c4`)
+
+Immunefi program
+`Rocket Pool`
+($150,000, `kyc: true`).
+Deposit / megapool /
+vault / smoothing
+slices on the same pin
+`fb7d9c4` are already
+logged. This slice is
+classic minipool
+create / distribute /
+dissolve / bond
+reduction. Local clone
+`/tmp/rocketpool`. No
+mainnet interaction.
+
+Files:
+`contracts/contract/minipool/RocketMinipoolDelegate.sol`,
+`contracts/contract/minipool/RocketMinipoolBase.sol`,
+`contracts/contract/minipool/RocketMinipoolFactory.sol`,
+`contracts/contract/minipool/RocketMinipoolManager.sol`,
+`contracts/contract/minipool/RocketMinipoolQueue.sol`,
+`contracts/contract/minipool/RocketMinipoolBondReducer.sol`,
+`contracts/contract/minipool/RocketMinipoolPenalty.sol`.
+
+Checked for: a stranger
+taking a minipool’s
+ETH or rETH share;
+user-distribute that
+skips the wait window;
+vacant promote that
+mints credit without
+oDAO scrub; bond
+reduce that steals
+user capital; factory
+init race; queue
+dequeue of someone
+else’s minipool.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- Factory deploy is
+  manager-only. The
+  clone is initialised
+  in the same
+  transaction
+  (`Undefined` →
+  `Uninitialised` →
+  delegate
+  `initialise`). No
+  front-run of
+  `initialise`.
+- `preDeposit` is
+  `rocketNodeDeposit`
+  only. `deposit` /
+  `userDeposit` are
+  `rocketDepositPool`
+  only. Current
+  `RocketNodeDeposit`
+  no longer calls
+  `createMinipool` /
+  `createVacantMinipool`
+  (megapool path).
+  Remaining minipools
+  are legacy.
+- `stake` / `promote`
+  / `close` /
+  `reduceBondAmount`
+  are owner-only.
+  Promote still waits
+  the promotion scrub
+  period. Bond reducer
+  mutators all revert
+  (“no longer
+  available”), so
+  `reduceBondAmount`
+  cannot change
+  balances.
+- `distributeBalance`
+  while staking: ≥ 8
+  ETH is treated as
+  capital. The owner
+  may finalise
+  immediately; anyone
+  else must have
+  `beginUserDistribute`
+  wait the DAO window.
+  User share goes to
+  rETH. Node share is
+  refunded only to the
+  withdrawal address.
+  < 8 ETH is skimmed
+  rewards split by
+  capital ratio +
+  commission. Dissolved
+  distribute is
+  owner-only and pays
+  the whole balance to
+  the withdrawal
+  address.
+- `dissolve` is
+  permissionless after
+  launch timeout in
+  prelaunch. Scrub is
+  trusted-node quorum.
+  Penalty 2.4 ETH is
+  recycled with user
+  capital; if the
+  contract is short
+  the vote reverts
+  (oDAO liveness, not
+  a stranger extract).
+- Queue enqueue is
+  `rocketNodeDeposit`.
+  Dequeue is
+  `rocketDepositPool`.
+  Remove is the
+  registered minipool.
+- Penalty max rate is
+  guardian-only.
+  Per-minipool rate is
+  `onlyLatestNetworkContract`
+  and clamped to the
+  max. Zero max
+  short-circuits to 0.
+- Manager
+  `eth.matched`
+  decrements on
+  finalise / destroy
+  use 0.8 checked math.
+  This tree never
+  increments that
+  snapshot (legacy
+  state / megapool
+  uses a different
+  key). Underflow
+  would revert
+  finalise for a
+  vacant that never
+  had matched ETH;
+  vacant create is
+  not reachable from
+  current NodeDeposit.
+
+Not submitted. Remaining
+Rocket Pool listed
+GitHub: DAO settings /
+voting.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -16754,12 +16906,12 @@ Rocket Pool v1.4 deposit
 / rETH / megapool queue,
 dissolve / rewards /
 exit, vault + RPL
-auction, and smoothing /
-rewards leftover
+auction, smoothing /
+rewards leftover, and
+minipool leftover
 (`fb7d9c4`) are logged
 (remaining Rocket Pool
-is minipool leftover
-and DAO settings /
+is DAO settings /
 voting);
 Beanstalk Basin leftover
 (Pipeline / Depot / Well
