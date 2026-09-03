@@ -8183,6 +8183,99 @@ executor / receiver rows
 chains already logged).
 Not submitted.
 
+## 2026-09-03: Yearn leftover yYB token / operator / locker / staker / distributor (Sourcify)
+
+Same Immunefi program
+`yearnfinance` ($200,000,
+`kyc: false`). 5 Jan 2026
+rows: yYB Token
+`0x2222…9D6` (exact
+`YToken`), Operator
+`0x1111…4af9` (exact),
+Locker `0x0000…6A` (exact),
+Boosted Staker
+`0x5D2e…AD91` (`match`,
+`YearnBoostedStaker`),
+Reward Distributor
+`0x1d02…746` (`match`,
+`SingleTokenRewardDistributor`).
+Extract under
+`/tmp/yearn-yyb`. Vault
+V3.1.0 + stYFI leftovers
+already logged. No
+state-changing txs.
+
+Files: `src/{YToken,
+Operator,Locker}.sol`,
+`YearnBoostedStaker.sol`,
+`SingleTokenRewardDistributor.sol`.
+
+Checked for: a stranger
+`YToken.mint` that skips
+the underlying transfer;
+`Locker.execute` that
+anyone can call;
+`nftTransferCallback`
+that mints without a lock
+increase; distributor
+`claimFor` that pays the
+claimer; staker
+`stakeAsMaxWeighted` that
+is permissionless.
+
+Result: no user-exploitable
+finding. Not submitted.
+
+- `YToken.mint` pulls
+  `token` to the locker and
+  `Operator.lock` unless
+  `msg.sender` is the
+  locker operator (NFT
+  wrap path). `sweep` /
+  `setLocker` are owner or
+  operator.
+- `Locker.execute` /
+  `safeExecute` are owner
+  or operator. Escrow
+  `increase_amount` is
+  blocked unless the
+  operator calls.
+  `onERC721Received`
+  requires the escrow NFT
+  and forwards to
+  `nftTransferCallback`.
+- Operator
+  `nftTransferCallback`
+  is locker-only and mints
+  the lock-amount delta.
+  `lock` is `onlyLockers`
+  (yToken is authorized at
+  construct). Gauge / DAO
+  votes are role-gated.
+- Staker `stake` /
+  `unstake` use even
+  amounts and checkpoints.
+  `stakeAsMaxWeighted` is
+  `approvedWeightedStaker`.
+  `stakeFor` / `unstakeFor`
+  need `approvedCaller`.
+- Distributor
+  `claim` / `claimWithRange`
+  pay the account (or its
+  configured recipient).
+  `claimFor` needs
+  `approvedClaimer`.
+  Skipping weeks in a
+  ranged claim is a
+  documented self-lockout.
+  `pushRewards` only moves
+  a past week with zero
+  adjusted global weight.
+
+Yearn 23 Jun + Jan 2026
+yYB leftovers are
+exhausted. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -8320,6 +8413,10 @@ LL+veYFI distributors
 (`69e262e`) plus Vault /
 TokenizedStrategy /
 Factory V3.1.0 (Sourcify)
+plus leftover Jan 2026
+yYB token / operator /
+locker / staker /
+distributor (Sourcify)
 are logged. Balancer V3
 Router + CompositeLiquidityRouter
 + ProtocolFeeController +

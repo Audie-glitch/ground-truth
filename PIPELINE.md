@@ -144,7 +144,10 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   February StakedYFI / LL depositor +
   leftover LL redemption / LL+veYFI
   distributors + Vault / Strategy /
-  Factory V3.1.0, Twyne Aave V3
+  Factory V3.1.0 + leftover
+  yYB token / operator /
+  locker / staker /
+  distributor, Twyne Aave V3
   operators (Sourcify), TermMax TMX
   OFT, Balancer V3
   CompositeLiquidityRouter +
