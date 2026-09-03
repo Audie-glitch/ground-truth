@@ -7939,6 +7939,98 @@ StableSurge, Weighted /
 Stable (Sourcify 404). Not
 submitted.
 
+## 2026-09-03: Balancer leftover Sourcify-404 factories (official monorepo)
+
+Immunefi program `balancer`
+($1,000,000, `kyc: false`).
+23 Jun 2026 rows still open
+after PFC / Router / CLR /
+LBPool / ReClamm / LP
+oracles: FixedPriceLBPoolFactory
+`0xeb1a…8758`, Gyro2CLP
+`0x8902…ECC6`, GyroECLP
+`0x04d5…69d1`, StableSurge
+`0x187a…A6Ac`, V3 Stable
+`0x4eFc…3228`, V3 Weighted
+`0x3326…1D99`. Sourcify v2
+and `repo.sourcify.dev`
+full/partial match are 404
+from this VM. `create()`
+bodies were read from
+official
+`balancer/balancer-v3-monorepo`
+`main` raw files (3 Sep;
+same `BasePoolFactory`
+pattern as the Sourcify-exact
+LBPool / ReClamm factories).
+No state-changing txs.
+
+Files (GitHub `main`, not
+bytecode-matched):
+`FixedPriceLBPoolFactory.sol`,
+`Gyro2CLPPoolFactory.sol`,
+`GyroECLPPoolFactory.sol`,
+`StablePoolFactory.sol`,
+`WeightedPoolFactory.sol`,
+`StableSurgePoolFactory.sol`,
+`BasePoolFactory.sol`.
+
+Checked for: a create that
+registers a pool the factory
+did not deploy; CREATE2 salt
+that omits the sender so a
+stranger can collide; a
+hook/role account the
+caller cannot set; StableSurge
+registering a stranger hook.
+
+Result: no user-exploitable
+finding. Not submitted.
+Bytecode match is unverified
+here; do not file against
+these addresses until
+Sourcify/Etherscan confirms
+the same `create()`.
+
+- Every factory `_create`s
+  (CREATE2 salt
+  `keccak(msg.sender, chainid, salt)`)
+  then `registerPool`s in
+  the same transaction.
+  `disable()` is
+  `authenticate`.
+- Gyro factories revert
+  unless `tokens.length == 2`.
+  Stable / StableSurge cap
+  at `StableMath.MAX_STABLE_TOKENS`.
+  Weighted computes
+  `minTokenBalances` via
+  `MinTokenBalanceLib`.
+- FixedPrice LBP requires
+  `projectTokenRate != 0`
+  and
+  `blockProjectTokenSwapsIn`
+  (buy-only), then uses
+  the same `_registerLBP`
+  path (pool is the hook;
+  `poolCreator` is a create
+  argument).
+- StableSurge hardcodes
+  the factory’s
+  `StableSurgeHook`. Other
+  factories take
+  `poolHooksContract` /
+  `roleAccounts` as
+  documented create args.
+  `protocolFeeExempt` is
+  always false.
+
+23 Jun Balancer leftover
+is exhausted. Older Jan
+2025 BatchRouter /
+BufferRouter rows are
+unchanged. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -8077,12 +8169,13 @@ Router + CompositeLiquidityRouter
 + ProtocolFeeController +
 LBPoolFactory + ReClamm +
 LP oracle factories (23 Jun,
-Sourcify) are logged; remaining
-Balancer is FixedPrice LBP /
-Gyro2CLP / GyroECLP /
-StableSurge factories and
-Weighted / Stable (Sourcify
-404). Remaining
+Sourcify) plus leftover
+Sourcify-404 factories
+(FixedPrice LBP / Gyro2CLP /
+GyroECLP / StableSurge /
+Weighted / Stable, official
+monorepo `create()` only)
+are logged. Remaining
 Lista leftover slices (new-contracts
 oracles / VeLista lock / airdrop /
 CDP ResilientOracle + pips at
@@ -8091,7 +8184,7 @@ Jito `jito-solana` /
 `mev-programs` ($250k, KYC; interceptor
 `dbd8ce4` and restaking `vault_*` /
 `restaking_*` at `db90840` are exhausted).
-Superteam API rechecked ~04:21 UTC
+Superteam API rechecked ~04:25 UTC
 3 Sep: still 28 open listings
 (`earn.superteam.fun/api/listings?status=open`).
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
@@ -8129,7 +8222,7 @@ clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 product code before 4 Sep 16:00 UTC.
 `1inch-aqua-improvement` is an improvement-proposal
 program and is not a second vuln book. Rechecked
-~04:21 UTC 3 Sep: KeeperHub #2105 still `open` +
+~04:25 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 Uniswap/sdks#720 still `open`, 0 comments, 0 PRs;
 Hedera Harness #8 still `open`, 0 comments;

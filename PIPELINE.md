@@ -149,7 +149,11 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   OFT, Balancer V3
   CompositeLiquidityRouter +
   ProtocolFeeController +
-  LBPoolFactory, Spark ALM
+  LBPoolFactory + ReClamm +
+  LP oracles + leftover
+  Sourcify-404 factories
+  (official monorepo `create()`),
+  Spark ALM
   controller (`ce5cbd9`) +
   SparkVault V2 (`51c6d7a`), and
   Horizen ZenStaker (no submittable finding).
