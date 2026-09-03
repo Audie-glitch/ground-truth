@@ -30712,9 +30712,22 @@ Option / Perp) is logged.
 Derive leftover StandardManager leftover
 (`96796a6` StandardManager +
 BaseManager bid / fee /
-settle) is logged
-(remaining listed is PMRM /
-feeds);
+settle) is logged.
+Derive leftover PMRM +
+feeds leftover
+(`96796a6` PMRM /
+PMRMLib / BaseLyraFeed /
+spot / vol / rate /
+forward / spot-diff /
+SFP) is logged
+(listed leftover that
+official GitHub of
+listed types opens is
+exhausted at the
+opened-contract level;
+Lyra explorer still
+403; Sourcify 404 on
+guessed L2 chain ids);
 Royco leftover (Sourcify
 factory + Makina strategy;
 KYC) is logged (remaining
@@ -30806,16 +30819,21 @@ StakedGlp / USDG, Avax
 twins, and V2 Oracle /
 Reader rows);
 DeXe Protocol leftover
-(Sourcify UserRegistry /
-SphereXEngine; KYC) is
-logged (remaining listed
-is Sourcify-404 DAO /
-registry / factory
-rows);
+(Sourcify + official
+GitHub UserRegistry /
+SphereXEngine / GovPool
+/ factory / registry /
+PriceFeed; KYC) is
+logged (listed leftover
+exhausted at the
+opened-contract level;
+remaining listed is
+PoolSphereXEngine
+Sourcify 404);
 Kiln On-Chain v1 leftover
-(Sourcify StakingContract /
-fee dispatchers /
-FeeRecipient; KYC) is
+(Sourcify StakingContract
+/ CL+EL fee dispatchers
+/ FeeRecipient; KYC) is
 logged (listed mainnet
 leftover exhausted;
 remaining listed is
@@ -34990,3 +35008,154 @@ is exhausted.
 Remaining listed:
 Goerli testnet
 rows only (skip).
+
+## 2026-09-03: Derive leftover PMRM + feeds leftover (`96796a6`)
+
+Immunefi program
+`derive`
+($50,000, `kyc: false`).
+Matching / cash /
+auction / assets /
+StandardManager
+leftovers are already
+logged. This slice is
+listed `PMRM` plus
+`PMRMLib` margin math
+and the live signed
+feeds. Official clone
+`/tmp/derive-v2-core`
+at `96796a6`.
+No mainnet interaction.
+
+Files:
+`src/risk-managers/PMRM.sol`,
+`src/risk-managers/PMRMLib.sol`,
+`src/feeds/BaseLyraFeed.sol`,
+`src/feeds/LyraSpotFeed.sol`,
+`src/feeds/LyraVolFeed.sol`,
+`src/feeds/LyraRateFeed.sol`,
+`src/feeds/LyraForwardFeed.sol`,
+`src/feeds/LyraSpotDiffFeed.sol`,
+`src/feeds/SFPSpotFeed.sol`.
+
+Checked for: a
+stranger
+`handleAdjustment`
+that skips IM on a
+risk-adding trade;
+`settlePerpsWithIndex`
+/ `settleOptions` that
+pay `msg.sender`;
+`acceptData` that
+writes a price
+without enough
+whitelisted signers;
+a replay that
+overwrites a newer
+spot / vol / rate.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `handleAdjustment`
+  is `onlyAccounts`.
+  Live auctions
+  block transfers.
+  Unsupported
+  assets revert.
+  Risk-adding
+  trades (perp or
+  a negative
+  option / base /
+  cash delta)
+  require post-trade
+  IM, or MM for a
+  trusted risk
+  assessor.
+  Reducing-only
+  trades bypass.
+- `settlePerpsWithIndex`
+  / `settleOptions`
+  credit that
+  account's cash
+  from unrealized
+  perp pnl /
+  expired options.
+  They do not pay
+  `msg.sender`.
+- `PMRMLib` is a
+  margin-math
+  library. It has
+  no caller payout.
+- Owner sets feeds
+  / scenarios /
+  max expiries.
+  Guardian pauses
+  adjustments.
+- `BaseLyraFeed._parseAndVerifyFeedData`
+  requires
+  `requiredSigners`,
+  no duplicate
+  signers, each
+  signer
+  `isSigner`, a
+  live deadline,
+  and a timestamp
+  not in the
+  future.
+- `LyraSpotFeed` /
+  `LyraVolFeed` /
+  `LyraRateFeed` /
+  `LyraSpotDiffFeed`
+  `acceptData` only
+  update when the
+  signed timestamp
+  is newer.
+  Confidence must
+  be ≤ 1e18.
+  Vol data cannot
+  be dated after
+  expiry.
+- `LyraForwardFeed`
+  settlement TWAP
+  uses signed
+  aggregates and
+  reverts on stale
+  settlement data.
+- `SFPSpotFeed`
+  reads an
+  immutable share
+  price and owner
+  bounds. It has
+  no `acceptData`.
+  Static feeds are
+  owner-set.
+
+Do not file
+permissionless
+expired-option /
+perp settle,
+trusted assessor
+MM vs IM, owner
+feed / signer /
+scenario
+privilege, or
+stale-heartbeat
+revert as
+stranger theft.
+
+Not submitted.
+Listed leftover
+that official
+GitHub of listed
+types opens is
+exhausted at the
+opened-contract
+level (Lyra
+explorer still
+403; Sourcify
+404 on guessed
+L2 chain ids).
+

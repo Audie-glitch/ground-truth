@@ -4,13 +4,20 @@ Goal: gain crypto assets by earning them. Every item below pays in crypto or
 stablecoins for shipped engineering work. Nothing here involves trading,
 custody, or sending funds anywhere.
 
-Status as of 3 September 2026, ~08:39 UTC. Dates verified against each
+Status as of 3 September 2026, ~08:50 UTC. Dates verified against each
 organizer's own page on 2–3 Sep; Superteam listings (27 open; T3N still
 OPEN, due 16 Sep 15:59 UTC; `AGENT_ALLOWED` still only Steve Arena and
 ZNS), Sherlock contests API (paginated; only Tare judging as of this
-recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:39 UTC;
+recheck), and Immunefi unofficial mirror rechecked 3 Sep (~08:50 UTC;
 246 programs; no Sep 2026 launches; Derive leftover
-StandardManager leftover is logged). KeeperHub
+PMRM + feeds leftover is logged;
+listed Derive leftover that official
+GitHub of listed types opens is
+exhausted; DeXe Protocol leftover is
+logged; GMX leftover V2 OrderHandler
+leftover is logged; GMX leftover V2
+GlvRouter leftover is logged; Kiln
+On-Chain v1 leftover is logged). KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
 — do not implement before 6 Sep. Listed Obyte smart-contract leftover
@@ -250,8 +257,22 @@ Derive leftover assets leftover
 is logged.
 Derive leftover StandardManager leftover
 (`96796a6` StandardManager + BaseManager
-bid / fee / settle) is logged
-(remaining listed is PMRM / feeds).
+bid / fee / settle) is logged.
+Derive leftover PMRM + feeds leftover
+(`96796a6` PMRM / PMRMLib / BaseLyraFeed /
+spot / vol / rate / forward / spot-diff /
+SFP) is logged (listed leftover that
+official GitHub of listed types opens is
+exhausted at the opened-contract level).
+DeXe Protocol leftover (Sourcify + official
+GitHub UserRegistry / SphereXEngine /
+GovPool / factory; KYC) is logged
+(listed leftover exhausted at the
+opened-contract level).
+Kiln On-Chain v1 leftover (Sourcify
+StakingContract / fee dispatchers; KYC)
+is logged (listed mainnet leftover
+exhausted).
 Royco leftover (Sourcify factory +
 Makina strategy; KYC) is logged
 (remaining listed is srRoyUSDC /
@@ -797,7 +818,15 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Option / Perp) plus
   StandardManager leftover
   (`96796a6` bid / fee /
-  settle),
+  settle) plus PMRM +
+  feeds leftover
+  (`96796a6` PMRM /
+  PMRMLib / signed feeds),
+  DeXe Protocol leftover
+  (Sourcify + official
+  GitHub; KYC),
+  Kiln On-Chain v1 leftover
+  (Sourcify; KYC),
   Royco leftover (Sourcify
   factory + Makina strategy;
   KYC),
