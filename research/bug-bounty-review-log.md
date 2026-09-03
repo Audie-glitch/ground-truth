@@ -11611,8 +11611,10 @@ finding. Not submitted.
 
 Next leftover: Enzyme
 `CreWorkflowConsumer`
-(logged below) or Twyne
-Sourcify-404 vaults.
+(logged below), Silo V3
+vaults (logged below),
+or Twyne Sourcify-404
+vaults.
 Not submitted.
 
 ## 2026-09-03: Enzyme Onyx CreWorkflowConsumer leftover (`7b48d24`)
@@ -11691,9 +11693,74 @@ finding. Not submitted.
   is
   `onlyAdminOrOwner`.
 
-Next leftover: Twyne
-Sourcify-404 vaults.
+Next leftover: Silo V3
+vaults (logged below) or
+Twyne Sourcify-404
+vaults.
 Not submitted.
+
+## 2026-09-03: Silo Finance V3 vaults (`31b98b3`)
+
+Immunefi program `silofinance-v2` (Silo Finance v2 & v3,
+$100,000, `kyc: true`). GitHub vault tree added 25 Mar
+2026. Local clone `/tmp/silo-v3` at `31b98b3`. No
+mainnet interaction.
+
+Files: `silo-vaults/contracts/{SiloVault,PublicAllocator,
+SiloVaultsFactory,IdleVault,IdleVaultsFactory}.sol`,
+`libraries/{SiloVaultActionsLib,SiloVaultFactoryActionsLib}.sol`,
+`incentives/VaultIncentivesModule.sol`.
+
+Checked for: first-depositor inflation; lying market
+`previewRedeem` that inflates share price then deflates;
+`balanceTracker` that can be lowered without a real
+withdraw; PublicAllocator flow-cap underflow / unsorted
+duplicates; claiming-logic `delegatecall` without a
+timelock; IdleVault deposit-to-stranger; factory init
+that leaves the incentives module unbound.
+
+Result: no user-exploitable finding.
+
+- MetaMorpho-style allocator / curator / guardian /
+  timelock. Caps require `market.asset() == vault.asset()`.
+  Lowering a cap is instant; raising is timelocked.
+  Market removal needs cap 0, no pending cap, and either
+  zero market-share balance or `removableAt` elapsed.
+- `DECIMALS_OFFSET = 6` plus `+1` virtual assets. IdleVault
+  is the same offset and only `ONLY_DEPOSITOR` (the
+  SiloVault) may mint/deposit (`maxDeposit(other) == 0`
+  and receiver must match).
+- `balanceTracker` only ratchets up when the market
+  reports more (`_updateInternalBalanceForMarket`). It
+  decreases only by the exact ERC20 delta received
+  (`_checkAfterWithdraw`). A lying high report can raise
+  `totalAssets()` (fee / share price) but that is
+  curator-trusted market risk; the tracker then blocks
+  further supply until a guardian `syncBalanceTracker`.
+- Fresh deposits `forceApprove` the exact amount, then
+  reset to 1 wei. `_priceManipulationCheck` reverts if
+  `previewRedeem(gotShares) + threshold < assets`
+  (default threshold `1e6`).
+- PublicAllocator `reallocateTo` is permissionless but
+  only if the vault set it as allocator. Withdrawals
+  must be unique and address-sorted; `maxOut` /
+  `maxIn` are `uint128` with
+  `MAX_SETTABLE_FLOW_CAP = type(uint128).max / 2`.
+  Fee is exact `msg.value`.
+- Incentives claiming logics run via `delegatecall`
+  from the vault. Owner-submitted logics are
+  timelocked; curator-submitted logics skip the
+  timelock only when a trusted factory (itself
+  owner-timelocked) reports `createdInFactory`.
+  Notification receivers are owner-only.
+- Factory clones the incentives module, deploys
+  `SiloVault` with that address, then
+  `__VaultIncentivesModule_init` binds `vault`.
+
+Not submitted. Remaining Silo listed Solidity: core
+`Silo` / `SiloConfig` / `SiloFactory` / router /
+leverage / kink IRM / incentives / hooks, plus
+share tokens.
 
 ## Next candidates
 
@@ -12082,6 +12149,12 @@ logged;
 Enzyme Onyx
 `CreWorkflowConsumer`
 (`7b48d24`) is logged;
+Silo Finance V3 vaults
+(`silofinance-v2`,
+`31b98b3`) are logged
+(remaining Silo is core
+Silo / router / leverage
+/ hooks);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
