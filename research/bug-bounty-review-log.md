@@ -67936,3 +67936,21 @@ Do not file a validate-gated v2 pool action as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: LendingPoolConfigurator / LendingPoolCollateralManager / v2 AToken / debt tokens / v2 AaveOracle.
 
+
+## 2026-09-03: Aave leftover remaining protocol-v2 CollateralManager leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after LendingPool leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `contracts/protocol/lendingpool/LendingPoolCollateralManager.sol`. Do not rematch LendingPool leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: liquidation of a healthy HF>=1 position; collateral seized without the liquidator paying debt; close factor letting a caller take more than 50% of debt when HF is only slightly below 1.
+
+Result: no user-exploitable finding. Not submitted.
+
+- This contract is `delegatecall`ed from leftover-logged `LendingPool.liquidationCall` and shares `LendingPoolStorage`. Standalone calls would use empty storage.
+- `liquidationCall` computes HF via `GenericLogic.calculateUserAccountData` and `ValidationLogic.validateLiquidationCall` (HF < 1, collateral enabled, debt exists). Max debt is 50% close factor. Collateral out is oracle-priced with the reserve liquidation bonus and capped by the user’s aToken balance.
+- Variable debt is burned first, then stable. Liquidator `safeTransferFrom`s `actualDebtToLiquidate` of the debt asset to the debt aToken. Collateral is either `transferOnLiquidation` of aTokens or `burn` of aTokens sending underlying to `msg.sender`.
+- `getRevision` is 0; `initialize` is never invoked on this implementation.
+
+Do not file a HF-gated close-factor liquidation as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: LendingPoolConfigurator / v2 AToken / debt tokens / v2 AaveOracle.
+
