@@ -33351,6 +33351,113 @@ Agglayer Bridge
 already
 Polygon-leftover.
 
+## 2026-09-03: Wormhole leftover remaining NTT leftover (`250d810`)
+
+Immunefi program
+`wormhole`
+(already
+leftover-logged
+as ETH core +
+TokenBridge).
+Bounty: $1M max,
+KYC true.
+Official
+`wormhole-foundation/native-token-transfers`
+HEAD
+`250d810`.
+Extract
+`/tmp/wh-ntt`
+via jsDelivr.
+No mainnet
+writes.
+
+Files:
+`evm/src/NttManager/NttManager.sol`,
+`evm/src/NttManager/ManagerBase.sol`,
+`evm/src/Transceiver/WormholeTransceiver/WormholeTransceiver.sol`,
+`evm/src/Transceiver/WormholeTransceiver/WormholeTransceiverState.sol`.
+
+Checked for: a
+stranger
+`transfer` that
+burns another
+account; a
+permissionless
+`executeMsg`
+that mints to
+the caller; a
+stranger
+`cancelOutboundQueuedTransfer`
+that unlocks
+someone else's
+queue; a
+`receiveMessage`
+that skips VAA
+verification.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `transfer`
+  pulls
+  `msg.sender`
+  via
+  `safeTransferFrom`
+  then locks or
+  burns.
+- `attestationReceived`
+  is
+  `onlyTransceiver`.
+  `executeMsg`
+  is
+  permissionless
+  after peer
+  verification
+  and mints /
+  unlocks to
+  the recorded
+  `to`.
+- `completeInboundQueuedTransfer`
+  is
+  permissionless
+  after the
+  rate-limit
+  window and
+  pays the
+  queued
+  recipient.
+  `cancelOutboundQueuedTransfer`
+  requires
+  `queuedTransfer.sender
+  == msg.sender`.
+- `WormholeTransceiver.receiveMessage`
+  verifies a
+  Wormhole VAA
+  then delivers
+  to the
+  manager.
+
+Do not file
+permissionless
+execute of a
+transceiver-attested
+NTT message to
+the recorded
+recipient.
+
+Not submitted.
+Payment requires
+user KYC.
+Remaining listed:
+circle-integration
+`2342025`;
+other-chain NTT
+(Solana /
+Sui);
+Relayer 404.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -35062,6 +35169,14 @@ is logged (remaining listed
 is NativeConverter impls 404
 / avKAT 404 / remaining
 converters / Jitosol OFT);
+Wormhole leftover remaining
+NTT leftover (`250d810`
+NttManager /
+WormholeTransceiver; KYC) is
+logged (remaining listed is
+circle-integration /
+other-chain NTT / Relayer
+404);
 Celer leftover ETH staking /
 SGN / cBridge leftover
 (Sourcify; KYC) is logged.

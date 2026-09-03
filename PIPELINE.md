@@ -87,7 +87,8 @@ Chainlink leftover remaining VRF leftover is logged;
 Stacks leftover pox-5 leftover is logged;
 Boba Network leftover ETH LightBridge leftover is logged;
 Starknet Staking leftover L1 mint + cairo staking leftover is logged;
-Katana leftover ETH portal + KAT OFT + vbToken leftover is logged).
+Katana leftover ETH portal + KAT OFT + vbToken leftover is logged;
+Wormhole leftover remaining NTT leftover is logged).
 KeeperHub
 #2105 is claimed by PR #2275. #2240 has a design comment from
 `edycutjong` and 0 implementation PRs (search hit PR #2277 is #2247)
@@ -612,6 +613,14 @@ is logged (remaining listed
 is NativeConverter impls 404
 / avKAT 404 / remaining
 converters / Jitosol OFT).
+Wormhole leftover remaining
+NTT leftover (`250d810`
+NttManager /
+WormholeTransceiver; KYC) is
+logged (remaining listed is
+circle-integration /
+other-chain NTT / Relayer
+404).
 Celer leftover ETH staking / SGN / cBridge
 (Sourcify; KYC) is logged (listed ETH
 leftover exhausted).
@@ -1247,6 +1256,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Katana leftover ETH portal +
   KAT OFT + vbToken leftover
   (Sourcify; KYC),
+  Wormhole leftover remaining
+  NTT leftover (`250d810`;
+  KYC),
   Celer leftover ETH staking /
   SGN / cBridge (Sourcify; KYC),
   DeXe Protocol leftover
