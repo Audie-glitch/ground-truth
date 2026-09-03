@@ -13691,6 +13691,72 @@ exhausted
 (`token-registry-aa` +
 `obyte-cascading-donations`).
 
+## 2026-09-03: MtPelerin bridge-v2 leftover (`1126cfc`)
+
+Immunefi program
+`mtpelerin` ($5,000,
+`kyc: false`). Listed
+`MtPelerin/bridge-v2`
+token / rules /
+operating / sale files.
+Official clone
+`/tmp/mtpelerin` at
+`1126cfc` (“Bumped
+version”). Local static
+read of
+`operating/{Processor,
+RuleEngine,ComplianceRegistry}.sol`,
+`token/abstract/{BridgeERC20,
+SeizableBridgeERC20}.sol`,
+`rules/{Soft,Hard}TransferLimitRule.sol`,
+`sale/TokenSale.sol`,
+`utils/TokenDispenserQueue.sol`,
+`tokenbridge/Mediator.sol`.
+No mainnet interaction.
+
+No finding.
+
+Balances live in the
+Processor keyed by
+`_msgSender()` (the
+token). A stranger
+calling Processor
+directly only writes
+their own unregistered
+slot. Token
+`transferFrom` checks
+allowance, then
+Processor runs each
+rule; `beforeTransferHook`
+may rewrite `to` /
+amount (Soft AML hold
+sends tokens to the
+ComplianceRegistry).
+Hooks are
+`onlyOperator` on the
+rule (the Processor must
+be an operator). Seize /
+mint / burn require
+token-level seizer /
+supplier roles. On-hold
+release is keyed by
+`msg.sender` as the
+trusted intermediary.
+Mediator
+`transferFrom`s the
+caller then AMB-passes
+to a mapped token.
+Sale / dispenser are
+operator-gated.
+
+Not submitted. Remaining
+MtPelerin listed files
+in this tree are
+thin wrappers (Coin /
+Share / Bond tokens)
+and KYC attribute
+rules.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -14147,10 +14213,15 @@ and token-registry AA
 (`8d37f20`) are logged
 (listed Obyte AAs
 exhausted);
+MtPelerin bridge-v2
+(`1126cfc`) is logged
+(remaining listed files
+are token wrappers +
+KYC attribute rules);
 Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase
-recheck ~05:25 UTC);
+recheck ~05:35 UTC);
 GammaSwap listed leftover (factory /
 DeltaSwap / staking / GS / timelock /
 airdrop) is exhausted;
