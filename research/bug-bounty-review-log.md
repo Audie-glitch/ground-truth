@@ -13587,7 +13587,109 @@ finding. Not submitted.
 Not submitted. Remaining
 Obyte listed AAs:
 `token-registry-aa`,
-`obyte-cascading-donations`.
+`obyte-cascading-donations`
+(logged below).
+
+## 2026-09-03: Obyte cascading-donations AA leftover (`2f48482`)
+
+Immunefi program `obyte`
+($50,000, `kyc: false`).
+Listed leftover
+`byteball/obyte-cascading-donations`
+(kivach.org). Official
+clone `/tmp/obyte-cascading`
+at `2f48482` (“doc and
+banner”). Local static
+read of `agent.aa`. No
+mainnet interaction.
+
+No finding.
+
+Donate credits
+`repo*pool*asset` after a
+storage fee (1000 bytes
+or 100 to an optional
+notification AA).
+`trigger.data.donor` may
+attribute ranking to
+another address (display
+only). Distribute is
+permissionless once
+rules exist: each dest
+repo gets
+`floor(pool * pct/100)`
+as pool credit inside
+this AA; remainder is
+`$to_self`. Only a
+GitHub-attested owner
+is paid `$to_self +
+unclaimed`; otherwise
+remainder stays
+unclaimed. Rules sum
+must be ≤ 100, ≤ 10
+dests, dest ≠ self.
+Repo strings are
+`owner/project` with
+`\w/.-` only. The
+published tree hardcodes
+the testkit attestor AA
+(mainnet IDs are
+commented). That is a
+deploy-time constant,
+not a user drain of a
+live kivach AA that
+uses the mainnet
+attestor.
+
+Not submitted.
+
+## 2026-09-03: Obyte token-registry AA leftover (`8d37f20`)
+
+Immunefi program `obyte`
+($50,000, `kyc: false`).
+Listed leftover
+`byteball/token-registry-aa`.
+Official clone
+`/tmp/obyte-token-registry`
+at `8d37f20` (“numbers
+are now stored as
+numbers”). Local static
+read of
+`token-registry.oscript`.
+No mainnet interaction.
+
+No finding.
+
+Support deposits
+(`≥ 1e8` bytes) vote for
+a symbol↔asset link.
+Withdraw pays only
+`trigger.address` from
+that address’s drawer
+and only after a locked
+drawer’s expiry.
+Permissionless `move`
+shifts an expired drawer
+to the same address’s
+drawer 0 (no payout).
+Symbol/asset flips need
+a 30-day challenge
+unless a new asset is
+still in the 30-day
+grace window and the
+challenger has 5×
+support. Description /
+decimals votes use the
+voter’s existing
+balance, not new
+payments. Reserved
+GBYTE/BYTE names bounce.
+
+Not submitted. Remaining
+Obyte listed AAs:
+exhausted
+(`token-registry-aa` +
+`obyte-cascading-donations`).
 
 ## Next candidates
 
@@ -14039,10 +14141,12 @@ the old pin; City AA
 (`4a0a53f`) and perpetual
 AA (`126cdd0`) and OSWAP
 token AA (`461e860`) are
-logged; remaining Obyte
-listed AAs:
-`token-registry-aa`,
-`obyte-cascading-donations`);
+logged; cascading-
+donations AA (`2f48482`)
+and token-registry AA
+(`8d37f20`) are logged
+(listed Obyte AAs
+exhausted);
 Twyne vaults / wrappers /
 EVC / factories still
 Sourcify 404 (lowercase
