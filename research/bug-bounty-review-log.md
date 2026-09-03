@@ -28486,6 +28486,103 @@ exhausted (all twelve
 listed addresses plus
 the DVV impl).
 
+## 2026-09-03: alchemix-boost leftover (`f100743`)
+
+Immunefi program
+`alchemix-boost`
+($125,000, `kyc: false`).
+Unique no-KYC listed
+`alchemix-v2-dao` slice
+(not the already-logged
+Alchemix V3 tree). Public
+raw sources from
+`alchemix-finance/alchemix-v2-dao`
+`f100743`. Extract
+`/tmp/alchemix-boost`.
+No mainnet interaction.
+
+Files:
+`RevenueHandler.sol`,
+`RewardsDistributor.sol`,
+`VotingEscrow.sol`,
+`Minter.sol`,
+`Voter.sol`,
+`RewardPoolManager.sol`,
+`FluxToken.sol`,
+`BaseGauge.sol`,
+`Bribe.sol`,
+`CurveMetaPoolAdapter.sol`,
+`CurveEthPoolAdapter.sol`,
+`AlchemixGovernor.sol`.
+
+Checked for: a stranger
+`claim` that pays the
+caller instead of the
+veNFT owner; `withdraw`
+that unlocks another
+tokenId; unguarded
+`mint` on Flux / ALCX.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- RevenueHandler /
+  RewardsDistributor /
+  FluxToken claims
+  require
+  `isApprovedOrOwner`
+  and pay the veNFT
+  owner (or a
+  recipient the owner
+  chose).
+- VotingEscrow
+  `createLock` /
+  `depositFor` pull
+  `msg.sender` BPT.
+  `withdraw` is owner-
+  or-approved and
+  transfers BPT to
+  `ownerOf`.
+- RewardPoolManager
+  deposit / withdraw
+  are `veALCX`-only.
+  Voter
+  `notifyRewardAmount`
+  is minter-only.
+  Bribe
+  `getRewardForOwner`
+  is voter-only and
+  pays `ownerOf`.
+- Minter
+  `updatePeriod` is
+  voter-only. Flux
+  `mint` is
+  `onlyMinter`. Curve
+  adapters `melt` to
+  `msg.sender` (the
+  RevenueHandler after
+  it moved tokens in).
+
+Do not file
+permissionless
+checkpoint / donate-
+to-lock, leftover
+adapter dust `melt`,
+admin treasury
+routing, or veNFT
+approval letting the
+approved address
+claim as theft.
+
+Not submitted.
+Listed leftover that
+a public tree would
+open is exhausted.
+Remaining listed: the
+website.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -29631,6 +29728,15 @@ SimpleDVTStakingStrategy)
 is logged (listed leftover
 that Sourcify opens is
 exhausted);
+alchemix-boost leftover
+(`f100743` veALCX /
+RevenueHandler /
+RewardsDistributor) is
+logged (listed leftover
+that a public tree would
+open is exhausted;
+remaining listed is the
+website);
 Beefy Finance leftover
 (Sourcify Polygon
 `BeefyVaultV6` + common

@@ -215,7 +215,12 @@ boost-lido leftover (Sourcify ETH DVV /
 StakingModule / SimpleDVTStakingStrategy)
 is logged (listed leftover that Sourcify
 opens is exhausted).
-Beefy Finance leftover (Sourcify Polygon))
+alchemix-boost leftover (`f100743` veALCX
+/ RevenueHandler / RewardsDistributor)
+is logged (listed leftover that a public
+tree would open is exhausted; remaining
+listed is the website).
+Beefy Finance leftover (Sourcify Polygon)))
 `BeefyVaultV6` + common chef / DFYN /
 Curve / BIFI-maxi strategies) is logged.
 Beefy leftover remaining Polygon vaults
@@ -649,6 +654,12 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   SimpleDVTStakingStrategy;
   listed leftover that Sourcify
   opens is exhausted),
+  alchemix-boost leftover
+  (`f100743` veALCX /
+  RevenueHandler /
+  RewardsDistributor; listed
+  leftover that a public tree
+  would open is exhausted),
   and
   Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
