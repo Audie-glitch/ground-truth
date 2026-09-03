@@ -1,6 +1,6 @@
 # Goal evidence matrix
 
-**Audited:** 3 September 2026 16:06 UTC  
+**Audited:** 3 September 2026 16:08 UTC  
 **Goal:** Gain crypto assets through legitimate, legal, non-custodial earning opportunities.
 
 | Requirement | Authoritative evidence | Status | Remaining proof |
@@ -13,7 +13,7 @@
 | Execute repository contribution | No KeeperHub source change. CreditPassport is original Attestcoin work in-tree; it is not submitted and not deployed to testnet. T3N Vendor Receipts and Mermail skill are in-tree; both still need the participant to submit. | **Not achieved** | KeeperHub window opens Sep 6. CTC deploy + DoraHacks / Superteam / Devpost submit need the participant. |
 | Submit contribution to the earning program | No KeeperHub PR or DoraHacks BUIDL exists | **Not achieved** | Requires the participant's authenticated GitHub fork, DoraHacks account, contact details, and truthful eligibility. |
 | Verify acceptance or judging result | No PR acceptance or official judging result exists | **Not achieved** | Inspect authoritative PR and DoraHacks state after submission. |
-| Inspect wallet access and balances | Rechecked 16:06 UTC 3 Sep 2026. Still no `session.json` / `addresses.json` / `user-provided.json`. DCR2 Connect code `K7Kw6eej` (~5 min TTL). Funded-acquisition watcher still `no-address`. | **Not achieved** | Need Connect approval, Portal App ID, or MetaMask/Base address on `/connect`. |
+| Inspect wallet access and balances | Rechecked 16:08 UTC 3 Sep 2026. Still no `session.json` / `addresses.json` / `user-provided.json`. DCR2 Connect code `K7Kw6eej` (~4 min TTL). Funded-acquisition watcher still `no-address`. | **Not achieved** | Need Connect approval, Portal App ID, or MetaMask/Base address on `/connect`. |
 | Execute a legal acquisition on a funded wallet | Rechecked 16:00 UTC 3 Sep. `/tmp/funded-acquisition-status.json` still `no-address`. Agent Bounties parent `0x71b7…` needs ~1.1 USDC + Base gas on a distinct child solver. No on-chain tx executed. | **Not achieved** | Funded Base signer + Connect session, or user signs Agent Bounties from own MetaMask at https://agentbounties.app/earn.html . |
 | Verify crypto assets gained | No transaction or payout exists | **Not achieved** | Require an onchain transfer or balance change at an address the participant controls. Never publish or take custody of wallet secrets. |
 

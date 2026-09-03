@@ -74306,3 +74306,19 @@ Result: no user-exploitable finding. Not submitted.
 Time spent: roughly 25 minutes on Poseidon core only. Remaining Quantus scope: ZK circuits crate, mobile SDK, quantus-apps. Submission requires Immunefi account.
 
 Not submitted. Next unused Immunefi program: Quantus ZK circuits or ENS portal/manager if continuing audit comps.
+
+## 2026-09-03: Quantus audit competition wormhole ZK circuits + verifier (`2a6914e`)
+
+Immunefi program `audit-comp-quantus` ($20,000 pool, `kyc: false`). In-scope tree `immunefi-team/audit-comp-quantus-qp-zk-circuits` branch `audit-comp-ready`. Pin `2a6914e` (`2a6914ed0184fbc0aaf621801ac8b8b7e3b01f6e`). Local clone `/tmp/quantus-zk-circuits`. Reviewed `wormhole/inputs` public-input parsing, `wormhole/verifier` artifact loading, and nullifier/forgery tests in `wormhole/tests`. No mainnet interaction. No exploit PoCs.
+
+Checked for: forged nullifier or exit-account public inputs passing verifier; non-canonical field-element decoding enabling digest collisions; oversized proof/batch counts forcing unbounded allocation; loading non-canonical verifier artifacts that accept weakened circuits; public-input length/shape mismatches that credit wrong exit amounts.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `WormholeVerifier::new_from_bytes` caps artifacts at 1 MiB and pins keccak256 of canonical leaf verifier/common bytes; config must match `standard_recursion_config()` with `MIN_LEAF_SECURITY_BITS` floor and exactly 21 public inputs.
+- `qp_wormhole_inputs` validates proof counts (`MAX_PROOF_COUNT` 64), u32 ranges on aggregated fields, and digest limb canonicality; batch parsers validate dimensions before allocation.
+- Nullifier tests explicitly reject forged hash fragments and invalid preimage encodings; aligns with on-chain nullifier marking reviewed in Quantus chain wormhole pallet.
+
+Time spent: roughly 30 minutes on inputs/verifier/tests only. Remaining Quantus scope: mobile SDK, quantus-apps. Submission requires Immunefi account.
+
+Not submitted. Next unused Immunefi program: Quantus mobile/apps or ENS portal/manager if continuing audit comps.
