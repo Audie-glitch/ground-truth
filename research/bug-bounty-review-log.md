@@ -61167,3 +61167,30 @@ Not submitted. Payment requires user KYC. Remaining listed: `sei-js`,
 `go-ethereum`, other `sei-chain` modules / precompiles (`oracle`,
 `epoch`, IBC / gov / wasm), `sei-cosmos` / `sei-wasmd` / tendermint,
 and Primacy of Impact.
+
+## 2026-09-03: Lombard leftover Sui LBTC + bridge_vault leftover (`d78ebef`)
+
+Immunefi program `lombard-finance` ($250,000, `kyc: true`). Follow-on leftover after BridgeV2 / Mailbox / BasculeV2 (`936b35b`). Official clone `/tmp/lombard-sui` `d78ebef`. Opened `move/lbtc/sources/{lbtc,treasury,consortium,bascule}.move`, `move/consortium/sources/{consortium,payload_decoder}.move`, `move/bascule/sources/bascule.move`, `move/bridge_vault/sources/bridge_vault.move`, `move/timelock_policy/sources/timelock_upgrade.move`. No mainnet writes. No exploit PoCs.
+
+Checked for: a stranger `mint_v2` / `mint_with_fee_v2` that mints to the caller; reused consortium payloads; Bascule `validate_withdrawal` that skips reported deposits; `claim_native` that mints without locking wrapped; `return_native` that drains another user's vault balance; `burn` / `redeem` that spend a victim's coin; deprecated in-package consortium/bascule still callable.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `lbtc::lbtc` init creates a regulated coin, freezes metadata, and shares `ControlledTreasury` owned by the publisher (documented as a multisig).
+- `mint_and_transfer` requires sender to be a configured multisig **and** hold `MinterCap`. Epoch mint limit is checked and decremented. Coins transfer to the supplied `to`.
+- `mint_with_witness` requires the witness type to already hold a `MinterCap` in `roles`. Amount is epoch-capped. Coins transfer to `to`. Intended for `BridgeWitness` / `TypedLBTCWitness` granted by admin.
+- `mint_v2` hashes the payload (`sha2_256`), rejects used hashes, then `consortium::validate_payload`. Decode must match treasury `mint_action` + `chain_id`, nonzero amount, nonzero recipient. Optional Bascule `validate_withdrawal(TypedLBTCWitness<T>, to, amount, tx_id, index)` when enabled. Mint transfers to the **decoded `to`**, then the hash is recorded in `used_payloads`.
+- `mint` / `mint_with_fee` (in-package consortium/bascule) **deprecated abort**.
+- `mint_with_fee_v2` is `ClaimerCap`. Same unused-payload + consortium + `assert_decoded_payload` as `mint_v2`. User ECDSA over `fee_payload`; `to.to_bytes() == blake2b256(user_pk)`. Fee payload must match treasury chain id, package id, fee action, `fee < amount`, and expiry. Fee (capped by treasury mint fee) goes to the treasury address; remainder to `to`.
+- `burn` burns the **passed `Coin<T>`** (caller must own it).
+- `redeem` burns the caller's coin after a burn-commission split to the treasury address; emits `UnstakeRequest` with `script_pubkey`. Requires withdrawal enabled, supported output type, `amount > commission`, and dust checks.
+- Standalone `consortium::validate_payload` checks current-epoch weighted secp256k1 signatures (`secp256k1_verify` hash type 1) over the raw payload. Comment mentions unused payloads; **consumption is in treasury**, not here. `set_next_validator_set` requires signatures over the new-valset payload and `epoch == current + 1`. Initial valset is admin-only at epoch 0. Admins cannot remove the last admin.
+- In-package `lbtc::consortium` / `lbtc::bascule` every entry **aborts deprecated**.
+- Standalone `bascule::validate_withdrawal` requires a drop witness whose type string is on the owner-managed validator allowlist. A `Reported` id becomes `Withdrawn` once. Already-withdrawn aborts. Unreported ids below `mValidateThreshold` are allowed and then marked withdrawn (same documented drawbridge policy as EVM BasculeV2). `report_deposit` is `BasculeReporterCap`.
+- `bridge_vault::claim_native` locks the caller's wrapped `Coin<WT>` into the vault, then `mint_with_witness(BridgeWitness)` to **`ctx.sender()`**.
+- `return_native` burns the caller's native `Coin<T>`, splits the same amount of wrapped from the vault, and `bridge::send_token` to the caller-supplied `target_address`. Requires vault balance ≥ amount and vault unpaused.
+- `timelock_upgrade` wraps `UpgradeCap`. `authorize_upgrade` requires 24h or 48h since last authorization (first call unrestricted). Owner of `TimelockCap` is trusted; `make_immutable` is irreversible.
+
+Do not file payload-recipient mints, claimer-gated fee claims, caller-owned burns, below-threshold Bascule skips, or admin/multisig mint limits as stranger theft.
+
+Not submitted. Payment requires user KYC. Listed leftover that official GitHub opens for Lombard Sui move packages is exhausted at the opened-file level. Remaining listed: Starknet cairo packages.
