@@ -43899,3 +43899,140 @@ permissionless;
 periphery-v3
 emergency / kyc /
 migration.
+
+## 2026-09-03: Kamino leftover Liquidity program IDL (`35579c1`)
+
+Immunefi program
+`kamino`
+($1,500,000, `kyc: true`).
+klend + kvault and
+Scope + KFarms
+leftovers already
+logged. This slice
+is listed Kamino
+Liquidity. Official
+on-chain program
+repo
+(`Kamino-Finance/kamino-liquidity`
+/ `kliquidity`)
+is not public
+(clone 401).
+Reviewed official
+SDK + IDL clone
+`/tmp/kamino-liq-sdk`
+`35579c1`
+(kliquidity-sdk
+v15.0.2). Program
+ID from SDK docs:
+`6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc`.
+No mainnet
+interaction.
+
+Files:
+`src/idl/kliquidity.json`
+(`deposit`,
+`depositAndInvest`,
+`withdraw`,
+`invest`,
+`executiveWithdraw`,
+`emergencySwap`,
+`withdrawFromTreasury`,
+`collectFeesAndRewards`).
+
+Checked for: a
+stranger
+`withdraw` of
+another user's
+shares; admin-less
+`emergencySwap` /
+treasury sweep;
+unsigned
+`deposit` that
+pulls someone
+else's tokens.
+
+Result: no
+user-exploitable
+finding at the
+IDL-constraint
+level. Not
+submitted.
+
+- `deposit` /
+  `depositAndInvest`
+  /
+  `withdraw`
+  require
+  `user`
+  `isSigner`.
+  Withdraw burns
+  `sharesAmount`
+  from
+  `userSharesAta`.
+  Token-account
+  owner matching
+  is not visible
+  in the IDL
+  (that check
+  lives in the
+  closed
+  program).
+- `invest` is
+  `actionsAuthority`
+  signer
+  (keeper /
+  admin path).
+- `executiveWithdraw`,
+  `emergencySwap`,
+  and
+  `withdrawFromTreasury`
+  require
+  `adminAuthority`
+  signer.
+- `collectFeesAndRewards`
+  is a signed
+  user/keeper
+  compound into
+  the strategy
+  vaults, not a
+  stranger
+  payout.
+
+Do not file
+signer-gated
+deposit /
+withdraw,
+admin emergency
+swap, or
+permissionless
+fee compound
+into the vault,
+as stranger
+theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed Kamino
+Liquidity leftover
+is exhausted at
+the public IDL /
+SDK level.
+Remaining listed:
+closed-source
+program
+internals (ATA
+owner / share
+math) if a later
+source drop
+opens, and
+listed
+third-party
+oracle
+interfaces
+(Meteora / JUP /
+RedStone /
+Securitize /
+Switchboard /
+Adrena) if still
+unused.
