@@ -118,7 +118,9 @@ ETHGlobal Start Fresh: no project-specific code before Sep 4.
   Yearn / Uni, Summer.fi / Insta / LSV /
   Merkl / fee / checkers (`e623f20`),
   Jito interceptor (`dbd8ce4`) and restaking
-  vault path (`db90840`),
+  vault path (`db90840`), 0x Settler execute +
+  leftover Stargate / LayerZero / CCIP /
+  Mayan / DeBridge (`1df9087`),
   and Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

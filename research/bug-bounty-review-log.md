@@ -4708,8 +4708,8 @@ Result: no user-exploitable finding.
 Remaining 0x: other DEX mixins
 (Maverick, Balancer, Bebop, EulerSwap,
 Dodo, Curve, UniswapV4, PancakeInfinity,
-Renegade, …) and Stargate / LayerZero /
-CCIP / Mayan / deBridge. Not submitted.
+Renegade, …) and Relay / NucleusTeller.
+Not submitted.
 
 ## 2026-09-03: Extra Finance LYF LendingPool + Velo manager
 
@@ -4794,6 +4794,60 @@ Aave-fork Pool impl
 (`0x0353b6221B23B8320202320Ca450EEB9fB0de9E5`),
 veToken. Not submitted.
 
+## 2026-09-03: 0x leftover Stargate / LayerZero / CCIP / Mayan / DeBridge (`1df9087`)
+
+Same Immunefi program `0x` ($1,000,000, `kyc: true`).
+Same clone `/tmp/0x-settler` at `1df9087`.
+No mainnet interaction. Across / UniV2 /
+Velodrome already logged.
+
+Files: `src/core/{StargateV2,LayerZeroOFT,
+CCIP,Mayan,DeBridge}.sol`,
+`src/bridge/IBridgeSettlerActions.sol`.
+
+Checked for: a hostile pool/OFT/router that
+is Permit2 or AllowanceHolder; amount
+override that spends a later action’s
+tokens for a stranger; Mayan
+`protocolAndData` that calls an arbitrary
+target with Settler’s allowance.
+
+Result: no user-exploitable finding.
+
+- All five run only from BridgeSettler
+  `_dispatch` inside one
+  `takerSubmitted` / signed execute.
+  They overwrite `amountLD` /
+  `giveAmount` / `tokenAmounts[0].amount`
+  / Mayan `amountIn` to this Settler’s
+  current token (or ETH-minus-fee)
+  balance, then `safeApproveIfBelow` the
+  bridge.
+- Stargate / LayerZero / CCIP take a
+  caller-chosen `pool` / `oft` / `router`
+  and call a fixed selector
+  (`sendToken` / `send` / `ccipSend`).
+  Comments note those selectors do not
+  clash with Permit2 or AllowanceHolder.
+  A fake pool can only keep tokens this
+  execution already pulled — same
+  authenticated-execution class as UniV2.
+- Mayan / DeBridge use hardcoded
+  `MAYAN_FORWARDER`
+  (`0x3376…3E2`) and `DLN_SOURCE`
+  (`0xeF4f…EB66`). Receiver / `to` /
+  `mayanProtocol` bytes are in the
+  taker’s action data.
+- CCIP requires `feeToken == 0` and
+  exactly one `tokenAmounts` entry, then
+  sends `selfbalance()` as native fee
+  (excess is documented as a donation).
+
+Remaining 0x: other DEX mixins (UniV4,
+BalancerV3, Curve, Dodo, EulerSwap,
+PancakeInfinity, …) and Relay /
+NucleusTeller. Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -4849,9 +4903,10 @@ exhausted. 0x Settler execute / Permit2 /
 RFQ / UniV3 / AllowanceHolder / BridgeSettler
 plus UniV2 / Velodrome / Across /
 POSITIVE_SLIPPAGE (`1df9087`) are logged;
-remaining 0x is other DEX mixins and
-Stargate / LayerZero / CCIP / Mayan /
-deBridge. Extra Finance LYF LendingPool +
+remaining 0x is other DEX mixins (UniV4,
+BalancerV3, Curve, Dodo, EulerSwap,
+PancakeInfinity, …) and Relay /
+NucleusTeller. Extra Finance LYF LendingPool +
 VeloPositionManager + RewardDistributor
 (Sourcify, 2024-08 verified) are logged;
 remaining Extra Finance is vault logic
