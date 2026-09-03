@@ -25,9 +25,10 @@ and create-canonical / realloc leftover are logged
 Instadapp DSA leftover (`fef062a`) is logged.
 Instadapp Avocado leftover (`0bc1dd9`) is logged.
 Instadapp Fluid liquidity + fToken leftover
-(`a9949b4`) is logged (remaining Instadapp is
-Fluid vault / dex / dexLite / steth and
-`inst-governance`).
+(`a9949b4`) is logged. Instadapp Fluid vault T1
+leftover (`a9949b4`) is logged (remaining
+Instadapp is Fluid vault T2–T4 / dex / dexLite /
+steth and `inst-governance`).
 Compound Finance PR 127 / 2.9 leftover is logged
 (listed Compound GitHub leftover exhausted). Rocket Pool
 v1.4 listed GitHub leftover is exhausted (deposit /

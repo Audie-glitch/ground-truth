@@ -19555,6 +19555,101 @@ dex / dexLite /
 steth and
 `inst-governance`.
 
+## 2026-09-03: Instadapp Fluid vault T1 leftover (`a9949b4`)
+
+Immunefi program
+`instadapp` ($500,000,
+`kyc: false`). Fluid
+liquidity + fToken
+leftover on pin
+`a9949b4` is already
+logged. This slice is
+VaultT1 operate /
+liquidate / factory
+mint. Same clone
+`/tmp/instadapp-fluid`.
+No mainnet
+interaction.
+
+Files:
+`protocols/vault/vaultT1/coreModule/main.sol`,
+`vaultT1/adminModule/main.sol`,
+`factory/main.sol`,
+`factory/ERC721/ERC721.sol`.
+
+Checked for: a
+stranger withdraw or
+borrow from another
+user’s NFT; factory
+mint of a position
+NFT to the attacker;
+callback that pulls
+tokens from a victim;
+admin fallback that
+anyone can hit.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- `operate` mints a
+  new NFT to
+  `msg.sender` when
+  `nftId == 0`.
+  Withdraw or borrow
+  on an existing id
+  requires
+  `ownerOf ==
+  msg.sender`.
+  Deposit / payback
+  on someone else’s
+  NFT is a gift, not
+  a drain. Payback
+  callback encodes
+  `msg.sender`.
+  Withdraw / borrow
+  `operate`s Liquidity
+  to `to_` (or
+  `msg.sender`).
+- `liquidate` is
+  permissionless for
+  underwater ticks
+  and pays the
+  liquidator
+  collateral for
+  repaid debt at the
+  oracle + penalty.
+  Dead-address
+  dry-run reverts
+  with amounts.
+- `liquidityCallback`
+  requires
+  `msg.sender ==
+  LIQUIDITY` and
+  reentrancy bit
+  set, then
+  `transferFrom` the
+  decoded `from`.
+- Factory `mint` is
+  only the vault for
+  that `vaultId`.
+  Fallback admin
+  delegatecall
+  requires global or
+  per-vault auth.
+  Admin module is
+  `_verifyCaller`
+  (delegatecall
+  only).
+
+Not submitted.
+Remaining Instadapp
+is Fluid vault T2–T4
+/ dex / dexLite /
+steth and
+`inst-governance`.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -20059,9 +20154,11 @@ and Avocado leftover
 (`0bc1dd9`) is logged;
 Instadapp Fluid
 liquidity + fToken leftover
+(`a9949b4`) is logged;
+Instadapp Fluid vault T1 leftover
 (`a9949b4`) is logged
 (remaining Instadapp is
-Fluid vault / dex /
+Fluid vault T2–T4 / dex /
 dexLite / steth and
 `inst-governance`);
 Rocket Pool v1.4 deposit
