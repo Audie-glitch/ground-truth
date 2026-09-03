@@ -68017,3 +68017,20 @@ Do not file a pool-gated aToken as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: v2 VariableDebtToken / StableDebtToken / v2 AaveOracle.
 
+
+## 2026-09-03: Aave leftover remaining protocol-v2 debt tokens leftover (`ce53c4a`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after AToken leftover. Official `aave/protocol-v2` `ce53c4a`. Opened listed `VariableDebtToken.sol` and `StableDebtToken.sol` plus `DebtTokenBase.sol` for credit delegation. Do not rematch v3 StableDebtToken leftover or v2 LendingPool leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: stranger `mint` of debt onto `onBehalfOf` without borrow allowance; ERC20 `transfer` of debt; `burn` without the LendingPool.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Both `mint` / `burn` are `onlyLendingPool`. If `user != onBehalfOf`, `_decreaseBorrowAllowance` subtracts from `_borrowAllowances[onBehalfOf][user]` and reverts on underflow (`BORROW_ALLOWANCE_NOT_ENOUGH`). `approveDelegation` only writes `msg.sender`’s allowance.
+- `DebtTokenBase` `transfer` / `transferFrom` / `approve` / allowances revert (`TRANSFER_NOT_SUPPORTED` / `ALLOWANCE_NOT_SUPPORTED`).
+- Variable mint scales by the reserve index. Stable mint compounds the user’s rate and average supply rate; burn is also pool-only.
+
+Do not file a credit-delegation-gated debt mint as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: v2 AaveOracle.
+
