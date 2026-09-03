@@ -14763,6 +14763,124 @@ management /
 `withdraw_stake_account`
 split.
 
+## 2026-09-03: Rocket Pool v1.4 deposit / rETH / megapool queue (`fb7d9c4`)
+
+Immunefi program
+`Rocket Pool`
+($150,000, `kyc: true`).
+Listed leftover
+`rocket-pool/rocketpool`
+blob/v1.4 (added 17 Feb
+2026). Local clone
+`/tmp/rocketpool` at
+`fb7d9c4` (“Insert
+correct mainnet genesis
+block time”). This slice
+is the user + node ETH
+path into the deposit
+pool and megapool queue.
+No mainnet interaction.
+
+Files:
+`contracts/contract/deposit/RocketDepositPool.sol`,
+`contracts/contract/token/RocketTokenRETH.sol`,
+`contracts/contract/node/RocketNodeDeposit.sol`,
+`contracts/contract/megapool/RocketMegapoolDelegate.sol`
+(`newValidator`,
+`dequeue`,
+`assignFunds`,
+`reduceBond`),
+`contracts/contract/network/RocketNetworkBalances.sol`.
+
+Checked for: minting
+rETH without ETH;
+`exitQueue` underflowing
+`nodeBalance` so excess
+can be drained;
+`applyCredit` to a
+stranger; dequeue that
+credits twice; burn that
+pulls more than excess.
+
+Result: no
+user-exploitable
+finding. Not submitted.
+
+- User `deposit` is
+  `onlyThisLatestContract`,
+  min size, pool cap
+  (plus queue capacity
+  when assign is on).
+  Fee comes out of
+  `msg.value`; rETH is
+  minted on the net
+  amount via the oracle
+  rate. ETH is split to
+  the rETH buffer then
+  the vault.
+- `mint` /
+  `depositExcess` /
+  `withdrawExcessBalance`
+  are deposit-pool-only.
+  `burn` pays
+  `getEthValue` and
+  pulls only
+  `getExcessBalance`
+  from the vault.
+- Node bond hits the
+  vault via
+  `nodeDeposit` (only
+  `rocketNodeDeposit`)
+  which increments
+  `nodeBalance` by the
+  full bond (credit may
+  cover `msg.value`).
+  `requestFunds` is
+  only a registered
+  megapool; it enqueues
+  and raises bonded /
+  borrowed snapshots
+  but does not touch
+  `nodeBalance` — that
+  increment already
+  happened in
+  `nodeDeposit`.
+- `exitQueue` subtracts
+  that bond from
+  `nodeBalance` and
+  `requestedTotal`.
+  Megapool `dequeue`
+  then
+  `fundsReturned` +
+  `applyCredit(bond)`.
+  The ETH stays in the
+  vault; credit mints
+  rETH the same way a
+  user deposit does.
+- `assignFunds` is
+  deposit-pool-only,
+  prestakes 1 ETH to
+  the official deposit
+  contract, and moves
+  queued capital into
+  `nodeBond` /
+  `userCapital`.
+- Network totals are
+  oracle-submitted
+  (trusted-node
+  threshold). Rate
+  games need oDAO
+  collusion.
+
+Not submitted. Remaining
+Rocket Pool listed
+GitHub: megapool
+stake / dissolve /
+rewards, minipool
+delegate leftover,
+vault, auction, DAO
+settings / voting.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -15252,6 +15370,14 @@ logged (remaining
 Marinade is crank /
 admin / validator
 management);
+Rocket Pool v1.4 deposit
+/ rETH / megapool queue
+(`fb7d9c4`) is logged
+(remaining Rocket Pool
+is megapool
+stake/dissolve/rewards,
+minipool leftover,
+vault, auction, DAO);
 Yearn yCRV token +
 Boosted Staker /
 distributor leftover
