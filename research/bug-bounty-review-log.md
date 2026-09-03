@@ -41172,6 +41172,8 @@ Filecoin leftover remaining go-crypto leftover
 (`91b77aa`) is logged.
 Filecoin leftover remaining go-address leftover
 (`73c8a46`) is logged.
+Filecoin leftover remaining go-fil-commcid leftover
+(`62ce856`) is logged.
 Wormhole leftover remaining CosmWasm token-bridge leftover
 (`c58827e`) is logged.
 Wormhole leftover remaining CosmWasm core leftover
@@ -41197,7 +41199,8 @@ Do not rematch Filecoin builtin-actors, boost, go-f3,
 lotus miner, FVM, proofs-api, proofs-ffi, or proofs.
 Do not rematch filecoin.io website leftover.
 Do not rematch filecoin-ffi, go-graphsync, paired,
-go-data-transfer, go-crypto, or go-address leftover.
+go-data-transfer, go-crypto, go-address, or
+go-fil-commcid leftover.
 Do not rematch ZKsync bootloader, interpreter,
 storage_models, proof_running_system, zk_ee,
 zkos-wrapper, or airbender verifier.
@@ -64470,5 +64473,20 @@ Result: no user-exploitable finding. Not submitted.
 - `NewFromBytes` rejects length 1; empty is `Undef`. `UnmarshalCBOR` rejects extra > 64 and `Undef`. `IDFromAddress` errors on non-ID.
 
 Do not file an address codec that checksums and length-checks as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner.
+
+## 2026-09-03: Filecoin leftover remaining go-fil-commcid leftover (`62ce856`)
+
+Immunefi program `filecoin` ($50,000, `kyc: true`). Official remaining listed after go-address leftover. Official clone `/tmp/filecoin-commcid` at `62ce856`. Opened `commcid.go`. Commitment↔CID helpers only. Does not move FIL. Do not rematch proofs leftovers. No mainnet writes. No exploit PoCs.
+
+Checked for: `CIDToDataCommitmentV1` accepting a sealed codec; `CIDToReplicaCommitmentV1` accepting unsealed; piece v2 decode ignoring hash code or digest length.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `validateFilecoinCidSegments` requires unsealed↔`Sha2_256Trunc254Padded`, sealed↔Poseidon, and 32-byte digest. `CIDToDataCommitmentV1` / `CIDToReplicaCommitmentV1` additionally check the matching codec.
+- `DataCommitmentToPieceCidv2` requires 32-byte commD and payload ≥ 127. `PieceCidV2ToDataCommitment` requires `Fr32Sha256Trunc254Padbintree`, exact digest length, and padding `< half` the padded tree.
+
+Do not file a commitment CID codec as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining go-* / lotus non-miner.
