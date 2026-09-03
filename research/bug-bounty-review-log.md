@@ -33213,3 +33213,129 @@ StandardManager /
 PMRM / Option /
 Perp / BaseAsset /
 feeds.
+## 2026-09-03: SSV Network leftover (Sourcify)
+
+Immunefi program
+`SSV Network`
+($250,000, `kyc: true`).
+Unique unused standing
+program. Not previously
+logged. Ethereum
+Sourcify `exact_match`
+ERC1967 proxies:
+SSV Network
+`0xDD9BC35aE942eF0cFa76930954a156B3fF30a4E1`
+impl
+`0xa72a8F31163d74D708664493d09167dfa13008E9`
+(`SSVNetworkSSVStakingUpgrade`),
+SSV Network View
+`0xafE830B6Ee262ba11cce5F32fDCd760FFE6a66e4`
+impl
+`0xAdEb99eb2307F874D72b1F814fCa106f6BFaA8E9`
+(`SSVNetworkViews`,
+`match`). The Views
+extract includes the
+full module tree
+used by the Network
+proxy. No mainnet
+writes. Extract
+`/tmp/ssv-impl`.
+
+Files:
+`project/contracts/SSVNetwork.sol`,
+`project/contracts/SSVNetworkViews.sol`,
+`project/contracts/modules/SSVClusters.sol`,
+`project/contracts/modules/SSVOperators.sol`,
+`project/contracts/modules/SSVStaking.sol`,
+`project/contracts/modules/SSVDAO.sol`,
+`project/contracts/libraries/OperatorLib.sol`,
+`project/contracts/libraries/CoreLib.sol`.
+
+Checked for: a
+stranger cluster
+`withdraw` that pays
+the caller from
+another owner's
+balance; operator
+earnings withdraw
+without
+`checkOwner`;
+`stake` that mints
+CSSV without pulling
+SSV; `withdrawUnlocked`
+of another user's
+cooldown queue;
+DAO earnings
+withdraw without
+owner.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Cluster `deposit`
+  adds `msg.value`
+  to a named
+  cluster (can fund
+  another owner).
+  `withdraw`
+  validates the
+  hashed cluster for
+  `msg.sender` and
+  pays that sender.
+  `liquidate` pays
+  the liquidator
+  only when the
+  caller is the
+  owner or the
+  cluster is
+  liquidatable.
+- Operator earnings
+  withdraws call
+  `checkOwner`
+  (`operator.owner
+  == msg.sender`).
+- `stake` pulls SSV
+  from `msg.sender`
+  and mints CSSV to
+  that sender.
+  `requestUnstake`
+  burns the caller's
+  CSSV and queues
+  that caller.
+  `withdrawUnlocked`
+  pays only that
+  caller's matured
+  requests.
+  `claimEthRewards`
+  pays
+  `accrued[msg.sender]`.
+- `rescueERC20`,
+  `withdrawNetworkSSVEarnings`,
+  fee / liquidation
+  setters, and
+  module upgrades
+  are `onlyOwner` on
+  `SSVNetwork`.
+  Views has no
+  money path.
+
+Do not file
+permissionless
+liquidation of a
+liquidatable
+cluster, depositing
+ETH into another
+owner's cluster, or
+owner DAO privilege
+as stranger theft.
+
+Not submitted.
+Payment requires
+user KYC.
+Listed SSV Network
+leftover is
+exhausted at the
+opened-contract
+level.
