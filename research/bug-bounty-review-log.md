@@ -31236,6 +31236,19 @@ is logged (listed Acala
 runtime leftover exhausted
 at the opened pallet level;
 remaining listed is ORML);
+Acala leftover ORML leftover
+(`33bc94a` tokens / xtokens /
+currencies / oracle /
+vesting / payments /
+auction / nft /
+unknown-tokens / rewards /
+asset-registry) is logged
+(listed leftover that
+money-path pallets open is
+exhausted; remaining is
+authority / xcm-support /
+traits / rate-limit
+support crates);
 Ostium leftover vault /
 trading leftover (Sourcify;
 KYC) is logged (remaining
@@ -37023,7 +37036,204 @@ at the opened
 pallet level.
 Remaining listed:
 `open-runtime-module-library`
-(`33bc94a` clone
-present; tokens /
-xtokens not yet
-reviewed).
+(`33bc94a`; tokens /
+xtokens leftover
+logged below).
+
+## 2026-09-03: Acala leftover ORML leftover (`33bc94a`)
+
+Immunefi program
+`acala`
+($1,000, `kyc: false`).
+Honzon / DEX / homa and
+EVM / XCM / bridge leftovers
+already logged. This slice
+is the remaining listed
+`open-web3-stack/open-runtime-module-library`
+money-path pallets.
+Official clone `/tmp/orml`
+at `33bc94a`. Sparse
+checkout: `tokens`,
+`xtokens`, `currencies`,
+`oracle`, `vesting`,
+`payments`, `auction`,
+`nft`, `unknown-tokens`,
+`rewards`,
+`asset-registry`.
+No mainnet interaction.
+
+Files:
+`tokens/src/lib.rs`,
+`xtokens/src/lib.rs`,
+`currencies/src/lib.rs`,
+`oracle/src/lib.rs`,
+`vesting/src/lib.rs`,
+`payments/src/lib.rs`,
+`auction/src/lib.rs`,
+`nft/src/lib.rs`,
+`unknown-tokens/src/lib.rs`,
+`rewards/src/lib.rs`,
+`asset-registry/src/lib.rs`.
+
+Checked for: a
+stranger `transfer` that
+debits another account;
+`force_transfer` /
+`set_balance` /
+`update_balance` callable
+without root; xtokens
+`WithdrawAsset` from a
+third-party sovereign
+account; oracle
+`feed_values` by a
+non-member; vesting
+`claim_for` that pays the
+caller; payments
+`release` / `cancel` by
+the wrong party;
+`accept_and_pay` that
+pulls a requested
+sender; NFT `transfer`
+without ownership.
+
+Result: no
+user-exploitable
+finding. Not
+submitted.
+
+- Tokens
+  `transfer` /
+  `transfer_all` /
+  `transfer_keep_alive`
+  are `ensure_signed`
+  and debit that
+  signer. `do_transfer`
+  subtracts `from.free`
+  and respects frozen
+  locks via
+  `ensure_can_withdraw`.
+  `force_transfer` and
+  `set_balance` are
+  `ensure_root`.
+- Xtokens all six
+  transfer extrinsics
+  take `ensure_signed`.
+  XCM is
+  `prepare_and_execute`d
+  as
+  `AccountIdToLocation(who)`,
+  so `WithdrawAsset`
+  pulls the signer's
+  sovereign account.
+  Destination deposit
+  is the dest
+  recipient, not the
+  caller.
+- Currencies
+  `transfer` /
+  `transfer_native_currency`
+  debit the signer.
+  `update_balance` is
+  `ensure_root`.
+- Oracle
+  `feed_values`
+  requires a
+  `Members` operator
+  or root (recorded as
+  `RootOperatorAccountId`).
+  Combined values come
+  only from those
+  authorized raw
+  feeds.
+- Vesting `claim`
+  updates the signer's
+  lock. Permissionless
+  `claim_for` only
+  refreshes `dest`'s
+  lock; it does not
+  pay the caller.
+  `vested_transfer`
+  needs
+  `VestedTransferOrigin`
+  and transfers from
+  that origin. Schedule
+  rewrite is root.
+- Payments `pay`
+  reserves the
+  signer's amount.
+  `release` is the
+  creator. `cancel` is
+  the recipient and
+  refunds the creator
+  (or drops a
+  `PaymentRequested`
+  row). `resolve_payment`
+  is the stored
+  resolver.
+  `request_payment`
+  stores a request
+  without pulling
+  funds.
+  `accept_and_pay`
+  reserves and settles
+  the signer.
+- Auction `bid`
+  records the signer;
+  `Handler::on_new_bid`
+  decides acceptance
+  (Acala
+  auction-manager
+  leftover already
+  logged).
+- NFT `transfer` /
+  `burn` require
+  `info.owner`. This
+  crate has no public
+  extrinsics (Acala
+  NFT wrapper leftover
+  already logged).
+- Unknown-tokens has
+  no public
+  extrinsics.
+  `deposit` / `withdraw`
+  are the XCM
+  `UnknownAsset` trait.
+- Rewards has no
+  public extrinsics.
+  Share / claim
+  helpers are used by
+  the already-logged
+  Acala incentives
+  pallet.
+- Asset-registry
+  `register_asset` /
+  `update_asset` need
+  `AuthorityOrigin`.
+
+Do not file
+permissionless
+`claim_for` lock
+refresh, recipient
+`cancel` that refunds
+the creator, root
+`set_balance`, or
+XCM withdraw of the
+signer's own
+sovereign account as
+stranger theft.
+
+Not submitted.
+Listed ORML leftover
+that money-path
+pallets open is
+exhausted at the
+opened-pallet level.
+Remaining listed:
+authority /
+gradually-update /
+parameters /
+rate-limit /
+xcm-support / `xcm`
+/ traits support
+crates (no user-fund
+extrinsics).
