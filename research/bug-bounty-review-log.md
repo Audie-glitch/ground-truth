@@ -73548,3 +73548,37 @@ Do not rematch core node transfers leftover (`7f8b636` / `afe53b6`) or Common/co
 - Common Keystore (`chainlink-common` `keystore/`).
 - evm txmgr package (`chainlink-evm` `pkg/txmgr` + `chainlink-framework` `chains/txmgr`) — this leftover.
 - ocr2 services (`core/services/ocr2`).
+
+## 2026-09-03 leftover: Chainlink ocr2 services (`core/services/ocr2`)
+
+Immunefi leftover **ocr2 services** (`https://github.com/smartcontractkit/chainlink/tree/develop/core/services/ocr2`). Official GitHub `GET /repos/smartcontractkit/chainlink/contents/core/services/ocr2?ref=develop` **200**. Pin `58d2ba6` (`58d2ba658feb47a8d2b8580816d212c84a4e566f`, committer `2026-09-03T13:48:16Z`). Local extract `/tmp/cl-ocr2/` via raw GitHub at that pin: `delegate.go`, `database.go`, `validate/validate.go`, `plugins/median/services.go`, `plugins/vault/transmitter.go`, `plugins/generic/oraclefactorytransmitter.go`. **No live-contract testing. No exploit PoCs.**
+
+Do not rematch libocr OCR2Aggregator leftover (`5de5620`) or LLO feeds leftover (`698f034`).
+
+### What I actually read
+
+- `ServicesForSpec`: job must already have an `OCR2OracleSpec`. Transmitter comes from the spec (or a single `sendingKeys` entry). EVM jobs call `GetEVMEffectiveTransmitterID`: optional `GetForwarderForEOA` when `ForwardingAllowed` (OCR2Aggregator transmitter whitelist); otherwise the job EOA. OCR2 key bundle is loaded from the node keystore by job/config ID. Plugins: LLO, Median, Generic, Vault, DonTime, Ring.
+- Registry-driven `NewServices` only launches `DonTimePlugin`. Transmitter is the on-chain OCR config account matching this node's OCR pubkey, else an eth-keystore address for the configured chain. Not a stranger HTTP surface.
+- Vault `Transmitter.Transmit`: unmarshals report info and `handler.SendResponse` in-process. `FromAccount` is the configured OCR account. No native-token send.
+- Generic `contractTransmitter` forwards `Transmit` to the relayer provider and reports `FromAccount` as the configured `transmitterID`.
+- Median: `relayer.NewPluginProvider` with spec `TransmitterID` / `ContractID`; `ContractTransmitter` comes from that provider. Juels/gas pipelines are observation data sources, not payment redirects.
+- `database.go`: OCR persistent state, config, and pending-transmission rows. No send path.
+
+### Verdict
+
+**No finding.** OCR2 services wire an admin job (or registry DON config) to libocr + the relayer transmitter. On-chain payment / payee withdraw stays in the already-reviewed OCR2Aggregator leftover. Stranger theft still needs a node job + enabled key. Out of Immunefi leftover remaining for `core/services/ocr2`.
+
+### Remaining listed (do not rematch)
+
+- VRF (`vrf/v08` / `vrf/v1`).
+- CCIP (`ccip/`) — EVM + Solana + Sui + Aptos leftovers logged.
+- Payments / Automation CRE / Operator Forwarder / LLO Feeds.
+- Websites (`smartcontract.community` / `dev.chain.link` / `docs.chain.link`).
+- OCR (`libocr` `ocr2/`).
+- Core node transfers (`core/web` `/v2/transfers`).
+- Core keystore (`core/services/keystore`).
+- Common Keystore (`chainlink-common` `keystore/`).
+- evm txmgr package (`chainlink-evm` `pkg/txmgr` + `chainlink-framework` `chains/txmgr`).
+- ocr2 services (`core/services/ocr2`) — this leftover.
+
+Official Chainlink leftover remaining at leftover-heading level is now exhausted. Next unused leftover is a different Immunefi program, not a rematch.
