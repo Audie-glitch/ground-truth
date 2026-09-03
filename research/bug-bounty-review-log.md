@@ -66955,3 +66955,21 @@ Do not file a calldata-packing view helper as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: PriceOracleSentinel / stk / StakeToken / GHO remaining (FixedFee / flash minter / Gsm4626) / governance.
 
+
+## 2026-09-03: Aave leftover remaining GHO FixedFeeStrategy leftover (`23859bb`)
+
+Immunefi program `aave` ($1,000,000, `kyc: true`). Official remaining listed after L2Encoder leftover. Official `aave-dao/gho-origin` `23859bb`. Opened listed `src/contracts/facilitators/gsm/feeStrategy/FixedFeeStrategy.sol`. Do not rematch GSM `buyAsset` / `sellAsset` leftover or `FixedPriceStrategy`. No mainnet writes. No exploit PoCs.
+
+Checked for: view fee math returning a negative fee or a gross that lets a GSM caller extract more GHO than the fixed price; constructor allowing a 100% fee that zeros the other side.
+
+Result: no user-exploitable finding. Not submitted.
+
+- `_buyFee` / `_sellFee` are immutable. Constructor requires each `< 5000` bps and at least one nonzero. This contract does not hold or move tokens.
+- `getBuyFee` / `getSellFee` are `mulDiv` ceil of `gross * fee / 1e4`.
+- `getGrossAmountFromTotalBought` floors `total * 1e4 / (1e4 + buyFee)` (zero fee returns `total`). `getGrossAmountFromTotalSold` ceils `total * 1e4 / (1e4 - sellFee)`. Rounding favors the GSM inventory, not the caller.
+- Fee updates require a new strategy deployment plus the GSM admin setter (role-gated on the GSM leftover).
+
+Do not file immutable bps fee quotes as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: PriceOracleSentinel / stk / StakeToken / GHO remaining (flash minter / Gsm4626 / OwnableFacilitator) / governance.
+
