@@ -95,7 +95,11 @@ share the username.
   `HarvestingEIP1271`, Lombard SVM mint/GMP + token pool +
   ratio oracle, Leather extension RPC (`eca229c`), OZ Confidential
   v0.5.3 including leftover ERC7984 modules (`4a4f6c7`), Money
-  on Chain V2 core/queue/V4 swapper (`d770477`), Alchemix V3,
+  on Chain V2 core/queue/V4 swapper (`d770477`), Alchemix V3
+  including leftover curator / gauge / 0x / NFT (`ea6f58b`),
+  Enzyme Blue gated-redemption wrapper + share-price
+  throttle (`da3b870`), Charm Alpha Pro Vault (`0174095`),
+  1inch Aqua solidity-utils mixins (`5b597e4`),
   and Horizen ZenStaker (no submittable finding).
 - `research/ethonline-hedera-harness-8.md`: file-level HOL Guard plan
   against harness `e045b10`. No harness code until 4 Sep 16:00 UTC.

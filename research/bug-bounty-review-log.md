@@ -3076,6 +3076,169 @@ Result: no user-exploitable finding.
 Aqua-listed solidity-utils files treated as
 exhausted. Do not submit. Payment requires user KYC.
 
+## 2026-09-03: Alchemix V3 leftover curator / gauge / 0x / NFT (`ea6f58b`)
+
+Same Immunefi program (`alchemix-1`, $150,000, no KYC).
+Same clone `/tmp/reviews/alchemix-v3` at `ea6f58b`. No
+mainnet interaction. Closes the leftover `src/` files
+after the strategies pass.
+
+Files: `AlchemistCurator.sol`,
+`AlchemistStrategyClassifier.sol`,
+`AlchemistV3Position.sol`,
+`AlchemistV3PositionRenderer.sol`, `PerpetualGauge.sol`,
+`FrxEthEthDualOracleAggregatorAdapter.sol`,
+`utils/{PermissionedProxy,Whitelist,ZeroXSwapVerifier}.sol`,
+`libraries/{FixedPointMath,TokenUtils,SafeERC20,Sets,SafeCast,NFTMetadataGenerator}.sol`,
+`external/AlEth.sol`.
+
+Checked for: a non-operator addAdapter / cap raise; NFT
+mint or burn outside the alchemist; a user-callable
+gauge allocate that ignores risk caps; 0x calldata that
+swaps a protected token; an oracle adapter that a user
+can point at a stale feed; permissionless alETH mint.
+
+Result: no user-exploitable finding.
+
+- Curator add/remove/cap paths are `onlyOperator` /
+  `onlyAdmin`. Immediate `setStrategy` writes
+  `adapterToMYT` then `addAdapter`; submit helpers only
+  `vault.submit`. `removeStrategy` uses the mapped MYT,
+  not the `myt` argument. `PermissionedProxy.proxy` is
+  operator-only and selector-gated.
+- Classifier defaults unassigned ids to risk 0 (100% /
+  100% caps). Admin-only writes. Trusted omission, not
+  a user extract.
+- Position NFT mint/burn is alchemist-only.
+  `_update` resets mint allowances before transfer
+  (already noted on the router). Renderer is metadata.
+- `PerpetualGauge` is unfinished: `strategyList` is
+  never pushed (`registerNewStrategy` only stamps
+  `lastStrategyAddedAt` and is permissionless), so
+  `executeAllocation` always reverts `No allocations`.
+  Vote power is live `balanceOf` with no checkpoint
+  (transfer-then-revote would leave stale weight if
+  the list were ever wired). Caps divide WAD by `1e4`
+  instead of `1e18`. Tests comment the TODO. Not
+  submitted: no live allocate path.
+- `ZeroXSwapVerifier` is not imported by any production
+  strategy. Fill parsers are marked TODO; `buyToken` is
+  unchecked. Dead code until an allocator uses it.
+- Frax dual-oracle adapter synthesizes `updatedAt =
+  block.timestamp` (documented). Combined with the
+  already-logged owner staleness on oracle-priced
+  strategies. Not a user-set feed.
+- `AlEth.sol` comments say it is modified for V3
+  invariant testing; `setWhitelist` / `pauseAlchemist`
+  / `setCeiling` have no access control. Production
+  token is `AlTokenV3` (already reviewed).
+- Libraries are standard mulDiv / safe ERC20 / 1-based
+  address set / NFT SVG.
+
+Alchemix V3 `src/` treated as exhausted. Not submitted.
+
+## 2026-09-03: Enzyme Blue gated redemption wrapper + share-price throttle (`da3b870`)
+
+Immunefi program `enzymefinance` ($200,000, `kyc: false`).
+Newest GitHub-adjacent add is
+`GatedRedemptionQueueSharesWrapperFactory`
+(etherscan, 17 Aug 2026). Local clone
+`/tmp/reviews/enzyme-protocol` at `da3b870`. No mainnet
+interaction. Distinct from the already-logged
+`enzyme-onyx` ACE tree.
+
+Files:
+`contracts/persistent/shares-wrappers/gated-redemption-queue/{GatedRedemptionQueueSharesWrapperFactory,GatedRedemptionQueueSharesWrapperLib,IGatedRedemptionQueueSharesWrapper,bases/GatedRedemptionQueueSharesWrapperLibBase1}.sol`,
+`contracts/persistent/smart-accounts/share-price-throttled-asset-manager/{SharePriceThrottledAssetManagerFactory,SharePriceThrottledAssetManagerLib}.sol`.
+
+Checked for: a deposit that mints wrapped shares without
+pulling assets; queue cancel after the manager has
+already tallied the request; redeem outside the window
+or above the relative cap; kick / force-transfer by a
+non-owner; throttle that lets a signer exceed
+`lossTolerance` in one multicall.
+
+Result: no user-exploitable finding.
+
+- Factory `deploy` requires a dispatcher-known vault
+  and inits the beacon proxy in the constructor.
+  `setImplementation` is dispatcher-owner only.
+- Direct `deposit` pulls (or wraps native), deposits
+  via `GlobalConfig.formatDepositCall`, and mints the
+  vault-share delta. Request mode escrows the asset;
+  cancel refunds the queued amount. Manager
+  `__depositFromQueue` removes requests before the
+  vault call (cancel then reverts `No request`) and
+  pro-rata mints (floored dust stays as unwrapped
+  vault shares, documented).
+- `requestRedeem` / `cancelRequestRedeem` revert in
+  the latest window. Transfers cannot move shares
+  that are queued. `redeemFromQueue` is
+  manager/owner, window-gated, checkpoints
+  `relativeSharesAllowed` from wrapped supply × cap,
+  burns, then redeems and disperses by redeemed
+  shares. Native payouts use `sendValue` (a rejecting
+  recipient reverts the slice).
+- `kick` / `forceTransfer` / manager approvals are
+  privileged. The lib header states holders must
+  trust the vault owner, who can appropriate value.
+- Throttled smart account `executeCalls` snapshots
+  gross share value, runs the owner multicall, then
+  adds replenished cumulative relative loss. A 0
+  `lossTolerancePeriodDuration` would revert on
+  replenish (owner config). Shutdowner zeros the
+  owner.
+
+Not submitted.
+
+## 2026-09-03: Charm Alpha Pro Vault (`0174095`)
+
+Immunefi program `charm` ($10,000, `kyc: false`).
+In-scope files are the three GitHub blobs below.
+Local clone `/tmp/reviews/charm-vaults` at `0174095`.
+No mainnet interaction.
+
+Files: `contracts/AlphaProVault.sol`,
+`contracts/AlphaProVaultFactory.sol`,
+`contracts/CloneFactory.sol`.
+
+Checked for: first-deposit share inflation; withdraw
+that pulls more than the share of idle + three UniV3
+positions; a non-pool mint/swap callback; rebalance
+that a user can run inside the TWAP / period guards;
+`sweep` of token0/token1; protocol+manager fee
+overflow.
+
+Result: no user-exploitable finding.
+
+- `deposit` pokes all three ranges, sizes from
+  `getTotalAmounts()`, pulls, then mints. First
+  depositor locks `MINIMUM_LIQUIDITY` (1e3) on the
+  factory and needs `max(amount0, amount1) > 1e3`.
+  `amount0Min` / `amount1Min` are the sandwich
+  defense the comment describes.
+- `withdraw` burns first, then idle × shares /
+  supply plus `_burnLiquidityShare` on full/base/
+  limit. Collect takes the whole position’s owed
+  fees; the withdrawer only receives
+  `fees * shares / totalSupply` after protocol and
+  manager cuts. Leftover fees stay idle for other
+  LPs.
+- Mint/swap callbacks require `msg.sender == pool`.
+  The vault never starts a swap; the swap callback
+  is unused.
+- `rebalance` is permissionless when
+  `rebalanceDelegate == 0`, else manager/delegate,
+  and still needs `checkCanRebalance` (period, min
+  tick move, TWAP deviation, tick bounds). Manager
+  `emergencyBurn` returns tokens to the vault, not
+  the manager. `sweep` cannot move token0/token1.
+- Factory and vault cap protocol and manager fees at
+  20% each (`20e4 / 1e6`). Combined 40% cannot
+  underflow `1e6 - protocol - manager`.
+
+Not submitted.
+
 ## Next candidates
 
 Sky PAS / SBEBeam / FarmOwner, the full `dss-emergency-spells` tree,
@@ -3103,13 +3266,23 @@ solidity-utils mixins / libraries (`5b597e4`) are
 exhausted. Origin in-scope Solidity listed as remaining
 is exhausted (including CoW `HarvestingEIP1271`, live
 `FixedRateRewardsSource`, and the OZ Governor wrapper).
-Remaining Alchemix: none of the previously listed
-leftover `src/` files. Remaining MoC: governance
-machines and live Rootstock v1 proxies if a later
-pass wants addresses rather than the V2 tree. 1inch
-Aqua opcode set and Aqua-listed solidity-utils mixins
-/ libraries (`5b597e4`) are exhausted. Superteam API
-rechecked 03:40 UTC 3 Sep: still 28 open listings.
+Remaining Alchemix leftover `src/` (curator,
+classifier, position NFT, gauge, 0x verifier, Frax
+adapter, libs, test `AlEth`) is exhausted. Enzyme
+Blue gated-redemption wrapper + share-price throttle
+(`da3b870`) and Charm Alpha Pro Vault (`0174095`)
+are exhausted. Remaining MoC: governance machines
+and live Rootstock v1 proxies if a later pass wants
+addresses rather than the V2 tree. 1inch Aqua opcode
+set and Aqua-listed solidity-utils mixins / libraries
+(`5b597e4`) are exhausted. Next unreviewed Immunefi
+GitHub-or-recent trees: DeFi Saver V3
+(`defisaver-v3-contracts/contracts`, $350k, no KYC),
+Jito restaking / stake-deposit-interceptor ($250k,
+KYC), Enzyme Blue adapters added as etherscan
+addresses after Apr 2026 (Bebop / ThreeOneThird /
+SharesSplitter). Superteam API rechecked 03:40 UTC
+3 Sep: still 28 open listings.
 `AGENT_ALLOWED` is still only Steve Arena and ZNS —
 do not execute. Mermail skill is built
 (`mermail-onchain-receipts/`); remaining work is the
@@ -3125,9 +3298,10 @@ working PoC against the published store build; do not
 file theoretical reports. USDT0’s 1 Sep add is Stellar
 explorer, not a Solidity GitHub tree. Sherlock
 `https://audits.sherlock.xyz/api/contests` is paginated
-(301 items); pages 1–5 as of 03:13 UTC 3 Sep show the
-only non-FINISHED row as contest `1234` (Tare) in
-`SHERLOCK_JUDGING`. Code4rena API: 25 audits, 24
+(301 items); page 1 as of 03:26 UTC 3 Sep still shows
+the only non-FINISHED row as contest `1234` (Tare) in
+`SHERLOCK_JUDGING` (later pages 403 from this VM).
+Code4rena API: 25 audits, 24
 `Completed`, 1 `Reporting` (Rujira, window ended Jan
 2026). Hedera Harness #8 still `open`, 0 comments, 0
 HOL-Guard PRs; file-level plan is in
@@ -3140,7 +3314,7 @@ file-level plan is in
 `research/ethonline-uniswap-sdks-720.md` (read-only
 clones `/tmp/uniswap-sdks` `35c4e35`, `/tmp/uniswapx`
 `fd60225`). Rechecked
-03:40 UTC 3 Sep: KeeperHub #2105 still `open` +
+03:24 UTC 3 Sep: KeeperHub #2105 still `open` +
 `accepted` + `confirmed`, 0 comments, 0 PRs;
 CreditPassport deployer still 0 Sepolia ETH / 0 tCTC;
 official CTC HTML still blocked by DoraHacks “Human
