@@ -164,7 +164,10 @@ real infrastructure with no key and no gas:
   one constructor executed through `eth_call`; the outcome comes back as the
   creation call's return data. On 3 Sep 2026 it recorded a real Sepolia ERC-20
   transfer (payer, payee, amount, query id) on a passport that existed only for
-  the duration of the call. Nothing is deployed and nothing is spent.
+  the duration of the call. `livecheck --batch` does the same through
+  `executeBatch` with a real shared-continuity batch proof for two transfers of
+  one token; on 3 Sep 2026 the live verifier's batch overload accepted it and
+  both payments were recorded. Nothing is deployed and nothing is spent.
 
 ## Tests
 
@@ -195,7 +198,7 @@ abi/                                   exported ABIs shared by agent and web
 - [x] Contracts, 32 tests (including real prover output), deploy scripts
 - [x] Agent with single and batch proof submission, scoring, memos, status API
 - [x] Real proof fetched and verified by the Creditcoin precompile from this repo (`verify`)
-- [x] Full `execute` path (verify, decode, record) run against the live precompile via `eth_call` (`livecheck`)
+- [x] Full `execute` and `executeBatch` paths (verify, decode, record) run against the live precompile via `eth_call` (`livecheck`, `livecheck --batch`)
 - [x] Web app
 - [x] Local demo environment
 - [ ] Testnet deployment (needs a funded deployer key)

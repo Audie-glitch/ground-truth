@@ -14,7 +14,10 @@ const artifacts = {
   TestUSD: "TestUSD.sol/TestUSD.json",
 };
 // The live check needs creation bytecode, not only the ABI.
-const withBytecode = { LivePrecompileCheck: "LivePrecompileCheck.sol/LivePrecompileCheck.json" };
+const withBytecode = {
+  LivePrecompileCheck: "LivePrecompileCheck.sol/LivePrecompileCheck.json",
+  LiveBatchCheck: "LiveBatchCheck.sol/LiveBatchCheck.json",
+};
 
 for (const dest of dests) {
   mkdirSync(dest, { recursive: true });
