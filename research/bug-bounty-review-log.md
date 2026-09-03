@@ -61858,3 +61858,20 @@ SELFDESTRUCT of the executing contract as stranger theft.
 Not submitted. Payment requires user KYC. Remaining listed: lotus,
 proofs / boost / graphsync / FVM / go-f3, other builtin-actors
 (`reward`, `datacap`, `verifreg`, `power`), and filecoin.io.
+
+## 2026-09-03: Sei leftover wasmd + sei-wasmd leftover (`2e256b5` / `8dd2534`)
+
+Immunefi program `sei` ($500,000, `kyc: true`). Follow-on leftover after `go-ethereum` (`ed6f3e9`). Official clones `/tmp/sei-chain` `2e256b5` (`precompiles/wasmd/wasmd.go`) and `/tmp/sei-wasmd` `8dd2534` (`x/wasm/keeper/{keeper,msg_server}.go`, `x/wasm/types/tx.go`). No mainnet writes. No exploit PoCs.
+
+Checked for: a wasmd precompile `execute` / `instantiate` that spends another associated account; `execute_batch` still live; CosmWasm `Execute` that `TransferCoins` from a victim; `MsgExecuteContract` with a forged signer.
+
+Result: no user-exploitable finding. Not submitted.
+
+- Precompile `0x…1002` `instantiate` / `execute` reject staticcall. `instantiate` rejects `delegatecall`. Sender is `GetSeiAddress(caller)` (association required). Attached `usei` must equal `msg.value`; `HandlePaymentUsei` pulls that associated address. Keeper then `Instantiate`/`Execute` with that creator/sender. `execute_batch` is disabled (`ErrExecuteBatchDisabled`). CW→EVM→CW is rejected (`!ctx.IsEVM()` except query).
+- Delegatecall `execute` is allowed only when `callingContract` is the ERC20/721/1155 pointer for the named CW contract.
+- `MsgExecuteContract` / `MsgInstantiateContract` `GetSigners()` is `Sender`. Keeper `execute` / `instantiate` `TransferCoins(ctx, caller|creator, contract, coins)` — the same address the message signer mapped to. `Migrate` / admin updates go through `AuthorizationPolicy` (`CanMigrate` / admin).
+- Query is nonpayable.
+
+Do not file associated-caller funds attach, pointer-gated delegatecall execute, or signer-bound CosmWasm execute as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: `sei-cosmos` / tendermint, other `sei-chain` modules (IBC host), and Primacy of Impact.
