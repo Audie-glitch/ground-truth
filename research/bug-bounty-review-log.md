@@ -46938,7 +46938,7 @@ is logged.
 Remaining listed Hedera: listed leftover that official trees open is exhausted.
 Remaining listed Filecoin: unused official leftover that listed trees open is exhausted on this pin. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Aave: primacy; unused official v3 logic leftover that listed trees open is exhausted on this pin.
-Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs` / `status_cache` / `bank_forks`) if still unused. Jito leftover remaining jito-solana snapshot_bank_utils leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana accounts_background_service leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
+Remaining listed Jito: unused official leftover that listed trees open is exhausted on this pin. Unused remaining-runtime slices (`bank.rs` / `bank_forks`) if still unused. Jito leftover remaining jito-solana accounts_background_service leftover (`d0e3a47`) is logged. Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`) is logged. Next unused leftover is a different Immunefi program, not a rematch.
 Remaining listed Rootstock: unused official leftover that listed trees open is exhausted.
 Remaining listed Optimism: unused official leftovers if still open. Official Optimism leftover that listed trees open is exhausted except unused official leftovers if still open. Optimism leftover remaining websites leftover is logged. Optimism leftover remaining op-reth leftover is logged. Optimism leftover remaining op-reth consensus leftover is logged. Optimism leftover remaining rust/op-reth flashblocks leftover is logged.
 Remaining listed ZKsync OS: official GitHub leftover
@@ -47021,6 +47021,8 @@ Do not rematch Jito jito-solana snapshot_minimizer leftover.
 Do not rematch Jito jito-solana snapshot_utils leftover.
 Do not rematch Jito jito-solana snapshot_bank_utils leftover.
 Do not rematch Jito jito-solana accounts_background_service leftover.
+Do not rematch Jito jito-solana status_cache leftover.
+Do not rematch Chainlink leftover remaining CCIP Solana leftover.
 Do not rematch Jito jito-solana snapshot_package leftover.
 Do not rematch Optimism leftover remaining op-node deposits + withdrawals leftover.
 Do not rematch Optimism leftover remaining PolicyEngineStaking leftover.
@@ -49825,8 +49827,10 @@ Jito leftover remaining jito-solana snapshot_utils leftover
 Jito leftover remaining jito-solana snapshot_bank_utils leftover
 (`d0e3a47`) is logged;
 Jito leftover remaining jito-solana accounts_background_service leftover
+(`d0e3a47`) is logged;
+Jito leftover remaining jito-solana status_cache leftover
 (`d0e3a47`) is logged (remaining listed is unused remaining-runtime
-bank / status_cache / bank_forks if still unused);
+bank / bank_forks if still unused);
 Optimism leftover remaining op-node deposits + withdrawals leftover
 (`eea9542`) is logged;
 Optimism leftover remaining PolicyEngineStaking leftover
@@ -72392,3 +72396,19 @@ Result: no user-exploitable finding. Not submitted.
 Do not file a pool release as stranger theft.
 
 Not submitted. Payment requires user KYC. Remaining listed: remaining Chainlink CCIP Sui / Aptos / chainlink-evm / OCR / core node / websites if still unused.
+## 2026-09-03: Jito leftover remaining jito-solana status_cache leftover (`d0e3a47`)
+
+Immunefi program `jito` ($250,000, `kyc: true`). Official remaining unused runtime leftover after accounts_background_service leftover. Official `jito-foundation/jito-solana` `d0e3a47`. Opened listed `runtime/src/status_cache.rs`. Do not rematch serde_snapshot leftover (snapshot status-cache serde) or remaining runtime leftover. No mainnet writes. No exploit PoCs.
+
+Checked for: `insert` that marks a stranger signature processed so a replay credits twice; `get_status` that matches a key on a non-ancestor fork; `append` that injects a snapshot delta as a live credit.
+
+Result: no user-exploitable finding. Not submitted.
+
+- This is an in-memory replay/RPC status cache, not a stranger IX. Keys are 20-byte slices of the tx key. `T` is typically `Result<(), TransactionError>` metadata. The cache does not move lamports.
+- `get_status` only returns an entry whose slot is in `ancestors` or `roots`. `insert` records `(slot, result)` and a slot-delta used for snapshots. Duplicate same-slot keys can appear on a dead slot (sig-verify vs execute); `clear_slot_entries` drops that slot.
+- `add_root` / `purge_roots` keep at most `MAX_RECENT_BLOCKHASHES` roots and drop older cache/delta entries. `append` is the snapshot rebuild path leftover-logged in serde_snapshot leftover.
+- `root_slot_deltas` serializes rooted slots only. No credit path.
+
+Do not file a replay status cache as stranger theft.
+
+Not submitted. Payment requires user KYC. Remaining listed: unused remaining-runtime slices (`bank.rs` / `bank_forks`) if still unused. Next unused leftover is a different Immunefi program, not a rematch.
